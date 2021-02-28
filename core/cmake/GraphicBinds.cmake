@@ -127,7 +127,9 @@ if (GRAPHIC_BIND STREQUAL efl)
 endif()
 
 if (GRAPHIC_BIND STREQUAL fb)
-  # all done :)
+  set(GRAPHIC_BINDS_SRCS 
+    src/binds/${GRAPHIC_BIND}/bind.cpp
+  )
 endif()
 
 if (GRAPHIC_BIND STREQUAL flaschen)

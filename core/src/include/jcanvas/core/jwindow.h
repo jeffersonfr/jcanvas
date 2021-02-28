@@ -216,12 +216,6 @@ class Window {
      * \brief
      *
      */
-    virtual void SetBounds(int x, int y, int width, int height);
-    
-    /**
-     * \brief
-     *
-     */
     virtual jpoint_t<int> GetPosition();
 
     /**
@@ -248,6 +242,12 @@ class Window {
      */
     virtual jrect_t<int> GetBounds();
 
+    /**
+     * \brief
+     *
+     */
+    virtual void SetBounds(jrect_t<int> bounds);
+    
     /**
      * \brief
      *

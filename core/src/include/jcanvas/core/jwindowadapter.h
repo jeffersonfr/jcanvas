@@ -36,7 +36,7 @@ class WindowAdapter {
      * \brief
      *
      */
-    WindowAdapter();
+    WindowAdapter(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds);
     
     /**
      * \brief
@@ -114,7 +114,7 @@ class WindowAdapter {
      * \brief
      *
      */
-    virtual void SetBounds(int x, int y, int width, int height);
+    virtual void SetBounds(jrect_t<int> bounds);
     
     /**
      * \brief

@@ -17,9 +17,9 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "../include/nativewindow.h"
-
 #include "jcanvas/core/jbufferedimage.h"
+#include "jcanvas/core/jwindowadapter.h"
+#include "jcanvas/core/japplication.h"
 
 #include <thread>
 #include <mutex>
@@ -658,8 +658,7 @@ void Application::Quit()
   sg_loop_mutex.unlock();
 }
 
-NativeWindow::NativeWindow(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds):
-	jcanvas::WindowAdapter()
+WindowAdapter::WindowAdapter(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds)
 {
 	if (sg_window != 0) {
 		throw std::runtime_error("Cannot create more than one window");
@@ -771,7 +770,7 @@ NativeWindow::NativeWindow(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds
 	XMapWindow(sg_display, sg_window);
 }
 
-NativeWindow::~NativeWindow()
+WindowAdapter::~WindowAdapter()
 {
   XUnmapWindow(sg_display, sg_window);
   XDestroyWindow(sg_display, sg_window);
@@ -785,12 +784,12 @@ NativeWindow::~NativeWindow()
   sg_back_buffer = nullptr;
 }
 
-void NativeWindow::Repaint()
+void WindowAdapter::Repaint()
 {
   sg_repaint.store(true);
 }
 
-void NativeWindow::ToggleFullScreen()
+void WindowAdapter::ToggleFullScreen()
 {
   if (sg_fullscreen == false) {
     sg_previous_bounds = GetBounds();
@@ -834,29 +833,29 @@ void NativeWindow::ToggleFullScreen()
   }
 }
 
-void NativeWindow::SetTitle(std::string title)
+void WindowAdapter::SetTitle(std::string title)
 {
 	sg_title = title;
 	
    XStoreName(sg_display, sg_window, title.c_str());
 }
 
-std::string NativeWindow::GetTitle()
+std::string WindowAdapter::GetTitle()
 {
 	return sg_title;
 }
 
-void NativeWindow::SetOpacity(float opacity)
+void WindowAdapter::SetOpacity(float opacity)
 {
   sg_opacity = opacity;
 }
 
-float NativeWindow::GetOpacity()
+float WindowAdapter::GetOpacity()
 {
   return sg_opacity;
 }
 
-void NativeWindow::SetUndecorated(bool undecorated)
+void WindowAdapter::SetUndecorated(bool undecorated)
 {
 	sg_undecorated = undecorated;
   
@@ -913,32 +912,32 @@ void NativeWindow::SetUndecorated(bool undecorated)
 	}
 }
 
-bool NativeWindow::IsUndecorated()
+bool WindowAdapter::IsUndecorated()
 {
   return sg_undecorated;
 }
 
-void NativeWindow::SetBounds(int x, int y, int width, int height)
+void WindowAdapter::SetBounds(jrect_t<int> bounds)
 {
-	XMoveResizeWindow(sg_display, sg_window, x, y, width, height);
+	XMoveResizeWindow(sg_display, sg_window, bounds.point.x, bounds.point.y, bounds.size.x, bounds.size.y);
 }
 
-jcanvas::jrect_t<int> NativeWindow::GetBounds()
+jcanvas::jrect_t<int> WindowAdapter::GetBounds()
 {
   return sg_visible_bounds;
 }
 
-void NativeWindow::SetResizable(bool resizable)
+void WindowAdapter::SetResizable(bool resizable)
 {
   sg_resizable = resizable;
 }
 
-bool NativeWindow::IsResizable()
+bool WindowAdapter::IsResizable()
 {
   return sg_resizable;
 }
 
-void NativeWindow::SetCursorLocation(int x, int y)
+void WindowAdapter::SetCursorLocation(int x, int y)
 {
 	if (x < 0) {
 		x = 0;
@@ -961,7 +960,7 @@ void NativeWindow::SetCursorLocation(int x, int y)
 	XFlush(sg_display);
 }
 
-jpoint_t<int> NativeWindow::GetCursorLocation()
+jpoint_t<int> WindowAdapter::GetCursorLocation()
 {
 	jpoint_t<int> t;
 
@@ -975,7 +974,7 @@ jpoint_t<int> NativeWindow::GetCursorLocation()
 	return t;
 }
 
-void NativeWindow::SetVisible(bool visible)
+void WindowAdapter::SetVisible(bool visible)
 {
   sg_visible = visible;
 
@@ -986,17 +985,17 @@ void NativeWindow::SetVisible(bool visible)
   }
 }
 
-bool NativeWindow::IsVisible()
+bool WindowAdapter::IsVisible()
 {
   return sg_visible;
 }
 
-jcursor_style_t NativeWindow::GetCursor()
+jcursor_style_t WindowAdapter::GetCursor()
 {
   return sg_jcanvas_cursor;
 }
 
-void NativeWindow::SetCursorEnabled(bool enabled)
+void WindowAdapter::SetCursorEnabled(bool enabled)
 {
   sgsg_jcanvas_cursor_enabled = enabled;
 
@@ -1010,12 +1009,12 @@ void NativeWindow::SetCursorEnabled(bool enabled)
   }
 }
 
-bool NativeWindow::IsCursorEnabled()
+bool WindowAdapter::IsCursorEnabled()
 {
 	return sgsg_jcanvas_cursor_enabled;
 }
 
-void NativeWindow::SetCursor(jcursor_style_t style)
+void WindowAdapter::SetCursor(jcursor_style_t style)
 {
   if (sgsg_jcanvas_cursor_enabled == false) {
     return;
@@ -1065,7 +1064,7 @@ void NativeWindow::SetCursor(jcursor_style_t style)
   sg_jcanvas_cursor = style;
 }
 
-void NativeWindow::SetCursor(Image *shape, int hotx, int hoty)
+void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
 {
 	/*
 	if ((void *)shape == nullptr) {
@@ -1117,21 +1116,21 @@ void NativeWindow::SetCursor(Image *shape, int hotx, int hoty)
 	*/
 }
 
-void NativeWindow::SetRotation(jwindow_rotation_t t)
+void WindowAdapter::SetRotation(jwindow_rotation_t t)
 {
 }
 
-jwindow_rotation_t NativeWindow::GetRotation()
+jwindow_rotation_t WindowAdapter::GetRotation()
 {
 	return jcanvas::JWR_NONE;
 }
 
-void NativeWindow::SetIcon(jcanvas::Image *image)
+void WindowAdapter::SetIcon(jcanvas::Image *image)
 {
   _icon = image;
 }
 
-jcanvas::Image * NativeWindow::GetIcon()
+jcanvas::Image * WindowAdapter::GetIcon()
 {
   return _icon;
 }

@@ -17,9 +17,9 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "../include/nativewindow.h"
-
 #include "jcanvas/core/jbufferedimage.h"
+#include "jcanvas/core/jwindowadapter.h"
+#include "jcanvas/core/japplication.h"
 
 #include <thread>
 #include <mutex>
@@ -551,8 +551,7 @@ void Application::Quit()
   sg_loop_mutex.unlock();
 }
 
-NativeWindow::NativeWindow(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds):
-	jcanvas::WindowAdapter()
+WindowAdapter::WindowAdapter(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds)
 {
 	if (sg_surface != nullptr) {
 		throw std::runtime_error("Cannot create more than one window");
@@ -590,7 +589,7 @@ NativeWindow::NativeWindow(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds
 	}
 }
 
-NativeWindow::~NativeWindow()
+WindowAdapter::~WindowAdapter()
 {
   al_destroy_bitmap(sg_surface);
   sg_surface = nullptr;
@@ -599,12 +598,12 @@ NativeWindow::~NativeWindow()
   sg_display = nullptr;
 }
 
-void NativeWindow::Repaint()
+void WindowAdapter::Repaint()
 {
   sg_repaint.store(true);
 }
 
-void NativeWindow::ToggleFullScreen()
+void WindowAdapter::ToggleFullScreen()
 {
   bool enabled = (al_get_display_flags(sg_display) & ALLEGRO_FULLSCREEN_WINDOW) != 0;
 
@@ -614,62 +613,62 @@ void NativeWindow::ToggleFullScreen()
     al_set_display_flag(sg_display, ALLEGRO_FULLSCREEN_WINDOW, true);
     al_set_display_flag(sg_display, ALLEGRO_GENERATE_EXPOSE_EVENTS, true);
     
-    SetBounds(0, 0, sg_screen.x, sg_screen.y);
+    SetBounds({{0, 0}, sg_screen});
 	} else {
     al_set_display_flag(sg_display, ALLEGRO_FULLSCREEN_WINDOW, false);
     al_set_display_flag(sg_display, ALLEGRO_GENERATE_EXPOSE_EVENTS, true);
     
-    SetBounds(sg_previous_bounds.point.x, sg_previous_bounds.point.y, sg_previous_bounds.size.x, sg_previous_bounds.size.y);
+    SetBounds({sg_previous_bounds.point, sg_previous_bounds.size});
 	}
 
 	sg_repaint = true;
 }
 
-void NativeWindow::SetTitle(std::string title)
+void WindowAdapter::SetTitle(std::string title)
 {
   sg_title = title;
 
   al_set_window_title(sg_display, title.c_str());
 }
 
-std::string NativeWindow::GetTitle()
+std::string WindowAdapter::GetTitle()
 {
   return sg_title;
 }
 
-void NativeWindow::SetOpacity(float opacity)
+void WindowAdapter::SetOpacity(float opacity)
 {
   sg_opacity = opacity;
 }
 
-float NativeWindow::GetOpacity()
+float WindowAdapter::GetOpacity()
 {
   return sg_opacity;
 }
 
-void NativeWindow::SetUndecorated(bool undecorated)
+void WindowAdapter::SetUndecorated(bool undecorated)
 {
   al_set_display_flag(sg_display, ALLEGRO_FRAMELESS, undecorated);
 }
 
-bool NativeWindow::IsUndecorated()
+bool WindowAdapter::IsUndecorated()
 {
   return (al_get_display_flags(sg_display) & ALLEGRO_FRAMELESS) != 0;
 }
 
-void NativeWindow::SetBounds(int x, int y, int width, int height)
+void WindowAdapter::SetBounds(jrect_t<int> bounds)
 {
-	al_set_window_position(sg_display, x, y);
-	al_resize_display(sg_display, width, height);
+	al_set_window_position(sg_display, bounds.point.x, bounds.point.y);
+	al_resize_display(sg_display, bounds.size.x, bounds.size.y);
  
 	if (sg_surface != nullptr) { 
 		al_destroy_bitmap(sg_surface);
 	}
 
-	sg_surface = al_create_bitmap(width, height);
+	sg_surface = al_create_bitmap(bounds.size.x, bounds.size.y);
 }
 
-jcanvas::jrect_t<int> NativeWindow::GetBounds()
+jcanvas::jrect_t<int> WindowAdapter::GetBounds()
 {
 	jcanvas::jrect_t<int> t;
 
@@ -681,17 +680,17 @@ jcanvas::jrect_t<int> NativeWindow::GetBounds()
 	return t;
 }
 		
-void NativeWindow::SetResizable(bool resizable)
+void WindowAdapter::SetResizable(bool resizable)
 {
   al_set_display_flag(sg_display, ALLEGRO_RESIZABLE, resizable);
 }
 
-bool NativeWindow::IsResizable()
+bool WindowAdapter::IsResizable()
 {
   return (al_get_display_flags(sg_display) & ALLEGRO_RESIZABLE) != 0;
 }
 
-void NativeWindow::SetCursorLocation(int x, int y)
+void WindowAdapter::SetCursorLocation(int x, int y)
 {
 	if (x < 0) {
 		x = 0;
@@ -712,7 +711,7 @@ void NativeWindow::SetCursorLocation(int x, int y)
 	al_set_mouse_xy(sg_display, x, y);
 }
 
-jpoint_t<int> NativeWindow::GetCursorLocation()
+jpoint_t<int> WindowAdapter::GetCursorLocation()
 {
 	jpoint_t<int> t;
 
@@ -724,24 +723,24 @@ jpoint_t<int> NativeWindow::GetCursorLocation()
 	return t;
 }
 
-void NativeWindow::SetVisible(bool visible)
+void WindowAdapter::SetVisible(bool visible)
 {
   sg_visible = visible;
 
   // TODO:: delete and create the window
 }
 
-bool NativeWindow::IsVisible()
+bool WindowAdapter::IsVisible()
 {
   return sg_visible;
 }
 
-jcursor_style_t NativeWindow::GetCursor()
+jcursor_style_t WindowAdapter::GetCursor()
 {
   return sg_jcanvas_cursor;
 }
 
-void NativeWindow::SetCursorEnabled(bool enabled)
+void WindowAdapter::SetCursorEnabled(bool enabled)
 {
   sg_jcanvas_cursor_enabled = enabled;
 
@@ -752,12 +751,12 @@ void NativeWindow::SetCursorEnabled(bool enabled)
 	}
 }
 
-bool NativeWindow::IsCursorEnabled()
+bool WindowAdapter::IsCursorEnabled()
 {
 	return sg_jcanvas_cursor_enabled;
 }
 
-void NativeWindow::SetCursor(jcursor_style_t style)
+void WindowAdapter::SetCursor(jcursor_style_t style)
 {
   ALLEGRO_SYSTEM_MOUSE_CURSOR type = ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT;
 
@@ -796,7 +795,7 @@ void NativeWindow::SetCursor(jcursor_style_t style)
   sg_jcanvas_cursor = style;
 }
 
-void NativeWindow::SetCursor(Image *shape, int hotx, int hoty)
+void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
 {
 	if ((void *)shape == nullptr) {
 		return;
@@ -839,22 +838,22 @@ void NativeWindow::SetCursor(Image *shape, int hotx, int hoty)
 	al_set_mouse_cursor(sg_display, sg_jcanvas_cursor_bitmap);
 }
 
-void NativeWindow::SetRotation(jwindow_rotation_t t)
+void WindowAdapter::SetRotation(jwindow_rotation_t t)
 {
 	// TODO::
 }
 
-jwindow_rotation_t NativeWindow::GetRotation()
+jwindow_rotation_t WindowAdapter::GetRotation()
 {
 	return jcanvas::JWR_NONE;
 }
 
-void NativeWindow::SetIcon(jcanvas::Image *image)
+void WindowAdapter::SetIcon(jcanvas::Image *image)
 {
   sg_jcanvas_icon = image;
 }
 
-jcanvas::Image * NativeWindow::GetIcon()
+jcanvas::Image * WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }

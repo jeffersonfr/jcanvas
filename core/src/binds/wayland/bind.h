@@ -1,4 +1,4 @@
-#include "jcanvas/jkeyevent.h"
+#include "jcanvas/core/jkeyevent.h"
 
 #include <string>
 

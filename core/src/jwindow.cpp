@@ -19,8 +19,7 @@
  ***************************************************************************/
 #include "jcanvas/core/jwindow.h"
 #include "jcanvas/core/japplication.h"
-
-#include "binds/include/nativewindow.h"
+#include "jcanvas/core/jwindowadapter.h"
 
 #include <algorithm>
 
@@ -33,7 +32,7 @@ Window::Window(jpoint_t<int> size, jpoint_t<int> point)
   _fps = 30;
 
   _event_manager = new EventManager(this);
-  _instance = new NativeWindow(this, jrect_t<int>{point, size});
+  _instance = new WindowAdapter(this, jrect_t<int>{point, size});
 
   SetTitle("Main");
   SetUndecorated(false);
@@ -90,9 +89,9 @@ jcursor_style_t Window::GetCursor()
   return _instance->GetCursor();
 }
 
-void Window::SetBounds(int x, int y, int width, int height)
+void Window::SetBounds(jrect_t<int> bounds)
 {
-  _instance->SetBounds(x, y, width, height);
+  _instance->SetBounds(bounds);
 }
 
 jpoint_t<int> Window::GetPosition()
@@ -102,9 +101,7 @@ jpoint_t<int> Window::GetPosition()
 
 void Window::SetPosition(jpoint_t<int> pos)
 {
-  jpoint_t<int> size = GetSize();
-
-  SetBounds(pos.x, pos.y, size.x, size.y);
+  SetBounds({pos, GetSize()});
 }
 
 jpoint_t<int> Window::GetSize()
@@ -114,9 +111,7 @@ jpoint_t<int> Window::GetSize()
 
 void Window::SetSize(jpoint_t<int> size)
 {
-  jpoint_t<int> pos = GetPosition();
-
-  SetBounds(pos.x, pos.y, size.x, size.y);
+  SetBounds({GetPosition(), size});
 }
 
 jrect_t<int> Window::GetBounds()

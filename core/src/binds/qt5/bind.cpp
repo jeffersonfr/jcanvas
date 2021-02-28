@@ -17,9 +17,9 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "../include/nativewindow.h"
-
 #include "jcanvas/core/jbufferedimage.h"
+#include "jcanvas/core/jwindowadapter.h"
+#include "jcanvas/core/japplication.h"
 
 #include <thread>
 #include <mutex>
@@ -492,8 +492,8 @@ class QTWindowRender : public QDialog {
         return;
       }
 
-      // NativeWindow 
-      //   *handler = reinterpret_cast<NativeWindow *>(user_data);
+      // WindowAdapter 
+      //   *handler = reinterpret_cast<WindowAdapter *>(user_data);
       jrect_t<int> 
         bounds = sg_jcanvas_window->GetBounds();
 
@@ -594,8 +594,7 @@ void Application::Quit()
   sg_loop_mutex.unlock();
 }
 
-NativeWindow::NativeWindow(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds):
-	jcanvas::WindowAdapter()
+WindowAdapter::WindowAdapter(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds)
 {
 	if (sg_jcanvas_window != nullptr) {
 		throw std::runtime_error("Cannot create more than one window");
@@ -614,7 +613,7 @@ NativeWindow::NativeWindow(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds
   sg_visible = true;
 }
 
-NativeWindow::~NativeWindow()
+WindowAdapter::~WindowAdapter()
 {
   QCoreApplication::quit();
   
@@ -622,12 +621,12 @@ NativeWindow::~NativeWindow()
   sg_back_buffer = nullptr;
 }
 
-void NativeWindow::Repaint()
+void WindowAdapter::Repaint()
 {
   sg_repaint.store(true);
 }
 
-void NativeWindow::ToggleFullScreen()
+void WindowAdapter::ToggleFullScreen()
 {
     const QString 
       session = QString(getenv("DESKTOP_SESSION")).toLower();
@@ -662,27 +661,27 @@ void NativeWindow::ToggleFullScreen()
 	}
 }
 
-void NativeWindow::SetTitle(std::string title)
+void WindowAdapter::SetTitle(std::string title)
 {
 	sg_handler->setWindowTitle(title.c_str());
 }
 
-std::string NativeWindow::GetTitle()
+std::string WindowAdapter::GetTitle()
 {
 	return sg_handler->windowTitle().toStdString();
 }
 
-void NativeWindow::SetOpacity(float opacity)
+void WindowAdapter::SetOpacity(float opacity)
 {
 	sg_opacity = opacity;
 }
 
-float NativeWindow::GetOpacity()
+float WindowAdapter::GetOpacity()
 {
   return sg_opacity;
 }
 
-void NativeWindow::SetUndecorated(bool undecorated)
+void WindowAdapter::SetUndecorated(bool undecorated)
 {
   sg_undecorated = undecorated;
 
@@ -697,18 +696,18 @@ void NativeWindow::SetUndecorated(bool undecorated)
   }
 }
 
-bool NativeWindow::IsUndecorated()
+bool WindowAdapter::IsUndecorated()
 {
   return sg_undecorated;
 }
 
-void NativeWindow::SetBounds(int x, int y, int width, int height)
+void WindowAdapter::SetBounds(jrect_t<int> bounds)
 {
-  sg_handler->resize(width, height);
-  sg_handler->move(x, y);
+  sg_handler->resize(bounds.size.x, bounds.size.y);
+  sg_handler->move(bounds.point.x, bounds.point.y);
 }
 
-jcanvas::jrect_t<int> NativeWindow::GetBounds()
+jcanvas::jrect_t<int> WindowAdapter::GetBounds()
 {
   QSize 
     size = sg_handler->size();
@@ -723,16 +722,16 @@ jcanvas::jrect_t<int> NativeWindow::GetBounds()
   };
 }
 
-void NativeWindow::SetResizable(bool resizable)
+void WindowAdapter::SetResizable(bool resizable)
 {
 }
 
-bool NativeWindow::IsResizable()
+bool WindowAdapter::IsResizable()
 {
   return false;
 }
 
-void NativeWindow::SetCursorLocation(int x, int y)
+void WindowAdapter::SetCursorLocation(int x, int y)
 {
 	if (x < 0) {
 		x = 0;
@@ -755,7 +754,7 @@ void NativeWindow::SetCursorLocation(int x, int y)
   cursor.setPos(QPoint(x, y));
 }
 
-jpoint_t<int> NativeWindow::GetCursorLocation()
+jpoint_t<int> WindowAdapter::GetCursorLocation()
 {
 	jpoint_t<int> t;
 
@@ -773,7 +772,7 @@ jpoint_t<int> NativeWindow::GetCursorLocation()
 	return t;
 }
 
-void NativeWindow::SetVisible(bool visible)
+void WindowAdapter::SetVisible(bool visible)
 {
   if (sg_visible == visible) {
     return;
@@ -792,17 +791,17 @@ void NativeWindow::SetVisible(bool visible)
   }
 }
 
-bool NativeWindow::IsVisible()
+bool WindowAdapter::IsVisible()
 {
   return sg_visible;
 }
 
-jcursor_style_t NativeWindow::GetCursor()
+jcursor_style_t WindowAdapter::GetCursor()
 {
   return sg_jcanvas_cursor;
 }
 
-void NativeWindow::SetCursorEnabled(bool enabled)
+void WindowAdapter::SetCursorEnabled(bool enabled)
 {
   QCursor cursor = sg_handler->cursor();
 
@@ -813,12 +812,12 @@ void NativeWindow::SetCursorEnabled(bool enabled)
   }
 }
 
-bool NativeWindow::IsCursorEnabled()
+bool WindowAdapter::IsCursorEnabled()
 {
   return sg_handler->cursor().shape() != Qt::BlankCursor;
 }
 
-void NativeWindow::SetCursor(jcursor_style_t style)
+void WindowAdapter::SetCursor(jcursor_style_t style)
 {
   Qt::CursorShape type = Qt::ArrowCursor;
 
@@ -858,7 +857,7 @@ void NativeWindow::SetCursor(jcursor_style_t style)
   sg_jcanvas_cursor = style;
 }
 
-void NativeWindow::SetCursor(Image *shape, int hotx, int hoty)
+void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
 {
 
 	if ((void *)shape == nullptr) {
@@ -881,21 +880,21 @@ void NativeWindow::SetCursor(Image *shape, int hotx, int hoty)
   sg_handler->setCursor(cursor_default);
 }
 
-void NativeWindow::SetRotation(jwindow_rotation_t t)
+void WindowAdapter::SetRotation(jwindow_rotation_t t)
 {
 }
 
-jwindow_rotation_t NativeWindow::GetRotation()
+jwindow_rotation_t WindowAdapter::GetRotation()
 {
 	return jcanvas::JWR_NONE;
 }
 
-void NativeWindow::SetIcon(jcanvas::Image *image)
+void WindowAdapter::SetIcon(jcanvas::Image *image)
 {
   sg_jcanvas_icon = image;
 }
 
-jcanvas::Image * NativeWindow::GetIcon()
+jcanvas::Image * WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }

@@ -17,9 +17,9 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "../include/nativewindow.h"
-
 #include "jcanvas/core/jbufferedimage.h"
+#include "jcanvas/core/jwindowadapter.h"
+#include "jcanvas/core/japplication.h"
 
 #include <thread>
 #include <mutex>
@@ -585,8 +585,7 @@ void Application::Quit()
   sg_loop_mutex.unlock();
 }
 
-NativeWindow::NativeWindow(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds):
-	jcanvas::WindowAdapter()
+WindowAdapter::WindowAdapter(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds)
 {
 	if (sg_window != nullptr) {
 		throw std::runtime_error("Cannot create more than one window");
@@ -657,7 +656,7 @@ NativeWindow::NativeWindow(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds
   SetCursor(sg_jcanvas_cursors[JCS_DEFAULT].cursor, sg_jcanvas_cursors[JCS_DEFAULT].hot_x, sg_jcanvas_cursors[JCS_DEFAULT].hot_y);
 }
 
-NativeWindow::~NativeWindow()
+WindowAdapter::~WindowAdapter()
 {
   delete sg_jcanvas_icon;
   sg_jcanvas_icon = nullptr;
@@ -693,31 +692,31 @@ NativeWindow::~NativeWindow()
   sg_back_buffer = nullptr;
 }
 
-void NativeWindow::Repaint()
+void WindowAdapter::Repaint()
 {
   sg_repaint.store(true);
 }
 
-void NativeWindow::ToggleFullScreen()
+void WindowAdapter::ToggleFullScreen()
 {
   // TODO::
 }
 
-void NativeWindow::SetTitle(std::string title)
+void WindowAdapter::SetTitle(std::string title)
 {
 }
 
-std::string NativeWindow::GetTitle()
+std::string WindowAdapter::GetTitle()
 {
 	return std::string();
 }
 
-void NativeWindow::SetOpacity(float opacity)
+void WindowAdapter::SetOpacity(float opacity)
 {
 	sg_window->SetOpacity(sg_window, (int)(opacity * 255.0f));
 }
 
-float NativeWindow::GetOpacity()
+float WindowAdapter::GetOpacity()
 {
   uint8_t o;
 
@@ -726,24 +725,24 @@ float NativeWindow::GetOpacity()
 	return (o * 100.0f)/255.0f;
 }
 
-void NativeWindow::SetUndecorated(bool undecorated)
+void WindowAdapter::SetUndecorated(bool undecorated)
 {
 }
 
-bool NativeWindow::IsUndecorated()
+bool WindowAdapter::IsUndecorated()
 {
   return true;
 }
 
-void NativeWindow::SetBounds(int x, int y, int width, int height)
+void WindowAdapter::SetBounds(jrect_t<int> bounds)
 {
   if (sg_window != NULL) {
-    sg_window->SetBounds(sg_window, x, y, width, height);
-    sg_window->ResizeSurface(sg_window, width, height);
+    sg_window->SetBounds(sg_window, bounds.point.x, bounds.point.y, bounds.size.x, bounds.size.y);
+    sg_window->ResizeSurface(sg_window, bounds.size.x, bounds.size.y);
   }
 }
 
-jcanvas::jrect_t<int> NativeWindow::GetBounds()
+jcanvas::jrect_t<int> WindowAdapter::GetBounds()
 {
 	jcanvas::jrect_t<int> t;
 
@@ -753,21 +752,21 @@ jcanvas::jrect_t<int> NativeWindow::GetBounds()
 	return t;
 }
 		
-void NativeWindow::SetResizable(bool resizable)
+void WindowAdapter::SetResizable(bool resizable)
 {
 }
 
-bool NativeWindow::IsResizable()
+bool WindowAdapter::IsResizable()
 {
   return true;
 }
 
-void NativeWindow::SetCursorLocation(int x, int y)
+void WindowAdapter::SetCursorLocation(int x, int y)
 {
 	sg_layer->WarpCursor(sg_layer, x, y);
 }
 
-jpoint_t<int> NativeWindow::GetCursorLocation()
+jpoint_t<int> WindowAdapter::GetCursorLocation()
 {
 	jpoint_t<int> p;
 
@@ -779,7 +778,7 @@ jpoint_t<int> NativeWindow::GetCursorLocation()
 	return p;
 }
 
-void NativeWindow::SetVisible(bool visible)
+void WindowAdapter::SetVisible(bool visible)
 {
 	if (visible == true) {
 	  // SetOpacity(_opacity);
@@ -788,7 +787,7 @@ void NativeWindow::SetVisible(bool visible)
   }
 }
 
-bool NativeWindow::IsVisible()
+bool WindowAdapter::IsVisible()
 {
   uint8_t o;
 
@@ -801,31 +800,31 @@ bool NativeWindow::IsVisible()
   return true;
 }
 
-jcursor_style_t NativeWindow::GetCursor()
+jcursor_style_t WindowAdapter::GetCursor()
 {
   return sg_jcanvas_cursor;
 }
 
-void NativeWindow::SetCursorEnabled(bool enabled)
+void WindowAdapter::SetCursorEnabled(bool enabled)
 {
   sg_cursor_enabled = (enabled == false)?false:true;
 
 	sg_layer->EnableCursor(sg_layer, sg_cursor_enabled);
 }
 
-bool NativeWindow::IsCursorEnabled()
+bool WindowAdapter::IsCursorEnabled()
 {
 	return true;
 }
 
-void NativeWindow::SetCursor(jcursor_style_t style)
+void WindowAdapter::SetCursor(jcursor_style_t style)
 {
 	sg_jcanvas_cursor = style;
 
 	SetCursor(sg_jcanvas_cursors[style].cursor, sg_jcanvas_cursors[style].hot_x, sg_jcanvas_cursors[style].hot_y);
 }
 
-void NativeWindow::SetCursor(Image *shape, int hotx, int hoty)
+void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
 {
 	if ((void *)shape == nullptr) {
 		return;
@@ -858,7 +857,7 @@ void NativeWindow::SetCursor(Image *shape, int hotx, int hoty)
 	surface->Release(surface);
 }
 
-void NativeWindow::SetRotation(jwindow_rotation_t t)
+void WindowAdapter::SetRotation(jwindow_rotation_t t)
 {
 #if ((DIRECTFB_MAJOR_VERSION * 1000000) + (DIRECTFB_MINOR_VERSION * 1000) + DIRECTFB_MICRO_VERSION) >= 1007000
 	if (sg_window != NULL) {
@@ -867,17 +866,17 @@ void NativeWindow::SetRotation(jwindow_rotation_t t)
 #endif
 }
 
-jwindow_rotation_t NativeWindow::GetRotation()
+jwindow_rotation_t WindowAdapter::GetRotation()
 {
 	return jcanvas::JWR_NONE;
 }
 
-void NativeWindow::SetIcon(jcanvas::Image *image)
+void WindowAdapter::SetIcon(jcanvas::Image *image)
 {
   sg_jcanvas_icon = image;
 }
 
-jcanvas::Image * NativeWindow::GetIcon()
+jcanvas::Image * WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }

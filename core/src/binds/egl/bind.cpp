@@ -19,10 +19,9 @@
  ***************************************************************************/
 #define RASPBERRY_PI
 
-#include "../include/nativewindow.h"
-
 #include "jcanvas/jbufferedimage.h"
-#include "jcanvas/jfont.h"
+#include "jcanvas/core/jwindowadapter.h"
+#include "jcanvas/core/japplication.h"
 
 #include <thread>
 #include <mutex>
@@ -1094,8 +1093,7 @@ void Application::Quit()
   sg_loop_mutex.unlock();
 }
 
-NativeWindow::NativeWindow(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds):
-	jcanvas::WindowAdapter()
+WindowAdapter::WindowAdapter(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds)
 {
   sg_jcanvas_icon = new BufferedImage(_DATA_PREFIX"/images/small-gnu.png");
 
@@ -1219,7 +1217,7 @@ NativeWindow::NativeWindow(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds
   }
 }
 
-NativeWindow::~NativeWindow()
+WindowAdapter::~WindowAdapter()
 {
   glClear(GL_COLOR_BUFFER_BIT);
 
@@ -1246,12 +1244,12 @@ NativeWindow::~NativeWindow()
   sg_back_buffer = nullptr;
 }
 
-void NativeWindow::Repaint()
+void WindowAdapter::Repaint()
 {
   sg_repaint.store(true);
 }
 
-void NativeWindow::ToggleFullScreen()
+void WindowAdapter::ToggleFullScreen()
 {
 #ifdef RASPBERRY_PI
   
@@ -1270,12 +1268,12 @@ void NativeWindow::ToggleFullScreen()
   if (sg_fullscreen == false) {
     previous_bounds = GetBounds();
 
-    SetBounds(0, 0, sg_screen.x, sg_screen.y);
+    SetBounds({{0, 0}, sg_screen});
 
     sg_fullscreen = true;
   } else {
     xcb_unmap_window(sg_xcb_connection, sg_xcb_window);
-    SetBounds(previous_bounds.point.x, previous_bounds.point.y, previous_bounds.size.x, previous_bounds.size.y);
+    SetBounds(previous_bounds);
     xcb_map_window(sg_xcb_connection, sg_xcb_window);
 
     sg_fullscreen = false;
@@ -1286,7 +1284,7 @@ void NativeWindow::ToggleFullScreen()
 #endif
 }
 
-void NativeWindow::SetTitle(std::string title)
+void WindowAdapter::SetTitle(std::string title)
 {
 	sg_title = title;
 		
@@ -1299,45 +1297,48 @@ void NativeWindow::SetTitle(std::string title)
 #endif
 }
 
-std::string NativeWindow::GetTitle()
+std::string WindowAdapter::GetTitle()
 {
 	return sg_title;
 }
 
-void NativeWindow::SetOpacity(float opacity)
+void WindowAdapter::SetOpacity(float opacity)
 {
   sg_opacity = opacity;
 }
 
-float NativeWindow::GetOpacity()
+float WindowAdapter::GetOpacity()
 {
   return sg_opacity;
 }
 
-void NativeWindow::SetUndecorated(bool undecorated)
+void WindowAdapter::SetUndecorated(bool undecorated)
 {
 }
 
-bool NativeWindow::IsUndecorated()
+bool WindowAdapter::IsUndecorated()
 {
   return sg_undecorated;
 }
 
-void NativeWindow::SetBounds(int x, int y, int width, int height)
+void WindowAdapter::SetBounds(jrect_t<int> bounds)
 {
 #ifdef RASPBERRY_PI
-
+  // do nothing;
 #else
-
-  const uint32_t 
-    values[] = {(uint32_t)x, (uint32_t)y, (uint32_t)width, (uint32_t)height};
+  const uint32_t values[] = {
+    (uint32_t)bounds.point.x, 
+    (uint32_t)bounds.point.y, 
+    (uint32_t)bounds.size.x, 
+    (uint32_t)bounds.size.y
+  };
 
   xcb_configure_window(sg_xcb_connection, sg_xcb_window, XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y | XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, values);
 
 #endif
 }
 
-jcanvas::jrect_t<int> NativeWindow::GetBounds()
+jcanvas::jrect_t<int> WindowAdapter::GetBounds()
 {
 	jcanvas::jrect_t<int> 
     t = {0, 0, 0, 0};
@@ -1370,17 +1371,17 @@ jcanvas::jrect_t<int> NativeWindow::GetBounds()
 	return t;
 }
 		
-void NativeWindow::SetResizable(bool resizable)
+void WindowAdapter::SetResizable(bool resizable)
 {
   sg_resizable = resizable;
 }
 
-bool NativeWindow::IsResizable()
+bool WindowAdapter::IsResizable()
 {
   return sg_resizable;
 }
 
-void NativeWindow::SetCursorLocation(int x, int y)
+void WindowAdapter::SetCursorLocation(int x, int y)
 {
 #ifdef RASPBERRY_PI
 
@@ -1394,7 +1395,7 @@ void NativeWindow::SetCursorLocation(int x, int y)
 #endif
 }
 
-jpoint_t<int> NativeWindow::GetCursorLocation()
+jpoint_t<int> WindowAdapter::GetCursorLocation()
 {
 	jpoint_t<int> t = {
 		.x = 0,
@@ -1414,7 +1415,7 @@ jpoint_t<int> NativeWindow::GetCursorLocation()
 	return t;
 }
 
-void NativeWindow::SetVisible(bool visible)
+void WindowAdapter::SetVisible(bool visible)
 {
   sg_visible = visible;
 
@@ -1433,17 +1434,17 @@ void NativeWindow::SetVisible(bool visible)
 #endif
 }
 
-bool NativeWindow::IsVisible()
+bool WindowAdapter::IsVisible()
 {
   return sg_visible;
 }
 
-jcursor_style_t NativeWindow::GetCursor()
+jcursor_style_t WindowAdapter::GetCursor()
 {
   return sg_jcanvas_cursor;
 }
 
-void NativeWindow::SetCursorEnabled(bool enabled)
+void WindowAdapter::SetCursorEnabled(bool enabled)
 {
   sg_cursor_enabled = enabled;
 
@@ -1451,12 +1452,12 @@ void NativeWindow::SetCursorEnabled(bool enabled)
 	// XFlush(_display);
 }
 
-bool NativeWindow::IsCursorEnabled()
+bool WindowAdapter::IsCursorEnabled()
 {
 	return sg_cursor_enabled;
 }
 
-void NativeWindow::SetCursor(jcursor_style_t style)
+void WindowAdapter::SetCursor(jcursor_style_t style)
 {
   sg_jcanvas_cursor = style;
 
@@ -1513,7 +1514,7 @@ void NativeWindow::SetCursor(jcursor_style_t style)
 #endif
 }
 
-void NativeWindow::SetCursor(Image *shape, int hotx, int hoty)
+void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
 {
 	if ((void *)shape == nullptr) {
 		return;
@@ -1579,21 +1580,21 @@ void NativeWindow::SetCursor(Image *shape, int hotx, int hoty)
 #endif
 }
 
-void NativeWindow::SetRotation(jwindow_rotation_t t)
+void WindowAdapter::SetRotation(jwindow_rotation_t t)
 {
 }
 
-jwindow_rotation_t NativeWindow::GetRotation()
+jwindow_rotation_t WindowAdapter::GetRotation()
 {
 	return jcanvas::JWR_NONE;
 }
 
-void NativeWindow::SetIcon(jcanvas::Image *image)
+void WindowAdapter::SetIcon(jcanvas::Image *image)
 {
   sg_jcanvas_icon = image;
 }
 
-jcanvas::Image * NativeWindow::GetIcon()
+jcanvas::Image * WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }
