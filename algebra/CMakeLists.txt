@@ -34,6 +34,6 @@ if (EXAMPLES)
   add_subdirectory(examples)
 endif()
 
-install(DIRECTORY src/include/jcanvas/algebra DESTINATION /usr/local/include/jcanvas)
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION /usr/local/lib)
+install(DIRECTORY src/include/jcanvas/algebra DESTINATION ${CMAKE_INSTALL_PREFIX}/include/jcanvas)
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 

@@ -78,6 +78,6 @@ endif()
 message ("\tGraphic Bind: ${GRAPHIC_BIND}")
 message ("\tImage Providers: ${IMAGE_LIST}")
 
-install(DIRECTORY src/include/jcanvas/core DESTINATION /usr/local/include/jcanvas)
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION /usr/local/lib)
+install(DIRECTORY src/include/jcanvas/core DESTINATION ${CMAKE_INSTALL_PREFIX}/include/jcanvas)
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 

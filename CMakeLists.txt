@@ -44,3 +44,23 @@ enable_testing()
 
 add_subdirectory(core)
 add_subdirectory(algebra)
+
+# generate jcanvas.pc
+set (JCANVAS_INCLUDE_DIRS "")
+set (JCANVAS_LIBRARIES "-lpthread")
+
+foreach(X IN LISTS CAIRO_INCLUDE_DIRS FREETYPE_INCLUDE_DIRS JMIXIN_INCLUDE_DIRS)
+  set (JCANVAS_INCLUDE_DIRS "${JCANVAS_INCLUDE_DIRS} -I${X}")
+endforeach()
+  
+foreach(X IN LISTS CAIRO_LIBRARIES FREETYPE_LIBRARIES JMIXIN_LIBRARIES)
+  set (JCANVAS_LIBRARIES "${JCANVAS_LIBRARIES} -l${X}")
+endforeach()
+  
+configure_file(
+  ${PROJECT_SOURCE_DIR}/jcanvas.pc.in
+  ${PROJECT_BINARY_DIR}/jcanvas.pc
+  @ONLY
+)
+
+install(FILES ${CMAKE_BINARY_DIR}/jcanvas.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
