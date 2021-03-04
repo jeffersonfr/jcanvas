@@ -40,7 +40,7 @@ class ColorChooser {
 				cy = border / 2 + 1;
 			double border2 = border / 2;
 
-			_image = new BufferedImage(JPF_ARGB, size);
+			_image = new BufferedImage(jpixelformat_t::ARGB, size);
 
 			for (double i = 0; i<360.; i+=.15) {
 				for (double j = 0; j<border2; j++) {
@@ -113,7 +113,7 @@ class ColorChooser {
 			return (uint32_t)(0xff000000 | (m_red << 0x10) | (m_green << 0x08) | (m_blue << 0x00));
 		}
 
-		virtual bool MouseMoved(jcanvas::MouseEvent *event)
+		virtual bool MouseMoved(MouseEvent *event)
 		{
       jpoint_t
         elocation = event->GetLocation();
@@ -131,7 +131,7 @@ class ColorChooser {
 
       g->SetColor(_color);
       g->FillRectangle(jrect_t<int>{0, 0, size.x, size.y});
-      g->SetCompositeFlags(JCF_SRC_OVER);
+      g->SetCompositeFlags(jcomposite_t::SrcOver);
 			g->DrawImage(_image, jpoint_t<int>{0, 0});
 		}
 		
@@ -159,7 +159,7 @@ class FrameTest : public Window, public MouseListener {
 			delete _color_chooser;
 		}
 
-		virtual bool MouseMoved(jcanvas::MouseEvent *event)
+		virtual bool MouseMoved(MouseEvent *event)
 		{
       _color_chooser->MouseMoved(event);
 

@@ -573,9 +573,9 @@ class BitMask {
 
 		virtual Image * ConvertToImage()
 		{
-      Image *image = new BufferedImage(JPF_RGB32, _size);
+      Image *image = new BufferedImage(jpixelformat_t::RGB32, _size);
 
-      image->GetGraphics()->SetCompositeFlags(JCF_SRC);
+      image->GetGraphics()->SetCompositeFlags(jcomposite_t::Src);
       image->GetGraphics()->SetRGBArray(_data, {0, 0, _size.x, _size.y});
 
 			return image;
@@ -583,9 +583,9 @@ class BitMask {
 
 		virtual void DrawTo(Graphics *g, int x, int y)
 		{
-			jcomposite_flags_t t = g->GetCompositeFlags();
+			jcomposite_t t = g->GetCompositeFlags();
 			
-			g->SetCompositeFlags(JCF_SRC);
+			g->SetCompositeFlags(jcomposite_t::Src);
 			g->SetRGBArray(_data, {x, y, _size.x, _size.y});
 			g->SetCompositeFlags(t);
 		}
@@ -626,38 +626,30 @@ class BitMaskTeste : public Window, public KeyListener {
 			delete bmpacman;
 		}
 
-		virtual bool KeyPressed(jcanvas::KeyEvent *event)
+		virtual bool KeyPressed(KeyEvent *event)
 		{
-			if (Window::KeyPressed(event) == true) {
-				return true;
-			}
-
-			if (event->GetSymbol() == jcanvas::JKS_CURSOR_LEFT) {
+			if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {
         _movement |= 0x01;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_UP) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorUp) {
         _movement |= 0x02;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_RIGHT) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorRight) {
         _movement |= 0x04;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_DOWN) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorDown) {
         _movement |= 0x08;
 			}
 
 			return true;
 		}
 
-		virtual bool KeyReleased(jcanvas::KeyEvent *event)
+		virtual bool KeyReleased(KeyEvent *event)
 		{
-			if (Window::KeyReleased(event) == true) {
-				return true;
-			}
-
-			if (event->GetSymbol() == jcanvas::JKS_CURSOR_LEFT) {
+			if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {
         _movement &= ~0x01;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_UP) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorUp) {
         _movement &= ~0x02;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_RIGHT) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorRight) {
         _movement &= ~0x04;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_DOWN) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorDown) {
         _movement &= ~0x08;
 			}
 

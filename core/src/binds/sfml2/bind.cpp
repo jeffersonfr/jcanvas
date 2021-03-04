@@ -20,7 +20,17 @@
 #include "jcanvas/core/jbufferedimage.h"
 #include "jcanvas/core/jwindowadapter.h"
 #include "jcanvas/core/japplication.h"
-#include "jcanvas/core/jkeyevent.h"
+#include "jcanvas/core/jenum.h"
+
+namespace jcanvas {
+  jkeyevent_modifiers_t jKeyEventModifiersNone = jkeyevent_modifiers_t::None;
+  jmouseevent_button_t jMouseEventButtonNone = jmouseevent_button_t::None;
+  jmouseevent_button_t jMouseEventButtonButton1 = jmouseevent_button_t::Button1;
+  jmouseevent_button_t jMouseEventButtonButton2 = jmouseevent_button_t::Button2;
+  jmouseevent_button_t jMouseEventButtonButton3 = jmouseevent_button_t::Button3;
+	jwindow_rotation_t jWindowRotationNone = jwindow_rotation_t::None;
+	jantialias_mode_t jAntialiasModeNone = jantialias_mode_t::None;
+}
 
 #include <thread>
 #include <mutex>
@@ -35,13 +45,13 @@
 namespace jcanvas {
 
 /** \brief */
-jcanvas::Image *sg_back_buffer = nullptr;
+Image *sg_back_buffer = nullptr;
 /** \brief */
 static std::atomic<bool> sg_repaint;
 /** \brief */
 static sf::RenderWindow *sg_window = nullptr;
 /** \brief */
-static jcanvas::Image *sg_jcanvas_icon = nullptr;
+static Image *sg_jcanvas_icon = nullptr;
 /** \brief */
 static int sg_mouse_x = 0;
 /** \brief */
@@ -63,259 +73,259 @@ static bool sg_quitting = false;
 /** \brief */
 static bool sg_fullscreen = false;
 /** \brief */
-static jcanvas::jpoint_t<int> sg_screen = {0, 0};
+static jpoint_t<int> sg_screen = {0, 0};
 /** \brief */
 static std::mutex sg_loop_mutex;
 /** \brief */
-static jcanvas::jrect_t<int> sg_previous_bounds;
+static jrect_t<int> sg_previous_bounds;
 /** \brief */
 static Window *sg_jcanvas_window = nullptr;
 /** \brief */
 static jcursor_style_t sg_jcanvas_cursor;
 
-static jcanvas::jkeyevent_symbol_t TranslateToNativeKeySymbol(sf::Keyboard::Key symbol)
+static jkeyevent_symbol_t TranslateToNativeKeySymbol(sf::Keyboard::Key symbol)
 {
 	switch (symbol) {
 		case sf::Keyboard::Return:
-			return jcanvas::JKS_ENTER; // jcanvas::JKS_RETURN;
+			return jkeyevent_symbol_t::Enter; // jkeyevent_symbol_t::Return;
 		case sf::Keyboard::BackSpace:
-			return jcanvas::JKS_BACKSPACE;
+			return jkeyevent_symbol_t::Backspace;
 		case sf::Keyboard::Tab:
-			return jcanvas::JKS_TAB;
+			return jkeyevent_symbol_t::Tab;
 		// case sf::Keyboard::CANCEL:
-		//	return jcanvas::JKS_CANCEL;
+		//	return jkeyevent_symbol_t::Cancel;
 		case sf::Keyboard::Escape:
-			return jcanvas::JKS_ESCAPE;
+			return jkeyevent_symbol_t::Escape;
 		case sf::Keyboard::Space:
-			return jcanvas::JKS_SPACE;
+			return jkeyevent_symbol_t::Space;
 		// case sf::Keyboard::EXCLAIM:
-		//	return jcanvas::JKS_EXCLAMATION_MARK;
+		//	return jkeyevent_symbol_t::ExclamationMark;
 		// case sf::Keyboard::QUOTEDBL:
-		//	return jcanvas::JKS_QUOTATION;
+		//	return jkeyevent_symbol_t::Quotation;
 		// case sf::Keyboard::HASH:
-		//	return jcanvas::JKS_NUMBER_SIGN;
+		//	return jkeyevent_symbol_t::Hash;
 		// case sf::Keyboard::DOLLAR:
-		//	return jcanvas::JKS_DOLLAR_SIGN;
+		//	return jkeyevent_symbol_t::DollarSign;
 		// case sf::Keyboard::PERCENT_SIGN:
-		//	return jcanvas::JKS_PERCENT_SIGN;
+		//	return jkeyevent_symbol_t::PercentSign;
 		// case sf::Keyboard::AMPERSAND:   
-		//	return jcanvas::JKS_AMPERSAND;
+		//	return jkeyevent_symbol_t::Ampersand;
 		case sf::Keyboard::Quote:
-			return jcanvas::JKS_APOSTROPHE;
+			return jkeyevent_symbol_t::Aposthrophe;
 		// case sf::Keyboard::LEFTPAREN:
-		//	return jcanvas::JKS_PARENTHESIS_LEFT;
+		//	return jkeyevent_symbol_t::ParenthesisLeft;
 		// case sf::Keyboard::RIGHTPAREN:
-		//	return jcanvas::JKS_PARENTHESIS_RIGHT;
+		//	return jkeyevent_symbol_t::ParenthesisRight;
 		case sf::Keyboard::Multiply:
-			return jcanvas::JKS_STAR;
+			return jkeyevent_symbol_t::Star;
 		case sf::Keyboard::Add:
-			return jcanvas::JKS_PLUS_SIGN;
+			return jkeyevent_symbol_t::Plus;
 		case sf::Keyboard::Comma:   
-			return jcanvas::JKS_COMMA;
+			return jkeyevent_symbol_t::Comma;
 		case sf::Keyboard::Dash:
 		case sf::Keyboard::Subtract:
-			return jcanvas::JKS_MINUS_SIGN;
+			return jkeyevent_symbol_t::Minus;
 		case sf::Keyboard::Period:  
-			return jcanvas::JKS_PERIOD;
+			return jkeyevent_symbol_t::Period;
 		case sf::Keyboard::Divide:
 		case sf::Keyboard::Slash:
-			return jcanvas::JKS_SLASH;
+			return jkeyevent_symbol_t::Slash;
 		case sf::Keyboard::Numpad0: 
 		case sf::Keyboard::Num0: 
-			return jcanvas::JKS_0;
+			return jkeyevent_symbol_t::Number0;
 		case sf::Keyboard::Numpad1: 
 		case sf::Keyboard::Num1:
-			return jcanvas::JKS_1;
+			return jkeyevent_symbol_t::Number1;
 		case sf::Keyboard::Numpad2: 
 		case sf::Keyboard::Num2:
-			return jcanvas::JKS_2;
+			return jkeyevent_symbol_t::Number2;
 		case sf::Keyboard::Numpad3: 
 		case sf::Keyboard::Num3:
-			return jcanvas::JKS_3;
+			return jkeyevent_symbol_t::Number3;
 		case sf::Keyboard::Numpad4: 
 		case sf::Keyboard::Num4:
-			return jcanvas::JKS_4;
+			return jkeyevent_symbol_t::Number4;
 		case sf::Keyboard::Numpad5: 
 		case sf::Keyboard::Num5:
-			return jcanvas::JKS_5;
+			return jkeyevent_symbol_t::Number5;
 		case sf::Keyboard::Numpad6: 
 		case sf::Keyboard::Num6:
-			return jcanvas::JKS_6;
+			return jkeyevent_symbol_t::Number6;
 		case sf::Keyboard::Numpad7: 
 		case sf::Keyboard::Num7:
-			return jcanvas::JKS_7;
+			return jkeyevent_symbol_t::Number7;
 		case sf::Keyboard::Numpad8: 
 		case sf::Keyboard::Num8:
-			return jcanvas::JKS_8;
+			return jkeyevent_symbol_t::Number8;
 		case sf::Keyboard::Numpad9: 
 		case sf::Keyboard::Num9:
-			return jcanvas::JKS_9;
+			return jkeyevent_symbol_t::Number9;
 		// case sf::Keyboard::COLON:
-		//	return jcanvas::JKS_COLON;
+		//	return jkeyevent_symbol_t::Colon;
 		case sf::Keyboard::SemiColon:
-			return jcanvas::JKS_SEMICOLON;
+			return jkeyevent_symbol_t::SemiColon;
 		// case sf::Keyboard::LESS:
-		// 	return jcanvas::JKS_LESS_THAN_SIGN;
+		// 	return jkeyevent_symbol_t::LessThan;
 		case sf::Keyboard::Equal: 
-			return jcanvas::JKS_EQUALS_SIGN;
+			return jkeyevent_symbol_t::Equals;
 		// case sf::Keyboard::GREATER:
-		//	return jcanvas::JKS_GREATER_THAN_SIGN;
+		//	return jkeyevent_symbol_t::GreaterThan;
 		// case sf::Keyboard::QUESTION:   
-		//	return jcanvas::JKS_QUESTION_MARK;
+		//	return jkeyevent_symbol_t::QuestionMark;
 		// case sf::Keyboard::AT:
-		//	return jcanvas::JKS_AT;
+		//	return jkeyevent_symbol_t::At;
 		case sf::Keyboard::A:
-			return jcanvas::JKS_a;
+			return jkeyevent_symbol_t::a;
 		case sf::Keyboard::B:
-			return jcanvas::JKS_b;
+			return jkeyevent_symbol_t::b;
 		case sf::Keyboard::C:
-			return jcanvas::JKS_c;
+			return jkeyevent_symbol_t::c;
 		case sf::Keyboard::D:
-			return jcanvas::JKS_d;
+			return jkeyevent_symbol_t::d;
 		case sf::Keyboard::E:
-			return jcanvas::JKS_e;
+			return jkeyevent_symbol_t::e;
 		case sf::Keyboard::F:
-			return jcanvas::JKS_f;
+			return jkeyevent_symbol_t::f;
 		case sf::Keyboard::G:
-			return jcanvas::JKS_g;
+			return jkeyevent_symbol_t::g;
 		case sf::Keyboard::H:
-			return jcanvas::JKS_h;
+			return jkeyevent_symbol_t::h;
 		case sf::Keyboard::I:
-			return jcanvas::JKS_i;
+			return jkeyevent_symbol_t::i;
 		case sf::Keyboard::J:
-			return jcanvas::JKS_j;
+			return jkeyevent_symbol_t::j;
 		case sf::Keyboard::K:
-			return jcanvas::JKS_k;
+			return jkeyevent_symbol_t::k;
 		case sf::Keyboard::L:
-			return jcanvas::JKS_l;
+			return jkeyevent_symbol_t::l;
 		case sf::Keyboard::M:
-			return jcanvas::JKS_m;
+			return jkeyevent_symbol_t::m;
 		case sf::Keyboard::N:
-			return jcanvas::JKS_n;
+			return jkeyevent_symbol_t::n;
 		case sf::Keyboard::O:
-			return jcanvas::JKS_o;
+			return jkeyevent_symbol_t::o;
 		case sf::Keyboard::P:
-			return jcanvas::JKS_p;
+			return jkeyevent_symbol_t::p;
 		case sf::Keyboard::Q:
-			return jcanvas::JKS_q;
+			return jkeyevent_symbol_t::q;
 		case sf::Keyboard::R:
-			return jcanvas::JKS_r;
+			return jkeyevent_symbol_t::r;
 		case sf::Keyboard::S:
-			return jcanvas::JKS_s;
+			return jkeyevent_symbol_t::s;
 		case sf::Keyboard::T:
-			return jcanvas::JKS_t;
+			return jkeyevent_symbol_t::t;
 		case sf::Keyboard::U:
-			return jcanvas::JKS_u;
+			return jkeyevent_symbol_t::u;
 		case sf::Keyboard::V:
-			return jcanvas::JKS_v;
+			return jkeyevent_symbol_t::v;
 		case sf::Keyboard::W:
-			return jcanvas::JKS_w;
+			return jkeyevent_symbol_t::w;
 		case sf::Keyboard::X:
-			return jcanvas::JKS_x;
+			return jkeyevent_symbol_t::x;
 		case sf::Keyboard::Y:
-			return jcanvas::JKS_y;
+			return jkeyevent_symbol_t::y;
 		case sf::Keyboard::Z:
-			return jcanvas::JKS_z;
+			return jkeyevent_symbol_t::z;
 		case sf::Keyboard::LBracket:
-			return jcanvas::JKS_SQUARE_BRACKET_LEFT;
+			return jkeyevent_symbol_t::SquareBracketLeft;
 		case sf::Keyboard::BackSlash:   
-			return jcanvas::JKS_BACKSLASH;
+			return jkeyevent_symbol_t::BackSlash;
 		case sf::Keyboard::RBracket:
-			return jcanvas::JKS_SQUARE_BRACKET_RIGHT;
+			return jkeyevent_symbol_t::SquareBracketRight;
 		// case sf::Keyboard::CARET:
-		//	return jcanvas::JKS_CIRCUMFLEX_ACCENT;
+		//	return jkeyevent_symbol_t::CircumflexAccent;
 		// case sf::Keyboard::UNDERSCORE:    
-		//	return jcanvas::JKS_UNDERSCORE;
+		//	return jkeyevent_symbol_t::Underscore;
 		// case sf::Keyboard::BACKQUOTE:
-		//	return jcanvas::JKS_GRAVE_ACCENT;
+		//	return jkeyevent_symbol_t::GraveAccent;
 		// case sf::Keyboard::CURLY_BRACKET_LEFT:
-		//	return jcanvas::JKS_CURLY_BRACKET_LEFT;
+		//	return jkeyevent_symbol_t::CurlyBracketLeft;
 		// case sf::Keyboard::VERTICAL_BAR:  
-		//	return jcanvas::JKS_VERTICAL_BAR;
+		//	return jkeyevent_symbol_t::VerticalBar;
 		// case sf::Keyboard::CURLY_BRACKET_RIGHT:
-		//	return jcanvas::JKS_CURLY_BRACKET_RIGHT;
+		//	return jkeyevent_symbol_t::CurlyBracketRight;
 		case sf::Keyboard::Tilde:  
-			return jcanvas::JKS_TILDE;
+			return jkeyevent_symbol_t::Tilde;
 		case sf::Keyboard::Delete:
-			return jcanvas::JKS_DELETE;
+			return jkeyevent_symbol_t::Delete;
 		case sf::Keyboard::Left:
-			return jcanvas::JKS_CURSOR_LEFT;
+			return jkeyevent_symbol_t::CursorLeft;
 		case sf::Keyboard::Right:
-			return jcanvas::JKS_CURSOR_RIGHT;
+			return jkeyevent_symbol_t::CursorRight;
 		case sf::Keyboard::Up:
-			return jcanvas::JKS_CURSOR_UP;
+			return jkeyevent_symbol_t::CursorUp;
 		case sf::Keyboard::Down:
-			return jcanvas::JKS_CURSOR_DOWN;
+			return jkeyevent_symbol_t::CursorDown;
 		case sf::Keyboard::Insert:  
-			return jcanvas::JKS_INSERT;
+			return jkeyevent_symbol_t::Insert;
 		case sf::Keyboard::Home:     
-			return jcanvas::JKS_HOME;
+			return jkeyevent_symbol_t::Home;
 		case sf::Keyboard::End:
-			return jcanvas::JKS_END;
+			return jkeyevent_symbol_t::End;
 		case sf::Keyboard::PageUp:
-			return jcanvas::JKS_PAGE_UP;
+			return jkeyevent_symbol_t::PageUp;
 		case sf::Keyboard::PageDown:
-			return jcanvas::JKS_PAGE_DOWN;
+			return jkeyevent_symbol_t::PageDown;
 		// case sf::Keyboard::PRINT:   
-		//	return jcanvas::JKS_PRINT;
+		//	return jkeyevent_symbol_t::Print;
 		case sf::Keyboard::Pause:
-			return jcanvas::JKS_PAUSE;
+			return jkeyevent_symbol_t::Pause;
 		// case sf::Keyboard::RED:
-		//	return jcanvas::JKS_RED;
+		//	return jkeyevent_symbol_t::Red;
 		// case sf::Keyboard::GREEN:
-		//	return jcanvas::JKS_GREEN;
+		//	return jkeyevent_symbol_t::Green;
 		// case sf::Keyboard::YELLOW:
-		//	return jcanvas::JKS_YELLOW;
+		//	return jkeyevent_symbol_t::Yellow;
 		// case sf::Keyboard::BLUE:
-		//	return jcanvas::JKS_BLUE;
+		//	return jkeyevent_symbol_t::Blue;
 		case sf::Keyboard::F1:
-			return jcanvas::JKS_F1;
+			return jkeyevent_symbol_t::F1;
 		case sf::Keyboard::F2:
-			return jcanvas::JKS_F2;
+			return jkeyevent_symbol_t::F2;
 		case sf::Keyboard::F3:
-			return jcanvas::JKS_F3;
+			return jkeyevent_symbol_t::F3;
 		case sf::Keyboard::F4:
-			return jcanvas::JKS_F4;
+			return jkeyevent_symbol_t::F4;
 		case sf::Keyboard::F5:
-			return jcanvas::JKS_F5;
+			return jkeyevent_symbol_t::F5;
 		case sf::Keyboard::F6:     
-			return jcanvas::JKS_F6;
+			return jkeyevent_symbol_t::F6;
 		case sf::Keyboard::F7:    
-			return jcanvas::JKS_F7;
+			return jkeyevent_symbol_t::F7;
 		case sf::Keyboard::F8:   
-			return jcanvas::JKS_F8;
+			return jkeyevent_symbol_t::F8;
 		case sf::Keyboard::F9:  
-			return jcanvas::JKS_F9;
+			return jkeyevent_symbol_t::F9;
 		case sf::Keyboard::F10: 
-			return jcanvas::JKS_F10;
+			return jkeyevent_symbol_t::F10;
 		case sf::Keyboard::F11:
-			return jcanvas::JKS_F11;
+			return jkeyevent_symbol_t::F11;
 		case sf::Keyboard::F12:
-			return jcanvas::JKS_F12;
+			return jkeyevent_symbol_t::F12;
 		case sf::Keyboard::LShift:
 		case sf::Keyboard::RShift:
-			return jcanvas::JKS_SHIFT;
+			return jkeyevent_symbol_t::Shift;
 		case sf::Keyboard::LControl:
 		case sf::Keyboard::RControl:
-			return jcanvas::JKS_CONTROL;
+			return jkeyevent_symbol_t::Control;
 		case sf::Keyboard::LAlt:
 		case sf::Keyboard::RAlt:
-			return jcanvas::JKS_ALT;
+			return jkeyevent_symbol_t::Alt;
 		// case sf::Keyboard::ALTGR:
-		//	return jcanvas::JKS_ALTGR;
+		//	return jkeyevent_symbol_t::AltGr;
 		// case sf::Keyboard::LMETA:
 		// case sf::Keyboard::RMETA:
-		//	return jcanvas::JKS_META;
+		//	return jkeyevent_symbol_t::Meta;
 		// case sf::Keyboard::LSUPER:
 		// case sf::Keyboard::RSUPER:
-		//	return jcanvas::JKS_SUPER;
+		//	return jkeyevent_symbol_t::Super;
 		case sf::Keyboard::RSystem:
-			return jcanvas::JKS_HYPER;
+			return jkeyevent_symbol_t::Hyper;
 		default: 
 			break;
 	}
 
-	return jcanvas::JKS_UNKNOWN;
+	return jkeyevent_symbol_t::Unknown;
 }
 
 void Application::Init(int argc, char **argv)
@@ -340,7 +350,7 @@ static void InternalPaint()
     bounds = sg_jcanvas_window->GetBounds();
 
   if (sg_back_buffer != nullptr) {
-    jcanvas::jpoint_t<int>
+    jpoint_t<int>
       size = sg_back_buffer->GetSize();
 
     if (size.x != bounds.size.x or size.y != bounds.size.y) {
@@ -350,14 +360,14 @@ static void InternalPaint()
   }
 
   if (sg_back_buffer == nullptr) {
-    sg_back_buffer = new jcanvas::BufferedImage(jcanvas::JPF_RGB32, bounds.size);
+    sg_back_buffer = new BufferedImage(jpixelformat_t::RGB32, bounds.size);
   }
 
-  jcanvas::Graphics 
+  Graphics 
     *g = sg_back_buffer->GetGraphics();
 
   g->Reset();
-  g->SetCompositeFlags(jcanvas::JCF_SRC);
+  g->SetCompositeFlags(jcomposite_t::Src);
 
   sg_jcanvas_window->Paint(g);
 
@@ -371,7 +381,7 @@ static void InternalPaint()
 	sf::Sprite sprite;
 
 	texture.create(bounds.size.x, bounds.size.y);
-	texture.setSmooth(g->GetAntialias() != JAM_NONE);
+	texture.setSmooth(g->GetAntialias() != jAntialiasModeNone);
 
 	sprite.setTexture(texture, false);
   
@@ -401,7 +411,7 @@ static void InternalPaint()
 	
   sg_back_buffer->UnlockData();
 
-  sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_PAINTED));
+  sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Painted));
 }
 
 void Application::Loop()
@@ -424,15 +434,15 @@ void Application::Loop()
       if (event.type == sf::Event::MouseEntered) {
         // SetCursor(GetCursor());
 
-        sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_ENTERED));
+        sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Entered));
       } else if (event.type == sf::Event::MouseLeft) {
-        // SetCursor(JCS_DEFAULT);
+        // SetCursor(jcursor_style_t::Default);
 
-        sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_LEAVED));
+        sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Leaved));
       } else if (event.type == sf::Event::Resized) {
         InternalPaint();
 
-        sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_RESIZED));
+        sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Resized));
       // } else if (event.type == sf::Event::Hidden) {
       // } else if (event.type == sf::Event::Exposed) {
       // } else if (event.type == sf::Event::Moved) {
@@ -441,12 +451,10 @@ void Application::Loop()
       } else if (event.type == sf::Event::TouchEnded) {
       } else if (event.type == sf::Event::LostFocus) {
       } else if (event.type == sf::Event::GainedFocus) {
-        sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_OPENED));
+        sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Opened));
       } else if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased) {
-        jcanvas::jkeyevent_type_t type;
-        jcanvas::jkeyevent_modifiers_t mod;
-
-        mod = (jcanvas::jkeyevent_modifiers_t)(0);
+        jkeyevent_type_t type = jkeyevent_type_t::Unknown;
+        jkeyevent_modifiers_t mod = jKeyEventModifiersNone;
 
         bool 
           shift = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::RShift),
@@ -454,46 +462,44 @@ void Application::Loop()
           alt = sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) || sf::Keyboard::isKeyPressed(sf::Keyboard::RAlt);
 
         if (shift == true) {
-          mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_SHIFT);
+          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
         }
 
         if (control == true) {
-          mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_CONTROL);
+          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
         }
 
         if (alt == true) {
-          mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_ALT);
+          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
         }
 
-        type = (jcanvas::jkeyevent_type_t)(0);
-
         if (event.type == sf::Event::KeyPressed) {
-          type = jcanvas::JKT_PRESSED;
+          type = jkeyevent_type_t::Pressed;
 
           // TODO:: grab pointer events
         } else if (event.type == sf::Event::KeyReleased) {
-          type = jcanvas::JKT_RELEASED;
+          type = jkeyevent_type_t::Released;
 
           // TODO:: ungrab pointer events
         }
 
-        jcanvas::jkeyevent_symbol_t symbol = TranslateToNativeKeySymbol(event.key.code);
+        jkeyevent_symbol_t symbol = TranslateToNativeKeySymbol(event.key.code);
 
-        sg_jcanvas_window->GetEventManager()->PostEvent(new jcanvas::KeyEvent(sg_jcanvas_window, type, mod, jcanvas::KeyEvent::GetCodeFromSymbol(symbol), symbol));
+        sg_jcanvas_window->GetEventManager().PostEvent(new KeyEvent(sg_jcanvas_window, type, mod, KeyEvent::GetCodeFromSymbol(symbol), symbol));
       } else if (
           event.type == sf::Event::MouseMoved || 
           event.type == sf::Event::MouseButtonPressed || 
           event.type == sf::Event::MouseButtonReleased ||
           event.type == sf::Event::MouseWheelMoved ||
           event.type == sf::Event::MouseWheelScrolled) {
-        static jcanvas::jmouseevent_button_t buttons = jcanvas::JMB_NONE;
+        static jmouseevent_button_t buttons = jMouseEventButtonNone;
 
-        jcanvas::jmouseevent_button_t button = jcanvas::JMB_NONE;
-        jcanvas::jmouseevent_type_t type = jcanvas::JMT_UNKNOWN;
+        jmouseevent_button_t button = jMouseEventButtonNone;
+        jmouseevent_type_t type = jmouseevent_type_t::Unknown;
         int mouse_z = 0;
 
         if (event.type == sf::Event::MouseMoved) {
-          type = jcanvas::JMT_MOVED;
+          type = jmouseevent_type_t::Moved;
 
           sg_mouse_x = event.mouseMove.x;
           sg_mouse_y = event.mouseMove.y;
@@ -502,22 +508,22 @@ void Application::Loop()
           sg_mouse_y = event.mouseButton.y;
 
           if (event.mouseButton.button == sf::Mouse::Left) {
-            button = jcanvas::JMB_BUTTON1;
+            button = jMouseEventButtonButton1;
           } else if (event.mouseButton.button == sf::Mouse::Middle) {
-            button = jcanvas::JMB_BUTTON2;
+            button = jMouseEventButtonButton2;
           } else if (event.mouseButton.button == sf::Mouse::Right) {
-            button = jcanvas::JMB_BUTTON3;
+            button = jMouseEventButtonButton3;
           }
           
           if (event.type == sf::Event::MouseButtonPressed) {
-            type = jcanvas::JMT_PRESSED;
-            buttons = (jcanvas::jmouseevent_button_t)(buttons | button);
+            type = jmouseevent_type_t::Pressed;
+            buttons = jenum_t{buttons}.Or(button);
           } else if (event.type == sf::Event::MouseButtonReleased) {
-            type = jcanvas::JMT_RELEASED;
-            buttons = (jcanvas::jmouseevent_button_t)(buttons & ~button);
+            type = jmouseevent_type_t::Released;
+            buttons = jenum_t{buttons}.And(jenum_t{button}.Not());
           }
         } else if (event.type == sf::Event::MouseWheelMoved || event.type == sf::Event::MouseWheelScrolled) {
-          type = jcanvas::JMT_ROTATED;
+          type = jmouseevent_type_t::Rotated;
 
           if (event.type == sf::Event::MouseWheelMoved) {
             sg_mouse_x = event.mouseWheel.x;
@@ -530,19 +536,19 @@ void Application::Loop()
           }
         }
 
-        if (sg_jcanvas_window->GetEventManager()->IsAutoGrab() == true && buttons != jcanvas::JMB_NONE) {
+        if (sg_jcanvas_window->GetEventManager().IsAutoGrab() == true && buttons != jMouseEventButtonNone) {
           sg_window->setMouseCursorGrabbed(true);
         } else {
           sg_window->setMouseCursorGrabbed(false);
         }
 
-        sg_jcanvas_window->GetEventManager()->PostEvent(new jcanvas::MouseEvent(sg_jcanvas_window, type, button, buttons, {sg_mouse_x, sg_mouse_y}, mouse_z));
+        sg_jcanvas_window->GetEventManager().PostEvent(new MouseEvent(sg_jcanvas_window, type, button, buttons, {sg_mouse_x, sg_mouse_y}, mouse_z));
       } else if (event.type == sf::Event::Closed) {
         sg_window->close();
 
         sg_quitting = true;
         
-        sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_CLOSED));
+        sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Closed));
       }
 		}
 
@@ -565,7 +571,7 @@ void Application::Quit()
   sg_loop_mutex.unlock();
 }
 
-WindowAdapter::WindowAdapter(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds)
+WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 {
 	if (sg_window != nullptr) {
 		throw std::runtime_error("Cannot create more than one window");
@@ -703,7 +709,7 @@ void WindowAdapter::SetBounds(jrect_t<int> bounds)
   sg_window->setView(sf::View(sf::FloatRect(0, 0, bounds.size.x, bounds.size.y)));
 }
 
-jcanvas::jrect_t<int> WindowAdapter::GetBounds()
+jrect_t<int> WindowAdapter::GetBounds()
 {
   sf::Vector2i 
     location = sg_window->getPosition();
@@ -798,29 +804,29 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
   /*
   sf::Cursor::Type type = sf::Cursor::Arrow;;
 
-  if (style == JCS_DEFAULT) {
+  if (style == jcursor_style_t::Default) {
     type = sf::Cursor::Arrow;
-  } else if (style == JCS_CROSSHAIR) {
+  } else if (style == jcursor_style_t::Crosshair) {
     type = sf::Cursor::Cross;
-  } else if (style == JCS_EAST) {
-  } else if (style == JCS_WEST) {
-  } else if (style == JCS_NORTH) {
-  } else if (style == JCS_SOUTH) {
-  } else if (style == JCS_HAND) {
+  } else if (style == jcursor_style_t::East) {
+  } else if (style == jcursor_style_t::West) {
+  } else if (style == jcursor_style_t::North) {
+  } else if (style == jcursor_style_t::South) {
+  } else if (style == jcursor_style_t::Hand) {
     type = sf::Cursor::Hand;
-  } else if (style == JCS_MOVE) {
+  } else if (style == jcursor_style_t::Move) {
     type = sf::Cursor::Hand;
-  } else if (style == JCS_NS) {
+  } else if (style == jcursor_style_t::Vertical) {
     type = sf::Cursor::SizeVertical;
-  } else if (style == JCS_WE) {
+  } else if (style == jcursor_style_t::Horizontal) {
     type = sf::Cursor::SizeHorizontal;
-  } else if (style == JCS_NW_CORNER) {
-  } else if (style == JCS_NE_CORNER) {
-  } else if (style == JCS_SW_CORNER) {
-  } else if (style == JCS_SE_CORNER) {
-  } else if (style == JCS_TEXT) {
+  } else if (style == jcursor_style_t::NorthWest) {
+  } else if (style == jcursor_style_t::NorthEast) {
+  } else if (style == jcursor_style_t::SouthWest) {
+  } else if (style == jcursor_style_t::SouthEast) {
+  } else if (style == jcursor_style_t::Text) {
     type = sf::Cursor::Text;
-  } else if (style == JCS_WAIT) {
+  } else if (style == jcursor_style_t::Wait) {
     type = sf::Cursor::Wait;
   }
 
@@ -841,7 +847,7 @@ void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
 		return;
 	}
 
-  jcanvas::jpoint_t<int> 
+  jpoint_t<int> 
     size = shape->GetSize();
 	uint32_t 
     data[size.x*size.y];
@@ -869,15 +875,15 @@ void WindowAdapter::SetRotation(jwindow_rotation_t t)
 
 jwindow_rotation_t WindowAdapter::GetRotation()
 {
-	return jcanvas::JWR_NONE;
+	return jWindowRotationNone;
 }
 
-void WindowAdapter::SetIcon(jcanvas::Image *image)
+void WindowAdapter::SetIcon(Image *image)
 {
   sg_jcanvas_icon = image;
 }
 
-jcanvas::Image * WindowAdapter::GetIcon()
+Image * WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }

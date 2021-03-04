@@ -130,7 +130,7 @@ class Main : public Window {
 			static Image *off = nullptr;
 			static Image *offsub = nullptr;
 			
-      g->SetCompositeFlags(JCF_SRC_OVER);
+      g->SetCompositeFlags(jcomposite_t::SrcOver);
 
 			if (off == nullptr) {
 				Image *image = new BufferedImage("images/square.png");

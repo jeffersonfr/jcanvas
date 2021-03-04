@@ -41,13 +41,9 @@ class Fullscreen : public Window, public KeyListener {
       delete _bg;
 		}
 
-		virtual bool KeyReleased(jcanvas::KeyEvent *event)
+		virtual bool KeyReleased(KeyEvent *event)
 		{
-			if (Window::KeyReleased(event) == true) {
-				return true;
-			}
-	
-			if (event->GetSymbol() == jcanvas::JKS_F || event->GetSymbol() == jcanvas::JKS_f) {
+			if (event->GetSymbol() == jkeyevent_symbol_t::F || event->GetSymbol() == jkeyevent_symbol_t::f) {
         ToggleFullScreen();
 			}
 

@@ -436,31 +436,27 @@ class Render3D : public Window, public KeyListener, public MouseListener {
 		{
 		}
 
-    virtual bool KeyPressed(jcanvas::KeyEvent *event)
+    virtual bool KeyPressed(KeyEvent *event)
     {
-			if (Window::KeyPressed(event) == true) {
-				return true;
-			}
-
 			int step = 20;
 
-			if (event->GetSymbol() == jcanvas::JKS_CURSOR_UP) {
+			if (event->GetSymbol() == jkeyevent_symbol_t::CursorUp) {
 				Rotate (step * 2, 'x');
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_DOWN) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorDown) {
 				Rotate (-step * 2, 'x');
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_LEFT) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {
 				Rotate (step * 2, 'y');
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_RIGHT) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorRight) {
 				Rotate (-step * 2, 'y');
-      } else if (event->GetSymbol() == jcanvas::JKS_SPACE) {
+      } else if (event->GetSymbol() == jkeyevent_symbol_t::Space) {
         if (PrimitiveType == FLAT_SHADED) {
           PrimitiveType = WIRE_FRAME;
         } else {
           PrimitiveType = FLAT_SHADED;
         }
-      } else if (event->GetSymbol() == jcanvas::JKS_TAB) {
+      } else if (event->GetSymbol() == jkeyevent_symbol_t::Tab) {
         BackfaceCull = !BackfaceCull;
-      } else if (event->GetSymbol() == jcanvas::JKS_l) {
+      } else if (event->GetSymbol() == jkeyevent_symbol_t::l) {
         if (rand()%50 == 0) {
           dxL += rand()%5 - 2;
         }
@@ -479,7 +475,7 @@ class Render3D : public Window, public KeyListener, public MouseListener {
       return true;
     }
 
-    virtual bool MouseMove(jcanvas::MouseEvent *event)
+    virtual bool MouseMove(MouseEvent *event)
     {
       jpoint_t
         elocation = event->GetLocation();

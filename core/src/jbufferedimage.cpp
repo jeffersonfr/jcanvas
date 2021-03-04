@@ -350,13 +350,13 @@ BufferedImage::BufferedImage(jpixelformat_t pixelformat, jpoint_t<int> size):
   cairo_format_t 
     format = CAIRO_FORMAT_INVALID;
 
-  if (_pixelformat == JPF_ARGB) {
+  if (_pixelformat == jpixelformat_t::ARGB) {
     format = CAIRO_FORMAT_ARGB32;
-  } else if (_pixelformat == JPF_RGB32) {
+  } else if (_pixelformat == jpixelformat_t::RGB32) {
     format = CAIRO_FORMAT_RGB24;
-  } else if (_pixelformat == JPF_RGB24) {
+  } else if (_pixelformat == jpixelformat_t::RGB24) {
     format = CAIRO_FORMAT_RGB24;
-  } else if (_pixelformat == JPF_RGB16) {
+  } else if (_pixelformat == jpixelformat_t::RGB16) {
     format = CAIRO_FORMAT_RGB16_565;
   }
 
@@ -366,7 +366,7 @@ BufferedImage::BufferedImage(jpixelformat_t pixelformat, jpoint_t<int> size):
 }
 
 BufferedImage::BufferedImage(cairo_surface_t *surface):
-  Image(JPF_UNKNOWN, {-1, -1})
+  Image(jpixelformat_t::Unknown, {-1, -1})
 {
   if (surface == nullptr) {
     throw std::runtime_error("Unable to get target surface from cairo context");
@@ -378,13 +378,13 @@ BufferedImage::BufferedImage(cairo_surface_t *surface):
     format = cairo_image_surface_get_format(_cairo_surface);
 
   if (format == CAIRO_FORMAT_ARGB32) {
-    _pixelformat = JPF_ARGB;
+    _pixelformat = jpixelformat_t::ARGB;
   } else if (format == CAIRO_FORMAT_RGB24) {
-    _pixelformat = JPF_RGB32;
+    _pixelformat = jpixelformat_t::RGB32;
   } else if (format == CAIRO_FORMAT_RGB16_565) {
-    _pixelformat = JPF_RGB16;
+    _pixelformat = jpixelformat_t::RGB16;
   } else {
-    _pixelformat = JPF_UNKNOWN;
+    _pixelformat = jpixelformat_t::Unknown;
   }
   
   _size.x = cairo_image_surface_get_width(_cairo_surface);
@@ -394,7 +394,7 @@ BufferedImage::BufferedImage(cairo_surface_t *surface):
 }
 
 BufferedImage::BufferedImage(std::string file):
-  Image(JPF_UNKNOWN, {-1, -1})
+  Image(jpixelformat_t::Unknown, {-1, -1})
 {
   std::ifstream f;
 
@@ -408,7 +408,7 @@ BufferedImage::BufferedImage(std::string file):
 }
 
 BufferedImage::BufferedImage(std::istream &stream):
-  Image(JPF_UNKNOWN, {-1, -1})
+  Image(jpixelformat_t::Unknown, {-1, -1})
 {
   ConstructFromStream(stream);
 }
@@ -543,16 +543,16 @@ void BufferedImage::ConstructFromStream(std::istream &stream)
 
   _cairo_surface = surface;
 
-  _pixelformat = JPF_UNKNOWN;
+  _pixelformat = jpixelformat_t::Unknown;
 
   cairo_format_t format = cairo_image_surface_get_format(_cairo_surface);
 
   if (format == CAIRO_FORMAT_ARGB32) {
-    _pixelformat = JPF_ARGB;
+    _pixelformat = jpixelformat_t::ARGB;
   } else if (format == CAIRO_FORMAT_RGB24) {
-    _pixelformat = JPF_RGB32;
+    _pixelformat = jpixelformat_t::RGB32;
   } else if (format == CAIRO_FORMAT_RGB16_565) {
-    _pixelformat = JPF_RGB16;
+    _pixelformat = jpixelformat_t::RGB16;
   }
 
   _size.x = cairo_image_surface_get_width(_cairo_surface);
@@ -578,18 +578,18 @@ Graphics * BufferedImage::GetGraphics()
   return _graphics;
 }
 
-Image * BufferedImage::Flip(jflip_flags_t mode)
+Image * BufferedImage::Flip(jflip_t mode)
 {
   cairo_format_t 
     format = CAIRO_FORMAT_INVALID;
 
-  if (_pixelformat == JPF_ARGB) {
+  if (_pixelformat == jpixelformat_t::ARGB) {
     format = CAIRO_FORMAT_ARGB32;
-  } else if (_pixelformat == JPF_RGB32) {
+  } else if (_pixelformat == jpixelformat_t::RGB32) {
     format = CAIRO_FORMAT_RGB24;
-  } else if (_pixelformat == JPF_RGB24) {
+  } else if (_pixelformat == jpixelformat_t::RGB24) {
     format = CAIRO_FORMAT_RGB24;
-  } else if (_pixelformat == JPF_RGB16) {
+  } else if (_pixelformat == jpixelformat_t::RGB16) {
     format = CAIRO_FORMAT_RGB16_565;
   }
 
@@ -600,7 +600,7 @@ Image * BufferedImage::Flip(jflip_flags_t mode)
 
   cairo_matrix_t ms, mt, m;
 
-  if (mode == JFF_HORIZONTAL) {
+  if (mode == jflip_t::Horizontal) {
     cairo_matrix_init_scale(&ms, -1.0f, 1.0f);
     cairo_matrix_init_translate(&mt, -_size.x, 0.0f);
   } else {
@@ -632,13 +632,13 @@ Image * BufferedImage::Shear(jpoint_t<float> size)
   cairo_format_t 
     format = CAIRO_FORMAT_INVALID;
 
-  if (_pixelformat == JPF_ARGB) {
+  if (_pixelformat == jpixelformat_t::ARGB) {
     format = CAIRO_FORMAT_ARGB32;
-  } else if (_pixelformat == JPF_RGB32) {
+  } else if (_pixelformat == jpixelformat_t::RGB32) {
     format = CAIRO_FORMAT_RGB24;
-  } else if (_pixelformat == JPF_RGB24) {
+  } else if (_pixelformat == jpixelformat_t::RGB24) {
     format = CAIRO_FORMAT_RGB24;
-  } else if (_pixelformat == JPF_RGB16) {
+  } else if (_pixelformat == jpixelformat_t::RGB16) {
     format = CAIRO_FORMAT_RGB16_565;
   }
 
@@ -695,13 +695,13 @@ Image * BufferedImage::Rotate(double radians, bool resize)
     cairo_format_t 
       format = CAIRO_FORMAT_INVALID;
 
-    if (_pixelformat == JPF_ARGB) {
+    if (_pixelformat == jpixelformat_t::ARGB) {
       format = CAIRO_FORMAT_ARGB32;
-    } else if (_pixelformat == JPF_RGB32) {
+    } else if (_pixelformat == jpixelformat_t::RGB32) {
       format = CAIRO_FORMAT_RGB24;
-    } else if (_pixelformat == JPF_RGB24) {
+    } else if (_pixelformat == jpixelformat_t::RGB24) {
       format = CAIRO_FORMAT_RGB24;
-    } else if (_pixelformat == JPF_RGB16) {
+    } else if (_pixelformat == jpixelformat_t::RGB16) {
       format = CAIRO_FORMAT_RGB16_565;
     }
 
@@ -711,7 +711,7 @@ Image * BufferedImage::Rotate(double radians, bool resize)
     Image 
       *image = new BufferedImage(surface);
 
-    if (GetGraphics()->GetAntialias() == JAM_NONE) {
+    if (GetGraphics()->GetAntialias() == jantialias_mode_t::None) {
       uint32_t *src = new uint32_t[_size.x*_size.y];
       uint32_t *dst = new uint32_t[iw*ih];
 
@@ -741,13 +741,13 @@ Image * BufferedImage::Rotate(double radians, bool resize)
   cairo_format_t 
     format = CAIRO_FORMAT_INVALID;
 
-  if (_pixelformat == JPF_ARGB) {
+  if (_pixelformat == jpixelformat_t::ARGB) {
     format = CAIRO_FORMAT_ARGB32;
-  } else if (_pixelformat == JPF_RGB32) {
+  } else if (_pixelformat == jpixelformat_t::RGB32) {
     format = CAIRO_FORMAT_RGB24;
-  } else if (_pixelformat == JPF_RGB24) {
+  } else if (_pixelformat == jpixelformat_t::RGB24) {
     format = CAIRO_FORMAT_RGB24;
-  } else if (_pixelformat == JPF_RGB16) {
+  } else if (_pixelformat == jpixelformat_t::RGB16) {
     format = CAIRO_FORMAT_RGB16_565;
   }
 
@@ -757,7 +757,7 @@ Image * BufferedImage::Rotate(double radians, bool resize)
   Image 
     *image = new BufferedImage(surface);
   
-  if (GetGraphics()->GetAntialias() == JAM_NONE) {
+  if (GetGraphics()->GetAntialias() == jantialias_mode_t::None) {
     uint32_t *src = new uint32_t[_size.x*_size.y];
     uint32_t *dst = new uint32_t[iw*ih];
 
@@ -791,13 +791,13 @@ Image * BufferedImage::Scale(jpoint_t<int> size)
   cairo_format_t 
     format = CAIRO_FORMAT_INVALID;
 
-  if (_pixelformat == JPF_ARGB) {
+  if (_pixelformat == jpixelformat_t::ARGB) {
     format = CAIRO_FORMAT_ARGB32;
-  } else if (_pixelformat == JPF_RGB32) {
+  } else if (_pixelformat == jpixelformat_t::RGB32) {
     format = CAIRO_FORMAT_RGB24;
-  } else if (_pixelformat == JPF_RGB24) {
+  } else if (_pixelformat == jpixelformat_t::RGB24) {
     format = CAIRO_FORMAT_RGB24;
-  } else if (_pixelformat == JPF_RGB16) {
+  } else if (_pixelformat == jpixelformat_t::RGB16) {
     format = CAIRO_FORMAT_RGB16_565;
   }
 
@@ -827,19 +827,19 @@ Image * BufferedImage::Scale(jpoint_t<int> size)
   Image
     *image = new BufferedImage(surface);
 
-  if (GetGraphics()->GetAntialias() == JAM_NONE) {
-    jinterpolation_method_t method = GetInterpolationMethod();
+  if (GetGraphics()->GetAntialias() == jantialias_mode_t::None) {
+    jblitting_t method = GetBlittingFlags();
 
     uint32_t *src = new uint32_t[_size.x*_size.y];
     uint32_t *dst = new uint32_t[size.x*size.y];
 
     GetRGBArray(src, {0, 0, _size.x, _size.y});
 
-    if (method == JIM_NEAREST) {
+    if (method == jblitting_t::Fast or method == jblitting_t::Nearest) {
       NearestNeighborScale(src, dst, _size.x, _size.y, size.x, size.y); 
-    } else if (method == JIM_BILINEAR) {
+    } else if (method == jblitting_t::Bilinear) {
       BilinearScale(src, dst, _size.x, _size.y, size.x, size.y); 
-    } else if (method == JIM_BICUBIC) {
+    } else {
       BicubicScale(src, dst, _size.x, _size.y, size.x, size.y); 
     }
 
@@ -868,13 +868,13 @@ Image * BufferedImage::Crop(jrect_t<int> rect)
   cairo_format_t 
     format = CAIRO_FORMAT_INVALID;
 
-  if (_pixelformat == JPF_ARGB) {
+  if (_pixelformat == jpixelformat_t::ARGB) {
     format = CAIRO_FORMAT_ARGB32;
-  } else if (_pixelformat == JPF_RGB32) {
+  } else if (_pixelformat == jpixelformat_t::RGB32) {
     format = CAIRO_FORMAT_RGB24;
-  } else if (_pixelformat == JPF_RGB24) {
+  } else if (_pixelformat == jpixelformat_t::RGB24) {
     format = CAIRO_FORMAT_RGB24;
-  } else if (_pixelformat == JPF_RGB16) {
+  } else if (_pixelformat == jpixelformat_t::RGB16) {
     format = CAIRO_FORMAT_RGB16_565;
   }
 
@@ -907,13 +907,13 @@ Image * BufferedImage::Blend(double alpha)
   cairo_format_t 
     format = CAIRO_FORMAT_INVALID;
 
-  if (_pixelformat == JPF_ARGB) {
+  if (_pixelformat == jpixelformat_t::ARGB) {
     format = CAIRO_FORMAT_ARGB32;
-  } else if (_pixelformat == JPF_RGB32) {
+  } else if (_pixelformat == jpixelformat_t::RGB32) {
     format = CAIRO_FORMAT_RGB24;
-  } else if (_pixelformat == JPF_RGB24) {
+  } else if (_pixelformat == jpixelformat_t::RGB24) {
     format = CAIRO_FORMAT_RGB24;
-  } else if (_pixelformat == JPF_RGB16) {
+  } else if (_pixelformat == jpixelformat_t::RGB16) {
     format = CAIRO_FORMAT_RGB16_565;
   }
 
@@ -965,7 +965,7 @@ Image * BufferedImage::Colorize(jcolor_t<float> color)
   jpoint_t<int> 
     size = image->GetSize();
 
-  if (image->GetPixelFormat() == JPF_ARGB) {
+  if (image->GetPixelFormat() == jpixelformat_t::ARGB) {
     for (int j=0; j<size.y; j++) {
       uint8_t *dst = (uint8_t *)(data + j * stride);
 
@@ -983,7 +983,7 @@ Image * BufferedImage::Colorize(jcolor_t<float> color)
         *(dst + i + 0) = b;
       }
     }
-  } else if (image->GetPixelFormat() == JPF_RGB32) {
+  } else if (image->GetPixelFormat() == jpixelformat_t::RGB32) {
     for (int j=0; j<size.y; j++) {
       uint8_t *dst = (uint8_t *)(data + j * stride);
 
@@ -1001,7 +1001,7 @@ Image * BufferedImage::Colorize(jcolor_t<float> color)
         *(dst + i + 0) = b;
       }
     }
-  } else if (image->GetPixelFormat() == JPF_RGB24) {
+  } else if (image->GetPixelFormat() == jpixelformat_t::RGB24) {
     for (int j=0; j<size.y; j++) {
       uint8_t *dst = (uint8_t *)(data + j * stride);
 
@@ -1017,7 +1017,7 @@ Image * BufferedImage::Colorize(jcolor_t<float> color)
         *(dst + i + 0) = b;
       }
     }
-  } else if (image->GetPixelFormat() == JPF_RGB16) {
+  } else if (image->GetPixelFormat() == jpixelformat_t::RGB16) {
     for (int j=0; j<size.y; j++) {
       uint8_t *dst = (uint8_t *)(data + j * stride);
 
@@ -1068,13 +1068,13 @@ Image * BufferedImage::Clone()
   cairo_format_t 
     format = CAIRO_FORMAT_INVALID;
 
-  if (_pixelformat == JPF_ARGB) {
+  if (_pixelformat == jpixelformat_t::ARGB) {
     format = CAIRO_FORMAT_ARGB32;
-  } else if (_pixelformat == JPF_RGB32) {
+  } else if (_pixelformat == jpixelformat_t::RGB32) {
     format = CAIRO_FORMAT_RGB24;
-  } else if (_pixelformat == JPF_RGB24) {
+  } else if (_pixelformat == jpixelformat_t::RGB24) {
     format = CAIRO_FORMAT_RGB24;
-  } else if (_pixelformat == JPF_RGB16) {
+  } else if (_pixelformat == jpixelformat_t::RGB16) {
     format = CAIRO_FORMAT_RGB16_565;
   }
 
@@ -1085,10 +1085,10 @@ Image * BufferedImage::Clone()
     *clone = new BufferedImage(surface);
   Graphics 
     *g = clone->GetGraphics();
-  jcomposite_flags_t 
+  jcomposite_t 
     flags = g->GetCompositeFlags();
 
-  g->SetCompositeFlags(JCF_SRC);
+  g->SetCompositeFlags(jcomposite_t::Src);
 
   if (g->DrawImage(this, jpoint_t<int>{0, 0}) == false) {
     delete clone;

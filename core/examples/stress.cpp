@@ -35,7 +35,7 @@ class GraphicPanel : public Window {
 	{
 		srand(time(nullptr));
 
-    _buffer = new BufferedImage(JPF_ARGB, {1920, 1080});
+    _buffer = new BufferedImage(jpixelformat_t::ARGB, {1920, 1080});
 	}
 
 	virtual ~GraphicPanel()
@@ -82,7 +82,7 @@ class GraphicPanel : public Window {
     Graphics 
       *g = _buffer->GetGraphics();
 		Font 
-      *font = new Font("default", JFA_NORMAL, 48);
+      *font = new Font("default", jfont_attributes_t::None, 48);
     jpoint_t
       t = GetSize();
 		
@@ -166,7 +166,7 @@ class GraphicPanel : public Window {
 		y = (t.y + sh)/2;
 
 		Image 
-      *fimage = new BufferedImage(JPF_ARGB, {2*sw, sh});
+      *fimage = new BufferedImage(jpixelformat_t::ARGB, {2*sw, sh});
 		Graphics 
       *gf = fimage->GetGraphics();
 
@@ -676,7 +676,7 @@ class GraphicPanel : public Window {
 		pimage = new BufferedImage("images/tux-zombie.png");
 
 		for (int i=0; i<iterations; i++) {
-			Image *image = new BufferedImage(JPF_ARGB, {size, size});
+			Image *image = new BufferedImage(jpixelformat_t::ARGB, {size, size});
 
 			image->GetGraphics()->DrawImage(pimage, {0, 0, size, size});
 

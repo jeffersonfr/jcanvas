@@ -119,21 +119,17 @@ class Game2048 : public Window, public KeyListener {
 			}
 		}
 
-		virtual bool KeyPressed(jcanvas::KeyEvent *event)
+		virtual bool KeyPressed(KeyEvent *event)
 		{
-			if (Window::KeyPressed(event) == true) {
-				return true;
-			}
-
 			_is_moved = false; 
 			
-			if (event->GetSymbol() == jcanvas::JKS_CURSOR_LEFT) {
+			if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {
 				move(LEFT);
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_RIGHT) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorRight) {
 				move(RIGHT);
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_UP) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorUp) {
 				move(UP);
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_DOWN) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorDown) {
 				move(DOWN);
 			}
 			

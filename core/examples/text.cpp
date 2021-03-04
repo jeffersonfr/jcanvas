@@ -53,25 +53,25 @@ class Text : public Window {
       g->SetFont(&Font::Size16);
       g->SetColor(jcolorname::White);
 
-      g->DrawString(text, jrect_t<int>{0*dw, 0*dh, dw, dh}, JHA_LEFT, JVA_TOP);
-      g->DrawString(text, jrect_t<int>{1*dw, 0*dh, dw, dh}, JHA_CENTER, JVA_TOP);
-      g->DrawString(text, jrect_t<int>{2*dw, 0*dh, dw, dh}, JHA_RIGHT, JVA_TOP);
-      g->DrawString(text, jrect_t<int>{3*dw, 0*dh, dw, dh}, JHA_JUSTIFY, JVA_TOP);
+      g->DrawString(text, jrect_t<int>{0*dw, 0*dh, dw, dh}, jhorizontal_align_t::Left, jvertical_align_t::Top);
+      g->DrawString(text, jrect_t<int>{1*dw, 0*dh, dw, dh}, jhorizontal_align_t::Center, jvertical_align_t::Top);
+      g->DrawString(text, jrect_t<int>{2*dw, 0*dh, dw, dh}, jhorizontal_align_t::Right, jvertical_align_t::Top);
+      g->DrawString(text, jrect_t<int>{3*dw, 0*dh, dw, dh}, jhorizontal_align_t::Justify, jvertical_align_t::Top);
 
-      g->DrawString(text, jrect_t<int>{0*dw, 1*dh, dw, dh}, JHA_LEFT, JVA_CENTER);
-      g->DrawString(text, jrect_t<int>{1*dw, 1*dh, dw, dh}, JHA_CENTER, JVA_CENTER);
-      g->DrawString(text, jrect_t<int>{2*dw, 1*dh, dw, dh}, JHA_RIGHT, JVA_CENTER);
-      g->DrawString(text, jrect_t<int>{3*dw, 1*dh, dw, dh}, JHA_JUSTIFY, JVA_CENTER);
+      g->DrawString(text, jrect_t<int>{0*dw, 1*dh, dw, dh}, jhorizontal_align_t::Left, jvertical_align_t::Center);
+      g->DrawString(text, jrect_t<int>{1*dw, 1*dh, dw, dh}, jhorizontal_align_t::Center, jvertical_align_t::Center);
+      g->DrawString(text, jrect_t<int>{2*dw, 1*dh, dw, dh}, jhorizontal_align_t::Right, jvertical_align_t::Center);
+      g->DrawString(text, jrect_t<int>{3*dw, 1*dh, dw, dh}, jhorizontal_align_t::Justify, jvertical_align_t::Center);
 
-      g->DrawString(text, jrect_t<int>{0*dw, 2*dh, dw, dh}, JHA_LEFT, JVA_BOTTOM);
-      g->DrawString(text, jrect_t<int>{1*dw, 2*dh, dw, dh}, JHA_CENTER, JVA_BOTTOM);
-      g->DrawString(text, jrect_t<int>{2*dw, 2*dh, dw, dh}, JHA_RIGHT, JVA_BOTTOM);
-      g->DrawString(text, jrect_t<int>{3*dw, 2*dh, dw, dh}, JHA_JUSTIFY, JVA_BOTTOM);
+      g->DrawString(text, jrect_t<int>{0*dw, 2*dh, dw, dh}, jhorizontal_align_t::Left, jvertical_align_t::Bottom);
+      g->DrawString(text, jrect_t<int>{1*dw, 2*dh, dw, dh}, jhorizontal_align_t::Center, jvertical_align_t::Bottom);
+      g->DrawString(text, jrect_t<int>{2*dw, 2*dh, dw, dh}, jhorizontal_align_t::Right, jvertical_align_t::Bottom);
+      g->DrawString(text, jrect_t<int>{3*dw, 2*dh, dw, dh}, jhorizontal_align_t::Justify, jvertical_align_t::Bottom);
 
-      g->DrawString(text, jrect_t<int>{0*dw, 3*dh, dw, dh}, JHA_LEFT, JVA_JUSTIFY);
-      g->DrawString(text, jrect_t<int>{1*dw, 3*dh, dw, dh}, JHA_CENTER, JVA_JUSTIFY);
-      g->DrawString(text, jrect_t<int>{2*dw, 3*dh, dw, dh}, JHA_RIGHT, JVA_JUSTIFY);
-      g->DrawString(text, jrect_t<int>{3*dw, 3*dh, dw, dh}, JHA_JUSTIFY, JVA_JUSTIFY);
+      g->DrawString(text, jrect_t<int>{0*dw, 3*dh, dw, dh}, jhorizontal_align_t::Left, jvertical_align_t::Justify);
+      g->DrawString(text, jrect_t<int>{1*dw, 3*dh, dw, dh}, jhorizontal_align_t::Center, jvertical_align_t::Justify);
+      g->DrawString(text, jrect_t<int>{2*dw, 3*dh, dw, dh}, jhorizontal_align_t::Right, jvertical_align_t::Justify);
+      g->DrawString(text, jrect_t<int>{3*dw, 3*dh, dw, dh}, jhorizontal_align_t::Justify, jvertical_align_t::Justify);
     }
 
 };

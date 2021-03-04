@@ -66,12 +66,8 @@ class Mandelbrot : public Window {
 		{
 		}
 
-		virtual bool KeyPressed(jcanvas::KeyEvent *event)
+		virtual bool KeyPressed(KeyEvent *event)
 		{
-			if (Window::KeyPressed(event) == true) {
-				return true;
-			}
-
 			center = START_POS;
 			zoom = START_ZOOM;
 
@@ -80,20 +76,16 @@ class Mandelbrot : public Window {
 			return true;
 		}
 		
-		virtual bool MousePressed(jcanvas::MouseEvent *event)
+		virtual bool MousePressed(MouseEvent *event)
 		{
-			if (Window::MousePressed(event) == true) {
-				return true;
-			}
-
-			jcanvas::jmouseevent_button_t 
+			jmouseevent_button_t 
         button = event->GetButton();
       jpoint_t
         elocation = event->GetLocation();
 
       center = std::complex<double>(center.real() + ((elocation.x - (MAX_WIDTH/2))/zoom), (center.imag() + ((elocation.y - (MAX_HEIGHT/2))/zoom)));
 
-			if (button == jcanvas::JMB_BUTTON1) {
+			if (button == jmouseevent_button_t::Button1) {
 				zoom *= ZOOM_FACTOR;
 			} else {
 				zoom /= ZOOM_FACTOR;

@@ -134,22 +134,18 @@ class Breakout : public Window, public KeyListener {
 				showbrick[i] = true;
 		}
 
-		virtual bool KeyPressed(jcanvas::KeyEvent *event)
+		virtual bool KeyPressed(KeyEvent *event)
 		{
-			if (Window::KeyPressed(event) == true) {
-				return true;
-			}
-
 			if (ingame) {
-				if (event->GetSymbol() == jcanvas::JKS_CURSOR_LEFT) {
+				if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {
 					batdpos = -3;
 				}
 
-				if (event->GetSymbol() == jcanvas::JKS_CURSOR_RIGHT) {
+				if (event->GetSymbol() == jkeyevent_symbol_t::CursorRight) {
 					batdpos = 3;
 				}
 			} else {
-				if (event->GetSymbol() == jcanvas::JKS_SPACE) {
+				if (event->GetSymbol() == jkeyevent_symbol_t::Space) {
 					ingame = true;
 
 					GameInit();
@@ -178,7 +174,7 @@ class Breakout : public Window, public KeyListener {
         size = GetSize();
 
 			if (goff == nullptr && size.x > 0 && size.y > 0) {
-				off = new BufferedImage(JPF_RGB32, size);
+				off = new BufferedImage(jpixelformat_t::RGB32, size);
 
 				goff = off->GetGraphics();
 			}

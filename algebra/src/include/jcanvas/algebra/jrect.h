@@ -33,6 +33,20 @@
 
 namespace jcanvas {
 
+enum class jalign_t {
+  Center,
+  North,
+  South,
+  East,
+  West,
+  NorthEast,
+  NorthWest,
+  SouthEast,
+  SouthWest,
+  Contains,
+  Cover
+};
+
 /**
  * \brief
  *
@@ -252,6 +266,101 @@ template<typename T, typename = typename std::enable_if<std::is_arithmetic<T>::v
         }
 
         return {0, 0, 0, 0};
+      }
+
+    template<typename U>
+      jrect_t<T> align(jalign_t align, jrect_t<U> obj)
+      {
+        jrect_t<T> rect = {
+          {0, 0}, {0, 0}
+        };
+
+        if (align == jalign_t::Center) {
+          rect = {
+            {(size.x - obj.size.x)/2, (size.y - obj.size.y)/2}, 
+            {obj.size.x, obj.size.y}
+          };
+        } else if (align == jalign_t::North) {
+          rect = {
+            {(size.x - obj.size.x)/2, 0}, 
+            {obj.size.x, obj.size.y}
+          };
+        } else if (align == jalign_t::South) {
+          rect = {
+            {(size.x - obj.size.x)/2, size.y - obj.size.y}, 
+            {obj.size.x, obj.size.y}
+          };
+        } else if (align == jalign_t::East) {
+          rect = {
+            {size.x - obj.size.x, (size.y - obj.size.y)/2}, 
+            {obj.size.x, obj.size.y}
+          };
+        } else if (align == jalign_t::West) {
+          rect = {
+            {0, (size.y - obj.size.y)/2}, 
+            {obj.size.x, obj.size.y}
+          };
+        } else if (align == jalign_t::NorthEast) {
+          rect = {
+            {size.x - obj.size.x, 0}, 
+            {obj.size.x, obj.size.y}
+          };
+        } else if (align == jalign_t::NorthWest) {
+          rect = {
+            {0, 0}, 
+            {obj.size.x, obj.size.y}
+          };
+        } else if (align == jalign_t::SouthEast) {
+          rect = {
+            {size.x - obj.size.x, size.y - obj.size.y}, 
+            {obj.size.x, obj.size.y}
+          };
+        } else if (align == jalign_t::SouthWest) {
+          rect = {
+            {0, size.y - obj.size.y}, 
+            {obj.size.x, obj.size.y}
+          };
+        } else if (align == jalign_t::Contains) {
+          if (obj.size.x > size.x) {
+            float f = size.x/obj.size.x;
+
+            obj.size.x = size.x;
+            obj.size.y = obj.size.y*f;
+          }
+
+          if (obj.size.y > size.y) {
+            float f = size.y/obj.size.y;
+
+            obj.size.y = size.y;
+            obj.size.x = obj.size.x*f;
+          }
+
+          rect = {
+            {(size.x - obj.size.x)/2, (size.y - obj.size.y)/2}, 
+            {obj.size.x, obj.size.y}
+          };
+        } else if (align == jalign_t::Cover) {
+          if (obj.size.x < size.x) {
+            float f = size.x/obj.size.x;
+
+            obj.size.x = size.x;
+            obj.size.y = obj.size.y*f;
+          }
+
+          if (obj.size.y < size.y) {
+            float f = size.y/obj.size.y;
+
+            obj.size.y = size.y;
+            obj.size.x = obj.size.x*f;
+          }
+
+          rect = {
+            {(size.x - obj.size.x)/2, (size.y - obj.size.y)/2}, 
+            {obj.size.x, obj.size.y}
+          };
+        }
+
+        return rect;
       }
 
     template<typename U> 

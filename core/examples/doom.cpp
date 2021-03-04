@@ -84,8 +84,8 @@ class Doom : public Window {
 			IndexedImage image(
 				palette, 37, (uint8_t *)buffer, {SCREEN_WIDTH, SCREEN_HEIGHT});
 
-      g->SetCompositeFlags(JCF_SRC);
-      g->SetBlittingFlags(JBF_NEAREST);
+      g->SetCompositeFlags(jcomposite_t::Src);
+      g->SetBlittingFlags(jblitting_t::Nearest);
 
 			g->DrawImage(&image, {0, 0, size.x, size.y});
 

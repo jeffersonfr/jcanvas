@@ -165,7 +165,7 @@ int loadImage(std::vector<uint32_t>& out, unsigned long& w, unsigned long& h, co
 class GraphicsTeste : public Window, public KeyListener {
 
 	private:
-    std::map<jcanvas::jkeyevent_symbol_t, bool> _keys;
+    std::map<jkeyevent_symbol_t, bool> _keys;
 		std::vector<uint32_t> texture[11];
 		uint32_t **rgb;
 		double posX; 
@@ -223,7 +223,7 @@ class GraphicsTeste : public Window, public KeyListener {
 			// Window::Paint(g);
 
       static BufferedImage 
-        image(JPF_RGB32, {SCREEN_WIDTH, SCREEN_HEIGHT});
+        image(jpixelformat_t::RGB32, {SCREEN_WIDTH, SCREEN_HEIGHT});
 
       // process events
 			double frameTime = 0.1;	//frameTime is the time this frame has taken, in seconds
@@ -231,7 +231,7 @@ class GraphicsTeste : public Window, public KeyListener {
 			double moveSpeed = frameTime * 2.0;			//the constant value is in squares/second
 			double rotSpeed = frameTime * 1.0;			//the constant value is in radians/second
 
-			if (_keys[jcanvas::JKS_CURSOR_UP]) {
+			if (_keys[jkeyevent_symbol_t::CursorUp]) {
 				if (worldMap[int(posX + dirX * moveSpeed)][int(posY)] == false) {
 					posX += dirX * moveSpeed;
 				}
@@ -239,7 +239,7 @@ class GraphicsTeste : public Window, public KeyListener {
 				if (worldMap[int(posX)][int(posY + dirY * moveSpeed)] == false) {
 					posY += dirY * moveSpeed;
 				}
-			} else if (_keys[jcanvas::JKS_CURSOR_DOWN]) {
+			} else if (_keys[jkeyevent_symbol_t::CursorDown]) {
 				if (worldMap[int(posX - dirX * moveSpeed)][int(posY)] == false) {
 					posX -= dirX * moveSpeed;
 				}
@@ -249,7 +249,7 @@ class GraphicsTeste : public Window, public KeyListener {
 				}
       }
 
-			if (_keys[jcanvas::JKS_CURSOR_LEFT]) {
+			if (_keys[jkeyevent_symbol_t::CursorLeft]) {
 				//both camera direction and camera plane must be rotated
 				double oldDirX = dirX;
 				dirX = dirX * cos(rotSpeed) - dirY * sin(rotSpeed);
@@ -257,7 +257,7 @@ class GraphicsTeste : public Window, public KeyListener {
 				double oldPlaneX = planeX;
 				planeX = planeX * cos(rotSpeed) - planeY * sin(rotSpeed);
 				planeY = oldPlaneX * sin(rotSpeed) + planeY * cos(rotSpeed);
-			} else if (_keys[jcanvas::JKS_CURSOR_RIGHT]) {
+			} else if (_keys[jkeyevent_symbol_t::CursorRight]) {
 				//both camera direction and camera plane must be rotated
 				double oldDirX = dirX;
 				dirX = dirX * cos(-rotSpeed) - dirY * sin(-rotSpeed);
@@ -524,23 +524,15 @@ class GraphicsTeste : public Window, public KeyListener {
       Repaint();
 		}
 
-		virtual bool KeyPressed(jcanvas::KeyEvent *event)
+		virtual bool KeyPressed(KeyEvent *event)
 		{
-			if (Window::KeyPressed(event) == true) {
-				return true;
-			}
-
       _keys[event->GetSymbol()] = true;
 
 			return true;
     }
 
-		virtual bool KeyReleased(jcanvas::KeyEvent *event)
+		virtual bool KeyReleased(KeyEvent *event)
 		{
-			if (Window::KeyReleased(event) == true) {
-				return true;
-			}
-
       _keys[event->GetSymbol()] = false;
 
 			return true;

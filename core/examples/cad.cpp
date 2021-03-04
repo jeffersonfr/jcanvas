@@ -298,15 +298,15 @@ class CAD : public Window, public KeyListener, public MouseListener {
       }
 		}
 
-		virtual bool KeyPressed(jcanvas::KeyEvent *event)
+		virtual bool KeyPressed(KeyEvent *event)
     {
-			if (event->GetSymbol() == jcanvas::JKS_l) {
+			if (event->GetSymbol() == jkeyevent_symbol_t::l) {
         tempShape = new Line();
-      } else if (event->GetSymbol() == jcanvas::JKS_b) {
+      } else if (event->GetSymbol() == jkeyevent_symbol_t::b) {
         tempShape = new Box();
-      } else if (event->GetSymbol() == jcanvas::JKS_c) {
+      } else if (event->GetSymbol() == jkeyevent_symbol_t::c) {
         tempShape = new Circle();
-      } else if (event->GetSymbol() == jcanvas::JKS_s) {
+      } else if (event->GetSymbol() == jkeyevent_symbol_t::s) {
         tempShape = new Curve();
       } else {
         return true;
@@ -318,14 +318,14 @@ class CAD : public Window, public KeyListener, public MouseListener {
       return true;
     }
 
-		virtual bool MousePressed(jcanvas::MouseEvent *event)
+		virtual bool MousePressed(MouseEvent *event)
 		{
       jpoint_t<int>
         elocation = event->GetLocation();
 
       jpoint3d_t<float> vMouse = {(float)elocation.x, (float)elocation.y};
 
-      if (event->GetButton() == jcanvas::JMB_BUTTON2) {
+      if (event->GetButton() == jmouseevent_button_t::Button2) {
         vStartPan = vMouse;
       }
 
@@ -352,7 +352,7 @@ class CAD : public Window, public KeyListener, public MouseListener {
 			return true;
 		}
 
-		virtual bool MouseReleased(jcanvas::MouseEvent *event)
+		virtual bool MouseReleased(MouseEvent *event)
 		{
       if (tempShape != nullptr) {
         selectedNode = tempShape->GetNextNode(vCursor);
@@ -366,14 +366,14 @@ class CAD : public Window, public KeyListener, public MouseListener {
 			return true;
 		}
 
-		virtual bool MouseMoved(jcanvas::MouseEvent *event)
+		virtual bool MouseMoved(MouseEvent *event)
 		{
       jpoint_t<int>
         elocation = event->GetLocation();
 
       jpoint3d_t<float> vMouse = {(float)elocation.x, (float)elocation.y};
 
-      if (event->GetButtons() & jcanvas::JMB_BUTTON2) {
+      if (jenum_t{event->GetButtons()}.And(jmouseevent_button_t::Button2)) {
         vOffset = {vOffset.x - (vMouse.x - vStartPan.x)/fScale, vOffset.y - (vMouse.y - vStartPan.y)/fScale, 0.0f};
         vStartPan = vMouse;
       }
@@ -395,7 +395,7 @@ class CAD : public Window, public KeyListener, public MouseListener {
 			return true;
 		}
 
-		virtual bool MouseWheel(jcanvas::MouseEvent *event)
+		virtual bool MouseWheel(MouseEvent *event)
 		{
       if (event->GetClicks() > 0) {
         fScale *= 1.1f;

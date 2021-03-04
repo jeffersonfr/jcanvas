@@ -105,12 +105,8 @@ class ColorAlphaTeste : public Window, public MouseListener {
 			delete _bg;
 		}
 
-		virtual bool MousePressed(jcanvas::MouseEvent *event)
+		virtual bool MousePressed(MouseEvent *event)
 		{
-			if (Window::MousePressed(event) == true) {
-				return true;
-			}
-
       jpoint_t
         elocation = event->GetLocation();
 			Graphics 
@@ -155,13 +151,13 @@ class ColorAlphaTeste : public Window, public MouseListener {
       int right = 0;
       int bottom = 0;
 
-      g->SetCompositeFlags(JCF_SRC_OVER);
+      g->SetCompositeFlags(jcomposite_t::SrcOver);
 
 			g->DrawImage(_bg, {left, top, size.x-left-right, size.y-top-bottom});
 
-      Image *image = new BufferedImage(JPF_ARGB, size);
+      Image *image = new BufferedImage(jpixelformat_t::ARGB, size);
 
-      image->GetGraphics()->SetCompositeFlags(JCF_SRC);
+      image->GetGraphics()->SetCompositeFlags(jcomposite_t::Src);
       image->GetGraphics()->SetRGBArray(buffer, {0, 0, size.x, size.y});
 
 			g->DrawImage(image, {left, top, size.x-left-right, size.y-top-bottom});

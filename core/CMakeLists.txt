@@ -6,6 +6,7 @@ set(SRCS
   src/japplication.cpp
   src/jbufferedimage.cpp
   src/jcolor.cpp
+  src/jenum.cpp
   src/jeventmanager.cpp
   src/jeventobject.cpp
   src/jfont.cpp
@@ -78,6 +79,6 @@ endif()
 message ("\tGraphic Bind: ${GRAPHIC_BIND}")
 message ("\tImage Providers: ${IMAGE_LIST}")
 
-install(DIRECTORY src/include/jcanvas/core DESTINATION ${CMAKE_INSTALL_PREFIX}/include/jcanvas)
+install(DIRECTORY src/include/jcanvas DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 

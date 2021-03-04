@@ -17,7 +17,65 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef J_GUILIB_H
-#define J_GUILIB_H
+#ifndef J_ADJUSTMENTEVENT_H
+#define J_ADJUSTMENTEVENT_H
+
+#include "jcanvas/core/jeventobject.h"
+
+namespace jcanvas {
+
+/**
+ * \brief
+ *
+ */
+enum class jadjustmentevent_type_t {
+  BlockUp,
+  BlockDown,
+  UnitUp,
+  UnitDown
+};
+
+/**
+ * \brief
+ *
+ * \author Jeff Ferr
+ */
+class AdjustmentEvent : public EventObject {
+
+  private:
+    /** \brief */
+    jadjustmentevent_type_t _type;
+    /** \brief */
+    double _value;
+
+  public:
+    /**
+     * \brief
+     *
+     */
+    AdjustmentEvent(void *source, jadjustmentevent_type_t type, double value);
+
+    /**
+     * \brief
+     *
+     */
+    virtual ~AdjustmentEvent();
+
+    /**
+     * \brief
+     *
+     */
+    virtual double GetValue();
+
+    /**
+     * \brief
+     *
+     */
+    virtual jadjustmentevent_type_t GetType();
+
+};
+
+}
 
 #endif
+

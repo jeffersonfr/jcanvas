@@ -44,7 +44,7 @@ class Fire : public Window {
       fire = new uint32_t[size.x*size.y];
       
       image = 
-        new BufferedImage(JPF_RGB32, {size.x, size.y/2});
+        new BufferedImage(jpixelformat_t::RGB32, {size.x, size.y/2});
 
       for (int i = 0; i < size.x*size.y; i++) {
         fire[i] = 0;

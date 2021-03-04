@@ -76,7 +76,7 @@ class Mines : public Window, public KeyListener {
 		void SetupBoard();
 		void Expose(int row, int col);
 		game_status_t GetResult();
-		virtual bool KeyPressed(jcanvas::KeyEvent *event);
+		virtual bool KeyPressed(KeyEvent *event);
 		virtual void Paint(Graphics *g);
 
 };
@@ -173,7 +173,7 @@ void Mines::Paint(Graphics *g)
 						sprintf(tmp, "%d", block.value);
 
 						g->SetColor({0xff, 0x00, 0x00, 0xff});
-						g->DrawString(tmp, {left+i*(isize+delta), top+j*(isize+delta), isize, isize}, JHA_CENTER, JVA_CENTER);
+						g->DrawString(tmp, {left+i*(isize+delta), top+j*(isize+delta), isize, isize}, jhorizontal_align_t::Center, jvertical_align_t::Center);
 					}
 				}
 			} else if (block.state == MARKED_BLOCK) {
@@ -183,7 +183,7 @@ void Mines::Paint(Graphics *g)
 		}
 	}
 
-	g->SetColor(jcanvas::jcolorname::White);
+	g->SetColor(jcolorname::White);
 
 	jpoint_t
 		size = GetSize();
@@ -216,30 +216,26 @@ void Mines::Paint(Graphics *g)
 	g->FillRectangle({left+current_col*(isize+delta), top+current_row*(isize+delta), isize, isize});
 }
 
-bool Mines::KeyPressed(jcanvas::KeyEvent *event)
+bool Mines::KeyPressed(KeyEvent *event)
 {
-	if (Window::KeyPressed(event) == true) {
-		return true;
-	}
-
 	if (GetResult() == NONE) {
-		if (event->GetSymbol() == jcanvas::JKS_CURSOR_RIGHT) {
+		if (event->GetSymbol() == jkeyevent_symbol_t::CursorRight) {
 			if (current_col < max_cols-1) {
 				current_col++;
 			}
-		} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_LEFT) {
+		} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {
 			if (current_col > 0) {
 				current_col--;
 			}
-		} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_UP) {
+		} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorUp) {
 			if (current_row > 0) {
 				current_row--;
 			}
-		} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_DOWN) {
+		} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorDown) {
 			if (current_row < max_rows-1) {
 				current_row++;
 			}
-		} else if (event->GetSymbol() == jcanvas::JKS_ENTER) {
+		} else if (event->GetSymbol() == jkeyevent_symbol_t::Enter) {
 			block_t *block = &board[current_row*max_cols+current_col];
 
 			// INFO:: just open a block
@@ -268,10 +264,10 @@ bool Mines::KeyPressed(jcanvas::KeyEvent *event)
 			if (count == max_bombs) {
 				game_state = WIN;
 			}
-		} else if (event->GetSymbol() == jcanvas::JKS_RED || event->GetSymbol() == jcanvas::JKS_F1) {
-		} else if (event->GetSymbol() == jcanvas::JKS_GREEN || event->GetSymbol() == jcanvas::JKS_F2) {
+		} else if (event->GetSymbol() == jkeyevent_symbol_t::Red || event->GetSymbol() == jkeyevent_symbol_t::F1) {
+		} else if (event->GetSymbol() == jkeyevent_symbol_t::Green || event->GetSymbol() == jkeyevent_symbol_t::F2) {
 			// Window *widget = new MessageDialogBox("Ajuda", "O jogo termina quando todos os blocos seguros forem revelados. Utilize as bandeirinhas para ajudar a identificar as minas escondidas.");
-		} else if (event->GetSymbol() == jcanvas::JKS_YELLOW || event->GetSymbol() == jcanvas::JKS_F3) {
+		} else if (event->GetSymbol() == jkeyevent_symbol_t::Yellow || event->GetSymbol() == jkeyevent_symbol_t::F3) {
 			block_t *block = &board[current_row*max_cols+current_col];
 
 			if (block->state == CLOSED_BLOCK) {
@@ -283,7 +279,7 @@ bool Mines::KeyPressed(jcanvas::KeyEvent *event)
 
 				hide_bombs++;
 			}
-		} else if (event->GetSymbol() == jcanvas::JKS_BLUE || event->GetSymbol() == jcanvas::JKS_F4) {
+		} else if (event->GetSymbol() == jkeyevent_symbol_t::Blue || event->GetSymbol() == jkeyevent_symbol_t::F4) {
 			SetupBoard();
 		}
 
@@ -302,7 +298,7 @@ bool Mines::KeyPressed(jcanvas::KeyEvent *event)
 		}
 
 		Repaint();
-	} else if (event->GetSymbol() == jcanvas::JKS_BLUE || event->GetSymbol() == jcanvas::JKS_F4) {
+	} else if (event->GetSymbol() == jkeyevent_symbol_t::Blue || event->GetSymbol() == jkeyevent_symbol_t::F4) {
 		SetupBoard();
 	}
 

@@ -88,7 +88,7 @@ class Surface : public Window, public MouseListener {
 		{
 		}
 
-    virtual bool MouseMoved(jcanvas::MouseEvent *event) 
+    virtual bool MouseMoved(MouseEvent *event) 
     {
       jpoint_t
         location = event->GetLocation();

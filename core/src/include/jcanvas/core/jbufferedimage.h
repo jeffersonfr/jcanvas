@@ -85,7 +85,7 @@ class BufferedImage : public virtual Image {
      * \brief
      *
      */
-    virtual Image * Flip(jflip_flags_t mode);
+    virtual Image * Flip(jflip_t mode);
     
     /**
      * \brief

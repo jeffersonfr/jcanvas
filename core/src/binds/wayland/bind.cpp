@@ -19,10 +19,6 @@
  ***************************************************************************/
 #include "../wayland/bind.h"
 
-#include "jcanvas/core/jbufferedimage.h"
-#include "jcanvas/core/jwindowadapter.h"
-#include "jcanvas/core/japplication.h"
-
 #include <thread>
 #include <mutex>
 #include <atomic>
@@ -39,7 +35,7 @@ static struct input _input;
 /** \brief */
 static bool _input_inited;
 /** \brief */
-static jcanvas::Image *sg_back_buffer = nullptr;
+static Image *sg_back_buffer = nullptr;
 /** \brief */
 static std::atomic<bool> sg_repaint;
 /** \brief */
@@ -49,191 +45,191 @@ static int sg_mouse_y = 0;
 /** \brief */
 static bool sg_quitting = false;
 /** \brief */
-static jcanvas::jpoint_t<int> sg_screen = {0, 0};
+static jpoint_t<int> sg_screen = {0, 0};
 /** \brief */
-static jcanvas::jrect_t<int> sg_previous_bounds;
+static jrect_t<int> sg_previous_bounds;
 /** \brief */
 static std::mutex sg_loop_mutex;
 /** \brief */
-static jcanvas::Image *sg_jcanvas_icon = nullptr;
+static Image *sg_jcanvas_icon = nullptr;
 /** \brief */
 static Window *sg_jcanvas_window = nullptr;
 /** \brief */
-static jcursor_style_t sg_jcanvas_cursor = JCS_DEFAULT;
+static jcursor_style_t sg_jcanvas_cursor = jcursor_style_t::Default;
 
 static struct name_keyCode name_keyCode_map[] = {
-  {"Return",      jcanvas::JKS_ENTER},
-  {"KP_Enter",    jcanvas::JKS_ENTER},
-  {"BackSpace",   jcanvas::JKS_BACKSPACE},
-  {"Tab",         jcanvas::JKS_TAB},
-  {"Cancel",      jcanvas::JKS_CANCEL},
-  // {"Clear",       jcanvas::JKS_CLEAR},
-  {"Shift_L",     jcanvas::JKS_SHIFT},
-  {"Shift_R",     jcanvas::JKS_SHIFT},
-  {"Control_L",   jcanvas::JKS_CONTROL},
-  {"Control_R",   jcanvas::JKS_CONTROL},
-  {"Alt_L",       jcanvas::JKS_ALT},
-  {"Alt_R",       jcanvas::JKS_ALT},
-  {"Pause",       jcanvas::JKS_PAUSE},
-  // {"Caps_Lock",   jcanvas::JKS_CAPS_LOCK},
-  {"Escape",      jcanvas::JKS_ESCAPE},
-  {"Prior",       jcanvas::JKS_PAGE_UP},
-  {"KP_Prior",    jcanvas::JKS_PAGE_UP},
-  {"Next",        jcanvas::JKS_PAGE_DOWN},
-  {"KP_Next",     jcanvas::JKS_PAGE_DOWN},
-  {"End",         jcanvas::JKS_END},
-  {"KP_End",      jcanvas::JKS_END},
-  {"Home",        jcanvas::JKS_HOME},
-  {"KP_Home",     jcanvas::JKS_HOME},
-  {"Left",        jcanvas::JKS_CURSOR_LEFT},
-  {"KP_Left",     jcanvas::JKS_CURSOR_LEFT},
-  {"Up",          jcanvas::JKS_CURSOR_UP},
-  {"KP_Up",       jcanvas::JKS_CURSOR_UP},
-  {"Right",       jcanvas::JKS_CURSOR_RIGHT},
-  {"KP_Right",    jcanvas::JKS_CURSOR_RIGHT},
-  {"Down",        jcanvas::JKS_CURSOR_DOWN},
-  {"KP_Down",     jcanvas::JKS_CURSOR_DOWN},
-  {"comma",       jcanvas::JKS_COMMA},
-  {"minus",       jcanvas::JKS_MINUS_SIGN},
-  {"KP_Subtract", jcanvas::JKS_MINUS_SIGN},
-  {"period",      jcanvas::JKS_PERIOD},
-  {"KP_Decimal",  jcanvas::JKS_PERIOD},
-  {"slash",       jcanvas::JKS_SLASH},
-  {"space",       jcanvas::JKS_SPACE},
-  {"0",           jcanvas::JKS_0},
-  {"KP_0",        jcanvas::JKS_0},
-  {"1",           jcanvas::JKS_1},
-  {"KP_1",        jcanvas::JKS_1},
-  {"2",           jcanvas::JKS_2},
-  {"KP_2",        jcanvas::JKS_2},
-  {"3",           jcanvas::JKS_3},
-  {"KP_3",        jcanvas::JKS_3},
-  {"4",           jcanvas::JKS_4},
-  {"KP_4",        jcanvas::JKS_4},
-  {"5",           jcanvas::JKS_5},
-  {"KP_5",        jcanvas::JKS_5},
-  {"6",           jcanvas::JKS_6},
-  {"KP_6",        jcanvas::JKS_6},
-  {"7",           jcanvas::JKS_7},
-  {"KP_7",        jcanvas::JKS_7},
-  {"8",           jcanvas::JKS_8},
-  {"KP_8",        jcanvas::JKS_8},
-  {"9",           jcanvas::JKS_9},
-  {"KP_9",        jcanvas::JKS_9},
-  {"semicolon",   jcanvas::JKS_SEMICOLON},
-  {"equal",       jcanvas::JKS_EQUALS_SIGN},
-  {"a",           jcanvas::JKS_a},
-  {"A",           jcanvas::JKS_a},
-  {"b",           jcanvas::JKS_b},
-  {"B",           jcanvas::JKS_b},
-  {"c",           jcanvas::JKS_c},
-  {"C",           jcanvas::JKS_c},
-  {"d",           jcanvas::JKS_d},
-  {"D",           jcanvas::JKS_d},
-  {"e",           jcanvas::JKS_e},
-  {"E",           jcanvas::JKS_e},
-  {"f",           jcanvas::JKS_f},
-  {"F",           jcanvas::JKS_f},
-  {"g",           jcanvas::JKS_g},
-  {"G",           jcanvas::JKS_g},
-  {"h",           jcanvas::JKS_h},
-  {"H",           jcanvas::JKS_h},
-  {"i",           jcanvas::JKS_i},
-  {"I",           jcanvas::JKS_i},
-  {"j",           jcanvas::JKS_j},
-  {"J",           jcanvas::JKS_j},
-  {"k",           jcanvas::JKS_k},
-  {"K",           jcanvas::JKS_k},
-  {"l",           jcanvas::JKS_l},
-  {"L",           jcanvas::JKS_l},
-  {"m",           jcanvas::JKS_m},
-  {"M",           jcanvas::JKS_m},
-  {"n",           jcanvas::JKS_n},
-  {"N",           jcanvas::JKS_n},
-  {"o",           jcanvas::JKS_o},
-  {"O",           jcanvas::JKS_o},
-  {"p",           jcanvas::JKS_p},
-  {"P",           jcanvas::JKS_p},
-  {"q",           jcanvas::JKS_q},
-  {"Q",           jcanvas::JKS_q},
-  {"r",           jcanvas::JKS_r},
-  {"R",           jcanvas::JKS_r},
-  {"s",           jcanvas::JKS_s},
-  {"S",           jcanvas::JKS_s},
-  {"t",           jcanvas::JKS_t},
-  {"T",           jcanvas::JKS_t},
-  {"u",           jcanvas::JKS_u},
-  {"U",           jcanvas::JKS_u},
-  {"v",           jcanvas::JKS_v},
-  {"V",           jcanvas::JKS_v},
-  {"w",           jcanvas::JKS_w},
-  {"W",           jcanvas::JKS_w},
-  {"x",           jcanvas::JKS_x},
-  {"X",           jcanvas::JKS_x},
-  {"y",           jcanvas::JKS_y},
-  {"Y",           jcanvas::JKS_y},
-  {"z",           jcanvas::JKS_z},
-  {"Z",           jcanvas::JKS_z},
-  {"bracketleft", jcanvas::JKS_SQUARE_BRACKET_LEFT},
-  {"backslash",   jcanvas::JKS_BACKSLASH},
-  {"bracketright",jcanvas::JKS_SQUARE_BRACKET_RIGHT},
-  {"asterisk",    jcanvas::JKS_STAR},
-  {"KP_Multiply", jcanvas::JKS_STAR},
-  {"plus",        jcanvas::JKS_PLUS_SIGN},
-  {"KP_Add",      jcanvas::JKS_PLUS_SIGN},
-  {"KP_Divide",   jcanvas::JKS_SLASH},
-  {"Delete",      jcanvas::JKS_DELETE},
-  {"KP_Delete",   jcanvas::JKS_DELETE},
-  // {"Num_Lock",    jcanvas::JKS_NUM_LOCK},
-  // {"Scroll_Lock", jcanvas::JKS_SCROLL_LOCK},
-  {"F1",          jcanvas::JKS_F1},
-  {"F2",          jcanvas::JKS_F2},
-  {"F3",          jcanvas::JKS_F3},
-  {"F4",          jcanvas::JKS_F4},
-  {"F5",          jcanvas::JKS_F5},
-  {"F6",          jcanvas::JKS_F6},
-  {"F7",          jcanvas::JKS_F7},
-  {"F8",          jcanvas::JKS_F8},
-  {"F9",          jcanvas::JKS_F9},
-  {"F10",         jcanvas::JKS_F10},
-  {"F11",         jcanvas::JKS_F11},
-  {"F12",         jcanvas::JKS_F12},
-  // {"F13",         jcanvas::JKS_F13},
-  // {"F14",         jcanvas::JKS_F14},
-  // {"F15",         jcanvas::JKS_F15},
-  // {"F16",         jcanvas::JKS_F16},
-  // {"F17",         jcanvas::JKS_F17},
-  // {"F18",         jcanvas::JKS_F18},
-  // {"F19",         jcanvas::JKS_F19},
-  // {"F20",         jcanvas::JKS_F20},
-  // {"F21",         jcanvas::JKS_F21},
-  // {"F22",         jcanvas::JKS_F22},
-  // {"F23",         jcanvas::JKS_F23},
-  // {"F24",         jcanvas::JKS_F24},
-  {"Insert",      jcanvas::JKS_INSERT},
-  // {"Help",        jcanvas::JKS_HELP},
-  {"grave",       jcanvas::JKS_GRAVE_ACCENT},
-  {"apostrophe",  jcanvas::JKS_APOSTROPHE},
-  {"bar",         jcanvas::JKS_VERTICAL_BAR},
-  {"ampersand",   jcanvas::JKS_AMPERSAND},
-  {"quotedbl",    jcanvas::JKS_QUOTATION},
-  {"less",        jcanvas::JKS_LESS_THAN_SIGN},
-  {"greater",     jcanvas::JKS_GREATER_THAN_SIGN},
-  // {"braceleft",   jcanvas::JKS_BRACELEFT},
-  // {"braceright",  jcanvas::JKS_BRACERIGHT},
-  {"at",          jcanvas::JKS_AT},
-  {"colon",       jcanvas::JKS_COLON},
-  {"asciicircum", jcanvas::JKS_CIRCUMFLEX_ACCENT},
-  {"dollar",      jcanvas::JKS_DOLLAR_SIGN},
-  {"exclam",      jcanvas::JKS_EXCLAMATION_MARK},
-  {"parenleft",   jcanvas::JKS_PARENTHESIS_LEFT},
-  {"numbersign",  jcanvas::JKS_NUMBER_SIGN},
-  {"parenright",  jcanvas::JKS_PARENTHESIS_RIGHT},
-  {"underscore",  jcanvas::JKS_UNDERSCORE},
-  {"percent",     jcanvas::JKS_5},
-  {"asciitilde",  jcanvas::JKS_APOSTROPHE},
-  {"question",    jcanvas::JKS_SLASH},
-  {nullptr, jcanvas::JKS_UNKNOWN}
+  {"Return",      jkeyevent_symbol_t::Enter},
+  {"KP_Enter",    jkeyevent_symbol_t::Enter},
+  {"BackSpace",   jkeyevent_symbol_t::Backspace},
+  {"Tab",         jkeyevent_symbol_t::Tab},
+  {"Cancel",      jkeyevent_symbol_t::Cancel},
+  // {"Clear",       jkeyevent_symbol_t::Clear},
+  {"Shift_L",     jkeyevent_symbol_t::Shift},
+  {"Shift_R",     jkeyevent_symbol_t::Shift},
+  {"Control_L",   jkeyevent_symbol_t::Control},
+  {"Control_R",   jkeyevent_symbol_t::Control},
+  {"Alt_L",       jkeyevent_symbol_t::Alt},
+  {"Alt_R",       jkeyevent_symbol_t::Alt},
+  {"Pause",       jkeyevent_symbol_t::Pause},
+  // {"Caps_Lock",   jkeyevent_symbol_t::CapsLock},
+  {"Escape",      jkeyevent_symbol_t::Escape},
+  {"Prior",       jkeyevent_symbol_t::PageUp},
+  {"KP_Prior",    jkeyevent_symbol_t::PageUp},
+  {"Next",        jkeyevent_symbol_t::PageDown},
+  {"KP_Next",     jkeyevent_symbol_t::PageDown},
+  {"End",         jkeyevent_symbol_t::End},
+  {"KP_End",      jkeyevent_symbol_t::End},
+  {"Home",        jkeyevent_symbol_t::Home},
+  {"KP_Home",     jkeyevent_symbol_t::Home},
+  {"Left",        jkeyevent_symbol_t::CursorLeft},
+  {"KP_Left",     jkeyevent_symbol_t::CursorLeft},
+  {"Up",          jkeyevent_symbol_t::CursorUp},
+  {"KP_Up",       jkeyevent_symbol_t::CursorUp},
+  {"Right",       jkeyevent_symbol_t::CursorRight},
+  {"KP_Right",    jkeyevent_symbol_t::CursorRight},
+  {"Down",        jkeyevent_symbol_t::CursorDown},
+  {"KP_Down",     jkeyevent_symbol_t::CursorDown},
+  {"comma",       jkeyevent_symbol_t::Comma},
+  {"minus",       jkeyevent_symbol_t::Minus},
+  {"KP_Subtract", jkeyevent_symbol_t::Minus},
+  {"period",      jkeyevent_symbol_t::Period},
+  {"KP_Decimal",  jkeyevent_symbol_t::Period},
+  {"slash",       jkeyevent_symbol_t::Slash},
+  {"space",       jkeyevent_symbol_t::Space},
+  {"0",           jkeyevent_symbol_t::Number0},
+  {"KP_0",        jkeyevent_symbol_t::Number0},
+  {"1",           jkeyevent_symbol_t::Number1},
+  {"KP_1",        jkeyevent_symbol_t::Number1},
+  {"2",           jkeyevent_symbol_t::Number2},
+  {"KP_2",        jkeyevent_symbol_t::Number2},
+  {"3",           jkeyevent_symbol_t::Number3},
+  {"KP_3",        jkeyevent_symbol_t::Number3},
+  {"4",           jkeyevent_symbol_t::Number4},
+  {"KP_4",        jkeyevent_symbol_t::Number4},
+  {"5",           jkeyevent_symbol_t::Number5},
+  {"KP_5",        jkeyevent_symbol_t::Number5},
+  {"6",           jkeyevent_symbol_t::Number6},
+  {"KP_6",        jkeyevent_symbol_t::Number6},
+  {"7",           jkeyevent_symbol_t::Number7},
+  {"KP_7",        jkeyevent_symbol_t::Number7},
+  {"8",           jkeyevent_symbol_t::Number8},
+  {"KP_8",        jkeyevent_symbol_t::Number8},
+  {"9",           jkeyevent_symbol_t::Number9},
+  {"KP_9",        jkeyevent_symbol_t::Number9},
+  {"semicolon",   jkeyevent_symbol_t::SemiColon},
+  {"equal",       jkeyevent_symbol_t::Equals},
+  {"a",           jkeyevent_symbol_t::a},
+  {"A",           jkeyevent_symbol_t::a},
+  {"b",           jkeyevent_symbol_t::b},
+  {"B",           jkeyevent_symbol_t::b},
+  {"c",           jkeyevent_symbol_t::c},
+  {"C",           jkeyevent_symbol_t::c},
+  {"d",           jkeyevent_symbol_t::d},
+  {"D",           jkeyevent_symbol_t::d},
+  {"e",           jkeyevent_symbol_t::e},
+  {"E",           jkeyevent_symbol_t::e},
+  {"f",           jkeyevent_symbol_t::f},
+  {"F",           jkeyevent_symbol_t::f},
+  {"g",           jkeyevent_symbol_t::g},
+  {"G",           jkeyevent_symbol_t::g},
+  {"h",           jkeyevent_symbol_t::h},
+  {"H",           jkeyevent_symbol_t::h},
+  {"i",           jkeyevent_symbol_t::i},
+  {"I",           jkeyevent_symbol_t::i},
+  {"j",           jkeyevent_symbol_t::j},
+  {"J",           jkeyevent_symbol_t::j},
+  {"k",           jkeyevent_symbol_t::k},
+  {"K",           jkeyevent_symbol_t::k},
+  {"l",           jkeyevent_symbol_t::l},
+  {"L",           jkeyevent_symbol_t::l},
+  {"m",           jkeyevent_symbol_t::m},
+  {"M",           jkeyevent_symbol_t::m},
+  {"n",           jkeyevent_symbol_t::n},
+  {"N",           jkeyevent_symbol_t::n},
+  {"o",           jkeyevent_symbol_t::o},
+  {"O",           jkeyevent_symbol_t::o},
+  {"p",           jkeyevent_symbol_t::p},
+  {"P",           jkeyevent_symbol_t::p},
+  {"q",           jkeyevent_symbol_t::q},
+  {"Q",           jkeyevent_symbol_t::q},
+  {"r",           jkeyevent_symbol_t::r},
+  {"R",           jkeyevent_symbol_t::r},
+  {"s",           jkeyevent_symbol_t::s},
+  {"S",           jkeyevent_symbol_t::s},
+  {"t",           jkeyevent_symbol_t::t},
+  {"T",           jkeyevent_symbol_t::t},
+  {"u",           jkeyevent_symbol_t::u},
+  {"U",           jkeyevent_symbol_t::u},
+  {"v",           jkeyevent_symbol_t::v},
+  {"V",           jkeyevent_symbol_t::v},
+  {"w",           jkeyevent_symbol_t::w},
+  {"W",           jkeyevent_symbol_t::w},
+  {"x",           jkeyevent_symbol_t::x},
+  {"X",           jkeyevent_symbol_t::x},
+  {"y",           jkeyevent_symbol_t::y},
+  {"Y",           jkeyevent_symbol_t::y},
+  {"z",           jkeyevent_symbol_t::z},
+  {"Z",           jkeyevent_symbol_t::z},
+  {"bracketleft", jkeyevent_symbol_t::SquareBracketLeft},
+  {"backslash",   jkeyevent_symbol_t::BackSlash},
+  {"bracketright",jkeyevent_symbol_t::SquareBracketRight},
+  {"asterisk",    jkeyevent_symbol_t::Star},
+  {"KP_Multiply", jkeyevent_symbol_t::Star},
+  {"plus",        jkeyevent_symbol_t::Plus},
+  {"KP_Add",      jkeyevent_symbol_t::Plus},
+  {"KP_Divide",   jkeyevent_symbol_t::Slash},
+  {"Delete",      jkeyevent_symbol_t::Delete},
+  {"KP_Delete",   jkeyevent_symbol_t::Delete},
+  // {"Num_Lock",    jkeyevent_symbol_t::NumLock},
+  // {"Scroll_Lock", jkeyevent_symbol_t::ScrollLock},
+  {"F1",          jkeyevent_symbol_t::F1},
+  {"F2",          jkeyevent_symbol_t::F2},
+  {"F3",          jkeyevent_symbol_t::F3},
+  {"F4",          jkeyevent_symbol_t::F4},
+  {"F5",          jkeyevent_symbol_t::F5},
+  {"F6",          jkeyevent_symbol_t::F6},
+  {"F7",          jkeyevent_symbol_t::F7},
+  {"F8",          jkeyevent_symbol_t::F8},
+  {"F9",          jkeyevent_symbol_t::F9},
+  {"F10",         jkeyevent_symbol_t::F10},
+  {"F11",         jkeyevent_symbol_t::F11},
+  {"F12",         jkeyevent_symbol_t::F12},
+  // {"F13",         jkeyevent_symbol_t::F13},
+  // {"F14",         jkeyevent_symbol_t::F14},
+  // {"F15",         jkeyevent_symbol_t::F15},
+  // {"F16",         jkeyevent_symbol_t::F16},
+  // {"F17",         jkeyevent_symbol_t::F17},
+  // {"F18",         jkeyevent_symbol_t::F18},
+  // {"F19",         jkeyevent_symbol_t::F19},
+  // {"F20",         jkeyevent_symbol_t::F20},
+  // {"F21",         jkeyevent_symbol_t::F21},
+  // {"F22",         jkeyevent_symbol_t::F22},
+  // {"F23",         jkeyevent_symbol_t::F23},
+  // {"F24",         jkeyevent_symbol_t::F24},
+  {"Insert",      jkeyevent_symbol_t::Insert},
+  // {"Help",        jkeyevent_symbol_t::Help},
+  {"grave",       jkeyevent_symbol_t::GraveAccent},
+  {"apostrophe",  jkeyevent_symbol_t::Aposthrophe},
+  {"bar",         jkeyevent_symbol_t::VerticalBar},
+  {"ampersand",   jkeyevent_symbol_t::Ampersand},
+  {"quotedbl",    jkeyevent_symbol_t::Quotation},
+  {"less",        jkeyevent_symbol_t::LessThan},
+  {"greater",     jkeyevent_symbol_t::GreaterThan},
+  // {"braceleft",   jkeyevent_symbol_t::BracketLeft},
+  // {"braceright",  jkeyevent_symbol_t::BracketRight},
+  {"at",          jkeyevent_symbol_t::At},
+  {"colon",       jkeyevent_symbol_t::Colon},
+  {"asciicircum", jkeyevent_symbol_t::CircumflexAccent},
+  {"dollar",      jkeyevent_symbol_t::Dollar},
+  {"exclam",      jkeyevent_symbol_t::ExclamationMark},
+  {"parenleft",   jkeyevent_symbol_t::ParenthesisLeft},
+  {"numbersign",  jkeyevent_symbol_t::Hash},
+  {"parenright",  jkeyevent_symbol_t::ParenthesisRight},
+  {"underscore",  jkeyevent_symbol_t::Underscore},
+  {"percent",     jkeyevent_symbol_t::Percent},
+  {"asciitilde",  jkeyevent_symbol_t::Aposthrophe},
+  {"question",    jkeyevent_symbol_t::Slash},
+  {nullptr, jkeyevent_symbol_t::Unknown}
 };
 
 static void display_handle_geometry(void *data, struct wl_output *wl_output, int32_t x, int32_t y, int32_t w, int32_t h, int32_t subpixel, const char *make, const char *model, int32_t transform) 
@@ -636,7 +632,7 @@ uint32_t find_keycode_by_name(const char* name)
   
   for (; map->name != NULL; map ++) {
     if (strcmp(map->name, name) == 0) {
-      return (uint32_t)map->code;
+      return static_cast<int>(map->code);
     }
   }
   
@@ -1271,7 +1267,7 @@ static void InternalPaint()
     bounds = sg_jcanvas_window->GetBounds();
 
   if (sg_back_buffer != nullptr) {
-    jcanvas::jpoint_t<int>
+    jpoint_t<int>
       size = sg_back_buffer->GetSize();
 
     if (size.x != bounds.size.x or size.y != bounds.size.y) {
@@ -1281,14 +1277,14 @@ static void InternalPaint()
   }
 
   if (sg_back_buffer == nullptr) {
-    sg_back_buffer = new jcanvas::BufferedImage(jcanvas::JPF_RGB32, bounds.size);
+    sg_back_buffer = new BufferedImage(jpixelformat_t::RGB32, bounds.size);
   }
 
-  jcanvas::Graphics 
+  Graphics 
     *g = sg_back_buffer->GetGraphics();
 
   g->Reset();
-  g->SetCompositeFlags(jcanvas::JCF_SRC);
+  g->SetCompositeFlags(jcomposite_t::Src);
 
   sg_jcanvas_window->Paint(g);
 
@@ -1310,7 +1306,7 @@ static void InternalPaint()
 
   display_flush();
 
-  sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_PAINTED));
+  sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Painted));
 }
 
 void Application::Loop()
@@ -1341,10 +1337,10 @@ void Application::Loop()
     
     if (event != NULL) {
       if (event->kind == MOUSE_EVENT)  {
-        static jcanvas::jmouseevent_button_t buttons = jcanvas::JMB_NONE;
+        static jmouseevent_button_t buttons = jmouseevent_button_t::None;
 
-        jcanvas::jmouseevent_button_t button = jcanvas::JMB_NONE;
-        jcanvas::jmouseevent_type_t type = jcanvas::JMT_UNKNOWN;
+        jmouseevent_button_t button = jmouseevent_button_t::None;
+        jmouseevent_type_t type = jmouseevent_type_t::Unknown;
         int mouse_z = 0;
 
         sg_mouse_x = event->e.m.x;
@@ -1354,87 +1350,83 @@ void Application::Loop()
         sg_mouse_y = CLAMP(sg_mouse_y, 0, sg_screen.y - 1);
 
         if (event->e.m.action == MOUSE_ENTER) {
-          sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_ENTERED));
+          sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Entered));
 
           continue;
         } else if (event->e.m.action == MOUSE_LEAVE) {
-          sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_LEAVED));
+          sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Leaved));
 
           continue;
         } else if (event->e.m.action == MOUSE_MOVE or event->e.m.action == MOUSE_DRAG) {
-          type = jcanvas::JMT_MOVED;
+          type = jmouseevent_type_t::Moved;
         } else if (event->e.m.action == MOUSE_BUTTON_PRESS or event->e.m.action == MOUSE_BUTTON_RELEASE) {
           if (event->e.m.button == BTN_LEFT) {
-            button = jcanvas::JMB_BUTTON1;
+            button = jmouseevent_button_t::Button1;
           } else if (event->e.m.button == BTN_MIDDLE) {
-            button = jcanvas::JMB_BUTTON2;
+            button = jmouseevent_button_t::Button2;
           } else if (event->e.m.button == BTN_RIGHT) {
-            button = jcanvas::JMB_BUTTON3;
+            button = jmouseevent_button_t::Button3;
           }
 
           if (event->e.m.action == MOUSE_BUTTON_PRESS) {
-            type = jcanvas::JMT_PRESSED;
-            buttons = (jcanvas::jmouseevent_button_t)(buttons | button);
+            type = jmouseevent_type_t::Pressed;
+            buttons = jenum_t{buttons}.Or(button);
           } else if (event->e.m.action == MOUSE_BUTTON_RELEASE) {
-            type = jcanvas::JMT_RELEASED;
-            buttons = (jcanvas::jmouseevent_button_t)(buttons & ~button);
+            type = jmouseevent_type_t::Released;
+            buttons = jenum_t{buttons}.And(jenum_t{button}.Not());
           }
         } else if (event->e.m.action == MOUSE_CLICK) {
           // action = "click";
         } else if (event->e.m.action == MOUSE_WHEEL) {
-          type = jcanvas::JMT_ROTATED;
+          type = jmouseevent_type_t::Rotated;
           mouse_z = (int)event->e.m.click_count;
         }
 
-        if (sg_jcanvas_window->GetEventManager()->IsAutoGrab() == true && buttons != jcanvas::JMB_NONE) {
+        if (sg_jcanvas_window->GetEventManager().IsAutoGrab() == true && buttons != jmouseevent_button_t::None) {
           // grab input
         } else {
           // release input
         }
 
-        sg_jcanvas_window->GetEventManager()->PostEvent(new jcanvas::MouseEvent(sg_jcanvas_window, type, button, buttons, {sg_mouse_x, sg_mouse_y}, mouse_z));
+        sg_jcanvas_window->GetEventManager().PostEvent(new MouseEvent(sg_jcanvas_window, type, button, buttons, {sg_mouse_x, sg_mouse_y}, mouse_z));
       } else if (event->kind == KEY_EVENT)  {
-        jcanvas::jkeyevent_type_t type;
-        jcanvas::jkeyevent_modifiers_t mod;
-
-        mod = (jcanvas::jkeyevent_modifiers_t)(0);
+        jkeyevent_type_t type = jkeyevent_type_t::Unknown;
+        jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
         if ((event->modifiers & MOD_SHIFT_MASK) != 0) {
-          mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_SHIFT);
+          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
         } else if ((event->modifiers & MOD_CONTROL_MASK) != 0) {
-          mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_CONTROL);
+          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
         } else if ((event->modifiers & MOD_ALT_MASK) != 0) {
-          mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_ALT);
+          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
         // } else if ((event.key.keysym.mod & KMOD_LGUI) != 0) {
-        //  mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_SUPER);
+          // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
         // } else if ((event.key.keysym.mod & KMOD_RGUI) != 0) {
-        //   mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_SUPER);
+          // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
         // } else if ((event.key.keysym.mod & KMOD_MODE) != 0) {
-        // 	mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_ALTGR);
+          // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::AltGr);
         // } else if ((event.key.keysym.mod & KMOD_CAPS) != 0) {
-        // 	mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_CAPS_LOCK);
+          // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::CapsLock);
         // } else if ((event.key.keysym.mod & KMOD_LMETA) != 0) {
-        //	mod = (jcanvas::jkeyevent_modifiers_t)(mod | JKM_META);
+          // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
         // } else if ((event.key.keysym.mod & KMOD_RMETA) != 0) {
-        //	mod = (jcanvas::jkeyevent_modifiers_t)(mod | JKM_META);
+          // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
         // } else if ((event.key.keysym.mod & ) != 0) {
-        //	mod = (jcanvas::jkeyevent_modifiers_t)(mod | JKM_SUPER);
+          // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
         // } else if ((event.key.keysym.mod & ) != 0) {
-        //	mod = (jcanvas::jkeyevent_modifiers_t)(mod | JKM_HYPER);
+          // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Hyper);
         }
 
-        type = jcanvas::JKT_UNKNOWN;
-
         if (event->e.k.action == KEY_PRESS) {
-          type = jcanvas::JKT_PRESSED;
+          type = jkeyevent_type_t::Pressed;
         } else if (event->e.k.action == KEY_RELEASE) {
-          type = jcanvas::JKT_RELEASED;
+          type = jkeyevent_type_t::Released;
         // } else if (event->e.k.action == KEY_TYPE) {
         }
 
-        jcanvas::jkeyevent_symbol_t symbol = (jcanvas::jkeyevent_symbol_t)event->e.k.keyCode;
+        jkeyevent_symbol_t symbol = (jkeyevent_symbol_t)event->e.k.keyCode;
 
-        sg_jcanvas_window->GetEventManager()->PostEvent(new jcanvas::KeyEvent(sg_jcanvas_window, type, mod, jcanvas::KeyEvent::GetCodeFromSymbol(symbol), symbol));
+        sg_jcanvas_window->GetEventManager().PostEvent(new KeyEvent(sg_jcanvas_window, type, mod, KeyEvent::GetCodeFromSymbol(symbol), symbol));
       } else if (event->kind == DISPLAY_EVENT)  {
         handle_display_event(event);
       } else if (event->kind == SURFACE_EVENT)  {
@@ -1485,7 +1477,7 @@ bool Application::IsVerticalSyncEnabled()
   return true;
 }
 
-WindowAdapter::WindowAdapter(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds)
+WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 {
 	if (sg_surface != nullptr) {
 		throw std::runtime_error("Cannot create more than one window");
@@ -1558,9 +1550,9 @@ void WindowAdapter::SetBounds(jrect_t<int> bounds)
   ResizeShmScreenSurface(sg_surface, bounds.size.x, bounds.size.y);
 }
 
-jcanvas::jrect_t<int> WindowAdapter::GetBounds()
+jrect_t<int> WindowAdapter::GetBounds()
 {
-	jcanvas::jrect_t<int> t {
+	jrect_t<int> t {
     .point = {
       sg_surface->x, sg_surface->y
     },
@@ -1623,29 +1615,29 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
   /*
   SDL_SystemCursor type = SDL_SYSTEM_CURSOR_ARROW;
 
-  if (style == JCS_DEFAULT) {
+  if (style == jcursor_style_t::Default) {
     type = SDL_SYSTEM_CURSOR_ARROW;
-  } else if (style == JCS_CROSSHAIR) {
+  } else if (style == jcursor_style_t::Crosshair) {
     type = SDL_SYSTEM_CURSOR_CROSSHAIR;
-  } else if (style == JCS_EAST) {
-  } else if (style == JCS_WEST) {
-  } else if (style == JCS_NORTH) {
-  } else if (style == JCS_SOUTH) {
-  } else if (style == JCS_HAND) {
+  } else if (style == jcursor_style_t::East) {
+  } else if (style == jcursor_style_t::West) {
+  } else if (style == jcursor_style_t::North) {
+  } else if (style == jcursor_style_t::South) {
+  } else if (style == jcursor_style_t::Hand) {
     type = SDL_SYSTEM_CURSOR_HAND;
-  } else if (style == JCS_MOVE) {
+  } else if (style == jcursor_style_t::Move) {
     type = SDL_SYSTEM_CURSOR_SIZEALL;
-  } else if (style == JCS_NS) {
+  } else if (style == jcursor_style_t::Vertical) {
     type = SDL_SYSTEM_CURSOR_SIZENS;
-  } else if (style == JCS_WE) {
+  } else if (style == jcursor_style_t::Horizontal) {
     type = SDL_SYSTEM_CURSOR_SIZEWE;
-  } else if (style == JCS_NW_CORNER) {
-  } else if (style == JCS_NE_CORNER) {
-  } else if (style == JCS_SW_CORNER) {
-  } else if (style == JCS_SE_CORNER) {
-  } else if (style == JCS_TEXT) {
+  } else if (style == jcursor_style_t::NorthWest) {
+  } else if (style == jcursor_style_t::NorthEast) {
+  } else if (style == jcursor_style_t::SouthWest) {
+  } else if (style == jcursor_style_t::SouthEast) {
+  } else if (style == jcursor_style_t::Text) {
     type = SDL_SYSTEM_CURSOR_IBEAM;
-  } else if (style == JCS_WAIT) {
+  } else if (style == jcursor_style_t::Wait) {
     type = SDL_SYSTEM_CURSOR_WAIT;
   }
 
@@ -1698,17 +1690,17 @@ void WindowAdapter::SetRotation(jwindow_rotation_t t)
 
 jwindow_rotation_t WindowAdapter::GetRotation()
 {
-	return jcanvas::JWR_NONE;
+	return jwindow_rotation_t::None;
 }
 
-void WindowAdapter::SetIcon(jcanvas::Image *image)
+void WindowAdapter::SetIcon(Image *image)
 {
   /*
   if (image == nullptr) {
     return;
   }
 
-  jcanvas::jpoint_t<int> 
+  jpoint_t<int> 
     size = image->GetSize();
   uint32_t 
     *data = (uint32_t *)image->LockData();
@@ -1721,7 +1713,7 @@ void WindowAdapter::SetIcon(jcanvas::Image *image)
   */
 }
 
-jcanvas::Image * WindowAdapter::GetIcon()
+Image * WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }

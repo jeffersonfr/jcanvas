@@ -157,7 +157,7 @@ class Grid : public Window, public KeyListener, public MouseListener {
       return jpoint_t<float>{p(0, 0)/_camera(2, 0), -p(1, 0)/_camera(2, 0)}*_scale + jpoint_t<int>{size.x/2, size.y/2};
 		}
 
-		bool MousePressed(jcanvas::MouseEvent *event)
+		bool MousePressed(MouseEvent *event)
 		{
       _pointer = event->GetLocation();
 
@@ -166,14 +166,14 @@ class Grid : public Window, public KeyListener, public MouseListener {
       return true;
     }
 
-		bool MouseReleased(jcanvas::MouseEvent *event)
+		bool MouseReleased(MouseEvent *event)
 		{
       _drag = false;
 
       return true;
     }
 
-		bool MouseMoved(jcanvas::MouseEvent *event)
+		bool MouseMoved(MouseEvent *event)
 		{
       if (_drag == false) {
         return false;
@@ -193,46 +193,46 @@ class Grid : public Window, public KeyListener, public MouseListener {
       return true;
     }
 
-		bool KeyPressed(jcanvas::KeyEvent *event)
+		bool KeyPressed(KeyEvent *event)
 		{
-			if (event->GetSymbol() == jcanvas::JKS_ESCAPE) {
+			if (event->GetSymbol() == jkeyevent_symbol_t::Escape) {
         _camera = {0.0f, 0.0f, 1.0f};
 				_rotate(0, 0) = 0.0f;
 				_rotate(1, 0) = 0.0f;
 				_rotate(2, 0) = 0.0f;
-      } else if (event->GetSymbol() == jcanvas::JKS_CURSOR_LEFT) {
+      } else if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {
 				_rotate(1, 0) += ANGLE_STEP;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_RIGHT) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorRight) {
 				_rotate(1, 0) -= ANGLE_STEP;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_UP) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorUp) {
 				_rotate(0, 0) += ANGLE_STEP;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_DOWN) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorDown) {
 				_rotate(0, 0) -= ANGLE_STEP;
-			} else if (event->GetSymbol() == jcanvas::JKS_SQUARE_BRACKET_LEFT) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::SquareBracketLeft) {
 				_rotate(2, 0) -= ANGLE_STEP;
-			} else if (event->GetSymbol() == jcanvas::JKS_SQUARE_BRACKET_RIGHT) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::SquareBracketRight) {
 				_rotate(2, 0) += ANGLE_STEP;
-			} else if (event->GetSymbol() == jcanvas::JKS_q) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::q) {
 				_scale *= 0.9f;
-			} else if (event->GetSymbol() == jcanvas::JKS_w) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::w) {
 				_scale *= 1.1f;
-			} else if (event->GetSymbol() == jcanvas::JKS_a) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::a) {
 				_camera(2, 0) -= 1.0f;
-			} else if (event->GetSymbol() == jcanvas::JKS_s) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::s) {
 				_camera(2, 0) += 1.0f;
-			} else if (event->GetSymbol() == jcanvas::JKS_j) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::j) {
 				_camera(0, 0) -= 1.0f;
-			} else if (event->GetSymbol() == jcanvas::JKS_l) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::l) {
 				_camera(0, 0) += 1.0f;
-			} else if (event->GetSymbol() == jcanvas::JKS_i) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::i) {
 				_camera(1, 0) += 1.0f;
-			} else if (event->GetSymbol() == jcanvas::JKS_k) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::k) {
 				_camera(1, 0) -= 1.0f;
-			} else if (event->GetSymbol() == jcanvas::JKS_1) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::Number1) {
 				f = f1;
-			} else if (event->GetSymbol() == jcanvas::JKS_2) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::Number2) {
 				f = f2;
-			} else if (event->GetSymbol() == jcanvas::JKS_3) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::Number3) {
 				f = f3;
 			}
 

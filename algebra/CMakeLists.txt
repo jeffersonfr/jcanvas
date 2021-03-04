@@ -4,6 +4,7 @@ include (${CMAKE_SOURCE_DIR}/Defines.cmake)
 
 set(SRCS
   src/jcircle.cpp
+  src/jinsets.cpp
   src/jline.cpp
   src/jmatrix.cpp
   src/jpoint.cpp

@@ -19,6 +19,7 @@
  ***************************************************************************/
 #include "jcanvas/core/jindexedimage.h"
 #include "jcanvas/core/jhslcolorspace.h"
+#include "jcanvas/core/jenum.h"
 
 #include <string.h>
 #include <math.h>
@@ -26,7 +27,7 @@
 namespace jcanvas {
 
 IndexedImage::IndexedImage(uint32_t *palette, int palette_size, uint8_t *data, jpoint_t<int> size):
-  Image(JPF_UNKNOWN, size)
+  Image(jpixelformat_t::Unknown, size)
 {
   _palette = new uint32_t[palette_size];
   _palette_size = palette_size;
@@ -42,7 +43,7 @@ IndexedImage::IndexedImage(uint32_t *palette, int palette_size, uint8_t *data, j
 }
 
 IndexedImage::IndexedImage(uint32_t *palette, int palette_size, uint32_t *argb, jpoint_t<int> size):
-  Image(JPF_UNKNOWN, size)
+  Image(jpixelformat_t::Unknown, size)
 {
   _palette = new uint32_t[palette_size];
   _palette_size = palette_size;
@@ -138,14 +139,14 @@ IndexedImage * IndexedImage::Pack(uint32_t *rgb, jpoint_t<int> size)
   return new IndexedImage(palette, palette_location, rgb, size);
 }
 
-Image * IndexedImage::Flip(jflip_flags_t t)
+Image * IndexedImage::Flip(jflip_t t)
 {
   jpoint_t<int> 
     size = GetSize();
   uint8_t 
     *data = new uint8_t[size.x*size.y];
   
-  if ((t & JFF_HORIZONTAL) != 0) {
+  if (jenum_t{t}.And(jflip_t::Horizontal)) {
     for (int j=0; j<size.y; j++) {
       for (int i=0; i<size.x; i++) {
         int 
@@ -158,7 +159,7 @@ Image * IndexedImage::Flip(jflip_flags_t t)
     }
   }
 
-  if ((t & JFF_VERTICAL) != 0) {
+  if (jenum_t{t}.And(jflip_t::Vertical)) {
     int 
       offset = (size.y-1)*size.x;
 

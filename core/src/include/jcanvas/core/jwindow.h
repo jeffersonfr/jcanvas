@@ -30,37 +30,37 @@
 
 namespace jcanvas {
 
-enum jwindow_state_t {
-  JWS_NORMAL,
-  JWS_MAXIMIZE,
-  JWS_MINIMIZE,
-  JWS_FULLSCREEN
+enum class jwindow_state_t {
+  Normal,
+  Maximize,
+  Minimize,
+  Fullscreen
 };
 
-enum jwindow_rotation_t {
-  JWR_NONE,
-  JWR_90,
-  JWR_180,
-  JWR_270
+enum class jwindow_rotation_t {
+  None,
+  Degrees90,
+  Degrees180,
+  Degrees270
 };
 
-enum jcursor_style_t {
-  JCS_DEFAULT,
-  JCS_CROSSHAIR,
-  JCS_EAST,
-  JCS_WEST,
-  JCS_NORTH,
-  JCS_SOUTH,
-  JCS_HAND,
-  JCS_MOVE,
-  JCS_NS,
-  JCS_WE,
-  JCS_NW_CORNER,
-  JCS_NE_CORNER,
-  JCS_SW_CORNER,
-  JCS_SE_CORNER,
-  JCS_TEXT,
-  JCS_WAIT
+enum class jcursor_style_t {
+  Default,
+  Hand,
+  Move,
+  Text,
+  Wait,
+  Crosshair,
+  Horizontal,
+  Vertical,
+  East,
+  West,
+  North,
+  South,
+  NorthWest,
+  NorthEast,
+  SouthWest,
+  SouthEast
 };
 
 class WindowAdapter;
@@ -75,12 +75,6 @@ class Window {
 
   private:
     /** \brief */
-    std::vector<EventObject *> _window_events;
-    /** \brief */
-    std::vector<KeyListener *> _key_listeners;
-    /** \brief */
-    std::vector<MouseListener *> _mouse_listeners;
-    /** \brief */
     std::vector<WindowListener *> _window_listeners;
     /** \brief */
     std::thread _exec_thread;
@@ -89,17 +83,13 @@ class Window {
     /** \brief */
      std::condition_variable _event_condition;
     /** \brief */
-     std::mutex _key_listener_mutex;
-    /** \brief */
-     std::mutex _mouse_listener_mutex;
-    /** \brief */
     std::mutex _paint_mutex;
     /** \brief */
     std::mutex _window_listener_mutex;
     /** \brief */
-    WindowAdapter *_instance;
+    EventManager _event_manager;
     /** \brief */
-    EventManager *_event_manager;
+    WindowAdapter *_window_adapter;
     /** \brief */
     int _fps;
 
@@ -120,7 +110,7 @@ class Window {
      * \brief
      *
      */
-    virtual EventManager * GetEventManager();
+    virtual EventManager & GetEventManager();
     
     /**
      * \brief Entry point to applications.
@@ -133,18 +123,6 @@ class Window {
      *
      */
     virtual void Exec();
-
-    /**
-     * \brief
-     *
-     */
-    virtual void SetIcon(Image *image);
-
-    /**
-     * \brief
-     *
-     */
-    virtual Image * GetIcon();
 
     /**
      * \brief
@@ -258,18 +236,6 @@ class Window {
      * \brief
      *
      */
-    virtual void PaintBackground(Graphics *g);
-
-    /**
-     * \brief
-     *
-     */
-    virtual void PaintGlassPane(Graphics *g);
-
-    /**
-     * \brief
-     *
-     */
     virtual void Paint(Graphics *g);
 
     /**
@@ -337,84 +303,6 @@ class Window {
      *
      */
     virtual jwindow_rotation_t GetRotation();
-
-    /**
-     * \brief
-     *
-     */
-    virtual bool KeyPressed(KeyEvent *event);
-
-    /**
-     * \brief
-     *
-     */
-    virtual bool KeyReleased(KeyEvent *event);
-
-    /**
-     * \brief
-     *
-     */
-    virtual bool KeyTyped(KeyEvent *event);
-
-    /**
-     * \brief
-     *
-     */
-    virtual bool MousePressed(MouseEvent *event);
-
-    /**
-     * \brief
-     *
-     */
-    virtual bool MouseReleased(MouseEvent *event);
-
-    /**
-     * \brief
-     *
-     */
-    virtual bool MouseMoved(MouseEvent *event);
-
-    /**
-     * \brief
-     *
-     */
-    virtual bool MouseWheel(MouseEvent *event);
-
-    /**
-     * \brief
-     *
-     */
-    virtual void RegisterKeyListener(KeyListener *listener);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void RemoveKeyListener(KeyListener *listener);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual const std::vector<KeyListener *> & GetKeyListeners();
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void RegisterMouseListener(MouseListener *listener);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void RemoveMouseListener(MouseListener *listener);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual const std::vector<MouseListener *> & GetMouseListeners();
 
     /**
      * \brief

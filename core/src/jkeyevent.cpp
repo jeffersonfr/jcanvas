@@ -37,279 +37,279 @@ KeyEvent::~KeyEvent()
 int KeyEvent::GetCodeFromSymbol(jkeyevent_symbol_t symbol)
 {
   switch (symbol) {
-    case JKS_UNKNOWN:
+    case jkeyevent_symbol_t::Unknown:
       return -1;
-    case JKS_ENTER:
+    case jkeyevent_symbol_t::Enter:
       return (int)'\n';
-    case JKS_BACKSPACE:
+    case jkeyevent_symbol_t::Backspace:
       return (int)'\b';
-    case JKS_TAB:
+    case jkeyevent_symbol_t::Tab:
       return (int)'\t';
-    // case JKS_RETURN:
+    // case jkeyevent_symbol_t::Return:
     //  return (int)'\r';
-    case JKS_CANCEL:
+    case jkeyevent_symbol_t::Cancel:
       return -1;
-    case JKS_ESCAPE:
+    case jkeyevent_symbol_t::Escape:
       return (int)'\x1b';
-    case JKS_SPACE:
+    case jkeyevent_symbol_t::Space:
       return (int)' ';
-    case JKS_EXCLAMATION_MARK:
+    case jkeyevent_symbol_t::ExclamationMark:
       return (int)'!';
-    case JKS_QUOTATION:
+    case jkeyevent_symbol_t::Quotation:
       return (int)'\"';
-    case JKS_NUMBER_SIGN:
+    case jkeyevent_symbol_t::Hash:
       return (int)'#';
-    case JKS_DOLLAR_SIGN:
+    case jkeyevent_symbol_t::Dollar:
       return (int)'$';
-    case JKS_PERCENT_SIGN:
+    case jkeyevent_symbol_t::Percent:
       return (int)'%';
-    case JKS_AMPERSAND:
+    case jkeyevent_symbol_t::Ampersand:
       return (int)'&';
-    case JKS_APOSTROPHE:
+    case jkeyevent_symbol_t::Aposthrophe:
       return (int)'\'';
-    case JKS_PARENTHESIS_LEFT:
+    case jkeyevent_symbol_t::ParenthesisLeft:
       return (int)'(';
-    case JKS_PARENTHESIS_RIGHT:
+    case jkeyevent_symbol_t::ParenthesisRight:
       return (int)')';
-    case JKS_STAR:
+    case jkeyevent_symbol_t::Star:
       return (int)'*';
-    case JKS_PLUS_SIGN:
+    case jkeyevent_symbol_t::Plus:
       return (int)'+';
-    case JKS_COMMA:
+    case jkeyevent_symbol_t::Comma:
       return (int)',';
-    case JKS_MINUS_SIGN:
+    case jkeyevent_symbol_t::Minus:
       return (int)'-';
-    case JKS_PERIOD:
+    case jkeyevent_symbol_t::Period:
       return (int)'.';
-    case JKS_SLASH:
+    case jkeyevent_symbol_t::Slash:
       return (int)'/';
-    case JKS_0:
+    case jkeyevent_symbol_t::Number0:
       return (int)'0';
-    case JKS_1:
+    case jkeyevent_symbol_t::Number1:
       return (int)'1';
-    case JKS_2:
+    case jkeyevent_symbol_t::Number2:
       return (int)'2';
-    case JKS_3:
+    case jkeyevent_symbol_t::Number3:
       return (int)'3';
-    case JKS_4:
+    case jkeyevent_symbol_t::Number4:
       return (int)'4';
-    case JKS_5:
+    case jkeyevent_symbol_t::Number5:
       return (int)'5';
-    case JKS_6:
+    case jkeyevent_symbol_t::Number6:
       return (int)'6';
-    case JKS_7:
+    case jkeyevent_symbol_t::Number7:
       return (int)'7';
-    case JKS_8:
+    case jkeyevent_symbol_t::Number8:
       return (int)'8';
-    case JKS_9:
+    case jkeyevent_symbol_t::Number9:
       return (int)'9';
-    case JKS_COLON:
+    case jkeyevent_symbol_t::Colon:
       return (int)':';
-    case JKS_SEMICOLON:
+    case jkeyevent_symbol_t::SemiColon:
       return (int)';';
-    case JKS_LESS_THAN_SIGN:
+    case jkeyevent_symbol_t::LessThan:
       return (int)'<';
-    case JKS_EQUALS_SIGN:
+    case jkeyevent_symbol_t::Equals:
       return (int)'=';
-    case JKS_GREATER_THAN_SIGN:
+    case jkeyevent_symbol_t::GreaterThan:
       return (int)'>';
-    case JKS_QUESTION_MARK:
+    case jkeyevent_symbol_t::QuestionMark:
       return (int)'?';
-    case JKS_AT:
+    case jkeyevent_symbol_t::At:
       return (int)'@';
-    case JKS_A:
+    case jkeyevent_symbol_t::A:
       return (int)'A';
-    case JKS_B:
+    case jkeyevent_symbol_t::B:
       return (int)'B';
-    case JKS_C:
+    case jkeyevent_symbol_t::C:
       return (int)'C';
-    case JKS_D:
+    case jkeyevent_symbol_t::D:
       return (int)'D';
-    case JKS_E:
+    case jkeyevent_symbol_t::E:
       return (int)'E';
-    case JKS_F:
+    case jkeyevent_symbol_t::F:
       return (int)'F';
-    case JKS_G:
+    case jkeyevent_symbol_t::G:
       return (int)'G';
-    case JKS_H:
+    case jkeyevent_symbol_t::H:
       return (int)'H';
-    case JKS_I:
+    case jkeyevent_symbol_t::I:
       return (int)'I';
-    case JKS_J:
+    case jkeyevent_symbol_t::J:
       return (int)'J';
-    case JKS_K:
+    case jkeyevent_symbol_t::K:
       return (int)'K';
-    case JKS_L:
+    case jkeyevent_symbol_t::L:
       return (int)'L';
-    case JKS_M:
+    case jkeyevent_symbol_t::M:
       return (int)'M';
-    case JKS_N:
+    case jkeyevent_symbol_t::N:
       return (int)'N';
-    case JKS_O:
+    case jkeyevent_symbol_t::O:
       return (int)'O';
-    case JKS_P:
+    case jkeyevent_symbol_t::P:
       return (int)'P';
-    case JKS_Q:
+    case jkeyevent_symbol_t::Q:
       return (int)'Q';
-    case JKS_R:
+    case jkeyevent_symbol_t::R:
       return (int)'R';
-    case JKS_S:
+    case jkeyevent_symbol_t::S:
       return (int)'S';
-    case JKS_T:
+    case jkeyevent_symbol_t::T:
       return (int)'T';
-    case JKS_U:
+    case jkeyevent_symbol_t::U:
       return (int)'U';
-    case JKS_V:
+    case jkeyevent_symbol_t::V:
       return (int)'V';
-    case JKS_W:
+    case jkeyevent_symbol_t::W:
       return (int)'W';
-    case JKS_X:
+    case jkeyevent_symbol_t::X:
       return (int)'X';
-    case JKS_Y:
+    case jkeyevent_symbol_t::Y:
       return (int)'Y';
-    case JKS_Z:
+    case jkeyevent_symbol_t::Z:
       return (int)'Z';
-    case JKS_SQUARE_BRACKET_LEFT:
+    case jkeyevent_symbol_t::SquareBracketLeft:
       return (int)'[';
-    case JKS_BACKSLASH:
+    case jkeyevent_symbol_t::BackSlash:
       return (int)'\\';
-    case JKS_SQUARE_BRACKET_RIGHT:
+    case jkeyevent_symbol_t::SquareBracketRight:
       return (int)']';
-    case JKS_CIRCUMFLEX_ACCENT:
+    case jkeyevent_symbol_t::CircumflexAccent:
       return (int)'^';
-    case JKS_UNDERSCORE:
+    case jkeyevent_symbol_t::Underscore:
       return (int)'_';
-    case JKS_GRAVE_ACCENT:
+    case jkeyevent_symbol_t::GraveAccent:
       return (int)'`';
-    case JKS_a:
+    case jkeyevent_symbol_t::a:
       return (int)'a';
-    case JKS_b:
+    case jkeyevent_symbol_t::b:
       return (int)'b';
-    case JKS_c:
+    case jkeyevent_symbol_t::c:
       return (int)'c';
-    case JKS_d:
+    case jkeyevent_symbol_t::d:
       return (int)'d';
-    case JKS_e:
+    case jkeyevent_symbol_t::e:
       return (int)'e';
-    case JKS_f:
+    case jkeyevent_symbol_t::f:
       return (int)'f';
-    case JKS_g:
+    case jkeyevent_symbol_t::g:
       return (int)'g';
-    case JKS_h:
+    case jkeyevent_symbol_t::h:
       return (int)'h';
-    case JKS_i:
+    case jkeyevent_symbol_t::i:
       return (int)'i';
-    case JKS_j:
+    case jkeyevent_symbol_t::j:
       return (int)'j';
-    case JKS_k:
+    case jkeyevent_symbol_t::k:
       return (int)'k';
-    case JKS_l:
+    case jkeyevent_symbol_t::l:
       return (int)'l';
-    case JKS_m:
+    case jkeyevent_symbol_t::m:
       return (int)'m';
-    case JKS_n:
+    case jkeyevent_symbol_t::n:
       return (int)'n';
-    case JKS_o:
+    case jkeyevent_symbol_t::o:
       return (int)'o';
-    case JKS_p:
+    case jkeyevent_symbol_t::p:
       return (int)'p';
-    case JKS_q:
+    case jkeyevent_symbol_t::q:
       return (int)'q';
-    case JKS_r:
+    case jkeyevent_symbol_t::r:
       return (int)'r';
-    case JKS_s:
+    case jkeyevent_symbol_t::s:
       return (int)'s';
-    case JKS_t:
+    case jkeyevent_symbol_t::t:
       return (int)'t';
-    case JKS_u:
+    case jkeyevent_symbol_t::u:
       return (int)'u';
-    case JKS_v:
+    case jkeyevent_symbol_t::v:
       return (int)'v';
-    case JKS_w:
+    case jkeyevent_symbol_t::w:
       return (int)'w';
-    case JKS_x:
+    case jkeyevent_symbol_t::x:
       return (int)'x';
-    case JKS_y:
+    case jkeyevent_symbol_t::y:
       return (int)'y';
-    case JKS_z:
+    case jkeyevent_symbol_t::z:
       return (int)'z';
-    case JKS_CURLY_BRACKET_LEFT:
+    case jkeyevent_symbol_t::CurlyBracketLeft:
       return (int)'{';
-    case JKS_VERTICAL_BAR:
+    case jkeyevent_symbol_t::VerticalBar:
       return (int)'|';
-    case JKS_CURLY_BRACKET_RIGHT:
+    case jkeyevent_symbol_t::CurlyBracketRight:
       return (int)'}';
-    case JKS_TILDE:
+    case jkeyevent_symbol_t::Tilde:
       return (int)'~';
-    case JKS_DELETE:
+    case jkeyevent_symbol_t::Delete:
       return (int)'\x7f';
-    case JKS_CURSOR_LEFT:
+    case jkeyevent_symbol_t::CursorLeft:
       return (int)0xf000;
-    case JKS_CURSOR_RIGHT:
+    case jkeyevent_symbol_t::CursorRight:
       return (int)0xf001;
-    case JKS_CURSOR_UP:
+    case jkeyevent_symbol_t::CursorUp:
       return (int)0xf002;
-    case JKS_CURSOR_DOWN:
+    case jkeyevent_symbol_t::CursorDown:
       return (int)0xf003;
-    case JKS_INSERT:
+    case jkeyevent_symbol_t::Insert:
       return (int)0xf004;
-    case JKS_HOME:
+    case jkeyevent_symbol_t::Home:
       return (int)0xf005;
-    case JKS_END:
+    case jkeyevent_symbol_t::End:
       return (int)0xf006;
-    case JKS_PAGE_UP:
+    case jkeyevent_symbol_t::PageUp:
       return (int)0xf007;
-    case JKS_PAGE_DOWN:
+    case jkeyevent_symbol_t::PageDown:
       return (int)0xf008;
-    case JKS_PRINT:
+    case jkeyevent_symbol_t::Print:
       return (int)0xf009;
-    case JKS_PAUSE:
+    case jkeyevent_symbol_t::Pause:
       return (int)0xf00a;
-    case JKS_RED:
+    case jkeyevent_symbol_t::Red:
       return (int)0x0190;
-    case JKS_GREEN:
+    case jkeyevent_symbol_t::Green:
       return (int)0x0191;
-    case JKS_YELLOW:
+    case jkeyevent_symbol_t::Yellow:
       return (int)0x0192;
-    case JKS_BLUE:
+    case jkeyevent_symbol_t::Blue:
       return (int)0x0193;
-    case JKS_F1:
+    case jkeyevent_symbol_t::F1:
       return (int)0xf101;
-    case JKS_F2:
+    case jkeyevent_symbol_t::F2:
       return (int)0xf102;
-    case JKS_F3:
+    case jkeyevent_symbol_t::F3:
       return (int)0xf103;
-    case JKS_F4:
+    case jkeyevent_symbol_t::F4:
       return (int)0xf104;
-    case JKS_F5:
+    case jkeyevent_symbol_t::F5:
       return (int)0xf105;
-    case JKS_F6:
+    case jkeyevent_symbol_t::F6:
       return (int)0xf106;
-    case JKS_F7:
+    case jkeyevent_symbol_t::F7:
       return (int)0xf107;
-    case JKS_F8:
+    case jkeyevent_symbol_t::F8:
       return (int)0xf108;
-    case JKS_F9:
+    case jkeyevent_symbol_t::F9:
       return (int)0xf109;
-    case JKS_F10:
+    case jkeyevent_symbol_t::F10:
       return (int)0xf10a;
-    case JKS_F11:
+    case jkeyevent_symbol_t::F11:
       return (int)0xf10b;
-    case JKS_F12:
+    case jkeyevent_symbol_t::F12:
       return (int)0xf10c;
-    case JKS_SHIFT:
+    case jkeyevent_symbol_t::Shift:
       return (int)0xf201;
-    case JKS_CONTROL:
+    case jkeyevent_symbol_t::Control:
       return (int)0xf202;
-    case JKS_ALT:
+    case jkeyevent_symbol_t::Alt:
       return (int)0xf204;
-    case JKS_ALTGR:
+    case jkeyevent_symbol_t::AltGr:
       return (int)-1;
-    case JKS_META:
+    case jkeyevent_symbol_t::Meta:
       return (int)-1;
-    case JKS_SUPER:
+    case jkeyevent_symbol_t::Super:
       return (int)0xF220;
-    case JKS_HYPER:
+    case jkeyevent_symbol_t::Hyper:
       return (int)-1;
     default: 
       break;

@@ -27,12 +27,10 @@
 
 namespace jcanvas {
 
-Window::Window(jpoint_t<int> size, jpoint_t<int> point)
+Window::Window(jpoint_t<int> size, jpoint_t<int> point):
+  _event_manager(this), _window_adapter(new WindowAdapter(this, jrect_t<int>{point, size}))
 {
   _fps = 30;
-
-  _event_manager = new EventManager(this);
-  _instance = new WindowAdapter(this, jrect_t<int>{point, size});
 
   SetTitle("Main");
   SetUndecorated(false);
@@ -44,17 +42,12 @@ Window::~Window()
     _exec_thread.join();
   } catch (std::system_error &e) {
   }
-  
-  if (_event_manager != nullptr) {
-    delete _event_manager;
-    _event_manager = nullptr;
-  }
 
-  delete _instance;
-  _instance = nullptr;
+  delete _window_adapter;
+  _window_adapter = nullptr;
 }
 
-EventManager * Window::GetEventManager()
+EventManager & Window::GetEventManager()
 {
   return _event_manager;
 }
@@ -71,27 +64,27 @@ void Window::Exec()
 
 void Window::SetResizable(bool resizable)
 {
-  _instance->SetResizable(resizable);
+  _window_adapter->SetResizable(resizable);
 }
 
 bool Window::IsResizable()
 {
-  return _instance->IsResizable();
+  return _window_adapter->IsResizable();
 }
 
 void Window::ToggleFullScreen()
 {
-  _instance->ToggleFullScreen();
+  _window_adapter->ToggleFullScreen();
 }
 
 jcursor_style_t Window::GetCursor()
 {
-  return _instance->GetCursor();
+  return _window_adapter->GetCursor();
 }
 
 void Window::SetBounds(jrect_t<int> bounds)
 {
-  _instance->SetBounds(bounds);
+  _window_adapter->SetBounds(bounds);
 }
 
 jpoint_t<int> Window::GetPosition()
@@ -116,47 +109,37 @@ void Window::SetSize(jpoint_t<int> size)
 
 jrect_t<int> Window::GetBounds()
 {
-  return _instance->GetBounds();
+  return _window_adapter->GetBounds();
 }
 
 void Window::SetTitle(std::string title)
 {
-  _instance->SetTitle(title);
+  _window_adapter->SetTitle(title);
 }
 
 std::string Window::GetTitle()
 {
-  return _instance->GetTitle();
+  return _window_adapter->GetTitle();
 }
 
 void Window::SetOpacity(float opacity)
 {
-  _instance->SetOpacity(opacity);
+  _window_adapter->SetOpacity(opacity);
 }
 
 float Window::GetOpacity()
 {
-  return _instance->GetOpacity();
+  return _window_adapter->GetOpacity();
 }
 
 void Window::SetUndecorated(bool undecorate)
 {
-  _instance->SetUndecorated(undecorate);
+  _window_adapter->SetUndecorated(undecorate);
 }
 
 bool Window::IsUndecorated()
 {
-  return _instance->IsUndecorated();
-}
-
-void Window::SetIcon(Image *image)
-{
-  _instance->SetIcon(image);
-}
-
-Image * Window::GetIcon()
-{
-  return _instance->GetIcon();
+  return _window_adapter->IsUndecorated();
 }
 
 void Window::Repaint()
@@ -165,15 +148,7 @@ void Window::Repaint()
     return;
   }
 
-  _instance->Repaint();
-}
-
-void Window::PaintBackground(Graphics *g)
-{
-}
-
-void Window::PaintGlassPane(Graphics *g)
-{
+  _window_adapter->Repaint();
 }
 
 void Window::SetFramesPerSecond(int fps)
@@ -193,149 +168,52 @@ void Window::Paint(Graphics *g)
 
 void Window::SetVisible(bool visible)
 {
-  _instance->SetVisible(visible);
+  _window_adapter->SetVisible(visible);
 }
 
 bool Window::IsVisible()
 {
-  return _instance->IsVisible();
+  return _window_adapter->IsVisible();
 }
     
 jwindow_rotation_t Window::GetRotation()
 {
-  return _instance->GetRotation();
+  return _window_adapter->GetRotation();
 }
 
 void Window::SetRotation(jwindow_rotation_t t)
 {
-  _instance->SetRotation(t);
-}
-
-bool Window::KeyPressed(KeyEvent *event)
-{
-  return false;
-}
-
-bool Window::KeyReleased(KeyEvent *event)
-{
-  return false;
-}
-
-bool Window::KeyTyped(KeyEvent *event)
-{
-  return false;
-}
-
-bool Window::MousePressed(MouseEvent *event)
-{
-  return false;
-}
-
-bool Window::MouseReleased(MouseEvent *event)
-{
-  return false;
-}
-
-bool Window::MouseMoved(MouseEvent *event)
-{
-  return false;
-}
-
-bool Window::MouseWheel(MouseEvent *event)
-{
-  return false;
+  _window_adapter->SetRotation(t);
 }
 
 void Window::SetCursorLocation(int x, int y)
 {
-  _instance->SetCursorLocation(x, y);
+  _window_adapter->SetCursorLocation(x, y);
 }
 
 jpoint_t<int> Window::GetCursorLocation()
 {
-  return _instance->GetCursorLocation();
+  return _window_adapter->GetCursorLocation();
 }
 
 void Window::SetCursorEnabled(bool enable)
 {
-  return _instance->SetCursorEnabled(enable);
+  return _window_adapter->SetCursorEnabled(enable);
 }
 
 bool Window::IsCursorEnabled()
 {
-  return _instance->IsCursorEnabled();
+  return _window_adapter->IsCursorEnabled();
 }
 
 void Window::SetCursor(jcursor_style_t t)
 {
-  _instance->SetCursor(t);
+  _window_adapter->SetCursor(t);
 }
 
 void Window::SetCursor(Image *shape, int hotx, int hoty)
 {
-  _instance->SetCursor(shape, hotx, hoty);
-}
-
-void Window::RegisterKeyListener(KeyListener *listener) 
-{
-   std::lock_guard<std::mutex> guard(_key_listener_mutex);
-
-  std::vector<KeyListener *>::iterator i = std::find(_key_listeners.begin(), _key_listeners.end(), listener);
-
-  if (i == _key_listeners.end()) {
-    _key_listeners.push_back(listener);
-  }
-}
-
-void Window::RemoveKeyListener(KeyListener *listener) 
-{
-   std::lock_guard<std::mutex> guard(_key_listener_mutex);
-
-  for (std::vector<KeyListener *>::iterator i=_key_listeners.begin(); i!=_key_listeners.end(); i++) {
-    KeyListener *l = (*i);
-
-    if (dynamic_cast<KeyListener *>(l) == listener) {
-      _key_listeners.erase(i);
-
-      break;
-    }
-  }
-}
-
-const std::vector<KeyListener *> & Window::GetKeyListeners()
-{
-  return _key_listeners;
-}
-
-void Window::RegisterMouseListener(MouseListener *listener) 
-{
-   std::lock_guard<std::mutex> guard(_mouse_listener_mutex);
-
-  std::vector<MouseListener *>::iterator i = std::find(_mouse_listeners.begin(), _mouse_listeners.end(), listener);
-
-  if (i == _mouse_listeners.end()) {
-    _mouse_listeners.push_back(listener);
-  }
-}
-
-void Window::RemoveMouseListener(MouseListener *listener) 
-{
-   std::lock_guard<std::mutex> guard(_mouse_listener_mutex);
-
-  for (std::vector<MouseListener *>::iterator i=_mouse_listeners.begin(); i!=_mouse_listeners.end(); i++) {
-    MouseListener *l = (*i);
-
-    if (dynamic_cast<MouseListener *>(l) == listener) {
-      _mouse_listeners.erase(i);
-
-      break;
-    }
-  }
-}
-
-const std::vector<MouseListener *> & Window::GetMouseListeners()
-{
-  return _mouse_listeners;
+  _window_adapter->SetCursor(shape, hotx, hoty);
 }
 
 void Window::RegisterWindowListener(WindowListener *listener)
@@ -379,21 +257,21 @@ void Window::DispatchWindowEvent(WindowEvent *event)
   for (std::vector<WindowListener *>::iterator i=listeners.begin(); i!=listeners.end() && event->IsConsumed() == false; i++) {
     WindowListener *listener = (*i);
 
-    if (event->GetType() == JWET_CLOSING) {
+    if (event->GetType() == jwindowevent_type_t::Closing) {
       listener->WindowClosing(event);
-    } else if (event->GetType() == JWET_CLOSED) {
+    } else if (event->GetType() == jwindowevent_type_t::Closed) {
       listener->WindowClosed(event);
-    } else if (event->GetType() == JWET_OPENED) {
+    } else if (event->GetType() == jwindowevent_type_t::Opened) {
       listener->WindowOpened(event);
-    } else if (event->GetType() == JWET_RESIZED) {
+    } else if (event->GetType() == jwindowevent_type_t::Resized) {
       listener->WindowResized(event);
-    } else if (event->GetType() == JWET_MOVED) {
+    } else if (event->GetType() == jwindowevent_type_t::Moved) {
       listener->WindowMoved(event);
-    } else if (event->GetType() == JWET_PAINTED) {
+    } else if (event->GetType() == jwindowevent_type_t::Painted) {
       listener->WindowPainted(event);
-    } else if (event->GetType() == JWET_ENTERED) {
+    } else if (event->GetType() == jwindowevent_type_t::Entered) {
       listener->WindowEntered(event);
-    } else if (event->GetType() == JWET_LEAVED) {
+    } else if (event->GetType() == jwindowevent_type_t::Leaved) {
       listener->WindowLeaved(event);
     }
   }

@@ -24,7 +24,7 @@ namespace jcanvas {
 Image::Image(jpixelformat_t pixelformat, jpoint_t<int> size)
 {
   _pixelformat = pixelformat;
-  _interpolation_method = JIM_NEAREST;
+  _blitting = jblitting_t::Nearest;
   _size = size;
 }
 
@@ -47,17 +47,17 @@ jpoint_t<int> Image::GetSize()
   return _size;
 }
 
-void Image::SetInterpolationMethod(jinterpolation_method_t method)
+void Image::SetBlittingFlags(jblitting_t flags)
 {
-  _interpolation_method = method;
+  _blitting = flags;
 }
 
-jinterpolation_method_t Image::GetInterpolationMethod()
+jblitting_t Image::GetBlittingFlags()
 {
-  return _interpolation_method;
+  return _blitting;
 }
 
-Image * Image::Flip(jflip_flags_t mode)
+Image * Image::Flip(jflip_t mode)
 {
   return nullptr;
 }

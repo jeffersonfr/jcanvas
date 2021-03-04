@@ -124,8 +124,8 @@ class Main : public Window, public KeyListener {
         _has_bullet = false;
       }
 
-      g->SetBlittingFlags(JBF_NEAREST);
-      g->SetCompositeFlags(JCF_SRC_OVER);
+      g->SetBlittingFlags(jblitting_t::Nearest);
+      g->SetCompositeFlags(jcomposite_t::SrcOver);
 
 			for (int j=0; j<8; j++) {
 				for (int i=0; i<10; i++) {
@@ -152,10 +152,10 @@ class Main : public Window, public KeyListener {
 
 		virtual void KeyPressed()
 		{
-			EventManager *ev = GetEventManager();
+			EventManager &ev = GetEventManager();
 			double angle_step = 0.1;
 
-			if (ev->IsKeyDown(jcanvas::JKS_SPACE)) {
+			if (ev.IsKeyDown(jkeyevent_symbol_t::Space)) {
 				if (_has_bullet == false) {
 					_bullet_x = _tx;
 					_bullet_y = _ty;
@@ -166,7 +166,7 @@ class Main : public Window, public KeyListener {
 			
 			_step = 0.0;
 
-			if (ev->IsKeyDown(jcanvas::JKS_CURSOR_UP)) {
+			if (ev.IsKeyDown(jkeyevent_symbol_t::CursorUp)) {
 				_step = _step + 2;
 
 				if (_step > 8) {
@@ -174,7 +174,7 @@ class Main : public Window, public KeyListener {
 				}
 			}
 			
-			if (ev->IsKeyDown(jcanvas::JKS_CURSOR_DOWN)) {
+			if (ev.IsKeyDown(jkeyevent_symbol_t::CursorDown)) {
 				_step = _step - 2;
 
 				if (_step < -8) {
@@ -182,7 +182,7 @@ class Main : public Window, public KeyListener {
 				}
 			}
 			
-			if (ev->IsKeyDown(jcanvas::JKS_CURSOR_RIGHT)) {
+			if (ev.IsKeyDown(jkeyevent_symbol_t::CursorRight)) {
 				// _step = 0.0;
 				_angle = (_angle-angle_step);
 				
@@ -191,7 +191,7 @@ class Main : public Window, public KeyListener {
 				}
 			}
 			
-			if (ev->IsKeyDown(jcanvas::JKS_CURSOR_LEFT)) {
+			if (ev.IsKeyDown(jkeyevent_symbol_t::CursorLeft)) {
 				// _step = 0.0;
 				_angle = fmod(_angle+angle_step, 2*M_PI);
 			}

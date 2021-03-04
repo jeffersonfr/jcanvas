@@ -178,7 +178,7 @@ class Test : public Window, public KeyListener {
       jpoint_t
         size = _image->GetSize();
 
-      _hough = new BufferedImage(JPF_RGB32, size);
+      _hough = new BufferedImage(jpixelformat_t::RGB32, size);
 
 		}
 
@@ -275,7 +275,7 @@ class Test : public Window, public KeyListener {
 				gray32[i] = 0xff000000 | (edges[i] << 0x10) | (edges[i] << 0x08) | (edges[i] << 0x00);
 			}
 
-      _hough->GetGraphics()->SetCompositeFlags(JCF_SRC);
+      _hough->GetGraphics()->SetCompositeFlags(jcomposite_t::Src);
       _hough->GetGraphics()->SetRGBArray(gray32, {0, 0, size.x, size.y});
 
 			delete [] gray;
@@ -308,19 +308,15 @@ class Test : public Window, public KeyListener {
 			}
 		}
 
-		virtual bool KeyPressed(jcanvas::KeyEvent *event)
+		virtual bool KeyPressed(KeyEvent *event)
 		{
-			if (Window::KeyPressed(event) == true) {
-				return true;
-			}
-
-			if (event->GetSymbol() == jcanvas::JKS_CURSOR_LEFT) {
+			if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {
 				_lines_threshold -= 10;
-      } else if (event->GetSymbol() == jcanvas::JKS_CURSOR_UP) {
+      } else if (event->GetSymbol() == jkeyevent_symbol_t::CursorUp) {
 				_binary_threshold += 10;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_RIGHT) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorRight) {
 				_lines_threshold += 10;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_DOWN) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorDown) {
 				_binary_threshold -= 10;
 			}
 

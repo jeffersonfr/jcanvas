@@ -28,15 +28,15 @@ namespace jcanvas {
  * \brief
  *
  */
-enum jwindowevent_type_t {
-  JWET_CLOSING,
-  JWET_CLOSED,
-  JWET_OPENED,
-  JWET_RESIZED,
-  JWET_MOVED,
-  JWET_PAINTED,
-  JWET_ENTERED,
-  JWET_LEAVED
+enum class jwindowevent_type_t {
+  Closing,
+  Closed,
+  Opened,
+  Resized,
+  Moved,
+  Painted,
+  Entered,
+  Leaved
 };
 
 /**

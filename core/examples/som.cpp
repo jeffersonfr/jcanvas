@@ -311,7 +311,7 @@ class SOM : public Window {
 			g->FillRectangle({0, 0, size.x, size.y});
 
 			if ((offscreen == nullptr) || ((imagewidth != w) || (imageheight != h))) {
-				offscreen = new BufferedImage(JPF_RGB32, {w, h});
+				offscreen = new BufferedImage(jpixelformat_t::RGB32, {w, h});
 
 				imagewidth = w;
 				imageheight = h;

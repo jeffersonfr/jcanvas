@@ -45,7 +45,7 @@ class GraphicsTeste : public Window, public MouseListener {
 		{
 		}
 
-    void DrawPoint(jcanvas::MouseEvent *event)
+    void DrawPoint(MouseEvent *event)
     {
       if (pressed == false) {
         return;
@@ -74,7 +74,7 @@ class GraphicsTeste : public Window, public MouseListener {
       Repaint();
     }
 
-		virtual bool MousePressed(jcanvas::MouseEvent *event)
+		virtual bool MousePressed(MouseEvent *event)
 		{
       pressed = true;
 
@@ -83,7 +83,7 @@ class GraphicsTeste : public Window, public MouseListener {
 			return true;
 		}
 
-		virtual bool MouseReleased(jcanvas::MouseEvent *event)
+		virtual bool MouseReleased(MouseEvent *event)
 		{
       pressed = false;
       last = {-1, -1};
@@ -91,7 +91,7 @@ class GraphicsTeste : public Window, public MouseListener {
 			return true;
 		}
 
-		virtual bool MouseMoved(jcanvas::MouseEvent *event)
+		virtual bool MouseMoved(MouseEvent *event)
 		{
       DrawPoint(event);
 

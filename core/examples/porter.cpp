@@ -41,8 +41,8 @@ class PorterTeste : public Window {
 
 			_bg = new BufferedImage("images/background.png");
 
-			_img1 = new BufferedImage(JPF_ARGB, {RECT_SIZE, RECT_SIZE});
-			_img2 = new BufferedImage(JPF_ARGB, {RECT_SIZE, RECT_SIZE});
+			_img1 = new BufferedImage(jpixelformat_t::ARGB, {RECT_SIZE, RECT_SIZE});
+			_img2 = new BufferedImage(jpixelformat_t::ARGB, {RECT_SIZE, RECT_SIZE});
 
 			_img1->GetGraphics()->SetColor(0xa0ff0000);
 			_img1->GetGraphics()->FillRectangle({0, 0, RECT_SIZE, RECT_SIZE});
@@ -58,12 +58,12 @@ class PorterTeste : public Window {
       delete _bg;
 		}
 
-		virtual void PaintComposition(Graphics *g, std::string name, jcomposite_flags_t t, int x, int y)
+		virtual void PaintComposition(Graphics *g, std::string name, jcomposite_t t, int x, int y)
 		{
-			Image *image = new BufferedImage(JPF_ARGB, {2*RECT_SIZE, 2*RECT_SIZE});
+			Image *image = new BufferedImage(jpixelformat_t::ARGB, {2*RECT_SIZE, 2*RECT_SIZE});
 			Graphics *ig = image->GetGraphics();
 
-			ig->SetCompositeFlags(JCF_SRC_OVER);
+			ig->SetCompositeFlags(jcomposite_t::SrcOver);
 			ig->DrawImage(_img1, jpoint_t<int>{1*RECT_SIZE/2, 1*RECT_SIZE/2});
 			ig->SetCompositeFlags(t);
 
@@ -78,7 +78,7 @@ class PorterTeste : public Window {
 				ig->SetRGBArray(buffer, {2*RECT_SIZE/2, 2*RECT_SIZE/2, size.x, size.y});
 			}
 
-			g->SetCompositeFlags(JCF_SRC_OVER);
+			g->SetCompositeFlags(jcomposite_t::SrcOver);
 			g->DrawImage(image, jpoint_t<int>{x, y});
 			
 			Font *font = &Font::Size16;
@@ -90,15 +90,11 @@ class PorterTeste : public Window {
 			delete image;
 		}
 
-		virtual bool KeyPressed(jcanvas::KeyEvent *event)
+		virtual bool KeyPressed(KeyEvent *event)
 		{
-			if (Window::KeyPressed(event) == true) {
-				return true;
-			}
-	
-			if (event->GetSymbol() == jcanvas::JKS_1) {
+			if (event->GetSymbol() == jkeyevent_symbol_t::Number1) {
 				_is_drawimage = true;
-			} else if (event->GetSymbol() == jcanvas::JKS_2) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::Number2) {
 				_is_drawimage = false;
 			}
 
@@ -122,35 +118,35 @@ class PorterTeste : public Window {
 			g->SetFont(font);
 			g->DrawString("Press 1 to use DrawImage() and 2 to use SetRGBArray()", jpoint_t<int>{0, 0});
 
-			PaintComposition(g, "CLEAR", JCF_CLEAR, 0*(2*RECT_SIZE+16), 1*(2*RECT_SIZE+16));
+			PaintComposition(g, "CLEAR", jcomposite_t::Clear, 0*(2*RECT_SIZE+16), 1*(2*RECT_SIZE+16));
 
-			PaintComposition(g, "SRC", JCF_SRC, 0*(2*RECT_SIZE+16), 2*(2*RECT_SIZE+16));
-			PaintComposition(g, "SRC_OVER", JCF_SRC_OVER, 1*(2*RECT_SIZE+16), 2*(2*RECT_SIZE+16));
-			PaintComposition(g, "SRC_IN", JCF_SRC_IN, 2*(2*RECT_SIZE+16), 2*(2*RECT_SIZE+16));
-			PaintComposition(g, "SRC_OUT", JCF_SRC_OUT, 3*(2*RECT_SIZE+16), 2*(2*RECT_SIZE+16));
-			PaintComposition(g, "SRC_ATOP", JCF_SRC_ATOP, 4*(2*RECT_SIZE+16), 2*(2*RECT_SIZE+16));
+			PaintComposition(g, "SRC", jcomposite_t::Src, 0*(2*RECT_SIZE+16), 2*(2*RECT_SIZE+16));
+			PaintComposition(g, "SRC_OVER", jcomposite_t::SrcOver, 1*(2*RECT_SIZE+16), 2*(2*RECT_SIZE+16));
+			PaintComposition(g, "SRC_IN", jcomposite_t::SrcIn, 2*(2*RECT_SIZE+16), 2*(2*RECT_SIZE+16));
+			PaintComposition(g, "SRC_OUT", jcomposite_t::SrcOut, 3*(2*RECT_SIZE+16), 2*(2*RECT_SIZE+16));
+			PaintComposition(g, "SRC_ATOP", jcomposite_t::SrcAtop, 4*(2*RECT_SIZE+16), 2*(2*RECT_SIZE+16));
 			
-			PaintComposition(g, "DST", JCF_DST, 0*(2*RECT_SIZE+16), 3*(2*RECT_SIZE+16));
-			PaintComposition(g, "DST_OVER", JCF_DST_OVER, 1*(2*RECT_SIZE+16), 3*(2*RECT_SIZE+16));
-			PaintComposition(g, "DST_IN", JCF_DST_IN, 2*(2*RECT_SIZE+16), 3*(2*RECT_SIZE+16));
-			PaintComposition(g, "DST_OUT", JCF_DST_OUT, 3*(2*RECT_SIZE+16), 3*(2*RECT_SIZE+16));
-			PaintComposition(g, "DST_ATOP", JCF_DST_ATOP, 4*(2*RECT_SIZE+16), 3*(2*RECT_SIZE+16));
+			PaintComposition(g, "DST", jcomposite_t::Dst, 0*(2*RECT_SIZE+16), 3*(2*RECT_SIZE+16));
+			PaintComposition(g, "DST_OVER", jcomposite_t::DstOver, 1*(2*RECT_SIZE+16), 3*(2*RECT_SIZE+16));
+			PaintComposition(g, "DST_IN", jcomposite_t::DstIn, 2*(2*RECT_SIZE+16), 3*(2*RECT_SIZE+16));
+			PaintComposition(g, "DST_OUT", jcomposite_t::DstOut, 3*(2*RECT_SIZE+16), 3*(2*RECT_SIZE+16));
+			PaintComposition(g, "DST_ATOP", jcomposite_t::DstAtop, 4*(2*RECT_SIZE+16), 3*(2*RECT_SIZE+16));
 			
-			PaintComposition(g, "XOR", JCF_XOR, 0*(2*RECT_SIZE+16), 4*(2*RECT_SIZE+16));
-			PaintComposition(g, "ADD", JCF_ADD, 1*(2*RECT_SIZE+16), 4*(2*RECT_SIZE+16));
-			PaintComposition(g, "SATURATE", JCF_SATURATE, 2*(2*RECT_SIZE+16), 4*(2*RECT_SIZE+16));
-			PaintComposition(g, "MULTIPLY", JCF_MULTIPLY, 3*(2*RECT_SIZE+16), 4*(2*RECT_SIZE+16));
-			PaintComposition(g, "SCREEN", JCF_SCREEN, 4*(2*RECT_SIZE+16), 4*(2*RECT_SIZE+16));
-			PaintComposition(g, "OVERLAY", JCF_OVERLAY, 5*(2*RECT_SIZE+16), 4*(2*RECT_SIZE+16));
-			PaintComposition(g, "DARKEN", JCF_DARKEN, 6*(2*RECT_SIZE+16), 4*(2*RECT_SIZE+16));
+			PaintComposition(g, "XOR", jcomposite_t::Xor, 0*(2*RECT_SIZE+16), 4*(2*RECT_SIZE+16));
+			PaintComposition(g, "ADD", jcomposite_t::Add, 1*(2*RECT_SIZE+16), 4*(2*RECT_SIZE+16));
+			PaintComposition(g, "SATURATE", jcomposite_t::Saturate, 2*(2*RECT_SIZE+16), 4*(2*RECT_SIZE+16));
+			PaintComposition(g, "MULTIPLY", jcomposite_t::Multiply, 3*(2*RECT_SIZE+16), 4*(2*RECT_SIZE+16));
+			PaintComposition(g, "SCREEN", jcomposite_t::Screen, 4*(2*RECT_SIZE+16), 4*(2*RECT_SIZE+16));
+			PaintComposition(g, "OVERLAY", jcomposite_t::Overlay, 5*(2*RECT_SIZE+16), 4*(2*RECT_SIZE+16));
+			PaintComposition(g, "DARKEN", jcomposite_t::Darken, 6*(2*RECT_SIZE+16), 4*(2*RECT_SIZE+16));
 
-			PaintComposition(g, "LIGHTEN", JCF_LIGHTEN, 0*(2*RECT_SIZE+16), 5*(2*RECT_SIZE+16));
-			PaintComposition(g, "DIFFERENCE", JCF_DIFFERENCE, 1*(2*RECT_SIZE+16), 5*(2*RECT_SIZE+16));
-			PaintComposition(g, "EXCLUSION", JCF_EXCLUSION, 2*(2*RECT_SIZE+16), 5*(2*RECT_SIZE+16));
-			PaintComposition(g, "DODGE", JCF_DODGE, 3*(2*RECT_SIZE+16), 5*(2*RECT_SIZE+16));
-			PaintComposition(g, "BURN", JCF_BURN, 4*(2*RECT_SIZE+16), 5*(2*RECT_SIZE+16));
-			PaintComposition(g, "HARD", JCF_HARD, 5*(2*RECT_SIZE+16), 5*(2*RECT_SIZE+16));
-			PaintComposition(g, "LIGHT", JCF_LIGHT, 6*(2*RECT_SIZE+16), 5*(2*RECT_SIZE+16));
+			PaintComposition(g, "LIGHTEN", jcomposite_t::Lighten, 0*(2*RECT_SIZE+16), 5*(2*RECT_SIZE+16));
+			PaintComposition(g, "DIFFERENCE", jcomposite_t::Difference, 1*(2*RECT_SIZE+16), 5*(2*RECT_SIZE+16));
+			PaintComposition(g, "EXCLUSION", jcomposite_t::Exclusion, 2*(2*RECT_SIZE+16), 5*(2*RECT_SIZE+16));
+			PaintComposition(g, "DODGE", jcomposite_t::Dodge, 3*(2*RECT_SIZE+16), 5*(2*RECT_SIZE+16));
+			PaintComposition(g, "BURN", jcomposite_t::Burn, 4*(2*RECT_SIZE+16), 5*(2*RECT_SIZE+16));
+			PaintComposition(g, "HARD", jcomposite_t::Hard, 5*(2*RECT_SIZE+16), 5*(2*RECT_SIZE+16));
+			PaintComposition(g, "LIGHT", jcomposite_t::Light, 6*(2*RECT_SIZE+16), 5*(2*RECT_SIZE+16));
 		}
 
 };

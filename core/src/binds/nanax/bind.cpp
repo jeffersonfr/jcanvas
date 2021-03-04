@@ -20,6 +20,7 @@
 #include "jcanvas/core/jbufferedimage.h"
 #include "jcanvas/core/jwindowadapter.h"
 #include "jcanvas/core/japplication.h"
+#include "jcanvas/core/jenum.h"
 
 #include <thread>
 #include <mutex>
@@ -33,7 +34,7 @@
 namespace jcanvas {
 
 /** \brief */
-jcanvas::Image *sg_back_buffer = nullptr;
+Image *sg_back_buffer = nullptr;
 /** \brief */
 static std::atomic<bool> sg_repaint;
 /** \brief */
@@ -53,204 +54,204 @@ static bool sg_fullscreen = false;
 /** \brief */
 static bool sg_quitting = false;
 /** \brief */
-static jcanvas::jpoint_t<int> sg_screen = {0, 0};
+static jpoint_t<int> sg_screen = {0, 0};
 /** \brief */
-static jcanvas::jrect_t<int> sg_last_bounds = {0, 0, 0, 0};
+static jrect_t<int> sg_last_bounds = {0, 0, 0, 0};
 /** \brief */
 static std::mutex sg_loop_mutex;
 /** \brief */
-static jcanvas::Image *sg_jcanvas_icon = nullptr;
+static Image *sg_jcanvas_icon = nullptr;
 /** \brief */
 static Window *sg_jcanvas_window = nullptr;
 /** \brief */
-static jcursor_style_t sg_jcanvas_cursor = JCS_DEFAULT;
+static jcursor_style_t sg_jcanvas_cursor = jcursor_style_t::Default;
 
-static jcanvas::jkeyevent_symbol_t TranslateToNativeKeySymbol(int symbol)
+static jkeyevent_symbol_t TranslateToNativeKeySymbol(int symbol)
 {
   switch (symbol) {
     case 13:
-      return jcanvas::JKS_ENTER; // jcanvas::JKS_RETURN;
+      return jkeyevent_symbol_t::Enter; // jkeyevent_symbol_t::Return;
     case 8:
-      return jcanvas::JKS_BACKSPACE;
+      return jkeyevent_symbol_t::Backspace;
     case 9:
-      return jcanvas::JKS_TAB;
+      return jkeyevent_symbol_t::Tab;
     // case ALLEGRO_KEY_CANCEL:
-    //  return jcanvas::JKS_CANCEL;
+    //  return jkeyevent_symbol_t::Cancel;
     case 27:
-      return jcanvas::JKS_ESCAPE;
+      return jkeyevent_symbol_t::Escape;
     case 32:
-      return jcanvas::JKS_SPACE;
+      return jkeyevent_symbol_t::Space;
     // case 39:
-    //  return jcanvas::JKS_APOSTHROFE;
+    //  return jkeyevent_symbol_t::Aposthrophe;
     case 44:   
-      return jcanvas::JKS_COMMA;
+      return jkeyevent_symbol_t::Comma;
     case 45:
-      return jcanvas::JKS_MINUS_SIGN;
+      return jkeyevent_symbol_t::Minus;
     case 46:  
-      return jcanvas::JKS_PERIOD;
+      return jkeyevent_symbol_t::Period;
     case 47:
-      return jcanvas::JKS_SLASH;
+      return jkeyevent_symbol_t::Slash;
     case 48:     
-      return jcanvas::JKS_0;
+      return jkeyevent_symbol_t::Number0;
     case 49:
-      return jcanvas::JKS_1;
+      return jkeyevent_symbol_t::Number1;
     case 50:
-      return jcanvas::JKS_2;
+      return jkeyevent_symbol_t::Number2;
     case 51:
-      return jcanvas::JKS_3;
+      return jkeyevent_symbol_t::Number3;
     case 52:
-      return jcanvas::JKS_4;
+      return jkeyevent_symbol_t::Number4;
     case 53:
-      return jcanvas::JKS_5;
+      return jkeyevent_symbol_t::Number5;
     case 54:
-      return jcanvas::JKS_6;
+      return jkeyevent_symbol_t::Number6;
     case 55:
-      return jcanvas::JKS_7;
+      return jkeyevent_symbol_t::Number7;
     case 56:
-      return jcanvas::JKS_8;
+      return jkeyevent_symbol_t::Number8;
     case 57:
-      return jcanvas::JKS_9;
+      return jkeyevent_symbol_t::Number9;
     case 59:
-      return jcanvas::JKS_SEMICOLON;
+      return jkeyevent_symbol_t::SemiColon;
     case 61: 
-      return jcanvas::JKS_EQUALS_SIGN;
+      return jkeyevent_symbol_t::Equals;
     case 65:
-      return jcanvas::JKS_a;
+      return jkeyevent_symbol_t::a;
     case 66:
-      return jcanvas::JKS_b;
+      return jkeyevent_symbol_t::b;
     case 67:
-      return jcanvas::JKS_c;
+      return jkeyevent_symbol_t::c;
     case 68:
-      return jcanvas::JKS_d;
+      return jkeyevent_symbol_t::d;
     case 69:
-      return jcanvas::JKS_e;
+      return jkeyevent_symbol_t::e;
     case 70:
-      return jcanvas::JKS_f;
+      return jkeyevent_symbol_t::f;
     case 71:
-      return jcanvas::JKS_g;
+      return jkeyevent_symbol_t::g;
     case 72:
-      return jcanvas::JKS_h;
+      return jkeyevent_symbol_t::h;
     case 73:
-      return jcanvas::JKS_i;
+      return jkeyevent_symbol_t::i;
     case 74:
-      return jcanvas::JKS_j;
+      return jkeyevent_symbol_t::j;
     case 75:
-      return jcanvas::JKS_k;
+      return jkeyevent_symbol_t::k;
     case 76:
-      return jcanvas::JKS_l;
+      return jkeyevent_symbol_t::l;
     case 77:
-      return jcanvas::JKS_m;
+      return jkeyevent_symbol_t::m;
     case 78:
-      return jcanvas::JKS_n;
+      return jkeyevent_symbol_t::n;
     case 79:
-      return jcanvas::JKS_o;
+      return jkeyevent_symbol_t::o;
     case 80:
-      return jcanvas::JKS_p;
+      return jkeyevent_symbol_t::p;
     case 81:
-      return jcanvas::JKS_q;
+      return jkeyevent_symbol_t::q;
     case 82:
-      return jcanvas::JKS_r;
+      return jkeyevent_symbol_t::r;
     case 83:
-      return jcanvas::JKS_s;
+      return jkeyevent_symbol_t::s;
     case 84:
-      return jcanvas::JKS_t;
+      return jkeyevent_symbol_t::t;
     case 85:
-      return jcanvas::JKS_u;
+      return jkeyevent_symbol_t::u;
     case 86:
-      return jcanvas::JKS_v;
+      return jkeyevent_symbol_t::v;
     case 87:
-      return jcanvas::JKS_w;
+      return jkeyevent_symbol_t::w;
     case 88:
-      return jcanvas::JKS_x;
+      return jkeyevent_symbol_t::x;
     case 89:
-      return jcanvas::JKS_y;
+      return jkeyevent_symbol_t::y;
     case 90:
-      return jcanvas::JKS_z;
+      return jkeyevent_symbol_t::z;
     case 91:
-      return jcanvas::JKS_SQUARE_BRACKET_LEFT;
+      return jkeyevent_symbol_t::SquareBracketLeft;
     case 92:   
-      return jcanvas::JKS_BACKSLASH;
+      return jkeyevent_symbol_t::BackSlash;
     case 93:
-      return jcanvas::JKS_SQUARE_BRACKET_RIGHT;
+      return jkeyevent_symbol_t::SquareBracketRight;
     case 96:
-      return jcanvas::JKS_GRAVE_ACCENT;
+      return jkeyevent_symbol_t::GraveAccent;
     case 127:
-      return jcanvas::JKS_DELETE;
+      return jkeyevent_symbol_t::Delete;
     case 37:
-      return jcanvas::JKS_CURSOR_LEFT;
+      return jkeyevent_symbol_t::CursorLeft;
     case 39:
-      return jcanvas::JKS_CURSOR_RIGHT;
+      return jkeyevent_symbol_t::CursorRight;
     case 38:  
-      return jcanvas::JKS_CURSOR_UP;
+      return jkeyevent_symbol_t::CursorUp;
     case 40:
-      return jcanvas::JKS_CURSOR_DOWN;
+      return jkeyevent_symbol_t::CursorDown;
     // case 16777222:  
-    //  return jcanvas::JKS_INSERT;
+    //  return jkeyevent_symbol_t::Insert;
     // case 16777232:     
-    //  return jcanvas::JKS_HOME;
+    //  return jkeyevent_symbol_t::Home;
     // case 16777233:
-    //  return jcanvas::JKS_END;
+    //  return jkeyevent_symbol_t::End;
     // case 16777238:
-    //  return jcanvas::JKS_PAGE_UP;
+    //  return jkeyevent_symbol_t::PageUp;
     // case 16777239:
-    //  return jcanvas::JKS_PAGE_DOWN;
+    //  return jkeyevent_symbol_t::PageDown;
     // case ALLEGRO_KEY_PRINTSCREEN:   
-    //  return jcanvas::JKS_PRINT;
+    //  return jkeyevent_symbol_t::Print;
     // case 16777224:
-    //  return jcanvas::JKS_PAUSE;
+    //  return jkeyevent_symbol_t::Pause;
     // case ALLEGRO_KEY_RED:
-    //  return jcanvas::JKS_RED;
+    //  return jkeyevent_symbol_t::Red;
     // case ALLEGRO_KEY_GREEN:
-    //  return jcanvas::JKS_GREEN;
+    //  return jkeyevent_symbol_t::Green;
     // case ALLEGRO_KEY_YELLOW:
-    //  return jcanvas::JKS_YELLOW;
+    //  return jkeyevent_symbol_t::Yellow;
     // case ALLEGRO_KEY_BLUE:
-    //  return jcanvas::JKS_BLUE;
+    //  return jkeyevent_symbol_t::Blue;
     case 65470:
-      return jcanvas::JKS_F1;
+      return jkeyevent_symbol_t::F1;
     case 65471:
-      return jcanvas::JKS_F2;
+      return jkeyevent_symbol_t::F2;
     case 65472:
-      return jcanvas::JKS_F3;
+      return jkeyevent_symbol_t::F3;
     case 65473:
-      return jcanvas::JKS_F4;
+      return jkeyevent_symbol_t::F4;
     case 65474:
-      return jcanvas::JKS_F5;
+      return jkeyevent_symbol_t::F5;
     case 65475:
-      return jcanvas::JKS_F6;
+      return jkeyevent_symbol_t::F6;
     case 65476:
-      return jcanvas::JKS_F7;
+      return jkeyevent_symbol_t::F7;
     case 65477:
-      return jcanvas::JKS_F8;
+      return jkeyevent_symbol_t::F8;
     case 65478:
-      return jcanvas::JKS_F9;
+      return jkeyevent_symbol_t::F9;
     case 65479:
-      return jcanvas::JKS_F10;
+      return jkeyevent_symbol_t::F10;
     case 65480:
-      return jcanvas::JKS_F11;
+      return jkeyevent_symbol_t::F11;
     case 65481:
-      return jcanvas::JKS_F12;
+      return jkeyevent_symbol_t::F12;
     case 16:
-      return jcanvas::JKS_SHIFT;
+      return jkeyevent_symbol_t::Shift;
     case 17:
-      return jcanvas::JKS_CONTROL;
+      return jkeyevent_symbol_t::Control;
     // case 16777251:
-    //  return jcanvas::JKS_ALT;
+    //  return jkeyevent_symbol_t::Alr;
     // case ALLEGRO_KEY_ALTGR:
-    //  return jcanvas::JKS_ALTGR;
+    //  return jkeyevent_symbol_t::AltGr;
     // case ALLEGRO_KEY_LMETA:
     // case ALLEGRO_KEY_RMETA:
-    //  return jcanvas::JKS_META;
+    //  return jkeyevent_symbol_t::Meta;
     // case ALLEGRO_KEY_LSUPER:
     // case ALLEGRO_KEY_RSUPER:
-    //  return jcanvas::JKS_SUPER;
+    //  return jkeyevent_symbol_t::Super;
     // case ALLEGRO_KEY_HYPER:
-    //  return jcanvas::JKS_HYPER;
+    //  return jkeyevent_symbol_t::Hyper;
     default: 
       break;
   }
 
-  return jcanvas::JKS_UNKNOWN;
+  return jkeyevent_symbol_t::Unknown;
 }
 
 void Application::Init(int argc, char **argv)
@@ -281,7 +282,7 @@ void Application::Loop()
     return;
   }
 
-  sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_OPENED));
+  sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Opened));
 
   std::lock_guard<std::mutex> lock(sg_loop_mutex);
 
@@ -317,7 +318,7 @@ static void destroy_callback(const nana::arg_destroy &arg)
 
   sg_quitting = true;
 
-  sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_CLOSED));
+  sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Closed));
 }
 
 static void expose_callback(const nana::arg_expose &arg)
@@ -329,51 +330,51 @@ static void resized_callback(const nana::arg_resized &arg)
 {
   dw->update();
           
-  sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_RESIZED));
+  sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Resized));
 }
 
 static void moved_callback(const nana::arg_move &arg)
 {
-  sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_MOVED));
+  sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Moved));
 }
 
 static void focus_callback(const nana::arg_mouse &arg)
 {
   if (arg.evt_code == nana::event_code::mouse_enter) {
-    sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_ENTERED));
+    sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Entered));
   } else if (arg.evt_code == nana::event_code::mouse_leave) {
-    sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_LEAVED));
+    sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Leaved));
   }
 }
 
 static void mouse_input_callback(const nana::arg_mouse &arg)
 {
-  static jcanvas::jmouseevent_button_t buttons = jcanvas::JMB_NONE;
+  static jmouseevent_button_t buttons = jmouseevent_button_t::None;
 
   int mouse_z = 0;
-  jcanvas::jmouseevent_button_t button = jcanvas::JMB_NONE;
-  jcanvas::jmouseevent_type_t type = jcanvas::JMT_UNKNOWN;
+  jmouseevent_button_t button = jmouseevent_button_t::None;
+  jmouseevent_type_t type = jmouseevent_type_t::Unknown;
 
   sg_mouse_x = arg.pos.x;
   sg_mouse_y = arg.pos.y;
 
   if (arg.evt_code == nana::event_code::mouse_move) {
-    type = jcanvas::JMT_MOVED;
+    type = jmouseevent_type_t::Moved;
   } else {
     if (arg.button == nana::mouse::left_button) {
-      button = jcanvas::JMB_BUTTON1;
+      button = jmouseevent_button_t::Button1;
     } else if (arg.button == nana::mouse::middle_button) {
-      button = jcanvas::JMB_BUTTON2;
+      button = jmouseevent_button_t::Button2;
     } else if (arg.button == nana::mouse::right_button) {
-      button = jcanvas::JMB_BUTTON3;
+      button = jmouseevent_button_t::Button3;
     }
   
     if (arg.evt_code == nana::event_code::mouse_down or arg.evt_code == nana::event_code::dbl_click) {
-      type = jcanvas::JMT_PRESSED;
-      buttons = (jcanvas::jmouseevent_button_t)(buttons | button);
+      type = jmouseevent_type_t::Pressed;
+      buttons = jenum_t{buttons}.Or(button);
     } else if (arg.evt_code == nana::event_code::mouse_up) {
-      type = jcanvas::JMT_RELEASED;
-      buttons = (jcanvas::jmouseevent_button_t)(buttons & ~button);
+      type = jmouseevent_type_t::Released;
+      buttons = jenum_t{buttons}.And(jenum_t{button}.Not());
     }
 
     mouse_z = 1;
@@ -383,19 +384,19 @@ static void mouse_input_callback(const nana::arg_mouse &arg)
     }
   }
 
-  if (sg_jcanvas_window->GetEventManager()->IsAutoGrab() == true && buttons != jcanvas::JMB_NONE) {
+  if (sg_jcanvas_window->GetEventManager().IsAutoGrab() == true && buttons != jmouseevent_button_t::None) {
     fm->set_capture(true);
   } else {
     fm->release_capture();
   }
 
-  sg_jcanvas_window->GetEventManager()->PostEvent(new jcanvas::MouseEvent(sg_jcanvas_window, type, button, buttons, {sg_mouse_x, sg_mouse_y}, mouse_z));
+  sg_jcanvas_window->GetEventManager().PostEvent(new MouseEvent(sg_jcanvas_window, type, button, buttons, {sg_mouse_x, sg_mouse_y}, mouse_z));
 }
 
 static void mouse_wheel_input_callback(const nana::arg_wheel &arg)
 {
-  jcanvas::jmouseevent_button_t button = jcanvas::JMB_NONE;
-  jcanvas::jmouseevent_type_t type = jcanvas::JMT_ROTATED;
+  jmouseevent_button_t button = jmouseevent_button_t::None;
+  jmouseevent_type_t type = jmouseevent_type_t::Rotated;
 
   int mouse_z = 1;
 
@@ -403,35 +404,31 @@ static void mouse_wheel_input_callback(const nana::arg_wheel &arg)
     mouse_z = -1;
   }
 
-  sg_jcanvas_window->GetEventManager()->PostEvent(new jcanvas::MouseEvent(sg_jcanvas_window, type, button, jcanvas::JMB_NONE, {sg_mouse_x, sg_mouse_y}, mouse_z));
+  sg_jcanvas_window->GetEventManager().PostEvent(new MouseEvent(sg_jcanvas_window, type, button, jmouseevent_button_t::None, {sg_mouse_x, sg_mouse_y}, mouse_z));
 }
 
 static void key_input_callback(const nana::arg_keyboard &arg)
 {
-  jcanvas::jkeyevent_type_t type;
-  jcanvas::jkeyevent_modifiers_t mod;
-
-  mod = (jcanvas::jkeyevent_modifiers_t)(0);
+  jkeyevent_type_t type = jkeyevent_type_t::Unknown;
+  jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
   if (arg.shift == true) {
-    mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_SHIFT);
+    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
   } else if (arg.ctrl == true) {
-    mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_CONTROL);
+    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
   } else if (arg.alt == true) {
-    mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_ALT);
+    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
   }
 
-  type = jcanvas::JKT_UNKNOWN;
-  
   if (arg.evt_code == nana::event_code::key_press) {
-    type = jcanvas::JKT_PRESSED;
+    type = jkeyevent_type_t::Pressed;
   } else if (arg.evt_code == nana::event_code::key_release) {
-    type = jcanvas::JKT_RELEASED;
+    type = jkeyevent_type_t::Released;
   }
 
-  jcanvas::jkeyevent_symbol_t symbol = TranslateToNativeKeySymbol(arg.key);
+  jkeyevent_symbol_t symbol = TranslateToNativeKeySymbol(arg.key);
 
-  sg_jcanvas_window->GetEventManager()->PostEvent(new jcanvas::KeyEvent(sg_jcanvas_window, type, mod, jcanvas::KeyEvent::GetCodeFromSymbol(symbol), symbol));
+  sg_jcanvas_window->GetEventManager().PostEvent(new KeyEvent(sg_jcanvas_window, type, mod, KeyEvent::GetCodeFromSymbol(symbol), symbol));
 }
 
 static void paint_callback(const nana::paint::graphics& graph)
@@ -444,7 +441,7 @@ static void paint_callback(const nana::paint::graphics& graph)
     bounds = sg_jcanvas_window->GetBounds();
 
   if (sg_back_buffer != nullptr) {
-    jcanvas::jpoint_t<int>
+    jpoint_t<int>
       size = sg_back_buffer->GetSize();
 
     if (size.x != bounds.size.x or size.y != bounds.size.y) {
@@ -454,20 +451,20 @@ static void paint_callback(const nana::paint::graphics& graph)
   }
 
   if (sg_back_buffer == nullptr) {
-    sg_back_buffer = new jcanvas::BufferedImage(jcanvas::JPF_RGB32, bounds.size);
+    sg_back_buffer = new BufferedImage(jpixelformat_t::RGB32, bounds.size);
   }
 
-  jcanvas::Graphics 
+  Graphics 
     *g = sg_back_buffer->GetGraphics();
 
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
   g->Reset();
-  g->SetCompositeFlags(jcanvas::JCF_SRC);
+  g->SetCompositeFlags(jcomposite_t::Src);
 
   sg_jcanvas_window->Paint(g);
 
   g->Flush();
+
+  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
 
   uint8_t *data = sg_back_buffer->LockData();
 
@@ -485,12 +482,12 @@ static void paint_callback(const nana::paint::graphics& graph)
 
   sg_back_buffer->UnlockData();
 
-  sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_PAINTED));
+  sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Painted));
   
   std::this_thread::yield();
 }
 
-WindowAdapter::WindowAdapter(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds)
+WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 {
   if (fm != nullptr) {
     throw std::runtime_error("Cannot create more than one window");
@@ -598,7 +595,7 @@ void WindowAdapter::SetBounds(jrect_t<int> bounds)
   fm->move({bounds.point.x, bounds.point.y});
 }
 
-jcanvas::jrect_t<int> WindowAdapter::GetBounds()
+jrect_t<int> WindowAdapter::GetBounds()
 {
   nana::size s = fm->size();
   nana::point p = fm->pos();
@@ -666,30 +663,30 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
 {
   nana::cursor type = nana::cursor::arrow;
 
-  if (style == JCS_DEFAULT) {
-  } else if (style == JCS_CROSSHAIR) {
-  } else if (style == JCS_EAST) {
-  } else if (style == JCS_WEST) {
-  } else if (style == JCS_NORTH) {
-  } else if (style == JCS_SOUTH) {
-  } else if (style == JCS_HAND) {
+  if (style == jcursor_style_t::Default) {
+  } else if (style == jcursor_style_t::Crosshair) {
+  } else if (style == jcursor_style_t::East) {
+  } else if (style == jcursor_style_t::West) {
+  } else if (style == jcursor_style_t::North) {
+  } else if (style == jcursor_style_t::South) {
+  } else if (style == jcursor_style_t::Hand) {
     type = nana::cursor::hand;
-  } else if (style == JCS_MOVE) {
-  } else if (style == JCS_NS) {
+  } else if (style == jcursor_style_t::Move) {
+  } else if (style == jcursor_style_t::Vertical) {
     type = nana::cursor::size_ns;
-  } else if (style == JCS_WE) {
+  } else if (style == jcursor_style_t::Horizontal) {
     type = nana::cursor::size_we;
-  } else if (style == JCS_NW_CORNER) {
+  } else if (style == jcursor_style_t::NorthWest) {
     type = nana::cursor::size_top_left;
-  } else if (style == JCS_NE_CORNER) {
+  } else if (style == jcursor_style_t::NorthEast) {
     type = nana::cursor::size_top_right;
-  } else if (style == JCS_SW_CORNER) {
+  } else if (style == jcursor_style_t::SouthWest) {
     type = nana::cursor::size_bottom_left;
-  } else if (style == JCS_SE_CORNER) {
+  } else if (style == jcursor_style_t::SouthEast) {
     type = nana::cursor::size_bottom_right;
-  } else if (style == JCS_TEXT) {
+  } else if (style == jcursor_style_t::Text) {
     type = nana::cursor::iterm;
-  } else if (style == JCS_WAIT) {
+  } else if (style == jcursor_style_t::Wait) {
     type = nana::cursor::wait;
   }
 
@@ -709,14 +706,14 @@ void WindowAdapter::SetRotation(jwindow_rotation_t t)
 
 jwindow_rotation_t WindowAdapter::GetRotation()
 {
-  return jcanvas::JWR_NONE;
+  return jwindow_rotation_t::None;
 }
 
-void WindowAdapter::SetIcon(jcanvas::Image *image)
+void WindowAdapter::SetIcon(Image *image)
 {
 }
 
-jcanvas::Image * WindowAdapter::GetIcon()
+Image * WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }

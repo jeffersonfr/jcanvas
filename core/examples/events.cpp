@@ -46,10 +46,10 @@ class UserEvent {
 	private:
 		userevent_type_t _type;
 		// \brief key event
-		jcanvas::jkeyevent_symbol_t _symbol;
-		jcanvas::jkeyevent_modifiers_t _mod;
+		jkeyevent_symbol_t _symbol;
+		jkeyevent_modifiers_t _mod;
 		// \brief mouse events
-		jcanvas::jmouseevent_button_t _button;
+		jmouseevent_button_t _button;
 		int _code;
 		int _x;
 		int _y;
@@ -58,7 +58,7 @@ class UserEvent {
 		int _click_count;
 
 	public:
-		UserEvent(userevent_type_t type, jcanvas::jkeyevent_modifiers_t mod, int code, jcanvas::jkeyevent_symbol_t symbol)
+		UserEvent(userevent_type_t type, jkeyevent_modifiers_t mod, int code, jkeyevent_symbol_t symbol)
 		{
 			_type = type;
 
@@ -67,7 +67,7 @@ class UserEvent {
 			_mod = mod;
 		}
 
-		UserEvent(userevent_type_t type, jcanvas::jmouseevent_button_t button, int click_count, int x, int y, double vx, double vy)
+		UserEvent(userevent_type_t type, jmouseevent_button_t button, int click_count, int x, int y, double vx, double vy)
 		{
 			_type = type;
 
@@ -88,7 +88,7 @@ class UserEvent {
 			return _type;
 		}
 
-		int GetKeySymbol()
+		jkeyevent_symbol_t GetKeySymbol()
 		{
 			return _symbol;
 		}
@@ -98,12 +98,12 @@ class UserEvent {
 			return _code;
 		}
 
-		jcanvas::jkeyevent_modifiers_t GetModifiers()
+		jkeyevent_modifiers_t GetModifiers()
 		{
 			return _mod;
 		}
 
-		jcanvas::jmouseevent_button_t GetButton()
+		jmouseevent_button_t GetButton()
 		{
 			return _button;
 		}
@@ -194,7 +194,7 @@ class UserWindow: public Window, public KeyListener, public MouseListener {
 		};
 
 	private:
-		std::map<jcanvas::jkeyevent_symbol_t, event_t *> _events;
+		std::map<jkeyevent_symbol_t, event_t *> _events;
 		std::vector<UserEventListener *> _user_listeners;
 		jpoint_t<int> _last_mouse_location;
 		uint64_t _last_mouse_move;
@@ -286,7 +286,7 @@ class UserWindow: public Window, public KeyListener, public MouseListener {
 			}
 		}
 
-		virtual bool KeyPressed(jcanvas::KeyEvent *event)
+		virtual bool KeyPressed(KeyEvent *event)
 		{
 			struct event_t *t = _events[event->GetSymbol()];
 
@@ -319,7 +319,7 @@ class UserWindow: public Window, public KeyListener, public MouseListener {
 			return true;
 		}
 
-		virtual bool KeyReleased(jcanvas::KeyEvent *event)
+		virtual bool KeyReleased(KeyEvent *event)
 		{
 			struct event_t *t = _events[event->GetSymbol()];
 
@@ -332,7 +332,7 @@ class UserWindow: public Window, public KeyListener, public MouseListener {
 			return true;
 		}
 
-		virtual bool MousePressed(jcanvas::MouseEvent *event)
+		virtual bool MousePressed(MouseEvent *event)
 		{
       jpoint_t<int>
         elocation = event->GetLocation();
@@ -346,7 +346,7 @@ class UserWindow: public Window, public KeyListener, public MouseListener {
 			return true;
 		}
 
-		virtual bool MouseReleased(jcanvas::MouseEvent *event)
+		virtual bool MouseReleased(MouseEvent *event)
 		{
       jpoint_t<int>
         elocation = event->GetLocation();
@@ -356,7 +356,7 @@ class UserWindow: public Window, public KeyListener, public MouseListener {
 			return true;
 		}
 
-		virtual bool MouseMoved(jcanvas::MouseEvent *event)
+		virtual bool MouseMoved(MouseEvent *event)
 		{
       jpoint_t<int>
         elocation = event->GetLocation();
@@ -375,7 +375,7 @@ class UserWindow: public Window, public KeyListener, public MouseListener {
 			return true;
 		}
 
-		virtual bool MouseWheel(jcanvas::MouseEvent *event)
+		virtual bool MouseWheel(MouseEvent *event)
 		{
       jpoint_t<int>
         elocation = event->GetLocation();
@@ -428,7 +428,7 @@ class Test : public UserWindow, public UserEventListener {
 		{
 			std::cout << "OnKeyUp: " << event->GetKeyCode() << std::endl;
 			
-			if ((event->GetKeySymbol() == jcanvas::JKS_ESCAPE || event->GetKeySymbol() == jcanvas::JKS_EXIT)) {
+			if ((event->GetKeySymbol() == jkeyevent_symbol_t::Escape || event->GetKeySymbol() == jkeyevent_symbol_t::Exit)) {
 				SetVisible(false);
 			}
 		}
@@ -440,7 +440,7 @@ class Test : public UserWindow, public UserEventListener {
 
 		virtual void OnMousePress(UserEvent *event)
 		{
-			std::cout << "OnMousePress: "  << event->GetClicks() << ", Button: " << event->GetButton() << std::endl;
+			// TODO:: std::cout << "OnMousePress: "  << event->GetClicks() << ", Button: " << event->GetButton() << std::endl;
 
 			int 
         cx = event->GetX(),
@@ -469,14 +469,14 @@ class Test : public UserWindow, public UserEventListener {
 
 		virtual void OnMouseRelease(UserEvent *event)
 		{
-			std::cout << "OnMouseRelease" << ", Button: " << event->GetButton() << std::endl;
+			// TODO:: std::cout << "OnMouseRelease" << ", Button: " << event->GetButton() << std::endl;
 
 			_pressed = false;
 		}
 
 		virtual void OnMouseClick(UserEvent *event)
 		{
-			std::cout << "OnMouseClick" << ", Button: " << event->GetButton() << std::endl;
+			// TODO:: std::cout << "OnMouseClick" << ", Button: " << event->GetButton() << std::endl;
 		}
 
 		virtual void OnMouseMove(UserEvent *event)
@@ -487,7 +487,7 @@ class Test : public UserWindow, public UserEventListener {
         cx = event->GetX(),
 			  cy = event->GetY();
 
-			std::cout << "OnMouseMove: " << cx << ", " << cy << " [" << event->GetVelocityX() << ", " << event->GetVelocityY() << "]" << std::endl;
+			// TODO:: std::cout << "OnMouseMove: " << cx << ", " << cy << " [" << event->GetVelocityX() << ", " << event->GetVelocityY() << "]" << std::endl;
 
 			if (_pressed == true) {
 				_ball.x = cx+_ball_diff.x;
@@ -515,7 +515,7 @@ class Test : public UserWindow, public UserEventListener {
 
 		virtual void OnMouseWheel(UserEvent *event)
 		{
-			std::cout << "OnMouseWheel: " << event->GetClicks() << std::endl;
+			// TODO:: std::cout << "OnMouseWheel: " << event->GetClicks() << std::endl;
 		}
 
 		virtual void Paint(Graphics *g)

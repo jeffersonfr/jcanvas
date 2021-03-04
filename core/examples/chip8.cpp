@@ -502,7 +502,7 @@ class Emulator : public Window {
     Emulator(std::string file):
       Window({640, 320})
     {
-      buffer = new BufferedImage(JPF_RGB32, {SCREEN_WIDTH, SCREEN_HEIGHT});
+      buffer = new BufferedImage(jpixelformat_t::RGB32, {SCREEN_WIDTH, SCREEN_HEIGHT});
 
       if (!myChip8.loadApplication(file.c_str()))	{
         throw std::runtime_error("Invalid app");
@@ -519,53 +519,53 @@ class Emulator : public Window {
     {
     }
 
-    bool UpdateKey(jcanvas::jkeyevent_symbol_t key, int down)
+    bool UpdateKey(jkeyevent_symbol_t key, int down)
     {
-      if (key == jcanvas::JKS_ESCAPE) {
+      if (key == jkeyevent_symbol_t::Escape) {
         exit(0);
-      } else if (key == jcanvas::JKS_1) {
+      } else if (key == jkeyevent_symbol_t::Number1) {
         myChip8.key[0x01] = down;
-      } else if (key == jcanvas::JKS_2) {
+      } else if (key == jkeyevent_symbol_t::Number2) {
         myChip8.key[0x02] = down;
-      } else if (key == jcanvas::JKS_3) {
+      } else if (key == jkeyevent_symbol_t::Number3) {
         myChip8.key[0x03] = down;
-      } else if (key == jcanvas::JKS_4) {
+      } else if (key == jkeyevent_symbol_t::Number4) {
         myChip8.key[0x0C] = down;
-      } else if (key == jcanvas::JKS_q) {
+      } else if (key == jkeyevent_symbol_t::q) {
         myChip8.key[0x04] = down;
-      } else if (key == jcanvas::JKS_w) {
+      } else if (key == jkeyevent_symbol_t::w) {
         myChip8.key[0x05] = down;
-      } else if (key == jcanvas::JKS_e) {
+      } else if (key == jkeyevent_symbol_t::e) {
         myChip8.key[0x06] = down;
-      } else if (key == jcanvas::JKS_r) {
+      } else if (key == jkeyevent_symbol_t::r) {
         myChip8.key[0x0D] = down;
-      } else if (key == jcanvas::JKS_a) {
+      } else if (key == jkeyevent_symbol_t::a) {
         myChip8.key[0x07] = down;
-      } else if (key == jcanvas::JKS_s) {
+      } else if (key == jkeyevent_symbol_t::s) {
         myChip8.key[0x08] = down;
-      } else if (key == jcanvas::JKS_d) {
+      } else if (key == jkeyevent_symbol_t::d) {
         myChip8.key[0x09] = down;
-      } else if (key == jcanvas::JKS_f) {
+      } else if (key == jkeyevent_symbol_t::f) {
         myChip8.key[0x0E] = down;
-      } else if (key == jcanvas::JKS_z) {
+      } else if (key == jkeyevent_symbol_t::z) {
         myChip8.key[0x0A] = down;
-      } else if (key == jcanvas::JKS_x) {
+      } else if (key == jkeyevent_symbol_t::x) {
         myChip8.key[0x00] = down;
-      } else if (key == jcanvas::JKS_c) {
+      } else if (key == jkeyevent_symbol_t::c) {
         myChip8.key[0x0B] = down;
-      } else if (key == jcanvas::JKS_v) {
+      } else if (key == jkeyevent_symbol_t::v) {
         myChip8.key[0x0F] = down;
       }
 
       return true;
     }
 
-    virtual bool KeyPressed(jcanvas::KeyEvent *event)
+    virtual bool KeyPressed(KeyEvent *event)
     {
       return UpdateKey(event->GetSymbol(), 1);
     }
 
-    virtual bool KeyReleased(jcanvas::KeyEvent *event)
+    virtual bool KeyReleased(KeyEvent *event)
     {
       return UpdateKey(event->GetSymbol(), 0);
     }
@@ -586,7 +586,7 @@ class Emulator : public Window {
           }
         }
 
-        g->SetBlittingFlags(JBF_NEAREST);
+        g->SetBlittingFlags(jblitting_t::Nearest);
         g->DrawImage(buffer, {0, 0, GetSize()});
         
         myChip8.drawFlag = false;

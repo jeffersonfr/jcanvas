@@ -21,18 +21,14 @@
 #define J_IMAGE_H
 
 #include "jcanvas/core/jgraphics.h"
+#include "jcanvas/core/jeventobject.h"
 
 namespace jcanvas {
 
-enum jinterpolation_method_t {
-  JIM_NEAREST,
-  JIM_BILINEAR,
-  JIM_BICUBIC
-};
-
-enum jflip_flags_t {
-  JFF_HORIZONTAL = 0x01,
-  JFF_VERTICAL = 0x02
+enum class jflip_t {
+  None = 0,
+  Horizontal = 1 << 0,
+  Vertical = 1 << 1
 };
 
 class Graphics;
@@ -48,7 +44,7 @@ class Image {
     /** \brief */
     struct jpoint_t<int> _size;
     /** \brief */
-    jinterpolation_method_t _interpolation_method;
+    jblitting_t _blitting;
     /** \brief */
     jpixelformat_t _pixelformat;
 
@@ -88,19 +84,19 @@ class Image {
      * \brief
      *
      */
-    virtual void SetInterpolationMethod(jinterpolation_method_t method);
+    virtual void SetBlittingFlags(jblitting_t flags);
     
     /**
      * \brief
      *
      */
-    virtual jinterpolation_method_t GetInterpolationMethod();
+    virtual jblitting_t GetBlittingFlags();
     
     /**
      * \brief
      *
      */
-    virtual Image * Flip(jflip_flags_t mode);
+    virtual Image * Flip(jflip_t mode);
     
     /**
      * \brief

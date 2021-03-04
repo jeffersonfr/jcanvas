@@ -40,11 +40,11 @@ class Primitives : public Window {
 		{
 		}
 
-		virtual bool KeyPressed(jcanvas::KeyEvent *event)
+		virtual bool KeyPressed(KeyEvent *event)
     {
-      if (event->GetSymbol() == jcanvas::JKS_CURSOR_LEFT) {
+      if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {
         _index = 0;
-      } else if (event->GetSymbol() == jcanvas::JKS_CURSOR_RIGHT) {
+      } else if (event->GetSymbol() == jkeyevent_symbol_t::CursorRight) {
         _index = 1;
       }
 
@@ -95,7 +95,7 @@ class Primitives : public Window {
         }
       }
 
-      g->SetAntialias(JAM_NONE);
+      g->SetAntialias(jantialias_mode_t::None);
 
       for (int i=0; i<num_colors; i++) {
         red = array[(i+4*sixth)%num_colors];
@@ -114,7 +114,7 @@ class Primitives : public Window {
         g->DrawLine({i+10, 1*(100+10)+20}, {i+10, 1*(100+10)+100+20});
       }
 
-      g->SetAntialias(JAM_NORMAL);
+      g->SetAntialias(jantialias_mode_t::Normal);
 
       // draw image
       Image *path = new BufferedImage("images/blue_icon.png");
@@ -371,17 +371,17 @@ class Primitives : public Window {
       g->SetColor(pcolor);
 
       pen.width = 10;
-      pen.join = JLJ_BEVEL;
+      pen.join = jline_join_t::Bevel;
       g->SetPen(pen);
 
       g->DrawTriangle({10+9*(120+10)+10, 3*(120+10)+100}, {10+9*(120+10)+10+100, 3*(120+10)+100}, {10+9*(120+10)+10+100/2, 3*(120+10)});
 
-      pen.join = JLJ_ROUND;
+      pen.join = jline_join_t::Round;
       g->SetPen(pen);
 
       g->DrawTriangle({10+9*(120+10)+10, 4*(120+10)+100}, {10+9*(120+10)+10+100, 4*(120+10)+100}, {10+9*(120+10)+10+100/2, 4*(120+10)});
 
-      pen.join = JLJ_MITER;
+      pen.join = jline_join_t::Miter;
       g->SetPen(pen);
 
       g->DrawTriangle({10+9*(120+10)+10, 5*(120+10)+100}, {10+9*(120+10)+10+100, 5*(120+10)+100}, {10+9*(120+10)+10+100/2, 5*(120+10)});
@@ -403,7 +403,7 @@ class Primitives : public Window {
       };
 
       pen.width = 1;
-      pen.join = JLJ_BEVEL;
+      pen.join = jline_join_t::Bevel;
       g->SetPen(pen);
 
       g->SetColor(ccolor);
@@ -513,10 +513,10 @@ class Primitives : public Window {
       g->DrawBezierCurve(pb2, 100);
 
       Font 
-        *f1 = new Font("default", JFA_NORMAL, 50),
-        *f2 = new Font("default", JFA_NORMAL, 40),
-        *f3 = new Font("default", JFA_NORMAL, 30),
-        *f4 = new Font("default", JFA_NORMAL, 20);
+        *f1 = new Font("default", jfont_attributes_t::None, 50),
+        *f2 = new Font("default", jfont_attributes_t::None, 40),
+        *f3 = new Font("default", jfont_attributes_t::None, 30),
+        *f4 = new Font("default", jfont_attributes_t::None, 20);
       int shadow = 4;
 
       std::string text = "DrawString";
@@ -551,7 +551,7 @@ class Primitives : public Window {
       int sw = f1->GetStringWidth(text);
       int sh = (3*(45+10)+20+shadow)+f4->GetSize()-(0*(45+10)+20+shadow);
 
-      Image *timage = new BufferedImage(JPF_RGB32, {sw, sh});
+      Image *timage = new BufferedImage(jpixelformat_t::RGB32, {sw, sh});
       Graphics *gt = timage->GetGraphics();
 
       gt->SetColor(rcolor);
@@ -717,7 +717,7 @@ class Primitives : public Window {
       g->SetPen(pen);
 
       // draw text
-      Font *font = new Font("Sans Serif", JFA_NORMAL, 64);
+      Font *font = new Font("Sans Serif", jfont_attributes_t::None, 64);
       Font *old = g->GetFont();
 
       g->SetFont(font);

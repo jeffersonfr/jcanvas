@@ -32,7 +32,7 @@ class Dummy : public Window {
     Dummy():
       Window({256, 256})
     {
-      buffer = new BufferedImage(JPF_RGB32, {256, 256});
+      buffer = new BufferedImage(jpixelformat_t::RGB32, {256, 256});
     }
 
     virtual ~Dummy()

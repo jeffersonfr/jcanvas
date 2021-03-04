@@ -56,7 +56,7 @@ jpoint_t<int>
   	.y = 640
 	};
 
-std::map<jcanvas::jkeyevent_symbol_t, bool>
+std::map<jkeyevent_symbol_t, bool>
 	sgKeys;
 jpoint_t<int>
   sgCamera {0, 0};
@@ -138,7 +138,7 @@ class AssetsManager {
     Font * LoadFont(std::string path, int size)
     {
       Font
-        *font = new Font(path, (jfont_attributes_t)(JFA_NORMAL), size);
+        *font = new Font(path, jfont_attributes_t::None, size);
 
       _fonts[{path, size}] = font;
 
@@ -1210,7 +1210,7 @@ class RadarComponent : public Component {
       Component(),
       _entityManager(entityManager)
     {
-      _image = new BufferedImage(JPF_ARGB, size);
+      _image = new BufferedImage(jpixelformat_t::ARGB, size);
 
       _angle = 0.0f;
     }
@@ -1242,7 +1242,7 @@ class RadarComponent : public Component {
       jpoint_t<int>
         size = _image->GetSize();
 
-      ig->SetCompositeFlags(JCF_SRC);
+      ig->SetCompositeFlags(jcomposite_t::Src);
 
       ig->SetColor(jcolorname::Green);
       ig->FillArc({size.x/2, size.y/2}, size/2, _angle, _angle + 0.05f);
@@ -1293,7 +1293,7 @@ class RadarComponent : public Component {
 class KeyboardComponent : public Component {
 
 	private:
-		std::map<std::string, jcanvas::jkeyevent_symbol_t>
+		std::map<std::string, jkeyevent_symbol_t>
 			_keyMap;
     EntityManager
       &_entityManager;
@@ -1301,7 +1301,7 @@ class KeyboardComponent : public Component {
       _counter;
 
   public:
-    KeyboardComponent(EntityManager &entityManager, const std::map<std::string, jcanvas::jkeyevent_symbol_t> &keys):
+    KeyboardComponent(EntityManager &entityManager, const std::map<std::string, jkeyevent_symbol_t> &keys):
       Component(),
       _entityManager(entityManager)
     {
@@ -1454,11 +1454,11 @@ class Game : public Window, public KeyListener {
       _ticks;
 
   private:
-    virtual bool KeyPressed(jcanvas::KeyEvent *event)
+    virtual bool KeyPressed(KeyEvent *event)
     {
-      jcanvas::jkeyevent_symbol_t s = event->GetSymbol();
+      jkeyevent_symbol_t s = event->GetSymbol();
   
-      if (s == jcanvas::JKS_F1) {
+      if (s == jkeyevent_symbol_t::F1) {
         sgDebug = !sgDebug;
       }
 
@@ -1467,9 +1467,9 @@ class Game : public Window, public KeyListener {
       return true;
     }
 
-    virtual bool KeyReleased(jcanvas::KeyEvent *event)
+    virtual bool KeyReleased(KeyEvent *event)
     {
-      jcanvas::jkeyevent_symbol_t s = event->GetSymbol();
+      jkeyevent_symbol_t s = event->GetSymbol();
   
       sgKeys[s] = false;
 
@@ -1488,8 +1488,8 @@ class Game : public Window, public KeyListener {
 
       Window::Paint(g);
 
-      g->SetBlittingFlags(JBF_NEAREST);
-      g->SetCompositeFlags(JCF_SRC_OVER);
+      g->SetBlittingFlags(jblitting_t::Nearest);
+      g->SetCompositeFlags(jcomposite_t::SrcOver);
 
       sgMutex.lock();
 
@@ -1704,12 +1704,12 @@ class Game : public Window, public KeyListener {
 					entity.Create<BoundedComponent>(jpoint_t<int>{0, 0});
 					entity.Create<TrembleComponent>();
 
-          entity.Create<KeyboardComponent>(_entityManager, std::map<std::string, jcanvas::jkeyevent_symbol_t> {
-            {"left", jcanvas::jkeyevent_symbol_t::JKS_CURSOR_LEFT},
-            {"right", jcanvas::jkeyevent_symbol_t::JKS_CURSOR_RIGHT},
-            {"up", jcanvas::jkeyevent_symbol_t::JKS_CURSOR_UP},
-            {"down", jcanvas::jkeyevent_symbol_t::JKS_CURSOR_DOWN},
-            {"action", jcanvas::jkeyevent_symbol_t::JKS_SPACE}});
+          entity.Create<KeyboardComponent>(_entityManager, std::map<std::string, jkeyevent_symbol_t> {
+            {"left", jkeyevent_symbol_t::CursorLeft},
+            {"right", jkeyevent_symbol_t::CursorRight},
+            {"up", jkeyevent_symbol_t::CursorUp},
+            {"down", jkeyevent_symbol_t::CursorDown},
+            {"action", jkeyevent_symbol_t::Space}});
         }
 
         Log(INFO, entity);

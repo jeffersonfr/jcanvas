@@ -36,7 +36,7 @@ class WindowAdapter {
      * \brief
      *
      */
-    WindowAdapter(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds);
+    WindowAdapter(Window *parent, jrect_t<int> bounds);
     
     /**
      * \brief

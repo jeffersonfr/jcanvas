@@ -20,7 +20,7 @@
 #ifndef J_COLOR_H
 #define J_COLOR_H
 
-#include "jvector.h"
+#include "jcanvas/algebra/jvector.h"
 
 #include <iostream>
 #include <cmath>

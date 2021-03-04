@@ -312,13 +312,9 @@ class PacMan : public Window, public KeyListener {
 		pacman_bmp = GetImage("images/pacman.png", 3*w, 5*h);
 	}
 
-	virtual bool KeyPressed(jcanvas::KeyEvent *event)
+	virtual bool KeyPressed(KeyEvent *event)
 	{
-		if (Window::KeyPressed(event) == true) {
-			return true;
-		}
-
-		if (event->GetSymbol() == jcanvas::JKS_ESCAPE) {
+		if (event->GetSymbol() == jkeyevent_symbol_t::Escape) {
 			flag = false;
 
 			// TODO:: SetVisible(Frame::Release();
@@ -327,23 +323,23 @@ class PacMan : public Window, public KeyListener {
 		}
 
 		if (ingame) {
-			if (event->GetSymbol() == jcanvas::JKS_CURSOR_LEFT) {
+			if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {
 				reqdx=-1;
 				reqdy=0;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_RIGHT) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorRight) {
 				reqdx=1;
 				reqdy=0;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_UP) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorUp) {
 				reqdx=0;
 				reqdy=-1;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_DOWN) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorDown) {
 				reqdx=0;
 				reqdy=1;
-			} else if (event->GetSymbol() == jcanvas::JKS_ESCAPE) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::Escape) {
 				ingame=false;
 			}
 		} else {
-			if (event->GetSymbol() == jcanvas::JKS_s) {
+			if (event->GetSymbol() == jkeyevent_symbol_t::s) {
 				ingame=true;
 				GameInit();
 			}
@@ -352,16 +348,12 @@ class PacMan : public Window, public KeyListener {
 		return true;
 	}
 
-	virtual bool KeyReleased(jcanvas::KeyEvent *event)
+	virtual bool KeyReleased(KeyEvent *event)
 	{
-		if (Window::KeyReleased(event) == true) {
-			return true;
-		}
-
-		if (event->GetSymbol() == jcanvas::JKS_CURSOR_LEFT || 
-			event->GetSymbol() == jcanvas::JKS_CURSOR_RIGHT || 
-			event->GetSymbol() == jcanvas::JKS_CURSOR_UP || 
-			event->GetSymbol() == jcanvas::JKS_CURSOR_DOWN) {
+		if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft|| 
+			event->GetSymbol() == jkeyevent_symbol_t::CursorRight || 
+			event->GetSymbol() == jkeyevent_symbol_t::CursorUp || 
+			event->GetSymbol() == jkeyevent_symbol_t::CursorDown) {
 			// reqdx=0;
 			// reqdy=0;
 		}
@@ -376,7 +368,7 @@ class PacMan : public Window, public KeyListener {
 		std::string s;
 
 		if (goff == nullptr && d.size.x > 0 && d.size.y > 0) {
-			ii = new BufferedImage(JPF_RGB32, d.size);
+			ii = new BufferedImage(jpixelformat_t::RGB32, d.size);
 
 			goff = ii->GetGraphics();
 		}

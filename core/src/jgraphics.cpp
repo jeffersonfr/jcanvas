@@ -20,6 +20,7 @@
 #include "jcanvas/core/jgraphics.h"
 #include "jcanvas/core/jfont.h"
 #include "jcanvas/core/jimage.h"
+#include "jcanvas/core/jenum.h"
 
 #include "jmixin/jstring.h"
 
@@ -47,20 +48,20 @@ Graphics::Graphics(cairo_surface_t *surface)
   _pen.dashes = nullptr;
   _pen.dashes_size = 0;
   _pen.width = 1;
-  _pen.join = JLJ_MITER;
-  _pen.style = JLS_BUTT;
+  _pen.join = jline_join_t::Miter;
+  _pen.style = jline_style_t::Butt;
 
   cairo_format_t
     format = cairo_image_surface_get_format(surface);
 
   if (format == CAIRO_FORMAT_ARGB32) {
-    _pixelformat = JPF_ARGB;
+    _pixelformat = jpixelformat_t::ARGB;
   } else if (format == CAIRO_FORMAT_RGB24) {
-    _pixelformat = JPF_RGB32;
+    _pixelformat = jpixelformat_t::RGB32;
   } else if (format == CAIRO_FORMAT_RGB16_565) {
-    _pixelformat = JPF_RGB16;
+    _pixelformat = jpixelformat_t::RGB16;
   } else {
-    _pixelformat = JPF_UNKNOWN;
+    _pixelformat = jpixelformat_t::Unknown;
   }
   
   _clip = {
@@ -74,12 +75,12 @@ Graphics::Graphics(cairo_surface_t *surface)
 
   _cairo_context = cairo_create(_cairo_surface);
 
-  SetAntialias(JAM_NORMAL);
+  SetAntialias(jantialias_mode_t::Normal);
   SetPen(_pen);
   SetColor(0x00000000);
   ResetGradientStop();
-  SetCompositeFlags(JCF_SRC_OVER);
-  SetBlittingFlags(JBF_BILINEAR);
+  SetCompositeFlags(jcomposite_t::SrcOver);
+  SetBlittingFlags(jblitting_t::Bilinear);
 }
 
 Graphics::~Graphics()
@@ -167,92 +168,92 @@ void Graphics::ReleaseClip()
   cairo_reset_clip(_cairo_context);
 }
 
-void Graphics::SetCompositeFlags(jcomposite_flags_t t)
+void Graphics::SetCompositeFlags(jcomposite_t t)
 {
   cairo_operator_t o = CAIRO_OPERATOR_CLEAR;
 
-  _composite_flags = t;
+  _composite = t;
 
-  if (_composite_flags == JCF_SRC) {
+  if (_composite == jcomposite_t::Src) {
     o = CAIRO_OPERATOR_SOURCE;
-  } else if (_composite_flags == JCF_SRC_OVER) {
+  } else if (_composite == jcomposite_t::SrcOver) {
     o = CAIRO_OPERATOR_OVER;
-  } else if (_composite_flags == JCF_SRC_IN) {
+  } else if (_composite == jcomposite_t::SrcIn) {
     o = CAIRO_OPERATOR_IN;
-  } else if (_composite_flags == JCF_SRC_OUT) {
+  } else if (_composite == jcomposite_t::SrcOut) {
     o = CAIRO_OPERATOR_OUT;
-  } else if (_composite_flags == JCF_SRC_ATOP) {
+  } else if (_composite == jcomposite_t::SrcAtop) {
     o = CAIRO_OPERATOR_ATOP;
-  } else if (_composite_flags == JCF_DST) {
+  } else if (_composite == jcomposite_t::Dst) {
     o = CAIRO_OPERATOR_DEST;
-  } else if (_composite_flags == JCF_DST_OVER) {
+  } else if (_composite == jcomposite_t::DstOver) {
     o = CAIRO_OPERATOR_DEST_OVER;
-  } else if (_composite_flags == JCF_DST_IN) {
+  } else if (_composite == jcomposite_t::DstIn) {
     o = CAIRO_OPERATOR_DEST_IN;
-  } else if (_composite_flags == JCF_DST_OUT) {
+  } else if (_composite == jcomposite_t::DstOut) {
     o = CAIRO_OPERATOR_DEST_OUT;
-  } else if (_composite_flags == JCF_DST_ATOP) {
+  } else if (_composite == jcomposite_t::DstAtop) {
     o = CAIRO_OPERATOR_DEST_ATOP;
-  } else if (_composite_flags == JCF_XOR) {
+  } else if (_composite == jcomposite_t::Xor) {
     o = CAIRO_OPERATOR_XOR;
-  } else if (_composite_flags == JCF_ADD) {
+  } else if (_composite == jcomposite_t::Add) {
     o = CAIRO_OPERATOR_ADD;
-  } else if (_composite_flags == JCF_SATURATE) {
+  } else if (_composite == jcomposite_t::Saturate) {
     o = CAIRO_OPERATOR_SATURATE;
-  } else if (_composite_flags == JCF_MULTIPLY) {
+  } else if (_composite == jcomposite_t::Multiply) {
     o = CAIRO_OPERATOR_MULTIPLY;
-  } else if (_composite_flags == JCF_SCREEN) {
+  } else if (_composite == jcomposite_t::Screen) {
     o = CAIRO_OPERATOR_SCREEN;
-  } else if (_composite_flags == JCF_OVERLAY) {
+  } else if (_composite == jcomposite_t::Overlay) {
     o = CAIRO_OPERATOR_OVERLAY;
-  } else if (_composite_flags == JCF_DARKEN) {
+  } else if (_composite == jcomposite_t::Darken) {
     o = CAIRO_OPERATOR_DARKEN;
-  } else if (_composite_flags == JCF_LIGHTEN) {
+  } else if (_composite == jcomposite_t::Lighten) {
     o = CAIRO_OPERATOR_LIGHTEN;
-  } else if (_composite_flags == JCF_DIFFERENCE) {
+  } else if (_composite == jcomposite_t::Difference) {
     o = CAIRO_OPERATOR_DIFFERENCE;
-  } else if (_composite_flags == JCF_EXCLUSION) {
+  } else if (_composite == jcomposite_t::Exclusion) {
     o = CAIRO_OPERATOR_EXCLUSION;
-  } else if (_composite_flags == JCF_DODGE) {
+  } else if (_composite == jcomposite_t::Dodge) {
     o = CAIRO_OPERATOR_COLOR_DODGE;
-  } else if (_composite_flags == JCF_BURN) {
+  } else if (_composite == jcomposite_t::Burn) {
     o = CAIRO_OPERATOR_COLOR_BURN;
-  } else if (_composite_flags == JCF_HARD) {
+  } else if (_composite == jcomposite_t::Hard) {
     o = CAIRO_OPERATOR_HARD_LIGHT;
-  } else if (_composite_flags == JCF_LIGHT) {
+  } else if (_composite == jcomposite_t::Light) {
     o = CAIRO_OPERATOR_SOFT_LIGHT;
   }
 
   cairo_set_operator(_cairo_context, o);
 }
 
-jcomposite_flags_t Graphics::GetCompositeFlags()
+jcomposite_t Graphics::GetCompositeFlags()
 {
-  return _composite_flags;
+  return _composite;
 }
 
-jblitting_flags_t Graphics::GetBlittingFlags()
+jblitting_t Graphics::GetBlittingFlags()
 {
-  return _blitting_flags;
+  return _blitting;
 }
 
-void Graphics::SetBlittingFlags(jblitting_flags_t t)
+void Graphics::SetBlittingFlags(jblitting_t t)
 {
   cairo_filter_t o = CAIRO_FILTER_FAST;
 
-  _blitting_flags = t;
+  _blitting = t;
 
-  if (_blitting_flags == JBF_FAST) {
+  if (_blitting == jblitting_t::Fast) {
     o = CAIRO_FILTER_FAST;
-  } else  if (_blitting_flags == JBF_GOOD) {
+  } else  if (_blitting == jblitting_t::Good) {
     o = CAIRO_FILTER_GOOD;
-  } else  if (_blitting_flags == JBF_BEST) {
+  } else  if (_blitting == jblitting_t::Best) {
     o = CAIRO_FILTER_BEST;
-  } else  if (_blitting_flags == JBF_NEAREST) {
+  } else  if (_blitting == jblitting_t::Nearest) {
     o = CAIRO_FILTER_NEAREST;
-  } else  if (_blitting_flags == JBF_BILINEAR) {
+  } else  if (_blitting == jblitting_t::Bilinear) {
     o = CAIRO_FILTER_BILINEAR;
-  } else  if (_blitting_flags == JBF_GAUSSIAN) {
+  } else  if (_blitting == jblitting_t::Gaussian) {
     o = CAIRO_FILTER_GAUSSIAN;
   }
 
@@ -342,11 +343,11 @@ void Graphics::SetAntialias(jantialias_mode_t mode)
 {
   cairo_antialias_t t = CAIRO_ANTIALIAS_NONE;
 
-  if (mode == JAM_FAST) {
+  if (mode == jantialias_mode_t::Fast) {
     t = CAIRO_ANTIALIAS_FAST;
-  } else if (mode == JAM_NORMAL) {
+  } else if (mode == jantialias_mode_t::Normal) {
     t = CAIRO_ANTIALIAS_DEFAULT; // DEFAULT, SUBPIXEL
-  } else if (mode == JAM_GOOD) {
+  } else if (mode == jantialias_mode_t::Good) {
     t = CAIRO_ANTIALIAS_GOOD; // GOOD, BEST
   }
     
@@ -358,37 +359,37 @@ jantialias_mode_t Graphics::GetAntialias()
   cairo_antialias_t antialias = cairo_get_antialias(_cairo_context);
 
   if (antialias == CAIRO_ANTIALIAS_DEFAULT) {
-    return JAM_NORMAL;
+    return jantialias_mode_t::Normal;
   } else if (antialias == CAIRO_ANTIALIAS_SUBPIXEL) {
-    return JAM_NORMAL;
+    return jantialias_mode_t::Normal;
   } else if (antialias == CAIRO_ANTIALIAS_FAST) {
-    return JAM_FAST;
+    return jantialias_mode_t::Fast;
   } else if (antialias == CAIRO_ANTIALIAS_GOOD) {
-    return JAM_GOOD;
+    return jantialias_mode_t::Good;
   } else if (antialias == CAIRO_ANTIALIAS_BEST) {
-    return JAM_GOOD;
+    return jantialias_mode_t::Good;
   }
 
-  return JAM_NONE;
+  return jantialias_mode_t::None;
 }
 
 void Graphics::SetPen(jpen_t t)
 {
   _pen = t;
 
-  if (_pen.join == JLJ_BEVEL) {
+  if (_pen.join == jline_join_t::Bevel) {
     cairo_set_line_join(_cairo_context, CAIRO_LINE_JOIN_BEVEL);
-  } else if (_pen.join == JLJ_ROUND) {
+  } else if (_pen.join == jline_join_t::Round) {
     cairo_set_line_join(_cairo_context, CAIRO_LINE_JOIN_ROUND);
-  } else if (_pen.join == JLJ_MITER) {
+  } else if (_pen.join == jline_join_t::Miter) {
     cairo_set_line_join(_cairo_context, CAIRO_LINE_JOIN_MITER);
   }
   
-  if (_pen.style == JLS_ROUND) {
+  if (_pen.style == jline_style_t::Round) {
     cairo_set_line_cap(_cairo_context, CAIRO_LINE_CAP_ROUND);
-  } else if (_pen.style == JLS_BUTT) {
+  } else if (_pen.style == jline_style_t::Butt) {
     cairo_set_line_cap(_cairo_context, CAIRO_LINE_CAP_BUTT);
-  } else if (_pen.style == JLS_SQUARE) {
+  } else if (_pen.style == jline_style_t::Square) {
     cairo_set_line_cap(_cairo_context, CAIRO_LINE_CAP_SQUARE);
   }
   
@@ -586,28 +587,28 @@ void Graphics::FillBevelRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
   cairo_save(_cairo_context);
   cairo_new_sub_path(_cairo_context);
 
-  if (corners & JRC_TOP_RIGHT) {
+  if (jenum_t{corners}.And(jrect_corner_t::TopRight)) {
     cairo_line_to(_cairo_context, x + w - dx, y);
     cairo_line_to(_cairo_context, x + w, y + dy);
   } else {
     cairo_line_to(_cairo_context, x + w, y);
   }
 
-  if (corners & JRC_BOTTOM_RIGHT) {
+  if (jenum_t{corners}.And(jrect_corner_t::BottomRight)) {
     cairo_line_to(_cairo_context, x + w, y + h - dy);
     cairo_line_to(_cairo_context, x + w - dx, y + h);
   } else {
     cairo_line_to(_cairo_context, x + w, y + h);
   }
 
-  if (corners & JRC_BOTTOM_LEFT) {
+  if (jenum_t{corners}.And(jrect_corner_t::BottomLeft)) {
     cairo_line_to(_cairo_context, x + dx, y + h);
     cairo_line_to(_cairo_context, x, y + h - dy);
   } else {
     cairo_line_to(_cairo_context, x, y + h);
   }
 
-  if (corners & JRC_TOP_LEFT) {
+  if (jenum_t{corners}.And(jrect_corner_t::TopLeft)) {
     cairo_line_to(_cairo_context, x, y + dy);
     cairo_line_to(_cairo_context, x + dx, y);
   } else {
@@ -660,28 +661,28 @@ void Graphics::DrawBevelRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
   cairo_save(_cairo_context);
   cairo_new_sub_path(_cairo_context);
 
-  if (corners & JRC_TOP_RIGHT) {
+  if (jenum_t{corners}.And(jrect_corner_t::TopRight)) {
     cairo_line_to(_cairo_context, x + w - dx, y);
     cairo_line_to(_cairo_context, x + w, y + dy);
   } else {
     cairo_line_to(_cairo_context, x + w, y);
   }
 
-  if (corners & JRC_BOTTOM_RIGHT) {
+  if (jenum_t{corners}.And(jrect_corner_t::BottomRight)) {
     cairo_line_to(_cairo_context, x + w, y + h - dy);
     cairo_line_to(_cairo_context, x + w - dx, y + h);
   } else {
     cairo_line_to(_cairo_context, x + w, y + h);
   }
 
-  if (corners & JRC_BOTTOM_LEFT) {
+  if (jenum_t{corners}.And(jrect_corner_t::BottomLeft)) {
     cairo_line_to(_cairo_context, x + dx, y + h);
     cairo_line_to(_cairo_context, x, y + h - dy);
   } else {
     cairo_line_to(_cairo_context, x, y + h);
   }
 
-  if (corners & JRC_TOP_LEFT) {
+  if (jenum_t{corners}.And(jrect_corner_t::TopLeft)) {
     cairo_line_to(_cairo_context, x, y + dy);
     cairo_line_to(_cairo_context, x + dx, y);
   } else {
@@ -718,7 +719,7 @@ void Graphics::FillRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
   cairo_save(_cairo_context);
   cairo_new_sub_path(_cairo_context);
 
-  if (corners & JRC_TOP_RIGHT) {
+  if (jenum_t{corners}.And(jrect_corner_t::TopRight)) {
     cairo_save(_cairo_context);
     cairo_translate(_cairo_context, x + w - dx, y + dy);
     cairo_scale(_cairo_context, dx, dy);
@@ -728,7 +729,7 @@ void Graphics::FillRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
     cairo_line_to(_cairo_context, x + w, y);
   }
 
-  if (corners & JRC_BOTTOM_RIGHT) {
+  if (jenum_t{corners}.And(jrect_corner_t::BottomRight)) {
     cairo_save(_cairo_context);
     cairo_translate(_cairo_context, x + w - dx, y + h - dy);
     cairo_scale(_cairo_context, dx, dy);
@@ -738,7 +739,7 @@ void Graphics::FillRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
     cairo_line_to(_cairo_context, x + w, y + h);
   }
 
-  if (corners & JRC_BOTTOM_LEFT) {
+  if (jenum_t{corners}.And(jrect_corner_t::BottomLeft)) {
     cairo_save(_cairo_context);
     cairo_translate(_cairo_context, x + dx, y + h - dy);
     cairo_scale(_cairo_context, dx, dy);
@@ -748,7 +749,7 @@ void Graphics::FillRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
     cairo_line_to(_cairo_context, x, y + h);
   }
 
-  if (corners & JRC_TOP_LEFT) {
+  if (jenum_t{corners}.And(jrect_corner_t::TopLeft)) {
     cairo_save(_cairo_context);
     cairo_translate(_cairo_context, x + dx, y + dy);
     cairo_scale(_cairo_context, dx, dy);
@@ -804,7 +805,7 @@ void Graphics::DrawRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
   cairo_save(_cairo_context);
   cairo_new_sub_path(_cairo_context);
 
-  if (corners & JRC_TOP_RIGHT) {
+  if (jenum_t{corners}.And(jrect_corner_t::TopRight)) {
     cairo_save(_cairo_context);
     cairo_translate(_cairo_context, x + w - dx, y + dy);
     cairo_scale(_cairo_context, dx, dy);
@@ -814,7 +815,7 @@ void Graphics::DrawRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
     cairo_line_to(_cairo_context, x + w, y);
   }
 
-  if (corners & JRC_BOTTOM_RIGHT) {
+  if (jenum_t{corners}.And(jrect_corner_t::BottomRight)) {
     cairo_save(_cairo_context);
     cairo_translate(_cairo_context, x + w - dx, y + h - dy);
     cairo_scale(_cairo_context, dx, dy);
@@ -824,7 +825,7 @@ void Graphics::DrawRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
     cairo_line_to(_cairo_context, x + w, y + h);
   }
 
-  if (corners & JRC_BOTTOM_LEFT) {
+  if (jenum_t{corners}.And(jrect_corner_t::BottomLeft)) {
     cairo_save(_cairo_context);
     cairo_translate(_cairo_context, x + dx, y + h - dy);
     cairo_scale(_cairo_context, dx, dy);
@@ -834,7 +835,7 @@ void Graphics::DrawRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
     cairo_line_to(_cairo_context, x, y + h);
   }
 
-  if (corners & JRC_TOP_LEFT) {
+  if (jenum_t{corners}.And(jrect_corner_t::TopLeft)) {
     cairo_save(_cairo_context);
     cairo_translate(_cairo_context, x + dx, y + dy);
     cairo_scale(_cairo_context, dx, dy);
@@ -1161,8 +1162,8 @@ void Graphics::FillLinearGradient(jrect_t<int> rect, jpoint_t<int> p0, jpoint_t<
   cairo_restore(_cairo_context);
   cairo_pattern_destroy(pattern);
   
-  SetCompositeFlags(_composite_flags);
-  SetBlittingFlags(_blitting_flags);
+  SetCompositeFlags(_composite);
+  SetBlittingFlags(_blitting);
 }
 
 void Graphics::DrawString(std::string text, jpoint_t<int> point)
@@ -1179,7 +1180,7 @@ void Graphics::DrawString(std::string text, jpoint_t<int> point)
   int glyphs_len = 0;
   cairo_status_t status;
 
-  if (_font->GetEncoding() == JFE_ISO_8859_1) {
+  if (_font->GetEncoding() == jfont_encoding_t::Latin1) {
     utf8 = jmixin::latin1_to_utf8(text);
   }
 
@@ -1244,7 +1245,7 @@ void Graphics::DrawString(std::string text, jrect_t<int> rect, jhorizontal_align
 
   _font->GetStringBreak(&lines, text, rect.size);
 
-  if (halign == JHA_LEFT) {
+  if (halign == jhorizontal_align_t::Left) {
     for (int i=0; i<(int)lines.size(); i++) {
       words.push_back({
           .text = lines[i],
@@ -1253,7 +1254,7 @@ void Graphics::DrawString(std::string text, jrect_t<int> rect, jhorizontal_align
           .sx = 0.0f
       });
     }
-  } else if (halign == JHA_CENTER) {
+  } else if (halign == jhorizontal_align_t::Center) {
     for (int i=0; i<(int)lines.size(); i++) {
       words.push_back({
           .text = lines[i],
@@ -1262,7 +1263,7 @@ void Graphics::DrawString(std::string text, jrect_t<int> rect, jhorizontal_align
           .sx = 0.0f
       });
     }
-  } else if (halign == JHA_RIGHT) {
+  } else if (halign == jhorizontal_align_t::Right) {
     for (int i=0; i<(int)lines.size(); i++) {
       words.push_back({
           .text = lines[i],
@@ -1271,7 +1272,7 @@ void Graphics::DrawString(std::string text, jrect_t<int> rect, jhorizontal_align
           .sx = 0.0f
       });
     }
-  } else if (halign == JHA_JUSTIFY) {
+  } else if (halign == jhorizontal_align_t::Justify) {
     for (int i=0; i<(int)lines.size(); i++) {
       auto tokens = jmixin::String(lines[i]).split(" ");
 
@@ -1294,22 +1295,22 @@ void Graphics::DrawString(std::string text, jrect_t<int> rect, jhorizontal_align
   }
 
   if (rect.size.y > (int)(lines.size()*height)) {
-    if (valign == JVA_TOP) {
+    if (valign == jvertical_align_t::Top) {
       // for (auto &line : words) {
       // }
-    } else if (valign == JVA_CENTER) {
+    } else if (valign == jvertical_align_t::Center) {
       int d = (rect.size.y - lines.size()*height)/2;
       
       for (auto &line : words) {
         line.dy = line.dy + d;
       }
-    } else if (valign == JVA_BOTTOM) {
+    } else if (valign == jvertical_align_t::Bottom) {
       int d = rect.size.y - lines.size()*height;
       
       for (auto &line : words) {
         line.dy = line.dy + d;
       }
-    } else if (valign == JVA_JUSTIFY) {
+    } else if (valign == jvertical_align_t::Justify) {
       if (lines.size() > 1) {
         float d = (rect.size.y - lines.size()*height)/(float)(lines.size() - 1);
         int k = 0;
@@ -1404,7 +1405,7 @@ void Graphics::GetRGBArray(uint32_t *rgb, jrect_t<int> rect)
 
   int stride = cairo_image_surface_get_stride(_cairo_surface);
 
-  if (_pixelformat == JPF_ARGB) {
+  if (_pixelformat == jpixelformat_t::ARGB) {
     for (int j=0; j<rect.size.y; j++) {
       uint8_t *src = (uint8_t *)(data + (y + j) * stride + x * 4);
       uint8_t *dst = (uint8_t *)(ptr + j * rect.size.x);
@@ -1422,7 +1423,7 @@ void Graphics::GetRGBArray(uint32_t *rgb, jrect_t<int> rect)
         di = di + 4;
       }
     }
-  } else if (_pixelformat == JPF_RGB32) {
+  } else if (_pixelformat == jpixelformat_t::RGB32) {
     for (int j=0; j<rect.size.y; j++) {
       uint8_t *src = (uint8_t *)(data + (y + j) * stride + x * 4);
       uint8_t *dst = (uint8_t *)(ptr + j * rect.size.x);
@@ -1439,14 +1440,13 @@ void Graphics::GetRGBArray(uint32_t *rgb, jrect_t<int> rect)
         di = di + 4;
       }
     }
-  } else if (_pixelformat == JPF_RGB16) {
+  } else if (_pixelformat == jpixelformat_t::RGB16) {
     for (int j=0; j<rect.size.y; j++) {
       uint8_t *src = (uint8_t *)(data + (y + j) * stride + x * 3);
       uint8_t *dst = (uint8_t *)(ptr + j * rect.size.x);
       int si = 0;
       int di = 0;
 
-      // TODO::
       for (int i=0; i<rect.size.x; i++) {
         uint8_t 
           p0 = *(src + si + 0),
@@ -1521,7 +1521,7 @@ void Graphics::SetRGBArray(uint32_t *rgb, jrect_t<int> rect)
 
   int step = stride / sw;
 
-  if (_pixelformat == JPF_ARGB) {
+  if (_pixelformat == jpixelformat_t::ARGB) {
     for (int j=0; j<rect.size.y; j++) {
       if ((y + j) < 0 or (y + j) >= sh) {
         continue;
@@ -1551,17 +1551,17 @@ void Graphics::SetRGBArray(uint32_t *rgb, jrect_t<int> rect)
         int pg = ALPHA_DEMULTIPLY(*(dst + di + 1), pa);
         int pb = ALPHA_DEMULTIPLY(*(dst + di + 0), pa);
 
-        if (_composite_flags == JCF_CLEAR) {
+        if (_composite == jcomposite_t::Clear) {
           pr = 0x00;
           pg = 0x00;
           pb = 0x00;
           pa = 0x00;
-        } else if (_composite_flags == JCF_SRC) {
+        } else if (_composite == jcomposite_t::Src) {
           pr = r;
           pg = g;
           pb = b;
           pa = a;
-        } else if (_composite_flags == JCF_SRC_OVER) {
+        } else if (_composite == jcomposite_t::SrcOver) {
           float fr = r/255.0;
           float fg = g/255.0;
           float fb = b/255.0;
@@ -1576,27 +1576,27 @@ void Graphics::SetRGBArray(uint32_t *rgb, jrect_t<int> rect)
           pg = (int)(((fa*fg + fpa*fpg*(1.0 - fa))/ar)*255);
           pb = (int)(((fa*fb + fpa*fpb*(1.0 - fa))/ar)*255);
           pa = (int)(ar * 255);
-        } else if (_composite_flags == JCF_SRC_IN) {
+        } else if (_composite == jcomposite_t::SrcIn) {
           pr = r;
           pg = g;
           pb = b;
           pa = (a*pa) >> 0x08;
-        } else if (_composite_flags == JCF_SRC_OUT) {
+        } else if (_composite == jcomposite_t::SrcOut) {
           pr = r;
           pg = g;
           pb = b;
           pa = (a*(0xff-pa)) >> 0x08;
-        } else if (_composite_flags == JCF_SRC_ATOP) {
+        } else if (_composite == jcomposite_t::SrcAtop) {
           pr = (int)(a*r + pr*(0xff-a)) >> 0x08;
           pg = (int)(a*g + pg*(0xff-a)) >> 0x08;
           pb = (int)(a*b + pb*(0xff-a)) >> 0x08;
           // pa = pa;
-        } else if (_composite_flags == JCF_DST) {
+        } else if (_composite == jcomposite_t::Dst) {
           pr = pr;
           pg = pg;
           pb = pb;
           pa = pa;
-        } else if (_composite_flags == JCF_DST_OVER) {
+        } else if (_composite == jcomposite_t::DstOver) {
           float fr = r/255.0;
           float fg = g/255.0;
           float fb = b/255.0;
@@ -1611,22 +1611,22 @@ void Graphics::SetRGBArray(uint32_t *rgb, jrect_t<int> rect)
           pg = (int)(((fpa*fpg + fa*fg*(1.0 - fpa))/ar)*255);
           pb = (int)(((fpa*fpb + fa*fb*(1.0 - fpa))/ar)*255);
           pa = (int)(ar * 255);
-        } else if (_composite_flags == JCF_DST_IN) {
+        } else if (_composite == jcomposite_t::DstIn) {
           // pr = pr;
           // pg = pg;
           // pb = pb;
           pa = (a*pa) >> 0x08;
-        } else if (_composite_flags == JCF_DST_OUT) {
+        } else if (_composite == jcomposite_t::DstOut) {
           pr = pr;
           pg = pg;
           pb = pb;
           pa = (pa*(0xff-a)) >> 0x08;
-        } else if (_composite_flags == JCF_DST_ATOP) {
+        } else if (_composite == jcomposite_t::DstAtop) {
           pr = (int)(pr*pa + r*(0xff-pa)) >> 0x08;
           pg = (int)(pg*pa + g*(0xff-pa)) >> 0x08;
           pb = (int)(pb*pa + b*(0xff-pa)) >> 0x08;
           pa = a;
-        } else if (_composite_flags == JCF_XOR) {
+        } else if (_composite == jcomposite_t::Xor) {
           float fr = r/255.0;
           float fg = g/255.0;
           float fb = b/255.0;
@@ -1641,7 +1641,7 @@ void Graphics::SetRGBArray(uint32_t *rgb, jrect_t<int> rect)
           pg = (int)(((fa*fg*(1.0 - fpa) + fpa*fpg*(1.0 - fa))/ar) * 255);
           pb = (int)(((fa*fb*(1.0 - fpa) + fpa*fpb*(1.0 - fa))/ar) * 255);
           pa = (int)(ar * 255);
-        } else if (_composite_flags == JCF_ADD) {
+        } else if (_composite == jcomposite_t::Add) {
           float fr = r/255.0;
           float fg = g/255.0;
           float fb = b/255.0;
@@ -1660,7 +1660,7 @@ void Graphics::SetRGBArray(uint32_t *rgb, jrect_t<int> rect)
           pg = (int)(((fa*fg + fpa*fpg)/ar) * 255);
           pb = (int)(((fa*fb + fpa*fpb)/ar) * 255);
           pa = (int)(ar * 255);
-        } else if (_composite_flags == JCF_SATURATE) {
+        } else if (_composite == jcomposite_t::Saturate) {
           float fr = r/255.0;
           float fg = g/255.0;
           float fb = b/255.0;
@@ -1702,35 +1702,35 @@ void Graphics::SetRGBArray(uint32_t *rgb, jrect_t<int> rect)
           float fxg = 0.0;
           float fxb = 0.0;
 
-          if (_composite_flags == JCF_MULTIPLY) {
+          if (_composite == jcomposite_t::Multiply) {
             fxr = (fr*fpr);
             fxg = (fg*fpg);
             fxb = (fb*fpb);
-          } else if (_composite_flags == JCF_SCREEN) {
+          } else if (_composite == jcomposite_t::Screen) {
             fxr = (fr+fpr - (fr*fpr));
             fxg = (fg+fpg - (fg*fpg));
             fxb = (fb+fpb - (fb*fpb));
-          } else if (_composite_flags == JCF_OVERLAY) {
+          } else if (_composite == jcomposite_t::Overlay) {
             fxr = ((fpr <= 0.5)?(2.0*fr*fpr):(1.0 - 2.0*(1.0 - fr)*(1.0 - fpr)));
             fxg = ((fpg <= 0.5)?(2.0*fg*fpg):(1.0 - 2.0*(1.0 - fg)*(1.0 - fpg)));
             fxb = ((fpb <= 0.5)?(2.0*fb*fpb):(1.0 - 2.0*(1.0 - fb)*(1.0 - fpb)));
-          } else if (_composite_flags == JCF_DARKEN) {
+          } else if (_composite == jcomposite_t::Darken) {
             fxr = ((fr < fpr)?fr:fpr);
             fxg = ((fg < fpg)?fg:fpg);
             fxb = ((fb < fpb)?fb:fpb);
-          } else if (_composite_flags == JCF_LIGHTEN) {
+          } else if (_composite == jcomposite_t::Lighten) {
             fxr = ((fr > fpr)?fr:fpr);
             fxg = ((fg > fpg)?fg:fpg);
             fxb = ((fb > fpb)?fb:fpb);
-          } else if (_composite_flags == JCF_DIFFERENCE) {
+          } else if (_composite == jcomposite_t::Difference) {
             fxr = (abs(fr-fpr));
             fxg = (abs(fg-fpg));
             fxb = (abs(fb-fpb));
-          } else if (_composite_flags == JCF_EXCLUSION) {
+          } else if (_composite == jcomposite_t::Exclusion) {
             fxr = (fr+fpr - 2*(fr*fpr));
             fxg = (fg+fpg - 2*(fg*fpg));
             fxb = (fb+fpb - 2*(fb*fpb));
-          } else if (_composite_flags == JCF_DODGE) {
+          } else if (_composite == jcomposite_t::Dodge) {
             float cr = fpr/(1.0 - fr);
             float cg = fpg/(1.0 - fg);
             float cb = fpb/(1.0 - fb);
@@ -1750,7 +1750,7 @@ void Graphics::SetRGBArray(uint32_t *rgb, jrect_t<int> rect)
             fxr = (fr < 1.0)?cr:1.0;
             fxg = (fg < 1.0)?cg:1.0;
             fxb = (fb < 1.0)?cb:1.0;
-          } else if (_composite_flags == JCF_BURN) {
+          } else if (_composite == jcomposite_t::Burn) {
             float cr = (1.0 - fpr)/fr;
             float cg = (1.0 - fpg)/fg;
             float cb = (1.0 - fpb)/fb;
@@ -1770,11 +1770,11 @@ void Graphics::SetRGBArray(uint32_t *rgb, jrect_t<int> rect)
             fxr = (fr > 0.0)?(1.0-cr):0.0;
             fxg = (fg > 0.0)?(1.0-cg):0.0;
             fxb = (fb > 0.0)?(1.0-cb):0.0;
-          } else if (_composite_flags == JCF_HARD) {
+          } else if (_composite == jcomposite_t::Hard) {
             fxr = (fr <= 0.5)?(2*fr*fpr):(1.0 - 2*(1.0 - fr)*(1.0 - fpr));
             fxg = (fg <= 0.5)?(2*fg*fpg):(1.0 - 2*(1.0 - fg)*(1.0 - fpg));
             fxb = (fb <= 0.5)?(2*fb*fpb):(1.0 - 2*(1.0 - fb)*(1.0 - fpb));
-          } else if (_composite_flags == JCF_LIGHT) {
+          } else if (_composite == jcomposite_t::Light) {
             float gr = (fpr <= 0.25)?(((16*fpr - 12)*fpr + 4)*fpr):(sqrt(fpr));
             float gg = (fpg <= 0.25)?(((16*fpg - 12)*fpg + 4)*fpg):(sqrt(fpg));
             float gb = (fpb <= 0.25)?(((16*fpb - 12)*fpb + 4)*fpb):(sqrt(fpb));
@@ -1804,7 +1804,7 @@ void Graphics::SetRGBArray(uint32_t *rgb, jrect_t<int> rect)
         di = di + 4;
       }
     }
-  } else if (_pixelformat == JPF_RGB32) {
+  } else if (_pixelformat == jpixelformat_t::RGB32) {
     for (int j=0; j<rect.size.y; j++) {
       if ((y + j) < 0 or (y + j) >= sh) {
         continue;
@@ -1825,7 +1825,7 @@ void Graphics::SetRGBArray(uint32_t *rgb, jrect_t<int> rect)
 			  memcpy(dst, src, rect.size.x*4);
 			}
     }
-  } else if (_pixelformat == JPF_RGB16) {
+  } else if (_pixelformat == jpixelformat_t::RGB16) {
     for (int j=0; j<rect.size.y; j++) {
       if ((y + j) < 0 or (y + j) >= sh) {
         continue;
@@ -1883,7 +1883,7 @@ bool Graphics::DrawImage(Image *img, jpoint_t<int> point)
     cairo_translate(_cairo_context, point.x + t.x, point.y + t.y);
     cairo_set_source_surface(_cairo_context, cairo_surface, 0, 0);
   
-    SetBlittingFlags(_blitting_flags);
+    SetBlittingFlags(_blitting);
   	
     cairo_rectangle(_cairo_context, 0, 0, isize.x, isize.y);
   	cairo_fill(_cairo_context);
@@ -1923,7 +1923,7 @@ bool Graphics::DrawImage(Image *img, jrect_t<int> dst)
     cairo_scale(_cairo_context, dx, dy);
     cairo_set_source_surface(_cairo_context, cairo_surface, 0, 0);
     
-    SetBlittingFlags(_blitting_flags);
+    SetBlittingFlags(_blitting);
     
     cairo_scale(_cairo_context, 1.0f/dx, 1.0f/dy);
   	cairo_rectangle(_cairo_context, 0, 0, dst.size.x, dst.size.y);
@@ -1980,7 +1980,7 @@ bool Graphics::DrawImage(Image *img, jrect_t<int> src, jrect_t<int> dst)
     cairo_scale(_cairo_context, dx, dy);
     cairo_set_source_surface(_cairo_context, cairo_surface, -src.point.x, -src.point.y);
 
-    SetBlittingFlags(_blitting_flags);
+    SetBlittingFlags(_blitting);
 
     cairo_scale(_cairo_context, 1.0f/dx, 1.0f/dy);
   	cairo_rectangle(_cairo_context, 0, 0, dst.size.x, dst.size.y);
@@ -2155,7 +2155,7 @@ void Graphics::TextTo(std::string text, jpoint_t<int> point)
   int glyphs_len = 0;
   cairo_status_t status;
 
-  if (font->GetEncoding() == JFE_ISO_8859_1) {
+  if (font->GetEncoding() == jfont_encoding_t::Latin1) {
     utf8 = jmixin::latin1_to_utf8(text);
   }
 
@@ -2198,7 +2198,7 @@ void Graphics::SetSource(Image *image)
 
   cairo_set_source_surface(_cairo_context, image->GetGraphics()->GetCairoSurface(), 0, 0);
   
-  SetBlittingFlags(_blitting_flags);
+  SetBlittingFlags(_blitting);
 }
 
 void Graphics::SetMask(Image *image)
@@ -2226,16 +2226,16 @@ void Graphics::Reset()
   _pen.dashes = nullptr;
   _pen.dashes_size = 0;
   _pen.width = 1;
-  _pen.join = JLJ_MITER;
-  _pen.style = JLS_BUTT;
+  _pen.join = jline_join_t::Miter;
+  _pen.style = jline_style_t::Butt;
 
   // ReleaseClip();
-  SetAntialias(JAM_NORMAL);
+  SetAntialias(jantialias_mode_t::Normal);
   SetPen(_pen);
   SetColor(0x00000000);
   ResetGradientStop();
-  SetCompositeFlags(JCF_SRC_OVER);
-  SetBlittingFlags(JBF_BILINEAR);
+  SetCompositeFlags(jcomposite_t::SrcOver);
+  SetBlittingFlags(jblitting_t::Bilinear);
 }
 
 void Graphics::SetVerticalSyncEnabled(bool enabled)

@@ -1,3 +1,7 @@
+#include "jcanvas/core/jbufferedimage.h"
+#include "jcanvas/core/jwindowadapter.h"
+#include "jcanvas/core/japplication.h"
+#include "jcanvas/core/jenum.h"
 #include "jcanvas/core/jkeyevent.h"
 
 #include <string>
@@ -200,7 +204,7 @@ typedef struct event Event;
 
 struct name_keyCode {
   const char* name;
-  uint32_t code;
+  jcanvas::jkeyevent_symbol_t code;
 };
 
 typedef void (*EventHandler)();

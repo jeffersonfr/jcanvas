@@ -4,16 +4,17 @@ include (${CMAKE_SOURCE_DIR}/Defines.cmake)
 
 project (jcanvas)
 
+option(WIDGETS "Enable widgets module" ON)
 option(TESTS "Enable unit tests" OFF)
 option(EXAMPLES "Enable examples" OFF)
 option(SANITIZE "Enable sanitize" OFF)
 option(COVERAGE "Enable coverage" OFF)
 option(PROFILE "Enable profile" OFF)
 
-set(CMAKE_CXX_STANDARD 20)
-# set(CMAKE_CXX_FLAGS "-std=c++20")
+#set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_FLAGS "-std=c++20 -g -ggdb")
 
-set(GRAPHIC_BIND "sdl2" CACHE STRING "Default graphic bind")
+set(GRAPHIC_BIND "gl" CACHE STRING "Default graphic bind")
 set_property(CACHE GRAPHIC_BIND PROPERTY STRINGS 
   allegro5 caca directfb dispmanx drm efl egl fb flaschen gl gtk3 nanax openvg qt5 sdl2 sfml2 vdpau vnc wayland xcb xlib jx)
 
@@ -42,8 +43,12 @@ endif()
 
 enable_testing()
 
-add_subdirectory(core)
 add_subdirectory(algebra)
+add_subdirectory(core)
+
+if (WIDGETS)
+  add_subdirectory(widgets)
+endif()
 
 # generate jcanvas.pc
 set (JCANVAS_INCLUDE_DIRS "")

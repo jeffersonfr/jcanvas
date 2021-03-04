@@ -20,6 +20,7 @@
 #include "jcanvas/core/jbufferedimage.h"
 #include "jcanvas/core/jwindowadapter.h"
 #include "jcanvas/core/japplication.h"
+#include "jcanvas/core/jenum.h"
 
 #include <thread>
 #include <mutex>
@@ -31,13 +32,13 @@
 namespace jcanvas {
 
 struct cursor_params_t {
-  jcanvas::Image *cursor;
+  Image *cursor;
   int hot_x;
   int hot_y;
 };
 
 /** \brief */
-jcanvas::Image *sg_back_buffer = nullptr;
+Image *sg_back_buffer = nullptr;
 /** \brief */
 static std::atomic<bool> sg_repaint;
 /** \brief */
@@ -51,7 +52,7 @@ static IDirectFBWindow *sg_window = nullptr;
 /** \brief */
 static IDirectFBSurface *sg_surface = nullptr;
 /** \brief */
-static jcanvas::Image *sg_jcanvas_icon = nullptr;
+static Image *sg_jcanvas_icon = nullptr;
 /** \brief */
 static int sg_mouse_x = 0;
 /** \brief */
@@ -63,242 +64,242 @@ static std::mutex sg_loop_mutex;
 /** \brief */
 static bool sg_quitting = false;
 /** \brief */
-static jcanvas::jpoint_t<int> sg_screen = {0, 0};
+static jpoint_t<int> sg_screen = {0, 0};
 /** \brief */
-static jcursor_style_t sg_jcanvas_cursor = JCS_DEFAULT;
+static jcursor_style_t sg_jcanvas_cursor = jcursor_style_t::Default;
 /** \brief */
 static Window *sg_jcanvas_window = nullptr;
 
-jcanvas::jkeyevent_symbol_t TranslateToNativeKeySymbol(DFBInputDeviceKeySymbol symbol)
+jkeyevent_symbol_t TranslateToNativeKeySymbol(DFBInputDeviceKeySymbol symbol)
 {
 	switch (symbol) {
 		case DIKS_NULL:
-			return jcanvas::JKS_UNKNOWN;
+			return jkeyevent_symbol_t::Unknown;
 		case DIKS_ENTER:
-			return jcanvas::JKS_ENTER;
+			return jkeyevent_symbol_t::Enter;
 		case DIKS_BACKSPACE:
-			return jcanvas::JKS_BACKSPACE;
+			return jkeyevent_symbol_t::Backspace;
 		case DIKS_TAB:
-			return jcanvas::JKS_TAB;
+			return jkeyevent_symbol_t::Tab;
 		//case DIKS_RETURN:
-		//	return jcanvas::JKS_RETURN;
+		//	return jkeyevent_symbol_t::Return;
 		case DIKS_CANCEL:
-			return jcanvas::JKS_CANCEL;
+			return jkeyevent_symbol_t::Cancel;
 		case DIKS_ESCAPE:
-			return jcanvas::JKS_ESCAPE;
+			return jkeyevent_symbol_t::Escape;
 		case DIKS_SPACE:
-			return jcanvas::JKS_SPACE;
+			return jkeyevent_symbol_t::Space;
 		case DIKS_EXCLAMATION_MARK:
-			return jcanvas::JKS_EXCLAMATION_MARK;
+			return jkeyevent_symbol_t::ExclamationMark;
 		case DIKS_QUOTATION:
-			return jcanvas::JKS_QUOTATION;
+			return jkeyevent_symbol_t::Quotation;
 		case DIKS_NUMBER_SIGN:
-			return jcanvas::JKS_NUMBER_SIGN;
+			return jkeyevent_symbol_t::Hash;
 		case DIKS_DOLLAR_SIGN:
-			return jcanvas::JKS_DOLLAR_SIGN;
+			return jkeyevent_symbol_t::Dollar;
 		case DIKS_PERCENT_SIGN:
-			return jcanvas::JKS_PERCENT_SIGN;
+			return jkeyevent_symbol_t::Percent;
 		case DIKS_AMPERSAND:   
-			return jcanvas::JKS_AMPERSAND;
+			return jkeyevent_symbol_t::Ampersand;
 		case DIKS_APOSTROPHE:
-			return jcanvas::JKS_APOSTROPHE;
+			return jkeyevent_symbol_t::Aposthrophe;
 		case DIKS_PARENTHESIS_LEFT:
-			return jcanvas::JKS_PARENTHESIS_LEFT;
+			return jkeyevent_symbol_t::ParenthesisLeft;
 		case DIKS_PARENTHESIS_RIGHT:
-			return jcanvas::JKS_PARENTHESIS_RIGHT;
+			return jkeyevent_symbol_t::ParenthesisRight;
 		case DIKS_ASTERISK:
-			return jcanvas::JKS_STAR;
+			return jkeyevent_symbol_t::Star;
 		case DIKS_PLUS_SIGN:
-			return jcanvas::JKS_PLUS_SIGN;
+			return jkeyevent_symbol_t::Plus;
 		case DIKS_COMMA:   
-			return jcanvas::JKS_COMMA;
+			return jkeyevent_symbol_t::Comma;
 		case DIKS_MINUS_SIGN:
-			return jcanvas::JKS_MINUS_SIGN;
+			return jkeyevent_symbol_t::Minus;
 		case DIKS_PERIOD:  
-			return jcanvas::JKS_PERIOD;
+			return jkeyevent_symbol_t::Period;
 		case DIKS_SLASH:
-			return jcanvas::JKS_SLASH;
+			return jkeyevent_symbol_t::Slash;
 		case DIKS_0:     
-			return jcanvas::JKS_0;
+			return jkeyevent_symbol_t::Number0;
 		case DIKS_1:
-			return jcanvas::JKS_1;
+			return jkeyevent_symbol_t::Number1;
 		case DIKS_2:
-			return jcanvas::JKS_2;
+			return jkeyevent_symbol_t::Number2;
 		case DIKS_3:
-			return jcanvas::JKS_3;
+			return jkeyevent_symbol_t::Number3;
 		case DIKS_4:
-			return jcanvas::JKS_4;
+			return jkeyevent_symbol_t::Number4;
 		case DIKS_5:
-			return jcanvas::JKS_5;
+			return jkeyevent_symbol_t::Number5;
 		case DIKS_6:
-			return jcanvas::JKS_6;
+			return jkeyevent_symbol_t::Number6;
 		case DIKS_7:
-			return jcanvas::JKS_7;
+			return jkeyevent_symbol_t::Number7;
 		case DIKS_8:
-			return jcanvas::JKS_8;
+			return jkeyevent_symbol_t::Number8;
 		case DIKS_9:
-			return jcanvas::JKS_9;
+			return jkeyevent_symbol_t::Number9;
 		case DIKS_COLON:
-			return jcanvas::JKS_COLON;
+			return jkeyevent_symbol_t::Colon;
 		case DIKS_SEMICOLON:
-			return jcanvas::JKS_SEMICOLON;
+			return jkeyevent_symbol_t::SemiColon;
 		case DIKS_LESS_THAN_SIGN:
-			return jcanvas::JKS_LESS_THAN_SIGN;
+			return jkeyevent_symbol_t::LessThan;
 		case DIKS_EQUALS_SIGN: 
-			return jcanvas::JKS_EQUALS_SIGN;
+			return jkeyevent_symbol_t::Equals;
 		case DIKS_GREATER_THAN_SIGN:
-			return jcanvas::JKS_GREATER_THAN_SIGN;
+			return jkeyevent_symbol_t::GreaterThan;
 		case DIKS_QUESTION_MARK:   
-			return jcanvas::JKS_QUESTION_MARK;
+			return jkeyevent_symbol_t::QuestionMark;
 		case DIKS_AT:      
-			return jcanvas::JKS_AT;
+			return jkeyevent_symbol_t::At;
 		case DIKS_SQUARE_BRACKET_LEFT:
-			return jcanvas::JKS_SQUARE_BRACKET_LEFT;
+			return jkeyevent_symbol_t::SquareBracketLeft;
 		case DIKS_BACKSLASH:   
-			return jcanvas::JKS_BACKSLASH;
+			return jkeyevent_symbol_t::BackSlash;
 		case DIKS_SQUARE_BRACKET_RIGHT:
-			return jcanvas::JKS_SQUARE_BRACKET_RIGHT;
+			return jkeyevent_symbol_t::SquareBracketRight;
 		case DIKS_CIRCUMFLEX_ACCENT:
-			return jcanvas::JKS_CIRCUMFLEX_ACCENT;
+			return jkeyevent_symbol_t::CircumflexAccent;
 		case DIKS_UNDERSCORE:    
-			return jcanvas::JKS_UNDERSCORE;
+			return jkeyevent_symbol_t::Underscore;
 		case DIKS_GRAVE_ACCENT:
-			return jcanvas::JKS_GRAVE_ACCENT;
+			return jkeyevent_symbol_t::GraveAccent;
 		case DIKS_SMALL_A:       
-			return jcanvas::JKS_a;
+			return jkeyevent_symbol_t::a;
 		case DIKS_SMALL_B:
-			return jcanvas::JKS_b;
+			return jkeyevent_symbol_t::b;
 		case DIKS_SMALL_C:
-			return jcanvas::JKS_c;
+			return jkeyevent_symbol_t::c;
 		case DIKS_SMALL_D:
-			return jcanvas::JKS_d;
+			return jkeyevent_symbol_t::d;
 		case DIKS_SMALL_E:
-			return jcanvas::JKS_e;
+			return jkeyevent_symbol_t::e;
 		case DIKS_SMALL_F:
-			return jcanvas::JKS_f;
+			return jkeyevent_symbol_t::f;
 		case DIKS_SMALL_G:
-			return jcanvas::JKS_g;
+			return jkeyevent_symbol_t::g;
 		case DIKS_SMALL_H:
-			return jcanvas::JKS_h;
+			return jkeyevent_symbol_t::h;
 		case DIKS_SMALL_I:
-			return jcanvas::JKS_i;
+			return jkeyevent_symbol_t::i;
 		case DIKS_SMALL_J:
-			return jcanvas::JKS_j;
+			return jkeyevent_symbol_t::j;
 		case DIKS_SMALL_K:
-			return jcanvas::JKS_k;
+			return jkeyevent_symbol_t::k;
 		case DIKS_SMALL_L:
-			return jcanvas::JKS_l;
+			return jkeyevent_symbol_t::l;
 		case DIKS_SMALL_M:
-			return jcanvas::JKS_m;
+			return jkeyevent_symbol_t::m;
 		case DIKS_SMALL_N:
-			return jcanvas::JKS_n;
+			return jkeyevent_symbol_t::n;
 		case DIKS_SMALL_O:
-			return jcanvas::JKS_o;
+			return jkeyevent_symbol_t::o;
 		case DIKS_SMALL_P:
-			return jcanvas::JKS_p;
+			return jkeyevent_symbol_t::p;
 		case DIKS_SMALL_Q:
-			return jcanvas::JKS_q;
+			return jkeyevent_symbol_t::q;
 		case DIKS_SMALL_R:
-			return jcanvas::JKS_r;
+			return jkeyevent_symbol_t::r;
 		case DIKS_SMALL_S:
-			return jcanvas::JKS_s;
+			return jkeyevent_symbol_t::s;
 		case DIKS_SMALL_T:
-			return jcanvas::JKS_t;
+			return jkeyevent_symbol_t::t;
 		case DIKS_SMALL_U:
-			return jcanvas::JKS_u;
+			return jkeyevent_symbol_t::u;
 		case DIKS_SMALL_V:
-			return jcanvas::JKS_v;
+			return jkeyevent_symbol_t::v;
 		case DIKS_SMALL_W:
-			return jcanvas::JKS_w;
+			return jkeyevent_symbol_t::w;
 		case DIKS_SMALL_X:
-			return jcanvas::JKS_x;
+			return jkeyevent_symbol_t::x;
 		case DIKS_SMALL_Y:
-			return jcanvas::JKS_y;
+			return jkeyevent_symbol_t::y;
 		case DIKS_SMALL_Z:
-			return jcanvas::JKS_z;
+			return jkeyevent_symbol_t::z;
 		case DIKS_CURLY_BRACKET_LEFT:
-			return jcanvas::JKS_CURLY_BRACKET_LEFT;
+			return jkeyevent_symbol_t::CurlyBracketLeft;
 		case DIKS_VERTICAL_BAR:  
-			return jcanvas::JKS_VERTICAL_BAR;
+			return jkeyevent_symbol_t::VerticalBar;
 		case DIKS_CURLY_BRACKET_RIGHT:
-			return jcanvas::JKS_CURLY_BRACKET_RIGHT;
+			return jkeyevent_symbol_t::CurlyBracketRight;
 		case DIKS_TILDE:  
-			return jcanvas::JKS_TILDE;
+			return jkeyevent_symbol_t::Tilde;
 		case DIKS_DELETE:
-			return jcanvas::JKS_DELETE;
+			return jkeyevent_symbol_t::Delete;
 		case DIKS_CURSOR_LEFT:
-			return jcanvas::JKS_CURSOR_LEFT;
+			return jkeyevent_symbol_t::CursorLeft;
 		case DIKS_CURSOR_RIGHT:
-			return jcanvas::JKS_CURSOR_RIGHT;
+			return jkeyevent_symbol_t::CursorRight;
 		case DIKS_CURSOR_UP:  
-			return jcanvas::JKS_CURSOR_UP;
+			return jkeyevent_symbol_t::CursorUp;
 		case DIKS_CURSOR_DOWN:
-			return jcanvas::JKS_CURSOR_DOWN;
+			return jkeyevent_symbol_t::CursorDown;
 		case DIKS_INSERT:  
-			return jcanvas::JKS_INSERT;
+			return jkeyevent_symbol_t::Insert;
 		case DIKS_HOME:     
-			return jcanvas::JKS_HOME;
+			return jkeyevent_symbol_t::Home;
 		case DIKS_END:
-			return jcanvas::JKS_END;
+			return jkeyevent_symbol_t::End;
 		case DIKS_PAGE_UP:
-			return jcanvas::JKS_PAGE_UP;
+			return jkeyevent_symbol_t::PageUp;
 		case DIKS_PAGE_DOWN:
-			return jcanvas::JKS_PAGE_DOWN;
+			return jkeyevent_symbol_t::PageDown;
 		case DIKS_PRINT:   
-			return jcanvas::JKS_PRINT;
+			return jkeyevent_symbol_t::Print;
 		case DIKS_PAUSE:
-			return jcanvas::JKS_PAUSE;
+			return jkeyevent_symbol_t::Pause;
 		case DIKS_RED:
-			return jcanvas::JKS_RED;
+			return jkeyevent_symbol_t::Red;
 		case DIKS_GREEN:
-			return jcanvas::JKS_GREEN;
+			return jkeyevent_symbol_t::Green;
 		case DIKS_YELLOW:
-			return jcanvas::JKS_YELLOW;
+			return jkeyevent_symbol_t::Yellow;
 		case DIKS_BLUE:
-			return jcanvas::JKS_BLUE;
+			return jkeyevent_symbol_t::Blue;
 		case DIKS_F1:
-			return jcanvas::JKS_F1;
+			return jkeyevent_symbol_t::F1;
 		case DIKS_F2:
-			return jcanvas::JKS_F2;
+			return jkeyevent_symbol_t::F2;
 		case DIKS_F3:
-			return jcanvas::JKS_F3;
+			return jkeyevent_symbol_t::F3;
 		case DIKS_F4:
-			return jcanvas::JKS_F4;
+			return jkeyevent_symbol_t::F4;
 		case DIKS_F5:
-			return jcanvas::JKS_F5;
+			return jkeyevent_symbol_t::F5;
 		case DIKS_F6:     
-			return jcanvas::JKS_F6;
+			return jkeyevent_symbol_t::F6;
 		case DIKS_F7:    
-			return jcanvas::JKS_F7;
+			return jkeyevent_symbol_t::F7;
 		case DIKS_F8:   
-			return jcanvas::JKS_F8;
+			return jkeyevent_symbol_t::F8;
 		case DIKS_F9:  
-			return jcanvas::JKS_F9;
+			return jkeyevent_symbol_t::F9;
 		case DIKS_F10: 
-			return jcanvas::JKS_F10;
+			return jkeyevent_symbol_t::F10;
 		case DIKS_F11:
-			return jcanvas::JKS_F11;
+			return jkeyevent_symbol_t::F11;
 		case DIKS_F12:
-			return jcanvas::JKS_F12;
+			return jkeyevent_symbol_t::F12;
 		case DIKS_SHIFT:
-			return jcanvas::JKS_SHIFT;
+			return jkeyevent_symbol_t::Shift;
 		case DIKS_CONTROL:
-			return jcanvas::JKS_CONTROL;
+			return jkeyevent_symbol_t::Control;
 		case DIKS_ALT:
-			return jcanvas::JKS_ALT;
+			return jkeyevent_symbol_t::Alt;
 		case DIKS_ALTGR:
-			return jcanvas::JKS_ALTGR;
+			return jkeyevent_symbol_t::AltGr;
 		case DIKS_META:
-			return jcanvas::JKS_META;
+			return jkeyevent_symbol_t::Meta;
 		case DIKS_SUPER:
-			return jcanvas::JKS_SUPER;
+			return jkeyevent_symbol_t::Super;
 		case DIKS_HYPER:
-			return jcanvas::JKS_HYPER;
+			return jkeyevent_symbol_t::Hyper;
 		default: 
 			break;
 	}
 
-	return jcanvas::JKS_UNKNOWN;
+	return jkeyevent_symbol_t::Unknown;
 }
 
 void Application::Init(int argc, char **argv)
@@ -345,10 +346,10 @@ void Application::Init(int argc, char **argv)
 	}
 
 #define CURSOR_INIT(type, ix, iy, hotx, hoty) \
-	t.cursor = new jcanvas::BufferedImage(JPF_ARGB, {w, h}); \
+	t.cursor = new BufferedImage(jpixelformat_t::ARGB, {w, h}); \
 	t.hot_x = hotx; \
 	t.hot_y = hoty; \
-	t.cursor->GetGraphics()->DrawImage(cursors, {ix*w, iy*h, w, h}, jcanvas::jpoint_t<int>{0, 0}); \
+	t.cursor->GetGraphics()->DrawImage(cursors, {ix*w, iy*h, w, h}, jpoint_t<int>{0, 0}); \
 	sg_jcanvas_cursors[type] = t; \
 
   /*
@@ -356,24 +357,24 @@ void Application::Init(int argc, char **argv)
 	int w = 30,
 			h = 30;
 
-	Image *cursors = new jcanvas::BufferedImage(_DATA_PREFIX"/images/cursors.png");
+	Image *cursors = new BufferedImage(_DATA_PREFIX"/images/cursors.png");
 
-	CURSOR_INIT(JCS_DEFAULT, 0, 0, 8, 8);
-	CURSOR_INIT(JCS_CROSSHAIR, 4, 3, 15, 15);
-	CURSOR_INIT(JCS_EAST, 4, 4, 22, 15);
-	CURSOR_INIT(JCS_WEST, 5, 4, 9, 15);
-	CURSOR_INIT(JCS_NORTH, 6, 4, 15, 8);
-	CURSOR_INIT(JCS_SOUTH, 7, 4, 15, 22);
-	CURSOR_INIT(JCS_HAND, 1, 0, 15, 15);
-	CURSOR_INIT(JCS_MOVE, 8, 4, 15, 15);
-	CURSOR_INIT(JCS_NS, 2, 4, 15, 15);
-	CURSOR_INIT(JCS_WE, 3, 4, 15, 15);
-	CURSOR_INIT(JCS_NW_CORNER, 8, 1, 10, 10);
-	CURSOR_INIT(JCS_NE_CORNER, 9, 1, 20, 10);
-	CURSOR_INIT(JCS_SW_CORNER, 6, 1, 10, 20);
-	CURSOR_INIT(JCS_SE_CORNER, 7, 1, 20, 20);
-	CURSOR_INIT(JCS_TEXT, 7, 0, 15, 15);
-	CURSOR_INIT(JCS_WAIT, 8, 0, 15, 15);
+	CURSOR_INIT(jcursor_style_t::Default, 0, 0, 8, 8);
+	CURSOR_INIT(jcursor_style_t::Crosshair, 4, 3, 15, 15);
+	CURSOR_INIT(jcursor_style_t::East, 4, 4, 22, 15);
+	CURSOR_INIT(jcursor_style_t::West, 5, 4, 9, 15);
+	CURSOR_INIT(jcursor_style_t::North, 6, 4, 15, 8);
+	CURSOR_INIT(jcursor_style_t::South, 7, 4, 15, 22);
+	CURSOR_INIT(jcursor_style_t::Hand, 1, 0, 15, 15);
+	CURSOR_INIT(jcursor_style_t::Move, 8, 4, 15, 15);
+	CURSOR_INIT(jcursor_style_t::Vertical, 2, 4, 15, 15);
+	CURSOR_INIT(jcursor_style_t::Horizontal, 3, 4, 15, 15);
+	CURSOR_INIT(jcursor_style_t::NorthWest, 8, 1, 10, 10);
+	CURSOR_INIT(jcursor_style_t::NorthEast, 9, 1, 20, 10);
+	CURSOR_INIT(jcursor_style_t::SouthWest, 6, 1, 10, 20);
+	CURSOR_INIT(jcursor_style_t::SouthEast, 7, 1, 20, 20);
+	CURSOR_INIT(jcursor_style_t::Text, 7, 0, 15, 15);
+	CURSOR_INIT(jcursor_style_t::Wait, 8, 0, 15, 15);
 	
 	delete cursors;
   */
@@ -391,7 +392,7 @@ static void InternalPaint()
     bounds = sg_jcanvas_window->GetBounds();
 
   if (sg_back_buffer != nullptr) {
-    jcanvas::jpoint_t<int>
+    jpoint_t<int>
       size = sg_back_buffer->GetSize();
 
     if (size.x != bounds.size.x or size.y != bounds.size.y) {
@@ -401,14 +402,14 @@ static void InternalPaint()
   }
 
   if (sg_back_buffer == nullptr) {
-    sg_back_buffer = new jcanvas::BufferedImage(jcanvas::JPF_RGB32, bounds.size);
+    sg_back_buffer = new BufferedImage(jpixelformat_t::RGB32, bounds.size);
   }
 
-  jcanvas::Graphics 
+  Graphics 
     *g = sg_back_buffer->GetGraphics();
 
   g->Reset();
-  g->SetCompositeFlags(jcanvas::JCF_SRC);
+  g->SetCompositeFlags(jcomposite_t::Src);
 
   sg_jcanvas_window->Paint(g);
 
@@ -435,7 +436,7 @@ static void InternalPaint()
 
   sg_back_buffer->UnlockData();
 
-  sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_PAINTED));
+  sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Painted));
 }
 
 void Application::Loop()
@@ -468,97 +469,93 @@ void Application::Loop()
       if (event.type == DWET_ENTER) {
         // SetCursor(GetCursor());
 
-        sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_ENTERED));
+        sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Entered));
       } else if (event.type == DWET_LEAVE) {
-        // SetCursor(JCS_DEFAULT);
+        // SetCursor(jcursor_style_t::Default);
 
-        sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_LEAVED));
+        sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Leaved));
       } else if (event.type == DWET_CLOSE || event.type == DWET_DESTROYED) {
         sg_quitting = true;
       } else if (event.type == DWET_KEYDOWN || event.type == DWET_KEYUP) {
-        jcanvas::jkeyevent_type_t type;
-        jcanvas::jkeyevent_modifiers_t mod;
-
-        mod = (jcanvas::jkeyevent_modifiers_t)(0);
+        jkeyevent_type_t type = jkeyevent_type_t::Unknown;
+        jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
         if ((event.flags & DIEF_MODIFIERS) != 0) {
           if ((event.modifiers & DIMM_SHIFT) != 0) {
-            mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_SHIFT);
+            mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
           } else if ((event.modifiers & DIMM_CONTROL) != 0) {
-            mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_CONTROL);
+            mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
           } else if ((event.modifiers & DIMM_ALT) != 0) {
-            mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_ALT);
+            mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
           } else if ((event.modifiers & DIMM_ALTGR) != 0) {
-            mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_ALTGR);
+            mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::AltGr);
           } else if ((event.modifiers & DIMM_META) != 0) {
-            mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_META);
+            mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
           } else if ((event.modifiers & DIMM_SUPER) != 0) {
-            mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_SUPER);
+            mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
           } else if ((event.modifiers & DIMM_HYPER) != 0) {
-            mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_HYPER);
+            mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Hyper);
           }
         }
 
-        type = (jcanvas::jkeyevent_type_t)(0);
-
         if (event.type == DWET_KEYDOWN) {
-          type = jcanvas::JKT_PRESSED;
+          type = jkeyevent_type_t::Pressed;
         } else if (event.type == DWET_KEYUP) {
-          type = jcanvas::JKT_RELEASED;
+          type = jkeyevent_type_t::Released;
         }
 
-        jcanvas::jkeyevent_symbol_t symbol = TranslateToNativeKeySymbol(event.key_symbol);
+        jkeyevent_symbol_t symbol = TranslateToNativeKeySymbol(event.key_symbol);
 
-        sg_jcanvas_window->GetEventManager()->PostEvent(new jcanvas::KeyEvent(sg_jcanvas_window, type, mod, jcanvas::KeyEvent::GetCodeFromSymbol(symbol), symbol));
+        sg_jcanvas_window->GetEventManager().PostEvent(new KeyEvent(sg_jcanvas_window, type, mod, KeyEvent::GetCodeFromSymbol(symbol), symbol));
       } else if (event.type == DWET_BUTTONDOWN || event.type == DWET_BUTTONUP || event.type == DWET_WHEEL || event.type == DWET_MOTION) {
-        jcanvas::jmouseevent_button_t button = jcanvas::JMB_NONE;
-        jcanvas::jmouseevent_button_t buttons = jcanvas::JMB_NONE;
-        jcanvas::jmouseevent_type_t type = jcanvas::JMT_UNKNOWN;
+        jmouseevent_button_t button = jmouseevent_button_t::None;
+        jmouseevent_button_t buttons = jmouseevent_button_t::None;
+        jmouseevent_type_t type = jmouseevent_type_t::Unknown;
         int mouse_z = 0;
 
         sg_mouse_x = event.cx;
         sg_mouse_y = event.cy;
 
         if (event.type == DWET_MOTION) {
-          type = jcanvas::JMT_MOVED;
+          type = jmouseevent_type_t::Moved;
         } else if (event.type == DWET_WHEEL) {
-          type = jcanvas::JMT_ROTATED;
+          type = jmouseevent_type_t::Rotated;
           mouse_z = event.step;
         } else if (event.type == DWET_BUTTONDOWN || event.type == DWET_BUTTONUP) {
           if (event.type == DWET_BUTTONDOWN) {
-            type = jcanvas::JMT_PRESSED;
+            type = jmouseevent_type_t::Pressed;
           } else if (event.type == DWET_BUTTONUP) {
-            type = jcanvas::JMT_RELEASED;
+            type = jmouseevent_type_t::Released;
           }
 
           if (event.button == DIBI_LEFT) {
-            button = jcanvas::JMB_BUTTON1;
+            button = jmouseevent_button_t::Button1;
           } else if (event.button == DIBI_RIGHT) {
-            button = jcanvas::JMB_BUTTON2;
+            button = jmouseevent_button_t::Button2;
           } else if (event.button == DIBI_MIDDLE) {
-            button = jcanvas::JMB_BUTTON3;
+            button = jmouseevent_button_t::Button3;
           }
         }
 
         if ((event.buttons & DIBM_LEFT) != 0) {
-          buttons = (jcanvas::jmouseevent_button_t)(button | jcanvas::JMB_BUTTON1);
+          buttons = jenum_t{button}.Or(jmouseevent_button_t::Button1);
         }
 
         if ((event.buttons & DIBM_RIGHT) != 0) {
-          buttons = (jcanvas::jmouseevent_button_t)(button | jcanvas::JMB_BUTTON2);
+          buttons = jenum_t{button}.Or(jmouseevent_button_t::Button2);
         }
 
         if ((event.buttons & DIBI_MIDDLE) != 0) {
-          buttons = (jcanvas::jmouseevent_button_t)(button | jcanvas::JMB_BUTTON3);
+          buttons = jenum_t{button}.Or(jmouseevent_button_t::Button3);
         }
 
-        if (sg_jcanvas_window->GetEventManager()->IsAutoGrab() == true && buttons != jcanvas::JMB_NONE) {
+        if (sg_jcanvas_window->GetEventManager().IsAutoGrab() == true && buttons != jmouseevent_button_t::None) {
           sg_window->GrabPointer(sg_window);
         } else {
           sg_window->UngrabPointer(sg_window);
         }
 
-        sg_jcanvas_window->GetEventManager()->PostEvent(new jcanvas::MouseEvent(sg_jcanvas_window, type, button, buttons, {sg_mouse_x, sg_mouse_y}, mouse_z));
+        sg_jcanvas_window->GetEventManager().PostEvent(new MouseEvent(sg_jcanvas_window, type, button, buttons, {sg_mouse_x, sg_mouse_y}, mouse_z));
       }
     }
   }
@@ -585,7 +582,7 @@ void Application::Quit()
   sg_loop_mutex.unlock();
 }
 
-WindowAdapter::WindowAdapter(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds)
+WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 {
 	if (sg_window != nullptr) {
 		throw std::runtime_error("Cannot create more than one window");
@@ -653,7 +650,7 @@ WindowAdapter::WindowAdapter(jcanvas::Window *parent, jcanvas::jrect_t<int> boun
 #endif
 	sg_surface->Clear(sg_surface, 0x00, 0x00, 0x00, 0x00);
   
-  SetCursor(sg_jcanvas_cursors[JCS_DEFAULT].cursor, sg_jcanvas_cursors[JCS_DEFAULT].hot_x, sg_jcanvas_cursors[JCS_DEFAULT].hot_y);
+  SetCursor(sg_jcanvas_cursors[jcursor_style_t::Default].cursor, sg_jcanvas_cursors[jcursor_style_t::Default].hot_x, sg_jcanvas_cursors[jcursor_style_t::Default].hot_y);
 }
 
 WindowAdapter::~WindowAdapter()
@@ -742,9 +739,9 @@ void WindowAdapter::SetBounds(jrect_t<int> bounds)
   }
 }
 
-jcanvas::jrect_t<int> WindowAdapter::GetBounds()
+jrect_t<int> WindowAdapter::GetBounds()
 {
-	jcanvas::jrect_t<int> t;
+	jrect_t<int> t;
 
 	sg_window->GetPosition(sg_window, &t.point.x, &t.point.y);
 	sg_window->GetSize(sg_window, &t.size.x, &t.size.y);
@@ -832,7 +829,7 @@ void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
 
 	IDirectFBSurface *surface = nullptr;
 	DFBSurfaceDescription desc;
-  jcanvas::jpoint_t<int> size = shape->GetSize();
+  jpoint_t<int> size = shape->GetSize();
 
 	desc.flags = (DFBSurfaceDescriptionFlags)(DSDESC_WIDTH | DSDESC_HEIGHT | DSDESC_PIXELFORMAT);
 	desc.pixelformat = DSPF_ARGB;
@@ -868,15 +865,15 @@ void WindowAdapter::SetRotation(jwindow_rotation_t t)
 
 jwindow_rotation_t WindowAdapter::GetRotation()
 {
-	return jcanvas::JWR_NONE;
+	return jwindow_rotation_t::None;
 }
 
-void WindowAdapter::SetIcon(jcanvas::Image *image)
+void WindowAdapter::SetIcon(Image *image)
 {
   sg_jcanvas_icon = image;
 }
 
-jcanvas::Image * WindowAdapter::GetIcon()
+Image * WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }

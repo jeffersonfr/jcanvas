@@ -810,7 +810,7 @@ class BufferedImageTest : public Picture {
 			jpoint_t
 				size = image->GetSize();
 
-			_image = new BufferedImage(JPF_RGB32, size);
+			_image = new BufferedImage(jpixelformat_t::RGB32, size);
 
 			_image->GetGraphics()->DrawImage(image, jpoint_t<int>{0, 0});
 
@@ -847,9 +847,9 @@ class RGBImageTest : public Picture {
       delete image;
       image = nullptr;
 
-			_image = new BufferedImage(JPF_RGB32, size);
+			_image = new BufferedImage(jpixelformat_t::RGB32, size);
 
-      _image->GetGraphics()->SetCompositeFlags(JCF_SRC);
+      _image->GetGraphics()->SetCompositeFlags(jcomposite_t::Src);
       _image->GetGraphics()->SetRGBArray(rgb, {0, 0, size.x, size.y});
 
 			_title = "RGB Image";

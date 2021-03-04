@@ -22,6 +22,7 @@
 
 #include "jcanvas/core/jkeyevent.h"
 #include "jcanvas/core/jmouseevent.h"
+#include "jcanvas/core/jenum.h"
 
 #include <vector>
 #include <map>

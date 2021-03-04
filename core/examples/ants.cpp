@@ -296,10 +296,10 @@ class Main : public Window {
 				size = GetSize();
 			char tmp[255];
 
-      g->SetCompositeFlags(JCF_SRC_OVER);
+      g->SetCompositeFlags(jcomposite_t::SrcOver);
 
 			if (foffscreen == nullptr) {
-				foffscreen = new BufferedImage(JPF_RGB32, size);
+				foffscreen = new BufferedImage(jpixelformat_t::RGB32, size);
 			
 				Graphics *goff = foffscreen->GetGraphics();
 

@@ -92,14 +92,14 @@ class GraphicsTeste : public Window, public KeyListener {
       jpoint_t
         size = GetSize();
       EventManager 
-        *ev = GetEventManager();
+        &ev = GetEventManager();
 
 			double frameTime = 0.1;	//frameTime is the time this frame has taken, in seconds
 			//speed modifiers
 			double moveSpeed = frameTime * 1.0;			//the constant value is in squares/second
 			double rotSpeed = frameTime * 1.0;			//the constant value is in radians/second
 
-			if (ev->IsKeyDown(jcanvas::JKS_CURSOR_UP)) {
+			if (ev.IsKeyDown(jkeyevent_symbol_t::CursorUp)) {
 				if (worldMap[int(posX + dirX * moveSpeed)][int(posY)] == false) {
 					posX += dirX * moveSpeed;
 				}
@@ -108,7 +108,7 @@ class GraphicsTeste : public Window, public KeyListener {
 				}
       }
 
-      if (ev->IsKeyDown(jcanvas::JKS_CURSOR_DOWN)) {
+      if (ev.IsKeyDown(jkeyevent_symbol_t::CursorDown)) {
 				if (worldMap[int(posX - dirX * moveSpeed)][int(posY)] == false) {
 					posX -= dirX * moveSpeed;
 				}
@@ -117,7 +117,7 @@ class GraphicsTeste : public Window, public KeyListener {
 				}
       } 
       
-      if (ev->IsKeyDown(jcanvas::JKS_CURSOR_RIGHT)) {
+      if (ev.IsKeyDown(jkeyevent_symbol_t::CursorRight)) {
 				//both camera direction and camera plane must be rotated
 				double oldDirX = dirX;
 				dirX = dirX * cos(rotSpeed) - dirY * sin(rotSpeed);
@@ -127,7 +127,7 @@ class GraphicsTeste : public Window, public KeyListener {
 				planeY = oldPlaneX * sin(rotSpeed) + planeY * cos(rotSpeed);
       }
       
-      if (ev->IsKeyDown(jcanvas::JKS_CURSOR_LEFT)) {
+      if (ev.IsKeyDown(jkeyevent_symbol_t::CursorLeft)) {
 				//both camera direction and camera plane must be rotated
 				double oldDirX = dirX;
 				dirX = dirX * cos(-rotSpeed) - dirY * sin(-rotSpeed);

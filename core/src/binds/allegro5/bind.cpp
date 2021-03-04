@@ -20,6 +20,7 @@
 #include "jcanvas/core/jbufferedimage.h"
 #include "jcanvas/core/jwindowadapter.h"
 #include "jcanvas/core/japplication.h"
+#include "jcanvas/core/jenum.h"
 
 #include <thread>
 #include <mutex>
@@ -63,7 +64,7 @@ static bool sg_quitting = false;
 /** \brief */
 static jcanvas::jpoint_t<int> sg_screen = {0, 0};
 /** \brief */
-static jcursor_style_t sg_jcanvas_cursor = JCS_DEFAULT;
+static jcursor_style_t sg_jcanvas_cursor = jcursor_style_t::Default;
 /** \brief */
 static jcanvas::Image *sg_jcanvas_icon = nullptr;
 
@@ -71,232 +72,232 @@ static jcanvas::jkeyevent_symbol_t TranslateToNativeKeySymbol(int symbol)
 {
 	switch (symbol) {
 		case ALLEGRO_KEY_ENTER:
-			return jcanvas::JKS_ENTER; // jcanvas::JKS_RETURN;
+			return jcanvas::jkeyevent_symbol_t::Enter; // jcanvas::jkeyevent_symbol_t::Return;
 		case ALLEGRO_KEY_BACKSPACE:
-			return jcanvas::JKS_BACKSPACE;
+			return jcanvas::jkeyevent_symbol_t::Backspace;
 		case ALLEGRO_KEY_TAB:
-			return jcanvas::JKS_TAB;
+			return jcanvas::jkeyevent_symbol_t::Tab;
 		// case ALLEGRO_KEY_CANCEL:
-		//	return jcanvas::JKS_CANCEL;
+		//	return jcanvas::jkeyevent_symbol_t::Cancel;
 		case ALLEGRO_KEY_ESCAPE:
-			return jcanvas::JKS_ESCAPE;
+			return jcanvas::jkeyevent_symbol_t::Escape;
 		case ALLEGRO_KEY_SPACE:
-			return jcanvas::JKS_SPACE;
+			return jcanvas::jkeyevent_symbol_t::Space;
 		// case ALLEGRO_KEY_EXCLAIM:
-		// 	return jcanvas::JKS_EXCLAMATION_MARK;
+		// 	return jcanvas::jkeyevent_symbol_t::ExclamationMark;
 		// case ALLEGRO_KEY_QUOTEDBL:
-		// 	return jcanvas::JKS_QUOTATION;
+		// 	return jcanvas::jkeyevent_symbol_t::Quotation;
 		// case ALLEGRO_KEY_HASH:
-		// 	return jcanvas::JKS_NUMBER_SIGN;
+		// 	return jcanvas::jkeyevent_symbol_t::Hash;
 		// case ALLEGRO_KEY_DOLLAR:
-		// 	return jcanvas::JKS_DOLLAR_SIGN;
+		// 	return jcanvas::jkeyevent_symbol_t::Dollar;
 		// case ALLEGRO_KEY_PERCENT_SIGN:
-		//	return jcanvas::JKS_PERCENT_SIGN;
+		//	return jcanvas::jkeyevent_symbol_t::Percent;
 		// case ALLEGRO_KEY_AMPERSAND:   
-		// 	return jcanvas::JKS_AMPERSAND;
+		// 	return jcanvas::jkeyevent_symbol_t::Ampersand;
 		case ALLEGRO_KEY_QUOTE:
-			return jcanvas::JKS_APOSTROPHE;
+			return jcanvas::jkeyevent_symbol_t::Aposthrophe;
 		// case ALLEGRO_KEY_LEFTPAREN:
-		// 	return jcanvas::JKS_PARENTHESIS_LEFT;
+		// 	return jcanvas::jkeyevent_symbol_t::ParenthesisLeft;
 		// case ALLEGRO_KEY_RIGHTPAREN:
-		// 	return jcanvas::JKS_PARENTHESIS_RIGHT;
+		// 	return jcanvas::jkeyevent_symbol_t::ParenthesisRight;
 		// case ALLEGRO_KEY_ASTERISK:
-		// 	return jcanvas::JKS_STAR;
+		// 	return jcanvas::jkeyevent_symbol_t::Star;
 		// case ALLEGRO_KEY_PLUS:
-		// 	return jcanvas::JKS_PLUS_SIGN;
+		// 	return jcanvas::jkeyevent_symbol_t::Plus;
 		case ALLEGRO_KEY_COMMA:   
-			return jcanvas::JKS_COMMA;
+			return jcanvas::jkeyevent_symbol_t::Comma;
 		case ALLEGRO_KEY_MINUS:
-			return jcanvas::JKS_MINUS_SIGN;
+			return jcanvas::jkeyevent_symbol_t::Minus;
 		case ALLEGRO_KEY_FULLSTOP:  
-		 	return jcanvas::JKS_PERIOD;
+		 	return jcanvas::jkeyevent_symbol_t::Period;
 		case ALLEGRO_KEY_SLASH:
-			return jcanvas::JKS_SLASH;
+			return jcanvas::jkeyevent_symbol_t::Slash;
 		case ALLEGRO_KEY_0:     
-			return jcanvas::JKS_0;
+			return jcanvas::jkeyevent_symbol_t::Number0;
 		case ALLEGRO_KEY_1:
-			return jcanvas::JKS_1;
+			return jcanvas::jkeyevent_symbol_t::Number1;
 		case ALLEGRO_KEY_2:
-			return jcanvas::JKS_2;
+			return jcanvas::jkeyevent_symbol_t::Number2;
 		case ALLEGRO_KEY_3:
-			return jcanvas::JKS_3;
+			return jcanvas::jkeyevent_symbol_t::Number3;
 		case ALLEGRO_KEY_4:
-			return jcanvas::JKS_4;
+			return jcanvas::jkeyevent_symbol_t::Number4;
 		case ALLEGRO_KEY_5:
-			return jcanvas::JKS_5;
+			return jcanvas::jkeyevent_symbol_t::Number5;
 		case ALLEGRO_KEY_6:
-			return jcanvas::JKS_6;
+			return jcanvas::jkeyevent_symbol_t::Number6;
 		case ALLEGRO_KEY_7:
-			return jcanvas::JKS_7;
+			return jcanvas::jkeyevent_symbol_t::Number7;
 		case ALLEGRO_KEY_8:
-			return jcanvas::JKS_8;
+			return jcanvas::jkeyevent_symbol_t::Number8;
 		case ALLEGRO_KEY_9:
-			return jcanvas::JKS_9;
+			return jcanvas::jkeyevent_symbol_t::Number9;
 		// case ALLEGRO_KEY_COLON:
-		// 	return jcanvas::JKS_COLON;
+		// 	return jcanvas::jkeyevent_symbol_t::Colon;
 		case ALLEGRO_KEY_SEMICOLON:
-			return jcanvas::JKS_SEMICOLON;
+			return jcanvas::jkeyevent_symbol_t::SemiColon;
 		// case ALLEGRO_KEY_LESS:
-		// 	return jcanvas::JKS_LESS_THAN_SIGN;
+		// 	return jcanvas::jkeyevent_symbol_t::LessThan;
 		case ALLEGRO_KEY_EQUALS: 
-			return jcanvas::JKS_EQUALS_SIGN;
+			return jcanvas::jkeyevent_symbol_t::Equals;
 		// case ALLEGRO_KEY_GREATER:
-		// 	return jcanvas::JKS_GREATER_THAN_SIGN;
+		// 	return jcanvas::jkeyevent_symbol_t::GreaterThan;
 		// case ALLEGRO_KEY_QUESTION:   
-		// 	return jcanvas::JKS_QUESTION_MARK;
+		// 	return jcanvas::jkeyevent_symbol_t::QuestionMark;
 		case ALLEGRO_KEY_AT:
-			return jcanvas::JKS_AT;
+			return jcanvas::jkeyevent_symbol_t::At;
 		case ALLEGRO_KEY_A:
-			return jcanvas::JKS_a;
+			return jcanvas::jkeyevent_symbol_t::a;
 		case ALLEGRO_KEY_B:
-			return jcanvas::JKS_b;
+			return jcanvas::jkeyevent_symbol_t::b;
 		case ALLEGRO_KEY_C:
-			return jcanvas::JKS_c;
+			return jcanvas::jkeyevent_symbol_t::c;
 		case ALLEGRO_KEY_D:
-			return jcanvas::JKS_d;
+			return jcanvas::jkeyevent_symbol_t::d;
 		case ALLEGRO_KEY_E:
-			return jcanvas::JKS_e;
+			return jcanvas::jkeyevent_symbol_t::e;
 		case ALLEGRO_KEY_F:
-			return jcanvas::JKS_f;
+			return jcanvas::jkeyevent_symbol_t::f;
 		case ALLEGRO_KEY_G:
-			return jcanvas::JKS_g;
+			return jcanvas::jkeyevent_symbol_t::g;
 		case ALLEGRO_KEY_H:
-			return jcanvas::JKS_h;
+			return jcanvas::jkeyevent_symbol_t::h;
 		case ALLEGRO_KEY_I:
-			return jcanvas::JKS_i;
+			return jcanvas::jkeyevent_symbol_t::i;
 		case ALLEGRO_KEY_J:
-			return jcanvas::JKS_j;
+			return jcanvas::jkeyevent_symbol_t::j;
 		case ALLEGRO_KEY_K:
-			return jcanvas::JKS_k;
+			return jcanvas::jkeyevent_symbol_t::k;
 		case ALLEGRO_KEY_L:
-			return jcanvas::JKS_l;
+			return jcanvas::jkeyevent_symbol_t::l;
 		case ALLEGRO_KEY_M:
-			return jcanvas::JKS_m;
+			return jcanvas::jkeyevent_symbol_t::m;
 		case ALLEGRO_KEY_N:
-			return jcanvas::JKS_n;
+			return jcanvas::jkeyevent_symbol_t::n;
 		case ALLEGRO_KEY_O:
-			return jcanvas::JKS_o;
+			return jcanvas::jkeyevent_symbol_t::o;
 		case ALLEGRO_KEY_P:
-			return jcanvas::JKS_p;
+			return jcanvas::jkeyevent_symbol_t::p;
 		case ALLEGRO_KEY_Q:
-			return jcanvas::JKS_q;
+			return jcanvas::jkeyevent_symbol_t::q;
 		case ALLEGRO_KEY_R:
-			return jcanvas::JKS_r;
+			return jcanvas::jkeyevent_symbol_t::r;
 		case ALLEGRO_KEY_S:
-			return jcanvas::JKS_s;
+			return jcanvas::jkeyevent_symbol_t::s;
 		case ALLEGRO_KEY_T:
-			return jcanvas::JKS_t;
+			return jcanvas::jkeyevent_symbol_t::t;
 		case ALLEGRO_KEY_U:
-			return jcanvas::JKS_u;
+			return jcanvas::jkeyevent_symbol_t::u;
 		case ALLEGRO_KEY_V:
-			return jcanvas::JKS_v;
+			return jcanvas::jkeyevent_symbol_t::v;
 		case ALLEGRO_KEY_W:
-			return jcanvas::JKS_w;
+			return jcanvas::jkeyevent_symbol_t::w;
 		case ALLEGRO_KEY_X:
-			return jcanvas::JKS_x;
+			return jcanvas::jkeyevent_symbol_t::x;
 		case ALLEGRO_KEY_Y:
-			return jcanvas::JKS_y;
+			return jcanvas::jkeyevent_symbol_t::y;
 		case ALLEGRO_KEY_Z:
-			return jcanvas::JKS_z;
+			return jcanvas::jkeyevent_symbol_t::z;
 		case ALLEGRO_KEY_OPENBRACE:
-			return jcanvas::JKS_SQUARE_BRACKET_LEFT;
+			return jcanvas::jkeyevent_symbol_t::SquareBracketLeft;
 		case ALLEGRO_KEY_BACKSLASH:   
-			return jcanvas::JKS_BACKSLASH;
+			return jcanvas::jkeyevent_symbol_t::BackSlash;
 		case ALLEGRO_KEY_CLOSEBRACE:
-			return jcanvas::JKS_SQUARE_BRACKET_RIGHT;
+			return jcanvas::jkeyevent_symbol_t::SquareBracketRight;
 		// case ALLEGRO_KEY_CARET:
-		// 	return jcanvas::JKS_CIRCUMFLEX_ACCENT;
+		// 	return jcanvas::jkeyevent_symbol_t::CircumflexAccent;
 		// case ALLEGRO_KEY_UNDERSCORE:    
-		// 	return jcanvas::JKS_UNDERSCORE;
+		// 	return jcanvas::jkeyevent_symbol_t::Underscore;
 		case ALLEGRO_KEY_BACKQUOTE:
-			return jcanvas::JKS_GRAVE_ACCENT;
+			return jcanvas::jkeyevent_symbol_t::GraveAccent;
 		// case ALLEGRO_KEY_CURLY_BRACKET_LEFT:
-		//	return jcanvas::JKS_CURLY_BRACKET_LEFT;
+		//	return jcanvas::jkeyevent_symbol_t::CurlyBracketLeft;
 		// case ALLEGRO_KEY_VERTICAL_BAR:  
-		// 	return jcanvas::JKS_VERTICAL_BAR;
+		// 	return jcanvas::jkeyevent_symbol_t::VerticalBar;
 		// case ALLEGRO_KEY_CURLY_BRACKET_RIGHT:
-		// 	return jcanvas::JKS_CURLY_BRACKET_RIGHT;
+		// 	return jcanvas::jkeyevent_symbol_t::CurlyBracketRight;
 		case ALLEGRO_KEY_TILDE:  
-			return jcanvas::JKS_TILDE;
+			return jcanvas::jkeyevent_symbol_t::Tilde;
 		case ALLEGRO_KEY_DELETE:
-			return jcanvas::JKS_DELETE;
+			return jcanvas::jkeyevent_symbol_t::Delete;
 		case ALLEGRO_KEY_LEFT:
-			return jcanvas::JKS_CURSOR_LEFT;
+			return jcanvas::jkeyevent_symbol_t::CursorLeft;
 		case ALLEGRO_KEY_RIGHT:
-			return jcanvas::JKS_CURSOR_RIGHT;
+			return jcanvas::jkeyevent_symbol_t::CursorRight;
 		case ALLEGRO_KEY_UP:  
-			return jcanvas::JKS_CURSOR_UP;
+			return jcanvas::jkeyevent_symbol_t::CursorUp;
 		case ALLEGRO_KEY_DOWN:
-			return jcanvas::JKS_CURSOR_DOWN;
+			return jcanvas::jkeyevent_symbol_t::CursorDown;
 		case ALLEGRO_KEY_INSERT:  
-			return jcanvas::JKS_INSERT;
+			return jcanvas::jkeyevent_symbol_t::Insert;
 		case ALLEGRO_KEY_HOME:     
-			return jcanvas::JKS_HOME;
+			return jcanvas::jkeyevent_symbol_t::Home;
 		case ALLEGRO_KEY_END:
-			return jcanvas::JKS_END;
+			return jcanvas::jkeyevent_symbol_t::End;
 		case ALLEGRO_KEY_PGUP:
-			return jcanvas::JKS_PAGE_UP;
+			return jcanvas::jkeyevent_symbol_t::PageUp;
 		case ALLEGRO_KEY_PGDN:
-			return jcanvas::JKS_PAGE_DOWN;
+			return jcanvas::jkeyevent_symbol_t::PageDown;
 		case ALLEGRO_KEY_PRINTSCREEN:   
-			return jcanvas::JKS_PRINT;
+			return jcanvas::jkeyevent_symbol_t::Print;
 		case ALLEGRO_KEY_PAUSE:
-			return jcanvas::JKS_PAUSE;
+			return jcanvas::jkeyevent_symbol_t::Pause;
 		// case ALLEGRO_KEY_RED:
-		// 	return jcanvas::JKS_RED;
+		// 	return jcanvas::jkeyevent_symbol_t::Red;
 		// case ALLEGRO_KEY_GREEN:
-		// 	return jcanvas::JKS_GREEN;
+		// 	return jcanvas::jkeyevent_symbol_t::Green;
 		// case ALLEGRO_KEY_YELLOW:
-		// 	return jcanvas::JKS_YELLOW;
+		// 	return jcanvas::jkeyevent_symbol_t::Yellow;
 		// case ALLEGRO_KEY_BLUE:
-		// 	return jcanvas::JKS_BLUE;
+		// 	return jcanvas::jkeyevent_symbol_t::Blue;
 		case ALLEGRO_KEY_F1:
-		 	return jcanvas::JKS_F1;
+		 	return jcanvas::jkeyevent_symbol_t::F1;
 		case ALLEGRO_KEY_F2:
-		 	return jcanvas::JKS_F2;
+		 	return jcanvas::jkeyevent_symbol_t::F2;
 		case ALLEGRO_KEY_F3:
-			return jcanvas::JKS_F3;
+			return jcanvas::jkeyevent_symbol_t::F3;
 		case ALLEGRO_KEY_F4:
-			return jcanvas::JKS_F4;
+			return jcanvas::jkeyevent_symbol_t::F4;
 		case ALLEGRO_KEY_F5:
-			return jcanvas::JKS_F5;
+			return jcanvas::jkeyevent_symbol_t::F5;
 		case ALLEGRO_KEY_F6:     
-			return jcanvas::JKS_F6;
+			return jcanvas::jkeyevent_symbol_t::F6;
 		case ALLEGRO_KEY_F7:    
-		 	return jcanvas::JKS_F7;
+		 	return jcanvas::jkeyevent_symbol_t::F7;
 		case ALLEGRO_KEY_F8:   
-			return jcanvas::JKS_F8;
+			return jcanvas::jkeyevent_symbol_t::F8;
 		case ALLEGRO_KEY_F9:  
-			return jcanvas::JKS_F9;
+			return jcanvas::jkeyevent_symbol_t::F9;
 		case ALLEGRO_KEY_F10: 
-		 	return jcanvas::JKS_F10;
+		 	return jcanvas::jkeyevent_symbol_t::F10;
 		case ALLEGRO_KEY_F11:
-			return jcanvas::JKS_F11;
+			return jcanvas::jkeyevent_symbol_t::F11;
 		case ALLEGRO_KEY_F12:
-		 	return jcanvas::JKS_F12;
+		 	return jcanvas::jkeyevent_symbol_t::F12;
 		case ALLEGRO_KEY_LSHIFT:
 		case ALLEGRO_KEY_RSHIFT:
-		 	return jcanvas::JKS_SHIFT;
+		 	return jcanvas::jkeyevent_symbol_t::Shift;
 		case ALLEGRO_KEY_LCTRL:
 		case ALLEGRO_KEY_RCTRL:
-		 	return jcanvas::JKS_CONTROL;
+		 	return jcanvas::jkeyevent_symbol_t::Control;
 		case ALLEGRO_KEY_ALT:
-		 	return jcanvas::JKS_ALT;
+		 	return jcanvas::jkeyevent_symbol_t::Alt;
 		case ALLEGRO_KEY_ALTGR:
-			return jcanvas::JKS_ALTGR;
+			return jcanvas::jkeyevent_symbol_t::AltGr;
 		// case ALLEGRO_KEY_LMETA:
 		// case ALLEGRO_KEY_RMETA:
-		// 	return jcanvas::JKS_META;
+		// 	return jcanvas::jkeyevent_symbol_t::Meta;
 		// case ALLEGRO_KEY_LSUPER:
 		// case ALLEGRO_KEY_RSUPER:
-		// 	return jcanvas::JKS_SUPER;
+		// 	return jcanvas::jkeyevent_symbol_t::Super;
 		// case ALLEGRO_KEY_HYPER:
-		// 	return jcanvas::JKS_HYPER;
+		// 	return jcanvas::jkeyevent_symbol_t::Hyper;
 		default: 
 			break;
 	}
 
-	return jcanvas::JKS_UNKNOWN;
+	return jcanvas::jkeyevent_symbol_t::Unknown;
 }
 
 void Application::Init(int argc, char **argv)
@@ -354,7 +355,7 @@ static void InternalPaint()
     *g = buffer.GetGraphics();
 
   g->Reset();
-  g->SetCompositeFlags(jcanvas::JCF_SRC);
+  g->SetCompositeFlags(jcanvas::jcomposite_t::Src);
 
   sg_jcanvas_window->Paint(g);
 
@@ -372,7 +373,7 @@ static void InternalPaint()
     al_wait_for_vsync();
   }
 
-  sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_PAINTED));
+  sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Painted));
 }
 
 void Application::Loop()
@@ -408,7 +409,7 @@ void Application::Loop()
       if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
         sg_quitting = true;
 
-        sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_CLOSED));
+        sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Closed));
       } else if (event.type == ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY) {
         // SDL_CaptureMouse(true);
         // void SDL_SetWindowGrab(SDL_Window* window, SDL_bool grabbed);
@@ -416,26 +417,24 @@ void Application::Loop()
 
         // SetCursor(GetCursor());
 
-        sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_ENTERED));
+        sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Entered));
       } else if (event.type == ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY) {
         // SDL_CaptureMouse(false);
         // void SDL_SetWindowGrab(SDL_Window* window, SDL_bool grabbed);
         // SDL_GrabMode SDL_WM_GrabInput(SDL_GrabMode mode); // <SDL_GRAB_ON, SDL_GRAB_OFF>
 
-        // SetCursor(JCS_DEFAULT);
+        // SetCursor(jcursor_style_t::Default);
 
-        sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_LEAVED));
+        sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Leaved));
       } else if (event.type == ALLEGRO_EVENT_DISPLAY_RESIZE) {
         InternalPaint();
 
-        sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_RESIZED));
+        sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Resized));
       } else if (event.type == ALLEGRO_EVENT_DISPLAY_EXPOSE) {
         InternalPaint();
       } else if (event.type == ALLEGRO_EVENT_KEY_CHAR || event.type == ALLEGRO_EVENT_KEY_DOWN || event.type == ALLEGRO_EVENT_KEY_UP) {
-        jcanvas::jkeyevent_type_t type;
-        jcanvas::jkeyevent_modifiers_t mod;
-
-        mod = jcanvas::JKM_NONE;
+        jcanvas::jkeyevent_type_t type = jcanvas::jkeyevent_type_t::Unknown;
+        jcanvas::jkeyevent_modifiers_t mod = jcanvas::jkeyevent_modifiers_t::None;
 
         switch (event.keyboard.keycode) {
           case ALLEGRO_KEY_LSHIFT:
@@ -456,41 +455,39 @@ void Application::Loop()
         };
 
         if (sg_key_modifiers[ALLEGRO_KEY_LSHIFT] == true) {
-          mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_SHIFT);
+          mod = jenum_t{mod}.Or(jcanvas::jkeyevent_modifiers_t::Shift);
         } else if (sg_key_modifiers[ALLEGRO_KEY_RSHIFT] == true) {
-          mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_SHIFT);
+          mod = jenum_t{mod}.Or(jcanvas::jkeyevent_modifiers_t::Shift);
         } else if (sg_key_modifiers[ALLEGRO_KEY_LCTRL] == true) {
-          mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_CONTROL);
+          mod = jenum_t{mod}.Or(jcanvas::jkeyevent_modifiers_t::Control);
         } else if (sg_key_modifiers[ALLEGRO_KEY_RCTRL] == true) {
-          mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_CONTROL);
+          mod = jenum_t{mod}.Or(jcanvas::jkeyevent_modifiers_t::Control);
         } else if (sg_key_modifiers[ALLEGRO_KEY_ALT] == true) {
-          mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_ALT);
+          mod = jenum_t{mod}.Or(jcanvas::jkeyevent_modifiers_t::Alt);
         } else if (sg_key_modifiers[ALLEGRO_KEY_ALTGR] == true) {
-          mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_ALTGR);
+          mod = jenum_t{mod}.Or(jcanvas::jkeyevent_modifiers_t::AltGr);
         } else if (sg_key_modifiers[ALLEGRO_KEY_LWIN] == true) {
-          mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_META);
+          mod = jenum_t{mod}.Or(jcanvas::jkeyevent_modifiers_t::Meta);
         } else if (sg_key_modifiers[ALLEGRO_KEY_RWIN] == true) {
-          mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_META);
+          mod = jenum_t{mod}.Or(jcanvas::jkeyevent_modifiers_t::Meta);
         } else if (sg_key_modifiers[ALLEGRO_KEY_CAPSLOCK] == true) {
-          mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_CAPS_LOCK);
+          mod = jenum_t{mod}.Or(jcanvas::jkeyevent_modifiers_t::CapsLock);
         }
 
-        type = jcanvas::JKT_UNKNOWN;
-
         if (event.type == ALLEGRO_EVENT_KEY_CHAR || event.type == ALLEGRO_EVENT_KEY_DOWN) {
-          type = jcanvas::JKT_PRESSED;
+          type = jcanvas::jkeyevent_type_t::Pressed;
         } else if (event.type == ALLEGRO_EVENT_KEY_UP) {
-          type = jcanvas::JKT_RELEASED;
+          type = jcanvas::jkeyevent_type_t::Released;
         }
 
         jcanvas::jkeyevent_symbol_t symbol = TranslateToNativeKeySymbol(event.keyboard.keycode);
 
-        sg_jcanvas_window->GetEventManager()->PostEvent(new jcanvas::KeyEvent(sg_jcanvas_window, type, mod, jcanvas::KeyEvent::GetCodeFromSymbol(symbol), symbol));
+        sg_jcanvas_window->GetEventManager().PostEvent(new jcanvas::KeyEvent(sg_jcanvas_window, type, mod, jcanvas::KeyEvent::GetCodeFromSymbol(symbol), symbol));
       } else if (event.type == ALLEGRO_EVENT_MOUSE_AXES || event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN || event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP || event.type == ALLEGRO_EVENT_MOUSE_WARPED) {
-        static jcanvas::jmouseevent_button_t buttons = jcanvas::JMB_NONE;
+        static jcanvas::jmouseevent_button_t buttons = jcanvas::jmouseevent_button_t::None;
 
-        jcanvas::jmouseevent_button_t button = jcanvas::JMB_NONE;
-        jcanvas::jmouseevent_type_t type = jcanvas::JMT_UNKNOWN;
+        jcanvas::jmouseevent_button_t button = jcanvas::jmouseevent_button_t::None;
+        jcanvas::jmouseevent_type_t type = jcanvas::jmouseevent_type_t::Unknown;
         int mouse_z = 0;
 
         sg_mouse_x = event.mouse.x;
@@ -500,35 +497,35 @@ void Application::Loop()
         sg_mouse_y = CLAMP(sg_mouse_y, 0, sg_screen.y - 1);
 
         if (event.type == ALLEGRO_EVENT_MOUSE_AXES) {
-          type = jcanvas::JMT_MOVED;
+          type = jcanvas::jmouseevent_type_t::Moved;
         } else if (event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN || event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
           if (event.mouse.button == 1) {
-            button = jcanvas::JMB_BUTTON1;
+            button = jcanvas::jmouseevent_button_t::Button1;
           } else if (event.mouse.button == 2) {
-            button = jcanvas::JMB_BUTTON2;
+            button = jcanvas::jmouseevent_button_t::Button2;
           } else if (event.mouse.button == 3) {
-            button = jcanvas::JMB_BUTTON3;
+            button = jcanvas::jmouseevent_button_t::Button3;
           }
 
           if (event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
-            type = jcanvas::JMT_PRESSED;
-            buttons = (jcanvas::jmouseevent_button_t)(buttons | button);
+            type = jcanvas::jmouseevent_type_t::Pressed;
+            buttons = jenum_t{buttons}.Or(button);
           } else if (event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
-            type = jcanvas::JMT_RELEASED;
-            buttons = (jcanvas::jmouseevent_button_t)(buttons & ~button);
+            type = jcanvas::jmouseevent_type_t::Released;
+            buttons = jenum_t{buttons}.And(jenum_t{button}.Not());
           }
         } else if (event.type == ALLEGRO_EVENT_MOUSE_WARPED) {
-          type = jcanvas::JMT_ROTATED;
+          type = jcanvas::jmouseevent_type_t::Rotated;
           mouse_z = event.mouse.dz;
         }
 
-        if (sg_jcanvas_window->GetEventManager()->IsAutoGrab() == true && buttons != jcanvas::JMB_NONE) {
+        if (sg_jcanvas_window->GetEventManager().IsAutoGrab() == true && buttons != jcanvas::jmouseevent_button_t::None) {
           al_grab_mouse(sg_display);
         } else {
           al_ungrab_mouse();
         }
 
-        sg_jcanvas_window->GetEventManager()->PostEvent(new jcanvas::MouseEvent(sg_jcanvas_window, type, button, buttons, {sg_mouse_x, sg_mouse_y}, mouse_z));
+        sg_jcanvas_window->GetEventManager().PostEvent(new jcanvas::MouseEvent(sg_jcanvas_window, type, button, buttons, {sg_mouse_x, sg_mouse_y}, mouse_z));
       }
     }
   }
@@ -760,33 +757,33 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
 {
   ALLEGRO_SYSTEM_MOUSE_CURSOR type = ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT;
 
-  if (style == JCS_DEFAULT) {
+  if (style == jcursor_style_t::Default) {
     type = ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT;
-  } else if (style == JCS_CROSSHAIR) {
-  } else if (style == JCS_EAST) {
+  } else if (style == jcursor_style_t::Crosshair) {
+  } else if (style == jcursor_style_t::East) {
     type = ALLEGRO_SYSTEM_MOUSE_CURSOR_RESIZE_E;
-  } else if (style == JCS_WEST) {
+  } else if (style == jcursor_style_t::West) {
     type = ALLEGRO_SYSTEM_MOUSE_CURSOR_RESIZE_W;
-  } else if (style == JCS_NORTH) {
+  } else if (style == jcursor_style_t::North) {
     type = ALLEGRO_SYSTEM_MOUSE_CURSOR_RESIZE_N;
-  } else if (style == JCS_SOUTH) {
+  } else if (style == jcursor_style_t::South) {
     type = ALLEGRO_SYSTEM_MOUSE_CURSOR_RESIZE_S;
-  } else if (style == JCS_HAND) {
-  } else if (style == JCS_MOVE) {
+  } else if (style == jcursor_style_t::Hand) {
+  } else if (style == jcursor_style_t::Move) {
     type = ALLEGRO_SYSTEM_MOUSE_CURSOR_MOVE;
-  } else if (style == JCS_NS) {
-  } else if (style == JCS_WE) {
-  } else if (style == JCS_NW_CORNER) {
+  } else if (style == jcursor_style_t::Vertical) {
+  } else if (style == jcursor_style_t::Horizontal) {
+  } else if (style == jcursor_style_t::NorthWest) {
     type = ALLEGRO_SYSTEM_MOUSE_CURSOR_RESIZE_NW;
-  } else if (style == JCS_NE_CORNER) {
+  } else if (style == jcursor_style_t::NorthEast) {
     type = ALLEGRO_SYSTEM_MOUSE_CURSOR_RESIZE_NE;
-  } else if (style == JCS_SW_CORNER) {
+  } else if (style == jcursor_style_t::SouthWest) {
     type = ALLEGRO_SYSTEM_MOUSE_CURSOR_RESIZE_SW;
-  } else if (style == JCS_SE_CORNER) {
+  } else if (style == jcursor_style_t::SouthEast) {
     type = ALLEGRO_SYSTEM_MOUSE_CURSOR_RESIZE_SE;
-  } else if (style == JCS_TEXT) {
+  } else if (style == jcursor_style_t::Text) {
     type = ALLEGRO_SYSTEM_MOUSE_CURSOR_EDIT;
-  } else if (style == JCS_WAIT) {
+  } else if (style == jcursor_style_t::Wait) {
     type = ALLEGRO_SYSTEM_MOUSE_CURSOR_BUSY;
   }
 
@@ -845,7 +842,7 @@ void WindowAdapter::SetRotation(jwindow_rotation_t t)
 
 jwindow_rotation_t WindowAdapter::GetRotation()
 {
-	return jcanvas::JWR_NONE;
+	return jcanvas::jwindow_rotation_t::None;
 }
 
 void WindowAdapter::SetIcon(jcanvas::Image *image)

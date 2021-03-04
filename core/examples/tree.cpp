@@ -278,7 +278,7 @@ class Tree : public Window, public KeyListener {
       }
     }
 		
-    virtual bool KeyPressed(jcanvas::KeyEvent *event) 
+    virtual bool KeyPressed(KeyEvent *event) 
 		{
       Repaint();
 

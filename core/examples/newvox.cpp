@@ -279,11 +279,11 @@ class NewVox : public Window, public KeyListener {
 				dst += MAXW;
 			}
 			
-			g->SetCompositeFlags(JCF_SRC);
+			g->SetCompositeFlags(jcomposite_t::Src);
 			g->SetRGBArray(buffer, {0, 0, MAXW, MAXH});
 		}
 
-		virtual bool KeyPressed(jcanvas::KeyEvent *event)
+		virtual bool KeyPressed(KeyEvent *event)
 		{
 			/* 
 			 * Main loop 
@@ -308,15 +308,15 @@ class NewVox : public Window, public KeyListener {
 				}
 			}
 
-			if (event->GetSymbol() == jcanvas::JKS_ESCAPE) {
+			if (event->GetSymbol() == jkeyevent_symbol_t::Escape) {
 				done = true;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_UP) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorUp) {
 				ss += s;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_DOWN) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorDown) {
 				ss -= s;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_LEFT) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {
 				sa -= 0.003;
-			} else if (event->GetSymbol() == jcanvas::JKS_CURSOR_RIGHT) {
+			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorRight) {
 				sa += 0.003;
 			}
 

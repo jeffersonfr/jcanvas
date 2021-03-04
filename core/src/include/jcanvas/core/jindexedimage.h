@@ -76,7 +76,7 @@ class IndexedImage : public Image {
      * \brief
      *
      */
-    virtual Image * Flip(jflip_flags_t t);
+    virtual Image * Flip(jflip_t t);
     
     /**
      * \brief

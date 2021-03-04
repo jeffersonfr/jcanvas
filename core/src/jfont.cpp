@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "jcanvas/core/jfont.h"
+#include "jcanvas/core/jenum.h"
 
 #include "jmixin/jstring.h"
 
@@ -30,30 +31,30 @@ static int sg_freetype_refcounter = 0;
 
 #define DEFAULT_FONT_NAME "default"
 
-Font Font::Tiny(DEFAULT_FONT_NAME, (jfont_attributes_t)(JFA_NORMAL), 8);
-Font Font::Small(DEFAULT_FONT_NAME, (jfont_attributes_t)(JFA_NORMAL), 12);
-Font Font::Normal(DEFAULT_FONT_NAME, (jfont_attributes_t)(JFA_NORMAL), 16);
-Font Font::Big(DEFAULT_FONT_NAME, (jfont_attributes_t)(JFA_NORMAL), 20);
-Font Font::Huge(DEFAULT_FONT_NAME, (jfont_attributes_t)(JFA_NORMAL), 24);
+Font Font::Tiny(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 8);
+Font Font::Small(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 12);
+Font Font::Normal(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 16);
+Font Font::Big(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 20);
+Font Font::Huge(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 24);
 
-Font Font::Size8(DEFAULT_FONT_NAME, (jfont_attributes_t)(JFA_NORMAL), 8);
-Font Font::Size12(DEFAULT_FONT_NAME, (jfont_attributes_t)(JFA_NORMAL), 12);
-Font Font::Size16(DEFAULT_FONT_NAME, (jfont_attributes_t)(JFA_NORMAL), 16);
-Font Font::Size20(DEFAULT_FONT_NAME, (jfont_attributes_t)(JFA_NORMAL), 20);
-Font Font::Size24(DEFAULT_FONT_NAME, (jfont_attributes_t)(JFA_NORMAL), 24);
-Font Font::Size28(DEFAULT_FONT_NAME, (jfont_attributes_t)(JFA_NORMAL), 28);
-Font Font::Size32(DEFAULT_FONT_NAME, (jfont_attributes_t)(JFA_NORMAL), 32);
-Font Font::Size36(DEFAULT_FONT_NAME, (jfont_attributes_t)(JFA_NORMAL), 36);
-Font Font::Size40(DEFAULT_FONT_NAME, (jfont_attributes_t)(JFA_NORMAL), 40);
-Font Font::Size44(DEFAULT_FONT_NAME, (jfont_attributes_t)(JFA_NORMAL), 44);
-Font Font::Size48(DEFAULT_FONT_NAME, (jfont_attributes_t)(JFA_NORMAL), 48);
+Font Font::Size8(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 8);
+Font Font::Size12(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 12);
+Font Font::Size16(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 16);
+Font Font::Size20(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 20);
+Font Font::Size24(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 24);
+Font Font::Size28(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 28);
+Font Font::Size32(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 32);
+Font Font::Size36(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 36);
+Font Font::Size40(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 40);
+Font Font::Size44(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 44);
+Font Font::Size48(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 48);
 
 Font::Font(std::string name, jfont_attributes_t attributes, int size, const jmatrix_t<3, 2, float> &m)
 {
   _name = name;
   _size = size;
   _attributes = attributes;
-  _encoding = JFE_UTF8;
+  _encoding = jfont_encoding_t::Utf8;
   _cairo_face = nullptr;
 
   _font = nullptr;
@@ -96,11 +97,11 @@ Font::Font(std::string name, jfont_attributes_t attributes, int size, const jmat
   if (_is_builtin == false) {
     int attr = 0;
 
-    if ((_attributes & JFA_BOLD) != 0) {
+    if (jenum_t{_attributes}.And(jfont_attributes_t::Bold)) {
       attr = attr | CAIRO_FT_SYNTHESIZE_BOLD;
     }
 
-    if ((_attributes & JFA_ITALIC) != 0) {
+    if (jenum_t{_attributes}.And(jfont_attributes_t::Italic)) {
       attr = attr | CAIRO_FT_SYNTHESIZE_OBLIQUE;
     }
 
@@ -110,11 +111,11 @@ Font::Font(std::string name, jfont_attributes_t attributes, int size, const jmat
     cairo_font_slant_t slant = CAIRO_FONT_SLANT_NORMAL;
     cairo_font_weight_t weight = CAIRO_FONT_WEIGHT_NORMAL;
 
-    if ((_attributes & JFA_BOLD) != 0) {
+    if (jenum_t{_attributes}.And(jfont_attributes_t::Bold)) {
       weight = CAIRO_FONT_WEIGHT_BOLD;
     }
 
-    if ((_attributes & JFA_ITALIC) != 0) {
+    if (jenum_t{_attributes}.And(jfont_attributes_t::Italic)) {
       slant = CAIRO_FONT_SLANT_ITALIC;
     }
 
@@ -256,7 +257,7 @@ jfont_extends_t Font::GetStringExtends(std::string text)
   std::string utf8 = text;
   cairo_text_extents_t t;
 
-  if (GetEncoding() == JFE_ISO_8859_1) {
+  if (GetEncoding() == jfont_encoding_t::Latin1) {
     utf8 = jmixin::latin1_to_utf8(text);
   }
 

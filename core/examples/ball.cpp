@@ -281,7 +281,7 @@ class BallDrop : public Window {
 				Graphics *backGraphics;
 
 				backDimension = size;
-				backImage = new BufferedImage(JPF_RGB32, size);
+				backImage = new BufferedImage(jpixelformat_t::RGB32, size);
 				backGraphics = backImage->GetGraphics();
 
 				// Erase the previous image.
@@ -297,7 +297,7 @@ class BallDrop : public Window {
 
 			if ( (offImage == nullptr) || (size.x != offDimension.x) || (size.y != offDimension.y) ) {
 				offDimension = size;
-				offImage = new BufferedImage(JPF_RGB32, size);
+				offImage = new BufferedImage(jpixelformat_t::RGB32, size);
 			}
 
 			offImage->GetGraphics()->DrawImage(backImage, jpoint_t<int>{0, 0});

@@ -108,30 +108,30 @@ class Tetris : public Window, public KeyListener {
       delete s3;
     }
 
-    bool KeyPressed(jcanvas::KeyEvent *event)
+    bool KeyPressed(KeyEvent *event)
     {
-      if (event->GetSymbol() == jcanvas::JKS_CURSOR_UP) {
+      if (event->GetSymbol() == jkeyevent_symbol_t::CursorUp) {
         rotate = true;
-      } else if (event->GetSymbol() == jcanvas::JKS_CURSOR_LEFT) {
+      } else if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {
         dx = -1;
-      } else if (event->GetSymbol() == jcanvas::JKS_CURSOR_RIGHT) {
+      } else if (event->GetSymbol() == jkeyevent_symbol_t::CursorRight) {
         dx = 1;
-      } else if (event->GetSymbol() == jcanvas::JKS_CURSOR_DOWN) {
+      } else if (event->GetSymbol() == jkeyevent_symbol_t::CursorDown) {
         timer = timer + 4;
       }
 
       return true;
     }
 
-    bool KeyReleased(jcanvas::KeyEvent *event)
+    bool KeyReleased(KeyEvent *event)
     {
-      if (event->GetSymbol() == jcanvas::JKS_CURSOR_UP) {
+      if (event->GetSymbol() == jkeyevent_symbol_t::CursorUp) {
         rotate = false;
-      } else if (event->GetSymbol() == jcanvas::JKS_CURSOR_LEFT) {
+      } else if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {
         dx = 0;
-      } else if (event->GetSymbol() == jcanvas::JKS_CURSOR_RIGHT) {
+      } else if (event->GetSymbol() == jkeyevent_symbol_t::CursorRight) {
         dx = 0;
-      } else if (event->GetSymbol() == jcanvas::JKS_CURSOR_DOWN) {
+      } else if (event->GetSymbol() == jkeyevent_symbol_t::CursorDown) {
         // timer = 0;
       }
 
@@ -140,7 +140,7 @@ class Tetris : public Window, public KeyListener {
 
 		void Paint(Graphics *g) 
 		{
-      g->SetCompositeFlags(JCF_SRC_OVER);
+      g->SetCompositeFlags(jcomposite_t::SrcOver);
 
       //// <- Move -> ///
       for (int i=0; i<4; i++)  { 

@@ -120,15 +120,15 @@ void EventManager::ProcessEvents()
       if (listener != nullptr) {
         KeyEvent *event = dynamic_cast<KeyEvent *>(unknown);
 
-        if (event->GetType() == JKT_PRESSED) {
+        if (event->GetType() == jkeyevent_type_t::Pressed) {
           _key_button_map[event->GetSymbol()] = true;
 
           listener->KeyPressed(event);
-        } else if (event->GetType() == JKT_RELEASED) {
+        } else if (event->GetType() == jkeyevent_type_t::Released) {
           _key_button_map[event->GetSymbol()] = false;
 
           listener->KeyReleased(event);
-        } else if (event->GetType() == JKT_TYPED) {
+        } else if (event->GetType() == jkeyevent_type_t::Typed) {
           listener->KeyTyped(event);
         }
       }
@@ -138,10 +138,10 @@ void EventManager::ProcessEvents()
       if (listener != nullptr) {
         MouseEvent *event = dynamic_cast<MouseEvent *>(unknown);
 
-        jmouseevent_button_t buttons = JMB_NONE;
+        jmouseevent_button_t buttons = jmouseevent_button_t::None;
         int clicks = 1;
 
-        if (event->GetType() == JMT_PRESSED) {
+        if (event->GetType() == jmouseevent_type_t::Pressed) {
           static std::map<jmouseevent_button_t, std::chrono::time_point<std::chrono::steady_clock>> button_timestamp;
 
           _mouse_button_map[event->GetButton()] = true;
@@ -151,31 +151,31 @@ void EventManager::ProcessEvents()
           }
 
           button_timestamp[event->GetButton()] = event->GetTimestamp();
-        } else if (event->GetType() == JMT_RELEASED) {
+        } else if (event->GetType() == jmouseevent_type_t::Released) {
           _mouse_button_map[event->GetButton()] = false;
         }
         
-        if (_mouse_button_map[JMB_BUTTON1] == true) {
-          buttons = (jmouseevent_button_t)(buttons | JMB_BUTTON1);
+        if (_mouse_button_map[jmouseevent_button_t::Button1] == true) {
+          buttons = jenum_t{buttons}.Or(jmouseevent_button_t::Button1);
         }
 
-        if (_mouse_button_map[JMB_BUTTON2] == true) {
-          buttons = (jmouseevent_button_t)(buttons | JMB_BUTTON2);
+        if (_mouse_button_map[jmouseevent_button_t::Button2] == true) {
+          buttons = jenum_t{buttons}.Or(jmouseevent_button_t::Button2);
         }
 
-        if (_mouse_button_map[JMB_BUTTON3] == true) {
-          buttons = (jmouseevent_button_t)(buttons | JMB_BUTTON3);
+        if (_mouse_button_map[jmouseevent_button_t::Button3] == true) {
+          buttons = jenum_t{buttons}.Or(jmouseevent_button_t::Button3);
         }
 
         MouseEvent local(event->GetSource(), event->GetType(), event->GetButton(), buttons, event->GetLocation(), clicks);
 
-        if (event->GetType() == JMT_PRESSED) {
+        if (event->GetType() == jmouseevent_type_t::Pressed) {
           listener->MousePressed(&local);
-        } else if (event->GetType() == JMT_RELEASED) {
+        } else if (event->GetType() == jmouseevent_type_t::Released) {
           listener->MouseReleased(&local);
-        } else if (event->GetType() == JMT_MOVED) {
+        } else if (event->GetType() == jmouseevent_type_t::Moved) {
           listener->MouseMoved(&local);
-        } else if (event->GetType() == JMT_ROTATED) {
+        } else if (event->GetType() == jmouseevent_type_t::Rotated) {
           listener->MouseWheel(&local);
         }
       }

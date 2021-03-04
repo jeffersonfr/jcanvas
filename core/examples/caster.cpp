@@ -188,7 +188,7 @@ class Scene : public Window, public MouseListener {
     {
     }
 
-    bool MouseMoved(jcanvas::MouseEvent *event)
+    bool MouseMoved(MouseEvent *event)
     {
       _light.SetPoint(event->GetLocation());
 

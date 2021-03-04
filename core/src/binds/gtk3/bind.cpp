@@ -33,7 +33,7 @@
 namespace jcanvas {
 
 /** \brief */
-jcanvas::Image *sg_back_buffer = nullptr;
+Image *sg_back_buffer = nullptr;
 /** \brief */
 static std::atomic<bool> sg_repaint;
 /** \brief */
@@ -45,7 +45,7 @@ static GtkWidget *sg_frame = nullptr;
 /** \brief */
 static GtkWidget *sg_widget = nullptr;
 /** \brief */
-static jcanvas::jrect_t<int> sg_visible_bounds;
+static jrect_t<int> sg_visible_bounds;
 /** \brief */
 static float sg_opacity = 1.0f;
 /** \brief */
@@ -57,296 +57,296 @@ static bool sg_visible = false;
 /** \brief */
 static bool sg_quitting = false;
 /** \brief */
-static jcanvas::jpoint_t<int> sg_screen = {0, 0};
+static jpoint_t<int> sg_screen = {0, 0};
 /** \brief */
 static std::mutex sg_loop_mutex;
 /** \brief */
-static jcanvas::Image *sg_jcanvas_icon = nullptr;
+static Image *sg_jcanvas_icon = nullptr;
 /** \brief */
 static Window *sg_jcanvas_window = nullptr;
 /** \brief */
-static jcursor_style_t sg_jcanvas_cursor = JCS_DEFAULT;
+static jcursor_style_t sg_jcanvas_cursor = jcursor_style_t::Default;
 
-static jcanvas::jkeyevent_symbol_t TranslateToNativeKeySymbol(guint symbol)
+static jkeyevent_symbol_t TranslateToNativeKeySymbol(guint symbol)
 {
 	switch (symbol) {
 		case GDK_Return:
 		case GDK_KP_Enter:
-			return jcanvas::JKS_ENTER;
+			return jkeyevent_symbol_t::Enter;
 		case GDK_BackSpace:
-			return jcanvas::JKS_BACKSPACE;
+			return jkeyevent_symbol_t::Backspace;
 		case GDK_Tab:
 		case GDK_KP_Tab:
-			return jcanvas::JKS_TAB;
+			return jkeyevent_symbol_t::Tab;
 		//case DIKS_RETURN:
-		//	return jcanvas::JKS_RETURN;
+		//	return jkeyevent_symbol_t::Return;
 		case GDK_Cancel:
-			return jcanvas::JKS_CANCEL;
+			return jkeyevent_symbol_t::Cancel;
 		case GDK_Escape:
-			return jcanvas::JKS_ESCAPE;
+			return jkeyevent_symbol_t::Escape;
 		case GDK_space:
 		case GDK_KP_Space:
-			return jcanvas::JKS_SPACE;
+			return jkeyevent_symbol_t::Space;
 		case GDK_exclam:
-			return jcanvas::JKS_EXCLAMATION_MARK;
+			return jkeyevent_symbol_t::ExclamationMark;
 		case GDK_quotedbl:
-			return jcanvas::JKS_QUOTATION;
+			return jkeyevent_symbol_t::Quotation;
 		case GDK_numbersign:
-			return jcanvas::JKS_NUMBER_SIGN;
+			return jkeyevent_symbol_t::Hash;
 		case GDK_dollar:
 		case GDK_currency:
-			return jcanvas::JKS_DOLLAR_SIGN;
+			return jkeyevent_symbol_t::Dollar;
 		case GDK_percent:
-			return jcanvas::JKS_PERCENT_SIGN;
+			return jkeyevent_symbol_t::Percent;
 		case GDK_ampersand:
-			return jcanvas::JKS_AMPERSAND;
+			return jkeyevent_symbol_t::Ampersand;
 		case GDK_apostrophe:
 		// case GDK_quoteright:
-			return jcanvas::JKS_APOSTROPHE;
+			return jkeyevent_symbol_t::Aposthrophe;
 		case GDK_parenleft:
-			return jcanvas::JKS_PARENTHESIS_LEFT;
+			return jkeyevent_symbol_t::ParenthesisLeft;
 		case GDK_parenright:
-			return jcanvas::JKS_PARENTHESIS_RIGHT;
+			return jkeyevent_symbol_t::ParenthesisRight;
 		case GDK_asterisk:
 		case GDK_KP_Multiply:
-			return jcanvas::JKS_STAR;
+			return jkeyevent_symbol_t::Star;
 		case GDK_plus:
 		case GDK_KP_Add:
-			return jcanvas::JKS_PLUS_SIGN;
+			return jkeyevent_symbol_t::Plus;
 		case GDK_minus:
 		case GDK_hyphen:
 		case GDK_KP_Subtract:
-			return jcanvas::JKS_MINUS_SIGN;
+			return jkeyevent_symbol_t::Minus;
 		case GDK_period:
 		case GDK_KP_Decimal:
-			return jcanvas::JKS_PERIOD;
+			return jkeyevent_symbol_t::Period;
 		case GDK_slash:
 		case GDK_KP_Divide:
-			return jcanvas::JKS_SLASH;
+			return jkeyevent_symbol_t::Slash;
 		case GDK_0:
 		case GDK_KP_0:
-			return jcanvas::JKS_0;
+			return jkeyevent_symbol_t::Number0;
 		case GDK_1:
 		case GDK_KP_1:
-			return jcanvas::JKS_1;
+			return jkeyevent_symbol_t::Number1;
 		case GDK_2:
 		case GDK_KP_2:
-			return jcanvas::JKS_2;
+			return jkeyevent_symbol_t::Number2;
 		case GDK_3:
 		case GDK_KP_3:
-			return jcanvas::JKS_3;
+			return jkeyevent_symbol_t::Number3;
 		case GDK_4:
 		case GDK_KP_4:
-			return jcanvas::JKS_4;
+			return jkeyevent_symbol_t::Number4;
 		case GDK_5:
 		case GDK_KP_5:
-			return jcanvas::JKS_5;
+			return jkeyevent_symbol_t::Number5;
 		case GDK_6:
 		case GDK_KP_6:
-			return jcanvas::JKS_6;
+			return jkeyevent_symbol_t::Number6;
 		case GDK_7:
 		case GDK_KP_7:
-			return jcanvas::JKS_7;
+			return jkeyevent_symbol_t::Number7;
 		case GDK_8:
 		case GDK_KP_8:
-			return jcanvas::JKS_8;
+			return jkeyevent_symbol_t::Number8;
 		case GDK_9:
 		case GDK_KP_9:
-			return jcanvas::JKS_9;
+			return jkeyevent_symbol_t::Number9;
 		case GDK_colon:
-			return jcanvas::JKS_COLON;
+			return jkeyevent_symbol_t::Colon;
 		case GDK_semicolon:
-			return jcanvas::JKS_SEMICOLON;
+			return jkeyevent_symbol_t::SemiColon;
 		case GDK_comma:
-			return jcanvas::JKS_COMMA;
+			return jkeyevent_symbol_t::Comma;
 		case GDK_equal:
 		case GDK_KP_Equal:
-			return jcanvas::JKS_EQUALS_SIGN;
+			return jkeyevent_symbol_t::Equals;
 		case GDK_less:
-			return jcanvas::JKS_LESS_THAN_SIGN;
+			return jkeyevent_symbol_t::LessThan;
 		case GDK_greater:
-			return jcanvas::JKS_GREATER_THAN_SIGN;
+			return jkeyevent_symbol_t::GreaterThan;
 		case GDK_question:
-			return jcanvas::JKS_QUESTION_MARK;
+			return jkeyevent_symbol_t::QuestionMark;
 		case GDK_at:
-			return jcanvas::JKS_AT;
+			return jkeyevent_symbol_t::At;
 		case GDK_bracketleft:
-			return jcanvas::JKS_SQUARE_BRACKET_LEFT;
+			return jkeyevent_symbol_t::SquareBracketLeft;
 		case GDK_backslash:
-			return jcanvas::JKS_BACKSLASH;
+			return jkeyevent_symbol_t::BackSlash;
 		case GDK_bracketright:
-			return jcanvas::JKS_SQUARE_BRACKET_RIGHT;
+			return jkeyevent_symbol_t::SquareBracketRight;
 		case GDK_asciicircum:
-			return jcanvas::JKS_CIRCUMFLEX_ACCENT;
+			return jkeyevent_symbol_t::CircumflexAccent;
 		case GDK_underscore:
-			return jcanvas::JKS_UNDERSCORE;
+			return jkeyevent_symbol_t::Underscore;
 		case GDK_acute:
-			return jcanvas::JKS_ACUTE_ACCENT;
+			return jkeyevent_symbol_t::AcuteAccent;
 		case GDK_grave:
 		// case GDK_quoteleft:
-			return jcanvas::JKS_GRAVE_ACCENT;
+			return jkeyevent_symbol_t::GraveAccent;
 		case GDK_a:       
-			return jcanvas::JKS_a;
+			return jkeyevent_symbol_t::a;
 		case GDK_b:
-			return jcanvas::JKS_b;
+			return jkeyevent_symbol_t::b;
 		case GDK_c:
-			return jcanvas::JKS_c;
+			return jkeyevent_symbol_t::c;
 		case GDK_d:
-			return jcanvas::JKS_d;
+			return jkeyevent_symbol_t::d;
 		case GDK_e:
-			return jcanvas::JKS_e;
+			return jkeyevent_symbol_t::e;
 		case GDK_f:
-			return jcanvas::JKS_f;
+			return jkeyevent_symbol_t::f;
 		case GDK_g:
-			return jcanvas::JKS_g;
+			return jkeyevent_symbol_t::g;
 		case GDK_h:
-			return jcanvas::JKS_h;
+			return jkeyevent_symbol_t::h;
 		case GDK_i:
-			return jcanvas::JKS_i;
+			return jkeyevent_symbol_t::i;
 		case GDK_j:
-			return jcanvas::JKS_j;
+			return jkeyevent_symbol_t::j;
 		case GDK_k:
-			return jcanvas::JKS_k;
+			return jkeyevent_symbol_t::k;
 		case GDK_l:
-			return jcanvas::JKS_l;
+			return jkeyevent_symbol_t::l;
 		case GDK_m:
-			return jcanvas::JKS_m;
+			return jkeyevent_symbol_t::m;
 		case GDK_n:
-			return jcanvas::JKS_n;
+			return jkeyevent_symbol_t::n;
 		case GDK_o:
-			return jcanvas::JKS_o;
+			return jkeyevent_symbol_t::o;
 		case GDK_p:
-			return jcanvas::JKS_p;
+			return jkeyevent_symbol_t::p;
 		case GDK_q:
-			return jcanvas::JKS_q;
+			return jkeyevent_symbol_t::q;
 		case GDK_r:
-			return jcanvas::JKS_r;
+			return jkeyevent_symbol_t::r;
 		case GDK_s:
-			return jcanvas::JKS_s;
+			return jkeyevent_symbol_t::s;
 		case GDK_t:
-			return jcanvas::JKS_t;
+			return jkeyevent_symbol_t::t;
 		case GDK_u:
-			return jcanvas::JKS_u;
+			return jkeyevent_symbol_t::u;
 		case GDK_v:
-			return jcanvas::JKS_v;
+			return jkeyevent_symbol_t::v;
 		case GDK_w:
-			return jcanvas::JKS_w;
+			return jkeyevent_symbol_t::w;
 		case GDK_x:
-			return jcanvas::JKS_x;
+			return jkeyevent_symbol_t::x;
 		case GDK_y:
-			return jcanvas::JKS_y;
+			return jkeyevent_symbol_t::y;
 		case GDK_z:
-			return jcanvas::JKS_z;
+			return jkeyevent_symbol_t::z;
 		// case GDK_Cedilla:
-		//	return jcanvas::JKS_CAPITAL_CEDILlA;
+		//	return jkeyevent_symbol_t::CapitalCedilla;
 		case GDK_cedilla:
-			return jcanvas::JKS_SMALL_CEDILLA;
+			return jkeyevent_symbol_t::Cedilla;
 		case GDK_braceleft:
-			return jcanvas::JKS_CURLY_BRACKET_LEFT;
+			return jkeyevent_symbol_t::CurlyBracketLeft;
 		case GDK_bar:
 		case GDK_brokenbar:
-			return jcanvas::JKS_VERTICAL_BAR;
+			return jkeyevent_symbol_t::VerticalBar;
 		case GDK_braceright:
-			return jcanvas::JKS_CURLY_BRACKET_RIGHT;
+			return jkeyevent_symbol_t::CurlyBracketRight;
 		case GDK_asciitilde:
-			return jcanvas::JKS_TILDE;
+			return jkeyevent_symbol_t::Tilde;
 		case GDK_Delete:
 		case GDK_KP_Delete:
-			return jcanvas::JKS_DELETE;
+			return jkeyevent_symbol_t::Delete;
 		case GDK_Left:
 		case GDK_KP_Left:
-			return jcanvas::JKS_CURSOR_LEFT;
+			return jkeyevent_symbol_t::CursorLeft;
 		case GDK_Right:
 		case GDK_KP_Right:
-			return jcanvas::JKS_CURSOR_RIGHT;
+			return jkeyevent_symbol_t::CursorRight;
 		case GDK_Up:
 		case GDK_KP_Up:
-			return jcanvas::JKS_CURSOR_UP;
+			return jkeyevent_symbol_t::CursorUp;
 		case GDK_Down:
 		case GDK_KP_Down:
-			return jcanvas::JKS_CURSOR_DOWN;
+			return jkeyevent_symbol_t::CursorDown;
 		case GDK_Break:
-			return jcanvas::JKS_BREAK;
+			return jkeyevent_symbol_t::Break;
 		case GDK_Insert:
 		case GDK_KP_Insert:
-			return jcanvas::JKS_INSERT;
+			return jkeyevent_symbol_t::Insert;
 		case GDK_Home:
 		case GDK_KP_Home:
-			return jcanvas::JKS_HOME;
+			return jkeyevent_symbol_t::Home;
 		case GDK_End:
 		case GDK_KP_End:
-			return jcanvas::JKS_END;
+			return jkeyevent_symbol_t::End;
 		case GDK_Page_Up:
 		case GDK_KP_Page_Up:
-			return jcanvas::JKS_PAGE_UP;
+			return jkeyevent_symbol_t::PageUp;
 		case GDK_Page_Down:
 		case GDK_KP_Page_Down:
-			return jcanvas::JKS_PAGE_DOWN;
+			return jkeyevent_symbol_t::PageDown;
 		case GDK_Print:
-			return jcanvas::JKS_PRINT;
+			return jkeyevent_symbol_t::Print;
 		case GDK_Pause:
-			return jcanvas::JKS_PAUSE;
+			return jkeyevent_symbol_t::Pause;
 		case GDK_Red:
-			return jcanvas::JKS_RED;
+			return jkeyevent_symbol_t::Red;
 		case GDK_Green:
-			return jcanvas::JKS_GREEN;
+			return jkeyevent_symbol_t::Green;
 		case GDK_Yellow:
-			return jcanvas::JKS_YELLOW;
+			return jkeyevent_symbol_t::Yellow;
 		case GDK_Blue:
-			return jcanvas::JKS_BLUE;
+			return jkeyevent_symbol_t::Blue;
 		case GDK_F1:
-			return jcanvas::JKS_F1;
+			return jkeyevent_symbol_t::F1;
 		case GDK_F2:
-			return jcanvas::JKS_F2;
+			return jkeyevent_symbol_t::F2;
 		case GDK_F3:
-			return jcanvas::JKS_F3;
+			return jkeyevent_symbol_t::F3;
 		case GDK_F4:
-			return jcanvas::JKS_F4;
+			return jkeyevent_symbol_t::F4;
 		case GDK_F5:
-			return jcanvas::JKS_F5;
+			return jkeyevent_symbol_t::F5;
 		case GDK_F6:
-			return jcanvas::JKS_F6;
+			return jkeyevent_symbol_t::F6;
 		case GDK_F7:
-			return jcanvas::JKS_F7;
+			return jkeyevent_symbol_t::F7;
 		case GDK_F8:
-			return jcanvas::JKS_F8;
+			return jkeyevent_symbol_t::F8;
 		case GDK_F9:
-			return jcanvas::JKS_F9;
+			return jkeyevent_symbol_t::F9;
 		case GDK_F10:
-			return jcanvas::JKS_F10;
+			return jkeyevent_symbol_t::F10;
 		case GDK_F11:
-			return jcanvas::JKS_F11;
+			return jkeyevent_symbol_t::F11;
 		case GDK_F12:
-			return jcanvas::JKS_F12;
+			return jkeyevent_symbol_t::F12;
 		case GDK_Shift_L:
 		case GDK_Shift_R:
-			return jcanvas::JKS_SHIFT;
+			return jkeyevent_symbol_t::Shift;
 		case GDK_Control_L:
 		case GDK_Control_R:
-			return jcanvas::JKS_CONTROL;
+			return jkeyevent_symbol_t::Control;
 		case GDK_Alt_L:
 		case GDK_Alt_R:
-			return jcanvas::JKS_ALT;
+			return jkeyevent_symbol_t::Alt;
 		case GDK_Meta_L:
 		case GDK_Meta_R:
-			return jcanvas::JKS_META;
+			return jkeyevent_symbol_t::Meta;
 		case GDK_Super_L:
 		case GDK_Super_R:
-			return jcanvas::JKS_SUPER;
+			return jkeyevent_symbol_t::Super;
 		case GDK_Hyper_L:
 		case GDK_Hyper_R:
-			return jcanvas::JKS_HYPER;
+			return jkeyevent_symbol_t::Hyper;
 		case GDK_Sleep:
-			return jcanvas::JKS_SLEEP;
+			return jkeyevent_symbol_t::Sleep;
 		case GDK_Suspend:
-			return jcanvas::JKS_SUSPEND;
+			return jkeyevent_symbol_t::Suspend;
 		case GDK_Hibernate:
-			return jcanvas::JKS_HIBERNATE;
+			return jkeyevent_symbol_t::Hibernate;
 		default: 
 			break;
 	}
 
-	return jcanvas::JKS_UNKNOWN;
+	return jkeyevent_symbol_t::Unknown;
 }
 
 static gboolean OnDraw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
@@ -361,7 +361,7 @@ static gboolean OnDraw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
     bounds = sg_jcanvas_window->GetBounds();
 
   if (sg_back_buffer != nullptr) {
-    jcanvas::jpoint_t<int>
+    jpoint_t<int>
       size = sg_back_buffer->GetSize();
 
     if (size.x != bounds.size.x or size.y != bounds.size.y) {
@@ -371,16 +371,16 @@ static gboolean OnDraw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
   }
 
   if (sg_back_buffer == nullptr) {
-    sg_back_buffer = new jcanvas::BufferedImage(jcanvas::JPF_RGB32, bounds.size);
+    sg_back_buffer = new BufferedImage(jpixelformat_t::RGB32, bounds.size);
   }
 
-  jcanvas::Graphics 
+  Graphics 
     *g = sg_back_buffer->GetGraphics();
 
   Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
 
   g->Reset();
-  g->SetCompositeFlags(jcanvas::JCF_SRC);
+  g->SetCompositeFlags(jcomposite_t::Src);
 
   sg_jcanvas_window->Paint(g);
 
@@ -393,51 +393,47 @@ static gboolean OnDraw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 	cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
   cairo_paint(cr);
 
-  sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_PAINTED));
+  sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Painted));
 
   return TRUE;
 }
 
 static gboolean OnKeyPressEvent(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 {
-  jcanvas::jkeyevent_type_t type;
-	jcanvas::jkeyevent_modifiers_t mod;
-
-	mod = jcanvas::JKM_NONE;
+  jkeyevent_type_t type = jkeyevent_type_t::Unknown;
+	jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
 	if (event->state & GDK_SHIFT_MASK) {
-		mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_SHIFT);
+		mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
 	} else if (event->state & GDK_CONTROL_MASK) {
-		mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_CONTROL);
+		mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
 	} else if (event->state & GDK_MOD1_MASK) {
-		mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_ALT);
+		mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
 	} else if (event->state & GDK_SUPER_MASK) {
-		mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_SUPER);
+		mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
 	} else if (event->state & GDK_HYPER_MASK) {
-		mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_HYPER);
+		mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Hyper);
 	} else if (event->state & GDK_META_MASK) {
-		mod = (jcanvas::jkeyevent_modifiers_t)(mod | jcanvas::JKM_META);
+		mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
 	}
 	
-	type = (jcanvas::jkeyevent_type_t)(0);
-
 	if (event->type == GDK_KEY_PRESS) {
-		type = jcanvas::JKT_PRESSED;
+		type = jkeyevent_type_t::Pressed;
 	} else if (event->type == GDK_KEY_RELEASE	) {
-		type = jcanvas::JKT_RELEASED;
+		type = jkeyevent_type_t::Released;
 	}
 
-	jcanvas::jkeyevent_symbol_t symbol = TranslateToNativeKeySymbol(event->keyval);
+	jkeyevent_symbol_t symbol = TranslateToNativeKeySymbol(event->keyval);
 
-  sg_jcanvas_window->GetEventManager()->PostEvent(new jcanvas::KeyEvent(sg_jcanvas_window, type, mod, jcanvas::KeyEvent::GetCodeFromSymbol(symbol), symbol));
+  sg_jcanvas_window->GetEventManager().PostEvent(new KeyEvent(sg_jcanvas_window, type, mod, KeyEvent::GetCodeFromSymbol(symbol), symbol));
 
 	return FALSE;
 }
 
 static gboolean OnMouseMoveEvent(GtkWidget *widget, GdkEventMotion *event, gpointer user_data)
 {
-  jcanvas::jmouseevent_button_t button = jcanvas::JMB_NONE;
-	jcanvas::jmouseevent_type_t type = jcanvas::JMT_MOVED;
+  jmouseevent_button_t button = jmouseevent_button_t::None;
+	jmouseevent_type_t type = jmouseevent_type_t::Moved;
 
 	int mouse_x = event->x;
 	int mouse_y = event->y;
@@ -446,45 +442,45 @@ static gboolean OnMouseMoveEvent(GtkWidget *widget, GdkEventMotion *event, gpoin
 	// handle (x,y) motion
 	gdk_event_request_motions(event); // handles is_hint events
 
-  sg_jcanvas_window->GetEventManager()->PostEvent(new jcanvas::MouseEvent(sg_jcanvas_window, type, button, jcanvas::JMB_NONE, {mouse_x, mouse_y}, mouse_z));
+  sg_jcanvas_window->GetEventManager().PostEvent(new MouseEvent(sg_jcanvas_window, type, button, jmouseevent_button_t::None, {mouse_x, mouse_y}, mouse_z));
 
   return TRUE;
 }
 
 static gboolean OnMousePressEvent(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 {
-  static jcanvas::jmouseevent_button_t buttons = jcanvas::JMB_NONE;
+  static jmouseevent_button_t buttons = jmouseevent_button_t::None;
 
-  jcanvas::jmouseevent_button_t button = jcanvas::JMB_NONE;
-	jcanvas::jmouseevent_type_t type = jcanvas::JMT_UNKNOWN;
+  jmouseevent_button_t button = jmouseevent_button_t::None;
+	jmouseevent_type_t type = jmouseevent_type_t::Unknown;
 
 	int mouse_x = event->x; // event->x_root;
 	int mouse_y = event->y; // event->y_root;
 	int mouse_z = 0;
 	
 	if (event->button == 1) {
-		button = jcanvas::JMB_BUTTON1;
+		button = jmouseevent_button_t::Button1;
 	} else if (event->button == 2) {
-		button = jcanvas::JMB_BUTTON3;
+		button = jmouseevent_button_t::Button3;
 	} else if (event->button == 3) {
-		button = jcanvas::JMB_BUTTON2;
+		button = jmouseevent_button_t::Button2;
 	}
 
 	if (event->type == GDK_BUTTON_PRESS || event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS) {
-		type = jcanvas::JMT_PRESSED;
-    buttons = (jcanvas::jmouseevent_button_t)(buttons | button);
+		type = jmouseevent_type_t::Pressed;
+    buttons = jenum_t{buttons}.Or(button);
   } else { // if (event->type == GDK_BUTTON_RELEASE) {
-		type = jcanvas::JMT_RELEASED;
-    buttons = (jcanvas::jmouseevent_button_t)(buttons & ~button);
+		type = jmouseevent_type_t::Released;
+    buttons = jenum_t{buttons}.And(jenum_t{button}.Not());
   }
 
-  if (sg_jcanvas_window->GetEventManager()->IsAutoGrab() == true && buttons != jcanvas::JMB_NONE) {
+  if (sg_jcanvas_window->GetEventManager().IsAutoGrab() == true && buttons != jmouseevent_button_t::None) {
     gtk_grab_add(sg_window);
   } else {
     gtk_grab_remove(sg_window);
   }
   
-  sg_jcanvas_window->GetEventManager()->PostEvent(new jcanvas::MouseEvent(sg_jcanvas_window, type, button, buttons, {mouse_x, mouse_y}, mouse_z));
+  sg_jcanvas_window->GetEventManager().PostEvent(new MouseEvent(sg_jcanvas_window, type, button, buttons, {mouse_x, mouse_y}, mouse_z));
 
   return TRUE;
 }
@@ -534,7 +530,7 @@ static void ConfigureApplication(GtkApplication *app, gpointer user_data)
   gtk_widget_show_now(sg_window);
   gtk_widget_show_all(sg_window);
   
-  sg_jcanvas_window->DispatchWindowEvent(new jcanvas::WindowEvent(sg_jcanvas_window, jcanvas::JWET_OPENED));
+  sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Opened));
 }
 
 void Application::Init(int argc, char **argv)
@@ -598,7 +594,7 @@ void Application::Quit()
   sg_loop_mutex.unlock();
 }
 
-WindowAdapter::WindowAdapter(jcanvas::Window *parent, jcanvas::jrect_t<int> bounds)
+WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 {
 	if (sg_window != nullptr) {
 		throw std::runtime_error("Cannot create more than one window");
@@ -703,7 +699,7 @@ void WindowAdapter::SetBounds(jrect_t<int> bounds)
 	gtk_widget_set_size_request(sg_window, bounds.size.x, bounds.size.y);
 }
 
-jcanvas::jrect_t<int> WindowAdapter::GetBounds()
+jrect_t<int> WindowAdapter::GetBounds()
 {
   return sg_visible_bounds;
 }
@@ -816,15 +812,15 @@ void WindowAdapter::SetRotation(jwindow_rotation_t t)
 
 jwindow_rotation_t WindowAdapter::GetRotation()
 {
-	return jcanvas::JWR_NONE;
+	return jwindow_rotation_t::None;
 }
 
-void WindowAdapter::SetIcon(jcanvas::Image *image)
+void WindowAdapter::SetIcon(Image *image)
 {
   sg_jcanvas_icon = image;
 }
 
-jcanvas::Image * WindowAdapter::GetIcon()
+Image * WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }

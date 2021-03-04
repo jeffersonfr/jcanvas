@@ -21,21 +21,22 @@
 #define J_FONT_H
 
 #include "jcanvas/core/jgraphics.h"
+#include "jcanvas/core/jeventobject.h"
 #include "jcanvas/algebra/jmatrix.h"
 
 #include <cairo-ft.h>
 
 namespace jcanvas {
 
-enum jfont_attributes_t {
-  JFA_NORMAL  = 0x00,
-  JFA_BOLD    = 0x01,
-  JFA_ITALIC  = 0x02
+enum class jfont_attributes_t {
+  None = 0,
+  Bold = 1 << 0,
+  Italic = 1 << 1
 };
 
-enum jfont_encoding_t {
-  JFE_UTF8,
-  JFE_ISO_8859_1
+enum class jfont_encoding_t {
+  Utf8,
+  Latin1
 };
 
 struct jfont_extends_t {

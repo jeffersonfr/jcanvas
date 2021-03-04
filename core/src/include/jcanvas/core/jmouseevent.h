@@ -29,24 +29,24 @@ namespace jcanvas {
  * \brief
  *
  */
-enum jmouseevent_type_t {
-  JMT_UNKNOWN,
-  JMT_PRESSED,
-  JMT_RELEASED,
-  JMT_MOVED,
-  JMT_ROTATED
+enum class jmouseevent_type_t {
+  Unknown,
+  Pressed,
+  Released,
+  Moved,
+  Rotated
 };
 
 /**
  * \brief
  *
  */
-enum jmouseevent_button_t {
-  JMB_NONE    = 0x00,
-  JMB_BUTTON1 = 0x01,
-  JMB_BUTTON2 = 0x02,
-  JMB_BUTTON3 = 0x04,
-  JMB_WHEEL    = 0x08
+enum class jmouseevent_button_t {
+  None = 0,
+  Button1 = 1 << 0,
+  Button2 = 1 << 1,
+  Button3 = 1 << 2,
+  Wheel = 1 << 3
 };
 
 /**
