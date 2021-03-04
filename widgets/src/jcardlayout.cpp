@@ -104,7 +104,7 @@ void CardLayout::CheckLayout(Container *parent)
     throw std::invalid_argument("Parent container must be a valid address");
   }
 
-  if (parent->GetLayout() != this) {
+  if (parent->GetLayout().get() != this) {
     throw std::runtime_error("Wrong parent for CardLayout");
   }
 }

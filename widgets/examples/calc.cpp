@@ -164,13 +164,13 @@ Calculator::Calculator():
 		new Button("=")
 	};
 
-	SetLayout(new BorderLayout());
+	SetLayout(std::make_shared<BorderLayout>());
 
 	Add(_display, jborderlayout_align_t::North);
 
 	_container = new Container();
 
-	_container->SetLayout(new GridLayout(4, 5, 2, 2));
+	_container->SetLayout(std::make_shared<GridLayout>(4, 5, 2, 2));
 
 	for (int i=0; i<20; i++) {
 		_buttons.push_back(b[i]);
@@ -187,22 +187,14 @@ Calculator::Calculator():
 
 Calculator::~Calculator() 
 {
-  Layout *layout = GetLayout();
+  std::shared_ptr<Layout> layout = GetLayout();
 
   RemoveAll();
-
-  delete layout;
-  layout = nullptr;
 
 	delete _display;
   _display = nullptr;
   
   _container->RemoveAll();
-
-  layout = _container->GetLayout();
-
-  delete layout;
-  layout = nullptr;
 
   delete _container;
   _container = nullptr;

@@ -25,12 +25,10 @@
 
 namespace jcanvas {
 
-static BorderLayout sg_default_layout;
-
 Container::Container(jrect_t<int> bounds):
   Component(bounds)
 {
-  _layout = &sg_default_layout;
+  _layout = std::make_shared<BorderLayout>();
 
   _is_focus_cycle_root = false;
   _orientation = jcomponent_orientation_t::LeftToRight;
@@ -56,6 +54,7 @@ Container::Container(jrect_t<int> bounds):
     &theme = GetTheme();
 
   theme.border.type = jtheme_border_t::style::Empty;
+  theme.border.size = jpoint_t<int>{0, 0};
 
   SetBackgroundVisible(false);
 }
@@ -308,7 +307,7 @@ void Container::SetOptimizedPaint(bool b)
   _optimized_paint = b;
 }
 
-void Container::SetLayout(Layout *layout)
+void Container::SetLayout(std::shared_ptr<Layout> const &layout)
 {
   if (layout == nullptr) {
     return;
@@ -317,7 +316,7 @@ void Container::SetLayout(Layout *layout)
   _layout = layout;
 }
 
-Layout * Container::GetLayout()
+std::shared_ptr<Layout> Container::GetLayout()
 {
   return _layout;
 }
@@ -441,45 +440,29 @@ void Container::Paint(Graphics *g)
     Component *c = (*i);
 
     if (c->IsVisible() == true) {
-      // TODO:: considera  r o scroll de um component
+      // TODO:: considerar o scroll de um component
       jrect_t 
         bounds = c->GetBounds();
       jinsets_t<int>
         padding = c->GetPadding();
 
-      bool 
-        flag = (dynamic_cast<Container *>(c) != nullptr);
-
       bounds.point = bounds.point - slocation;
 
       if (bounds.size.x > 0 && bounds.size.y > 0) {
         g->Translate(bounds.point);
-        g->ClipRect({{0, 0}, bounds.size});
+        g->ClipRect({0, 0, bounds.size});
   
-        if (flag == false && c->IsBackgroundVisible() == true) {
-          g->Reset(); 
+        if (c->IsBackgroundVisible() == true) {
           c->PaintBackground(g);
         }
 
-        jrect_t 
-          clip2 = g->GetClip();
-
-        g->ClipRect(padding.bounds(jrect_t<int>{{0, 0}, bounds.size}));
-        
-        g->Reset(); 
         c->Paint(g);
         
-        g->SetClip(clip2);
-
-        if (flag == false && c->IsScrollVisible() == true) {
-          g->Reset(); 
+        if (c->IsScrollVisible() == true) {
           c->PaintScrollbars(g);
         }
 
-        if (flag == false) {
-          g->Reset(); 
-          c->PaintBorders(g);
-        }
+        c->PaintBorders(g);
         
         g->Translate(-bounds.point);
         g->SetClip(clip);
@@ -487,16 +470,13 @@ void Container::Paint(Graphics *g)
     }
   }
         
-  g->SetClip(clip);
-
   if (IsScrollVisible() == true) {
-    g->Reset(); 
     PaintScrollbars(g);
   }
+    
+  PaintBorders(g);
 
-  // INFO:: paint dialogs over the container
-  g->SetClip(clip);
-
+  // INFO:: paint dialogs
   _dialogs_mutex.lock();
 
   for (std::vector<Dialog *>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
@@ -515,10 +495,12 @@ void Container::Paint(Graphics *g)
 
       if (cw > 0 && ch > 0) {
         g->Translate({cx, cy});
-        g->ClipRect({0, 0, cw - 1, ch - 1});
+        g->ClipRect({0, 0, cw, ch});
   
-        g->Reset(); 
+        c->PaintBackground(g);
         c->Paint(g);
+        c->PaintScrollbars(g);
+        c->PaintBorders(g);
         
         g->Translate({-cx, -cy});
         g->SetClip(clip);
@@ -528,10 +510,6 @@ void Container::Paint(Graphics *g)
   
   _dialogs_mutex.unlock();
 
-  g->Reset(); 
-  PaintBorders(g);
-
-  g->Reset(); 
   PaintGlassPane(g);
 }
 
@@ -607,7 +585,7 @@ void Container::Add(Component *c, GridBagConstraints *constraints)
   Add(c, GetComponentCount());
 
   if (_layout != nullptr) {
-    GridBagLayout *layout = dynamic_cast<GridBagLayout *>(_layout);
+    std::shared_ptr<GridBagLayout> layout = std::dynamic_pointer_cast<GridBagLayout>(_layout);
 
     if (layout != nullptr) {
       layout->AddLayoutComponent(c, constraints);
@@ -624,7 +602,7 @@ void Container::Add(Component *c, std::string id)
   Add(c, GetComponentCount());
 
   if (_layout != nullptr) {
-    CardLayout *layout = dynamic_cast<CardLayout *>(_layout);
+    std::shared_ptr<CardLayout> layout = std::dynamic_pointer_cast<CardLayout>(_layout);
 
     if (layout != nullptr) {
       layout->AddLayoutComponent(id, c);
@@ -641,7 +619,7 @@ void Container::Add(Component *c, jborderlayout_align_t align)
   Add(c, GetComponentCount());
 
   if (_layout != nullptr) {
-    BorderLayout *layout = dynamic_cast<BorderLayout *>(_layout);
+    std::shared_ptr<BorderLayout> layout = std::dynamic_pointer_cast<BorderLayout>(_layout);
 
     if (layout != nullptr) {
       layout->AddLayoutComponent(c, align);
@@ -687,7 +665,7 @@ void Container::Remove(Component *c)
   }
 
   if (_layout != nullptr) {
-    BorderLayout *layout = dynamic_cast<BorderLayout *>(_layout);
+    std::shared_ptr<BorderLayout> layout = std::dynamic_pointer_cast<BorderLayout>(_layout);
     
     if (layout != nullptr) {
       layout->RemoveLayoutComponent(c);

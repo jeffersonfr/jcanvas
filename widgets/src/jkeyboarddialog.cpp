@@ -44,7 +44,7 @@
     *container = new Container(),                           \
     *lines[5];                                              \
                                                             \
-  container->SetLayout(new GridLayout(5, 1, 4, 0));         \
+  container->SetLayout(std::make_shared<GridLayout>(5, 1, 4, 0)); \
                                                             \
   container->SetScrollableX(false);                         \
   container->SetScrollableY(false);                         \
@@ -53,7 +53,7 @@
   for (int i=0; i<5; i++) {                                 \
     lines[i] = new Container();                             \
                                                             \
-    lines[i]->SetLayout(new FlowLayout(jflowlayout_align_t::Center, 4, 0)); \
+    lines[i]->SetLayout(std::make_shared<FlowLayout>(jflowlayout_align_t::Center, 4, 0)); \
                                                             \
     lines[i]->SetScrollableX(false);                        \
     lines[i]->SetScrollableY(false);                        \
@@ -93,7 +93,7 @@ KeyboardDialog::KeyboardDialog(Container *parent, jkeyboard_type_t type, bool te
   _type = type;
   _is_password = is_password;
 
-  SetLayout(new BorderLayout());
+  SetLayout(std::make_shared<BorderLayout>());
 
   if (_type == jkeyboard_type_t::Qwerty) {
     BuildQWERTYKeyboard();
@@ -113,8 +113,6 @@ KeyboardDialog::KeyboardDialog(Container *parent, jkeyboard_type_t type, bool te
 
 KeyboardDialog::~KeyboardDialog() 
 {
-  Layout *layout = GetLayout();
-
   std::vector<Component *> components = GetComponents();
   
   for (int i=0; i<(int)components.size(); i++) {
@@ -138,31 +136,18 @@ KeyboardDialog::~KeyboardDialog()
           }
 
           container2->RemoveAll();
-          layout = container2->GetLayout();
-          container2->SetLayout(nullptr);
-
-          delete layout;
         }
 
         delete component2;
       }
 
       container->RemoveAll();
-      layout = container->GetLayout();
-      container->SetLayout(nullptr);
-
-      delete layout;
     }
 
     delete component;
   }
 
   RemoveAll();
-  layout = GetLayout();
-  SetLayout(NULL);
-
-  delete layout;
-  layout = nullptr;
 }
 
 void KeyboardDialog::ActionPerformed(ActionEvent *event)

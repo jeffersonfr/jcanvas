@@ -28,6 +28,7 @@
 
 #include <vector>
 #include <mutex>
+#include <memory>
 
 namespace jcanvas {
 
@@ -58,7 +59,7 @@ class Container : public Component {
     /** \brief */
     std::mutex _dialogs_mutex;
     /** \brief */
-    Layout *_layout;
+    std::shared_ptr<Layout> _layout;
     /** \brief */
     jinsets_t<int> _insets;
     /** \brief */
@@ -122,13 +123,13 @@ class Container : public Component {
      * \brief
      *
      */
-    virtual void SetLayout(Layout *layout);
+    virtual void SetLayout(std::shared_ptr<Layout> const &layout);
     
     /**
      * \brief
      *
      */
-    virtual Layout * GetLayout();
+    virtual std::shared_ptr<Layout> GetLayout();
 
     /**
      * \brief

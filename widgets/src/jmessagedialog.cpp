@@ -30,12 +30,14 @@ MessageDialog::MessageDialog(Container *parent, std::string title, std::string m
 
   _ok.RegisterActionListener(this);
   
-  _buttons_layout.SetAlign(jflowlayout_align_t::Right);
-  _buttons_container.SetLayout(&_buttons_layout);
+  _buttons_layout = std::make_shared<FlowLayout>();
+
+  _buttons_layout->SetAlign(jflowlayout_align_t::Right);
+  _buttons_container.SetLayout(_buttons_layout);
 
   _buttons_container.Add(&_ok);
 
-  _buttons_container.SetPreferredSize(_buttons_layout.GetPreferredLayoutSize(&_buttons_container));
+  _buttons_container.SetPreferredSize(_buttons_layout->GetPreferredLayoutSize(&_buttons_container));
 
   Add(&_label, jborderlayout_align_t::Center);
   Add(&_buttons_container, jborderlayout_align_t::South);

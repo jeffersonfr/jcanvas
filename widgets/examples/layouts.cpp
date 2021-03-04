@@ -65,13 +65,14 @@ class Main : public Frame, public ActionListener {
 			_c;
 		std::vector<Button *> 
       _buttons;
-		Layout *_main,
-			*_flow,
-			*_grid,
-			*_border,
-			*_card,
-			*_null,
-			*_gridbag;
+    std::shared_ptr<Layout> 
+      _main,
+			_flow,
+			_grid,
+			_border,
+			_card,
+			_null,
+			_gridbag;
 		Button *_first,
 			*_last,
 			*_previous,
@@ -83,21 +84,24 @@ class Main : public Frame, public ActionListener {
 		Main():
 			Frame({1280, 720})
 		{
-			SetLayout(_main = new GridLayout(2, 3));
-		
-			_flow = new FlowLayout();
-			_grid = new GridLayout(3, 3);
-			_border = new BorderLayout();
-			_card = new BorderLayout();
-			_gridbag = new GridBagLayout();
-			_null = new NullLayout();
+      _main = std::make_shared<GridLayout>(2, 3);
+			_flow = std::make_shared<FlowLayout>();
+			_grid = std::make_shared<GridLayout>(3, 3);
+			_border = std::make_shared<BorderLayout>();
+			_card = std::make_shared<BorderLayout>();
+			_gridbag = std::make_shared<GridBagLayout>();
+			_null = std::make_shared<NullLayout>();
+
+			SetLayout(_main);
 
 			for (int i=0; i<6; i++) {
 				// _b.push_back(new Container(0, 0, 0, 0));
 				_b.push_back(new RectangleContainer(0, 0, 0, 0));
 				_c.push_back(new Container());
 
-				_b[i]->SetLayout(new BorderLayout());
+        auto border_layout = std::make_shared<BorderLayout>();
+
+				_b[i]->SetLayout(border_layout);
 				_b[i]->Add(_c[i], jborderlayout_align_t::Center);
 
 				Add(_b[i]);
@@ -135,7 +139,9 @@ class Main : public Frame, public ActionListener {
 			_c.push_back(new Container());
 			_c.push_back(new Container());
 
-			_c[6]->SetLayout(new FlowLayout());
+      auto flow_layout = std::make_shared<FlowLayout>();
+
+			_c[6]->SetLayout(flow_layout);
 
 			_first = new Button("First");
 			_next = new Button("Next");
@@ -152,7 +158,9 @@ class Main : public Frame, public ActionListener {
 			_next->RegisterActionListener(this);
 			_last->RegisterActionListener(this);
 
-			_c[7]->SetLayout(new CardLayout());
+      auto card_layout = std::make_shared<CardLayout>();
+
+			_c[7]->SetLayout(card_layout);
 			_c[7]->Add(new Button("First Screen"), "01");
 			_c[7]->Add(new Button("Second Screen"), "02");
 			_c[7]->Add(new Button("Third Screen"), "03");
@@ -279,27 +287,14 @@ class Main : public Frame, public ActionListener {
 					delete (*ibcomponent);
 				}
 
-        delete bcontainer->GetLayout();
-
 				delete ccontainer;
 				delete bcontainer;
 			}
-			
-      Layout *layout = GetLayout();
-      
-      delete layout;
-		
-			delete _flow;
-			delete _grid;
-			delete _border;
-			delete _card;
-			delete _gridbag;
-			delete _null;
 		}
 
 		virtual void ActionPerformed(ActionEvent *event)
 		{
-			CardLayout *card = ((CardLayout *)_c[7]->GetLayout());
+      std::shared_ptr<CardLayout> card = std::dynamic_pointer_cast<CardLayout>(_c[7]->GetLayout());
 
 			if (event->GetSource() == _first) {
 				card->First(_c[7]);

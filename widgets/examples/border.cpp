@@ -22,6 +22,8 @@
 #include "jcanvas/widgets/jbutton.h"
 #include "jcanvas/widgets/jflowlayout.h"
 
+#include <memory>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -36,13 +38,15 @@ class BorderTest : public Frame{
     Container 
       _top,
       _bottom;
-    FlowLayout
+    std::shared_ptr<FlowLayout>
       _layout;
 
 	public:
 		BorderTest():
 			Frame({960, 540})
 		{
+      _layout = std::make_shared<FlowLayout>();
+
 			_buttons.push_back(new Button("Empty"));
 			_buttons.push_back(new Button("Line"));
 			_buttons.push_back(new Button("Bevel"));
@@ -55,8 +59,8 @@ class BorderTest : public Frame{
 			_buttons.push_back(new Button("Raised Etched"));
 			_buttons.push_back(new Button("Lowered Etched"));
 
-      _top.SetLayout(&_layout);
-      _bottom.SetLayout(&_layout);
+      _top.SetLayout(_layout);
+      _bottom.SetLayout(_layout);
 
 			for (int i=0; i<(int)_buttons.size(); i++) {
         Component *cmp = _buttons[i];
@@ -95,8 +99,8 @@ class BorderTest : public Frame{
         }
 			}
   		
-      _top.SetPreferredSize(_layout.GetPreferredLayoutSize(&_top));
-      _bottom.SetPreferredSize(_layout.GetPreferredLayoutSize(&_bottom));
+      _top.SetPreferredSize(_layout->GetPreferredLayoutSize(&_top));
+      _bottom.SetPreferredSize(_layout->GetPreferredLayoutSize(&_bottom));
 
       Add(&_top, jborderlayout_align_t::North);
       Add(&_bottom, jborderlayout_align_t::South);

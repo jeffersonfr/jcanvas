@@ -34,6 +34,7 @@ CheckButton::CheckButton(jcheckbox_type_t type, std::string text):
   _checked = false;
   _is_wrap = false;
 
+  SetPadding({8, 0, 0, 0});
   SetFocusable(true);
 }
 
@@ -271,7 +272,7 @@ void CheckButton::Paint(Graphics *g)
       text = theme.font.primary->TruncateString(text, "...", bounds.size.x);
     }
 
-    g->DrawString(text, {padding.left, padding.top, bounds.size.x, bounds.size.y}, _halign, _valign);
+    g->DrawString(text, padding.bounds(bounds), _halign, _valign);
   }
 }
 

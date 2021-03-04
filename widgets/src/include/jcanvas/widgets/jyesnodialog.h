@@ -51,7 +51,7 @@ class YesNoDialog : public Dialog, public ActionListener {
     /** \brief */
     Container _buttons_container;
     /** \brief */
-    FlowLayout _buttons_layout;
+    std::shared_ptr<FlowLayout> _buttons_layout;
 
   public:
     /**
