@@ -54,7 +54,7 @@ class CoordinateLayout : public Layout {
      * \brief
      *
      */
-    CoordinateLayout(int width = -1, int height = -1, jcoordinatelayout_orientation_t type = jenum_t{jcoordinatelayout_orientation_t::Horizontal}.Or(jcoordinatelayout_orientation_t::Vertical));
+    CoordinateLayout(int width = -1, int height = -1, jcoordinatelayout_orientation_t type = jenum_t<jcoordinatelayout_orientation_t>{jcoordinatelayout_orientation_t::Horizontal}.Or(jcoordinatelayout_orientation_t::Vertical));
     
     /**
      * \brief

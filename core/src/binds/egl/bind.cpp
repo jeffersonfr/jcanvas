@@ -19,7 +19,7 @@
  ***************************************************************************/
 #define RASPBERRY_PI
 
-#include "jcanvas/jbufferedimage.h"
+#include "jcanvas/core/jbufferedimage.h"
 #include "jcanvas/core/jwindowadapter.h"
 #include "jcanvas/core/japplication.h"
 #include "jcanvas/core/jenum.h"
@@ -551,7 +551,7 @@ void Application::Init(int argc, char **argv)
     throw std::runtime_error("Unable to bind opengl es api");
   }
 
-  sg_egl_display = eglGetDisplay(EGL_Default_DISPLAY);
+  sg_egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
 #else 
 
@@ -635,26 +635,28 @@ void Application::Init(int argc, char **argv)
 	int w = 30,
 			h = 30;
 
-	Image *cursors = new BufferedImage(_DATA_PREFIX"/images/cursors.png");
+	/*
+	Image *cursors = new BufferedImage(JCANVAS_RESOURCES_DIR "/images/cursors.png");
 
 	CURSOR_INIT(jcursor_style_t::Default, 0, 0, 8, 8);
-	CURSOR_INIT(jcursor_style_t::CROSSHAIR, 4, 3, 15, 15);
-	CURSOR_INIT(jcursor_style_t::EAST, 4, 4, 22, 15);
-	CURSOR_INIT(jcursor_style_t::WEST, 5, 4, 9, 15);
-	CURSOR_INIT(jcursor_style_t::NORTH, 6, 4, 15, 8);
-	CURSOR_INIT(jcursor_style_t::SOUTH, 7, 4, 15, 22);
-	CURSOR_INIT(jcursor_style_t::HAND, 1, 0, 15, 15);
-	CURSOR_INIT(jcursor_style_t::MOVE, 8, 4, 15, 15);
-	CURSOR_INIT(jcursor_style_t::NS, 2, 4, 15, 15);
-	CURSOR_INIT(jcursor_style_t::WE, 3, 4, 15, 15);
-	CURSOR_INIT(jcursor_style_t::NW_CORNER, 8, 1, 10, 10);
-	CURSOR_INIT(jcursor_style_t::NE_CORNER, 9, 1, 20, 10);
-	CURSOR_INIT(jcursor_style_t::SW_CORNER, 6, 1, 10, 20);
-	CURSOR_INIT(jcursor_style_t::SE_CORNER, 7, 1, 20, 20);
-	CURSOR_INIT(jcursor_style_t::TEXT, 7, 0, 15, 15);
-	CURSOR_INIT(jcursor_style_t::WAIT, 8, 0, 15, 15);
+	CURSOR_INIT(jcursor_style_t::Crosshair, 4, 3, 15, 15);
+	CURSOR_INIT(jcursor_style_t::East, 4, 4, 22, 15);
+	CURSOR_INIT(jcursor_style_t::West, 5, 4, 9, 15);
+	CURSOR_INIT(jcursor_style_t::North, 6, 4, 15, 8);
+	CURSOR_INIT(jcursor_style_t::South, 7, 4, 15, 22);
+	CURSOR_INIT(jcursor_style_t::Hand, 1, 0, 15, 15);
+	CURSOR_INIT(jcursor_style_t::Move, 8, 4, 15, 15);
+	CURSOR_INIT(jcursor_style_t::Vertical, 2, 4, 15, 15);
+	CURSOR_INIT(jcursor_style_t::Horizontal, 3, 4, 15, 15);
+	CURSOR_INIT(jcursor_style_t::NorthWest, 8, 1, 10, 10);
+	CURSOR_INIT(jcursor_style_t::NorthEast, 9, 1, 20, 10);
+	CURSOR_INIT(jcursor_style_t::SouthWest, 6, 1, 10, 20);
+	CURSOR_INIT(jcursor_style_t::SouthEast, 7, 1, 20, 20);
+	CURSOR_INIT(jcursor_style_t::Text, 7, 0, 15, 15);
+	CURSOR_INIT(jcursor_style_t::Wait, 8, 0, 15, 15);
 	
 	delete cursors;
+	*/
 
 #else
 
@@ -875,43 +877,41 @@ void Application::Loop()
 
     if (read(fdk, &ev, sizeof ev) == sizeof(ev)) {
       if (ev.type == EV_KEY) {
-        jkeyevent_type_t type;
-        jkeyevent_modifiers_t mod;
-
-        mod = (jkeyevent_modifiers_t)(0);
+        jkeyevent_type_t type = jkeyevent_type_t::Unknown;
+        jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
         if (ev.code == 0x2a) { //LSHIFT
-          mod = (jkeyevent_modifiers_t)(mod | jkeyevent_modifiers_t::SHIFT);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
         } else if (ev.code == 0x36) { // RSHIFT
-          mod = (jkeyevent_modifiers_t)(mod | jkeyevent_modifiers_t::SHIFT);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
         /*
         } else if ((event.key.keysym.mod & KMOD_LCTRL) != 0) {
-          mod = (jkeyevent_modifiers_t)(mod | jkeyevent_modifiers_t::CONTROL);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
         } else if ((event.key.keysym.mod & KMOD_RCTRL) != 0) {
-          mod = (jkeyevent_modifiers_t)(mod | jkeyevent_modifiers_t::CONTROL);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
         } else if ((event.key.keysym.mod & KMOD_LALT) != 0) {
-          mod = (jkeyevent_modifiers_t)(mod | jkeyevent_modifiers_t::ALT);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
         } else if ((event.key.keysym.mod & KMOD_RALT) != 0) {
-          mod = (jkeyevent_modifiers_t)(mod | jkeyevent_modifiers_t::ALT);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
         } else if ((event.key.keysym.mod & ) != 0) {
-        	mod = (jkeyevent_modifiers_t)(mod | jkeyevent_modifiers_t::ALTGR);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::AltGr);
         } else if ((event.key.keysym.mod & KMOD_LMETA) != 0) {
-        	mod = (jkeyevent_modifiers_t)(mod | jkeyevent_modifiers_t::META);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
         } else if ((event.key.keysym.mod & KMOD_RMETA) != 0) {
-        	mod = (jkeyevent_modifiers_t)(mod | jkeyevent_modifiers_t::META);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
         } else if ((event.key.keysym.mod & ) != 0) {
-        	mod = (jkeyevent_modifiers_t)(mod | jkeyevent_modifiers_t::SUPER);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Super);
         } else if ((event.key.keysym.mod & ) != 0) {
-        	mod = (jkeyevent_modifiers_t)(mod | jkeyevent_modifiers_t::HYPER);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Hyper);
         */
         }
 
-        type = jkeyevent_type_t::UNKNOWN;
+        type = jkeyevent_type_t::Unknown;
 
         if (ev.value == 1 or ev.value == 2) {
-          type = jkeyevent_type_t::PRESSED;
+          type = jkeyevent_type_t::Pressed;
         } else if (ev.value == 0) {
-          type = jkeyevent_type_t::RELEASED;
+          type = jkeyevent_type_t::Released;
         }
 
         jkeyevent_symbol_t symbol = TranslateToNativeKeySymbol(ev.code);
@@ -996,17 +996,17 @@ void Application::Loop()
         jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
         if ((e->state & XCB_MOD_MASK_SHIFT) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
         } else if ((e->state & XCB_MOD_MASK_CONTROL) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
         } else if ((e->state & XCB_MOD_MASK_LOCK) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::CapsLock);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::CapsLock);
         } else if ((e->state & XCB_MOD_MASK_1) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
         } else if ((e->state & XCB_MOD_MASK_2) != 0) {
         } else if ((e->state & XCB_MOD_MASK_3) != 0) {
         } else if ((e->state & XCB_MOD_MASK_4) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Super);
         } else if ((e->state & XCB_MOD_MASK_5) != 0) {
         }
 
@@ -1092,7 +1092,7 @@ void Application::Quit()
 
 WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 {
-  sg_jcanvas_icon = new BufferedImage(_DATA_PREFIX"/images/small-gnu.png");
+  // sg_jcanvas_icon = new BufferedImage(JCANVAS_RESOURCES_DIR "/images/small-gnu.png");
 
 	sg_mouse_x = 0;
 	sg_mouse_y = 0;
@@ -1120,8 +1120,8 @@ WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 		  sg_dispman_update, sg_dispmana_display, 0, &dst_rect, 0, &src_rect, DISPMANX_PROTECTION_NONE, 0, 0, (DISPMANX_TRANSFORM_T)0);
 
   sg_dispman_window.element = sg_dispman_element;
-  sg_dispman_window.x = sg_screen.x;
-  sg_dispman_window.y = sg_screen.y;
+  sg_dispman_window.width = sg_screen.x;
+  sg_dispman_window.height = sg_screen.y;
 
   vc_dispmanx_update_submit_sync(sg_dispman_update);
 

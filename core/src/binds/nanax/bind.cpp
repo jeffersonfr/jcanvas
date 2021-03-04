@@ -371,10 +371,10 @@ static void mouse_input_callback(const nana::arg_mouse &arg)
   
     if (arg.evt_code == nana::event_code::mouse_down or arg.evt_code == nana::event_code::dbl_click) {
       type = jmouseevent_type_t::Pressed;
-      buttons = jenum_t{buttons}.Or(button);
+      buttons = jenum_t<jmouseevent_button_t>{buttons}.Or(button);
     } else if (arg.evt_code == nana::event_code::mouse_up) {
       type = jmouseevent_type_t::Released;
-      buttons = jenum_t{buttons}.And(jenum_t{button}.Not());
+      buttons = jenum_t<jmouseevent_button_t>{buttons}.And(jenum_t<jmouseevent_button_t>{button}.Not());
     }
 
     mouse_z = 1;
@@ -413,11 +413,11 @@ static void key_input_callback(const nana::arg_keyboard &arg)
   jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
   if (arg.shift == true) {
-    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+    mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
   } else if (arg.ctrl == true) {
-    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+    mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
   } else if (arg.alt == true) {
-    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+    mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
   }
 
   if (arg.evt_code == nana::event_code::key_press) {

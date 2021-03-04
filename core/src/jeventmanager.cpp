@@ -156,15 +156,15 @@ void EventManager::ProcessEvents()
         }
         
         if (_mouse_button_map[jmouseevent_button_t::Button1] == true) {
-          buttons = jenum_t{buttons}.Or(jmouseevent_button_t::Button1);
+          buttons = jenum_t<jmouseevent_button_t>{buttons}.Or(jmouseevent_button_t::Button1);
         }
 
         if (_mouse_button_map[jmouseevent_button_t::Button2] == true) {
-          buttons = jenum_t{buttons}.Or(jmouseevent_button_t::Button2);
+          buttons = jenum_t<jmouseevent_button_t>{buttons}.Or(jmouseevent_button_t::Button2);
         }
 
         if (_mouse_button_map[jmouseevent_button_t::Button3] == true) {
-          buttons = jenum_t{buttons}.Or(jmouseevent_button_t::Button3);
+          buttons = jenum_t<jmouseevent_button_t>{buttons}.Or(jmouseevent_button_t::Button3);
         }
 
         MouseEvent local(event->GetSource(), event->GetType(), event->GetButton(), buttons, event->GetLocation(), clicks);

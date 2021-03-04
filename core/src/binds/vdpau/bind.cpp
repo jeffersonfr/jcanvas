@@ -577,15 +577,15 @@ void Application::Loop()
         jkeyevent_modifiers_t mod = jKeyEventModifiersNone;
 
         if (event.xkey.state & ShiftMask) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
         }
 
         if (event.xkey.state & ControlMask) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
         }
 
         if (event.xkey.state & Mod1Mask) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
         }
 
         if (event.type == KeyPress) {

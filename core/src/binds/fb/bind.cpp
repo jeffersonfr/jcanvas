@@ -315,12 +315,11 @@ void Application::Init(int argc, char **argv)
 	t.cursor->GetGraphics()->DrawImage(cursors, {ix*w, iy*h, w, h}, jpoint_t<int>{0, 0}); \
 	sg_jcanvas_cursors[type] = t; \
 
-  /*
 	struct cursor_params_t t;
 	int w = 30,
 			h = 30;
 
-	Image *cursors = new BufferedImage(_DATA_PREFIX"/images/cursors.png");
+	Image *cursors = new BufferedImage(JCANVAS_RESOURCES_DIR "/images/cursors.png");
 
 	CURSOR_INIT(jcursor_style_t::Default, 0, 0, 8, 8);
 	CURSOR_INIT(jcursor_style_t::Crosshair, 4, 3, 15, 15);
@@ -340,7 +339,6 @@ void Application::Init(int argc, char **argv)
 	CURSOR_INIT(jcursor_style_t::Wait, 8, 0, 15, 15);
 	
 	delete cursors;
-  */
   
   sg_quitting = false;
 }
@@ -474,28 +472,28 @@ void Application::Loop()
         jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
         if (ev.code == 0x2a) { // LSHIFT
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
         } else if (ev.code == 0x36) { // RSHIFT
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
         /*
         } else if ((event.key.keysym.mod & KMOD_LCTRL) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
         } else if ((event.key.keysym.mod & KMOD_RCTRL) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
         } else if ((event.key.keysym.mod & KMOD_LALT) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
         } else if ((event.key.keysym.mod & KMOD_RALT) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
         } else if ((event.key.keysym.mod & ) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::AltGr);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::AltGr);
         } else if ((event.key.keysym.mod & KMOD_LMETA) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
         } else if ((event.key.keysym.mod & KMOD_RMETA) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
         } else if ((event.key.keysym.mod & ) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Super);
         } else if ((event.key.keysym.mod & ) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Hyper);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Hyper);
         */
         }
 

@@ -34,10 +34,10 @@ include (cmake/ImageProviders.cmake)
 pkg_check_modules(CAIRO REQUIRED cairo)
 
 # find freetype2
-pkg_check_modules(Freetype REQUIRED freetype2)
+pkg_check_modules(FREETYPE REQUIRED freetype2)
 
 # find jmixin
-include (cmake/FindJmixin.cmake)
+pkg_check_modules(JMIXIN REQUIRED jmixin)
 
 # core compilation
 add_library(${PROJECT_NAME} SHARED 
@@ -80,5 +80,5 @@ message ("\tGraphic Bind: ${GRAPHIC_BIND}")
 message ("\tImage Providers: ${IMAGE_LIST}")
 
 install(DIRECTORY src/include/jcanvas DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 

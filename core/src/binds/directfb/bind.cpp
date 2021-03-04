@@ -352,12 +352,11 @@ void Application::Init(int argc, char **argv)
 	t.cursor->GetGraphics()->DrawImage(cursors, {ix*w, iy*h, w, h}, jpoint_t<int>{0, 0}); \
 	sg_jcanvas_cursors[type] = t; \
 
-  /*
 	struct cursor_params_t t;
 	int w = 30,
 			h = 30;
 
-	Image *cursors = new BufferedImage(_DATA_PREFIX"/images/cursors.png");
+	Image *cursors = new BufferedImage(JCANVAS_RESOURCES_DIR "/images/cursors.png");
 
 	CURSOR_INIT(jcursor_style_t::Default, 0, 0, 8, 8);
 	CURSOR_INIT(jcursor_style_t::Crosshair, 4, 3, 15, 15);
@@ -377,7 +376,6 @@ void Application::Init(int argc, char **argv)
 	CURSOR_INIT(jcursor_style_t::Wait, 8, 0, 15, 15);
 	
 	delete cursors;
-  */
   
   sg_quitting = false;
 }
@@ -482,19 +480,19 @@ void Application::Loop()
 
         if ((event.flags & DIEF_MODIFIERS) != 0) {
           if ((event.modifiers & DIMM_SHIFT) != 0) {
-            mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+            mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
           } else if ((event.modifiers & DIMM_CONTROL) != 0) {
-            mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+            mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
           } else if ((event.modifiers & DIMM_ALT) != 0) {
-            mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+            mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
           } else if ((event.modifiers & DIMM_ALTGR) != 0) {
-            mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::AltGr);
+            mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::AltGr);
           } else if ((event.modifiers & DIMM_META) != 0) {
-            mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
+            mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
           } else if ((event.modifiers & DIMM_SUPER) != 0) {
-            mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
+            mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Super);
           } else if ((event.modifiers & DIMM_HYPER) != 0) {
-            mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Hyper);
+            mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Hyper);
           }
         }
 
@@ -538,15 +536,15 @@ void Application::Loop()
         }
 
         if ((event.buttons & DIBM_LEFT) != 0) {
-          buttons = jenum_t{button}.Or(jmouseevent_button_t::Button1);
+          buttons = jenum_t<jmouseevent_button_t>{button}.Or(jmouseevent_button_t::Button1);
         }
 
         if ((event.buttons & DIBM_RIGHT) != 0) {
-          buttons = jenum_t{button}.Or(jmouseevent_button_t::Button2);
+          buttons = jenum_t<jmouseevent_button_t>{button}.Or(jmouseevent_button_t::Button2);
         }
 
         if ((event.buttons & DIBI_MIDDLE) != 0) {
-          buttons = jenum_t{button}.Or(jmouseevent_button_t::Button3);
+          buttons = jenum_t<jmouseevent_button_t>{button}.Or(jmouseevent_button_t::Button3);
         }
 
         if (sg_jcanvas_window->GetEventManager().IsAutoGrab() == true && buttons != jmouseevent_button_t::None) {

@@ -146,7 +146,7 @@ Image * IndexedImage::Flip(jflip_t t)
   uint8_t 
     *data = new uint8_t[size.x*size.y];
   
-  if (jenum_t{t}.And(jflip_t::Horizontal)) {
+  if (jenum_t<jflip_t>{t}.And(jflip_t::Horizontal)) {
     for (int j=0; j<size.y; j++) {
       for (int i=0; i<size.x; i++) {
         int 
@@ -159,7 +159,7 @@ Image * IndexedImage::Flip(jflip_t t)
     }
   }
 
-  if (jenum_t{t}.And(jflip_t::Vertical)) {
+  if (jenum_t<jflip_t>{t}.And(jflip_t::Vertical)) {
     int 
       offset = (size.y-1)*size.x;
 

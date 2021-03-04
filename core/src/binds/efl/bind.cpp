@@ -529,7 +529,7 @@ static void mousedown_callback(void *data EINA_UNUSED, Evas *evas, Evas_Object *
     mouse_z = 3;
   }
 
-  sg_button_state = jenum_t{sg_button_state}.Or(button);
+  sg_button_state = jenum_t<jmouseevent_button_t>{sg_button_state}.Or(button);
 
   if (sg_jcanvas_window->GetEventManager().IsAutoGrab() == true && sg_button_state != jmouseevent_button_t::None) {
     evas_object_pointer_mode_set(sg_window, EVAS_OBJECT_POINTER_MODE_AUTOGRAB); // EVAS_OBJECT_POINTER_MODE_NOGRAB
@@ -557,7 +557,7 @@ static void mouseup_callback(void *data EINA_UNUSED, Evas *evas, Evas_Object *o 
 
   mouse_z = 1;
 
-  sg_button_state = jenum_t{sg_button_state}.And(jenum_t{button}.Not());
+  sg_button_state = jenum_t<jmouseevent_button_t>{sg_button_state}.And(jenum_t<jmouseevent_button_t>{button}.Not());
 
   if (sg_jcanvas_window->GetEventManager().IsAutoGrab() == true && sg_button_state != jmouseevent_button_t::None) {
     evas_object_pointer_mode_set(sg_window, EVAS_OBJECT_POINTER_MODE_NOGRAB);
@@ -606,11 +606,11 @@ static void keydown_callback(void *data EINA_UNUSED, Evas *evas, Evas_Object *o 
   jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
   if (evas_key_modifier_is_set(mods, "Control")) {
-    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+    mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
   } else if (evas_key_modifier_is_set(mods, "Shift")) {
-    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+    mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
   } else if (evas_key_modifier_is_set(mods, "Alt")) {
-    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+    mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
   }
 
   jkeyevent_symbol_t symbol = TranslateToNativeKeySymbol(ev->key);
@@ -627,11 +627,11 @@ static void keyup_callback(void *data EINA_UNUSED, Evas *evas, Evas_Object *o EI
   jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
   if (evas_key_modifier_is_set(mods, "Control")) {
-    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+    mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
   } else if (evas_key_modifier_is_set(mods, "Shift")) {
-    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+    mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
   } else if (evas_key_modifier_is_set(mods, "Alt")) {
-    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+    mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
   }
 
   jkeyevent_symbol_t symbol = TranslateToNativeKeySymbol(ev->key);

@@ -458,28 +458,28 @@ void Application::Loop()
         jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
         if (ev.code == 0x2a) { // LSHIFT
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
         } else if (ev.code == 0x36) { // RSHIFT
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
         /*
         } else if ((event.key.keysym.mod & KMOD_LCTRL) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
         } else if ((event.key.keysym.mod & KMOD_RCTRL) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
         } else if ((event.key.keysym.mod & KMOD_LALT) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
         } else if ((event.key.keysym.mod & KMOD_RALT) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
         } else if ((event.key.keysym.mod & ) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::AltGr);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::AltGr);
         } else if ((event.key.keysym.mod & KMOD_LMETA) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
         } else if ((event.key.keysym.mod & KMOD_RMETA) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
         } else if ((event.key.keysym.mod & ) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Super);
         } else if ((event.key.keysym.mod & ) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Hyper);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Hyper);
         */
         }
 

@@ -23,8 +23,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#include <jpeglib.h>
-
 namespace jcanvas {
 
 typedef struct {

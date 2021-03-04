@@ -373,7 +373,7 @@ class CAD : public Window, public KeyListener, public MouseListener {
 
       jpoint3d_t<float> vMouse = {(float)elocation.x, (float)elocation.y};
 
-      if (jenum_t{event->GetButtons()}.And(jmouseevent_button_t::Button2)) {
+      if (jenum_t<jmouseevent_button_t>{event->GetButtons()}.And(jmouseevent_button_t::Button2)) {
         vOffset = {vOffset.x - (vMouse.x - vStartPan.x)/fScale, vOffset.y - (vMouse.y - vStartPan.y)/fScale, 0.0f};
         vStartPan = vMouse;
       }

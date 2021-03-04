@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "jcanvas/widgets/jtextarea.h"
 
+#include "jmixin/jstring.h"
+
 namespace jcanvas {
 
 TextArea::TextArea():
@@ -287,11 +289,10 @@ void TextArea::DecrementLines(int lines)
 
 void TextArea::InitRowsString()
 {
-  /* TODO::
   jtheme_t
     theme = GetTheme();
 
-  if (font == nullptr) {
+  if (theme.font.primary == nullptr) {
     return;
   }
 
@@ -312,66 +313,62 @@ void TextArea::InitRowsString()
   }
 
   if (_is_wrap == false) {
-    _lines.push_back(jcommon::StringUtils::ReplaceString(text, "\n", " ") + " ");
+    _lines.push_back(jmixin::String(text).replace("\n", " ") + " ");
 
     return;
   }
 
-  jcommon::StringTokenizer 
-    token(text, "\n", jcommon::JTT_STRING, false);
   std::vector<std::string> 
     lines;
 
-  for (int i=0; i<token.GetSize(); i++) {
-    std::vector<std::string> words;
-    std::string line = token.GetToken(i) + "\n";
-    jcommon::StringTokenizer line_token(line, " ", jcommon::JTT_STRING, true);
+  jmixin::String(text)
+    .split("\n")
+    .for_each([&](auto const &token) {
+          std::vector<std::string> words;
+          std::string line = token + "\n";
+          std::string temp, previous;
 
-    std::string temp,
-      previous;
+          jmixin::String(line)
+            .split(" ")
+            .for_each([&](auto const &emp) {
+                  if (theme.font.primary->GetStringWidth(temp) > w) {
+                    int p = 1;
 
-    for (int j=0; j<line_token.GetSize(); j++) {
-      temp = line_token.GetToken(j);
+                    while (p < (int)temp.size()) {
+                      if (theme.font.primary->GetStringWidth(temp.substr(0, ++p)) > w) {
+                        words.push_back(temp.substr(0, p-1));
 
-      if (font->GetStringWidth(temp) > w) {
-        int p = 1;
+                        temp = temp.substr(p-1);
 
-        while (p < (int)temp.size()) {
-          if (font->GetStringWidth(temp.substr(0, ++p)) > w) {
-            words.push_back(temp.substr(0, p-1));
+                        p = 1;
+                      }
+                    }
 
-            temp = temp.substr(p-1);
+                    if (temp != "") {
+                      words.push_back(temp.substr(0, p));
+                    }
+                  } else {
+                    words.push_back(temp);
+                  }
+                });
 
-            p = 1;
+          temp = words[0];
+
+          for (int j=1; j<(int)words.size(); j++) {
+            previous = temp;
+            temp += words[j];
+
+            if (theme.font.primary->GetStringWidth(temp.c_str()) > w) {
+              temp = words[j];
+
+              _lines.push_back(previous);
+            }
           }
-        }
 
-        if (temp != "") {
-          words.push_back(temp.substr(0, p));
-        }
-      } else {
-        words.push_back(temp);
-      }
-    }
+          _lines.push_back(temp);
+        });
 
-    temp = words[0];
-
-    for (int j=1; j<(int)words.size(); j++) {
-      previous = temp;
-      temp += words[j];
-
-      if (font->GetStringWidth(temp.c_str()) > w) {
-        temp = words[j];
-
-        _lines.push_back(previous);
-      }
-    }
-
-    _lines.push_back(temp);
-  }
-
-  int 
-    length = _caret_position;
+  int length = _caret_position;
 
   for (int i=0; i<=(int)_lines.size()-1; i++) {
     std::string line = _lines[i];
@@ -385,7 +382,6 @@ void TextArea::InitRowsString()
       break;
     }
   }
-  */
 
   _rows_string = false;
 }

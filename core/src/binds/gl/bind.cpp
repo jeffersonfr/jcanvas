@@ -499,21 +499,21 @@ void OnKeyPressRelease(unsigned char key, int x, int y, bool released)
   int m = glutGetModifiers();
 
   if (m == GLUT_ACTIVE_SHIFT) {
-    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+    mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
   } else if (m == GLUT_ACTIVE_CTRL) {
-    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+    mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
   } else if (GLUT_ACTIVE_ALT) {
-    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+    mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
   // } else if ((event.key.keysym.mod & ) != 0) {
-    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::AltGr);
+    mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::AltGr);
   // } else if ((event.key.keysym.mod & KMOD_LMETA) != 0) {
-    // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
+    // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
   // } else if ((event.key.keysym.mod & KMOD_RMETA) != 0) {
-    // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
+    // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
   // } else if ((event.key.keysym.mod & ) != 0) {
-    // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
+    // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Super);
   // } else if ((event.key.keysym.mod & ) != 0) {
-    // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Hyper);
+    // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Hyper);
   }
 
   type = jkeyevent_type_t::Unknown;
@@ -547,21 +547,21 @@ void OnKeyPressReleaseSpecial(int key, int x, int y, bool released)
   int m = glutGetModifiers();
 
   if (m & GLUT_ACTIVE_SHIFT) {
-    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+    mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
   } else if (m & GLUT_ACTIVE_CTRL) {
-    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+    mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
   } else if (m & GLUT_ACTIVE_ALT) {
-    mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+    mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
   // } else if ((event.key.keysym.mod & ) != 0) {
-    // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::AltGr);
+    // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::AltGr);
   // } else if ((event.key.keysym.mod & KMOD_LMETA) != 0) {
-    // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
+    // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
   // } else if ((event.key.keysym.mod & KMOD_RMETA) != 0) {
-    // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
+    // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
   // } else if ((event.key.keysym.mod & ) != 0) {
-    // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
+    // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Super);
   // } else if ((event.key.keysym.mod & ) != 0) {
-    // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Hyper);
+    // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Hyper);
   }
 
   if (released == false) {

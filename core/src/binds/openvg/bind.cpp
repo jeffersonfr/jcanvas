@@ -223,7 +223,7 @@ static jkeyevent_symbol_t TranslateToNativeKeySymbol(int symbol)
 		case 0x67:  
 			return jkeyevent_symbol_t::CursorUp;
 		case 0x6c:
-			return jkeyevent_symbol_t::CursosDown;
+			return jkeyevent_symbol_t::CursorDown;
 		case 0x6e:  
 			return jkeyevent_symbol_t::Insert;
 		case 0x66:     
@@ -277,7 +277,7 @@ static jkeyevent_symbol_t TranslateToNativeKeySymbol(int symbol)
 		case 0x61: // right
 			return jkeyevent_symbol_t::Control;
 		case 0x38: // left
-			return jkeyevent_symbol_t::Alr;
+			return jkeyevent_symbol_t::Alt;
 		case 0x64: 
 		  return jkeyevent_symbol_t::AltGr;
 		// case SDLK_LMETA:
@@ -300,7 +300,7 @@ void Application::Init(int argc, char **argv)
 
   bcm_host_init();
 
-  sg_egl_display = eglGetDisplay(EGL_Default_DISPLAY);
+  sg_egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
 #define CURSOR_INIT(type, ix, iy, hotx, hoty)\
 	t.cursor = new BufferedImage(jpixelformat_t::ARGB, {w, h});\
@@ -309,12 +309,11 @@ void Application::Init(int argc, char **argv)
 	t.cursor->GetGraphics()->DrawImage(cursors, {ix*w, iy*h, w, h}, jpoint_t<int>{0, 0});\
 	sg_cursors[type] = t;\
 
-  /*
 	struct cursor_params_t t;
 	int w = 30,
 			h = 30;
 
-	Image *cursors = new BufferedImage(_DATA_PREFIX"/images/cursors.png");
+	Image *cursors = new BufferedImage(JCANVAS_RESOURCES_DIR "/images/cursors.png");
 
 	CURSOR_INIT(jcursor_style_t::Default, 0, 0, 8, 8);
 	CURSOR_INIT(jcursor_style_t::Crosshair, 4, 3, 15, 15);
@@ -334,7 +333,6 @@ void Application::Init(int argc, char **argv)
 	CURSOR_INIT(jcursor_style_t::Wait, 8, 0, 15, 15);
 	
 	delete cursors;
-  */
 
   const EGLint attribute_list[] = {
     EGL_COLOR_BUFFER_TYPE, EGL_RGB_BUFFER,
@@ -498,28 +496,28 @@ void Application::Loop()
         jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
         if (ev.code == 0x2a) { // LSHIFT
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
         } else if (ev.code == 0x36) { // RSHIFT
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
         /*
         } else if ((event.key.keysym.mod & KMOD_LCTRL) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
         } else if ((event.key.keysym.mod & KMOD_RCTRL) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
         } else if ((event.key.keysym.mod & KMOD_LALT) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
         } else if ((event.key.keysym.mod & KMOD_RALT) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
         } else if ((event.key.keysym.mod & ) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::AltGr);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::AltGr);
         } else if ((event.key.keysym.mod & KMOD_LMETA) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
         } else if ((event.key.keysym.mod & KMOD_RMETA) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
         } else if ((event.key.keysym.mod & ) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Super);
         } else if ((event.key.keysym.mod & ) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Hyper);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Hyper);
         */
         }
 
@@ -630,8 +628,8 @@ WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 		  sg_dispman_update, sg_dispman_display, 0, &dst_rect, 0, &src_rect, DISPMANX_PROTECTION_NONE, 0, 0, (DISPMANX_TRANSFORM_T)0);
 
   sg_dispman_window.element = sg_dispman_element;
-  sg_dispman_window.x = sg_screen.x;
-  sg_dispman_window.y = sg_screen.y;
+  sg_dispman_window.width = sg_screen.x;
+  sg_dispman_window.height = sg_screen.y;
 
   vc_dispmanx_update_submit_sync(sg_dispman_update);
 

@@ -99,9 +99,7 @@ struct jtheme_t {
     .size {
       4, 4
     },
-    .type {
-      jtheme_border_t::style::Line
-    }
+    .type = jtheme_border_t::style::Line
   };
 
   jtheme_scroll_t scroll {

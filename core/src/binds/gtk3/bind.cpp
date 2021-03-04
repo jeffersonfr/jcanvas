@@ -404,17 +404,17 @@ static gboolean OnKeyPressEvent(GtkWidget *widget, GdkEventKey *event, gpointer 
 	jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
 	if (event->state & GDK_SHIFT_MASK) {
-		mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+		mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
 	} else if (event->state & GDK_CONTROL_MASK) {
-		mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+		mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
 	} else if (event->state & GDK_MOD1_MASK) {
-		mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+		mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
 	} else if (event->state & GDK_SUPER_MASK) {
-		mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
+		mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Super);
 	} else if (event->state & GDK_HYPER_MASK) {
-		mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Hyper);
+		mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Hyper);
 	} else if (event->state & GDK_META_MASK) {
-		mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
+		mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
 	}
 	
 	if (event->type == GDK_KEY_PRESS) {
@@ -468,10 +468,10 @@ static gboolean OnMousePressEvent(GtkWidget *widget, GdkEventButton *event, gpoi
 
 	if (event->type == GDK_BUTTON_PRESS || event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS) {
 		type = jmouseevent_type_t::Pressed;
-    buttons = jenum_t{buttons}.Or(button);
+    buttons = jenum_t<jmouseevent_button_t>{buttons}.Or(button);
   } else { // if (event->type == GDK_BUTTON_RELEASE) {
 		type = jmouseevent_type_t::Released;
-    buttons = jenum_t{buttons}.And(jenum_t{button}.Not());
+    buttons = jenum_t<jmouseevent_button_t>{buttons}.And(jenum_t<jmouseevent_button_t>{button}.Not());
   }
 
   if (sg_jcanvas_window->GetEventManager().IsAutoGrab() == true && buttons != jmouseevent_button_t::None) {

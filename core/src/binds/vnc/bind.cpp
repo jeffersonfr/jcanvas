@@ -482,9 +482,9 @@ static void ProcessKeyEvents(rfbBool down, rfbKeySym k, rfbClientPtr cl)
 
 #define UPDATE_MODIFIERS(flag) \
     if (down == true) { \
-      mod = jenum_t{mod}.Or(flag); \
+      mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(flag); \
     } else { \
-      mod = jenum_t{mod}.And(jenum_t{flag}.Not()); \
+      mod = jenum_t<jkeyevent_modifiers_t>{mod}.And(jenum_t<jkeyevent_modifiers_t>{flag}.Not()); \
     } \
 
   if (k == XK_Shift_L) {

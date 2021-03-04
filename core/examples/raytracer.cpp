@@ -19,7 +19,6 @@
  ***************************************************************************/
 #include "jcanvas/core/japplication.h"
 #include "jcanvas/core/jwindow.h"
-#include "jcanvas/core/jvector.h"
 
 #include <vector>
 #include <cassert>

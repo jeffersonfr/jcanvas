@@ -587,28 +587,28 @@ void Graphics::FillBevelRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
   cairo_save(_cairo_context);
   cairo_new_sub_path(_cairo_context);
 
-  if (jenum_t{corners}.And(jrect_corner_t::TopRight)) {
+  if (jenum_t<jrect_corner_t>{corners}.And(jrect_corner_t::TopRight)) {
     cairo_line_to(_cairo_context, x + w - dx, y);
     cairo_line_to(_cairo_context, x + w, y + dy);
   } else {
     cairo_line_to(_cairo_context, x + w, y);
   }
 
-  if (jenum_t{corners}.And(jrect_corner_t::BottomRight)) {
+  if (jenum_t<jrect_corner_t>{corners}.And(jrect_corner_t::BottomRight)) {
     cairo_line_to(_cairo_context, x + w, y + h - dy);
     cairo_line_to(_cairo_context, x + w - dx, y + h);
   } else {
     cairo_line_to(_cairo_context, x + w, y + h);
   }
 
-  if (jenum_t{corners}.And(jrect_corner_t::BottomLeft)) {
+  if (jenum_t<jrect_corner_t>{corners}.And(jrect_corner_t::BottomLeft)) {
     cairo_line_to(_cairo_context, x + dx, y + h);
     cairo_line_to(_cairo_context, x, y + h - dy);
   } else {
     cairo_line_to(_cairo_context, x, y + h);
   }
 
-  if (jenum_t{corners}.And(jrect_corner_t::TopLeft)) {
+  if (jenum_t<jrect_corner_t>{corners}.And(jrect_corner_t::TopLeft)) {
     cairo_line_to(_cairo_context, x, y + dy);
     cairo_line_to(_cairo_context, x + dx, y);
   } else {
@@ -661,28 +661,28 @@ void Graphics::DrawBevelRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
   cairo_save(_cairo_context);
   cairo_new_sub_path(_cairo_context);
 
-  if (jenum_t{corners}.And(jrect_corner_t::TopRight)) {
+  if (jenum_t<jrect_corner_t>{corners}.And(jrect_corner_t::TopRight)) {
     cairo_line_to(_cairo_context, x + w - dx, y);
     cairo_line_to(_cairo_context, x + w, y + dy);
   } else {
     cairo_line_to(_cairo_context, x + w, y);
   }
 
-  if (jenum_t{corners}.And(jrect_corner_t::BottomRight)) {
+  if (jenum_t<jrect_corner_t>{corners}.And(jrect_corner_t::BottomRight)) {
     cairo_line_to(_cairo_context, x + w, y + h - dy);
     cairo_line_to(_cairo_context, x + w - dx, y + h);
   } else {
     cairo_line_to(_cairo_context, x + w, y + h);
   }
 
-  if (jenum_t{corners}.And(jrect_corner_t::BottomLeft)) {
+  if (jenum_t<jrect_corner_t>{corners}.And(jrect_corner_t::BottomLeft)) {
     cairo_line_to(_cairo_context, x + dx, y + h);
     cairo_line_to(_cairo_context, x, y + h - dy);
   } else {
     cairo_line_to(_cairo_context, x, y + h);
   }
 
-  if (jenum_t{corners}.And(jrect_corner_t::TopLeft)) {
+  if (jenum_t<jrect_corner_t>{corners}.And(jrect_corner_t::TopLeft)) {
     cairo_line_to(_cairo_context, x, y + dy);
     cairo_line_to(_cairo_context, x + dx, y);
   } else {
@@ -719,7 +719,7 @@ void Graphics::FillRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
   cairo_save(_cairo_context);
   cairo_new_sub_path(_cairo_context);
 
-  if (jenum_t{corners}.And(jrect_corner_t::TopRight)) {
+  if (jenum_t<jrect_corner_t>{corners}.And(jrect_corner_t::TopRight)) {
     cairo_save(_cairo_context);
     cairo_translate(_cairo_context, x + w - dx, y + dy);
     cairo_scale(_cairo_context, dx, dy);
@@ -729,7 +729,7 @@ void Graphics::FillRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
     cairo_line_to(_cairo_context, x + w, y);
   }
 
-  if (jenum_t{corners}.And(jrect_corner_t::BottomRight)) {
+  if (jenum_t<jrect_corner_t>{corners}.And(jrect_corner_t::BottomRight)) {
     cairo_save(_cairo_context);
     cairo_translate(_cairo_context, x + w - dx, y + h - dy);
     cairo_scale(_cairo_context, dx, dy);
@@ -739,7 +739,7 @@ void Graphics::FillRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
     cairo_line_to(_cairo_context, x + w, y + h);
   }
 
-  if (jenum_t{corners}.And(jrect_corner_t::BottomLeft)) {
+  if (jenum_t<jrect_corner_t>{corners}.And(jrect_corner_t::BottomLeft)) {
     cairo_save(_cairo_context);
     cairo_translate(_cairo_context, x + dx, y + h - dy);
     cairo_scale(_cairo_context, dx, dy);
@@ -749,7 +749,7 @@ void Graphics::FillRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
     cairo_line_to(_cairo_context, x, y + h);
   }
 
-  if (jenum_t{corners}.And(jrect_corner_t::TopLeft)) {
+  if (jenum_t<jrect_corner_t>{corners}.And(jrect_corner_t::TopLeft)) {
     cairo_save(_cairo_context);
     cairo_translate(_cairo_context, x + dx, y + dy);
     cairo_scale(_cairo_context, dx, dy);
@@ -805,7 +805,7 @@ void Graphics::DrawRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
   cairo_save(_cairo_context);
   cairo_new_sub_path(_cairo_context);
 
-  if (jenum_t{corners}.And(jrect_corner_t::TopRight)) {
+  if (jenum_t<jrect_corner_t>{corners}.And(jrect_corner_t::TopRight)) {
     cairo_save(_cairo_context);
     cairo_translate(_cairo_context, x + w - dx, y + dy);
     cairo_scale(_cairo_context, dx, dy);
@@ -815,7 +815,7 @@ void Graphics::DrawRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
     cairo_line_to(_cairo_context, x + w, y);
   }
 
-  if (jenum_t{corners}.And(jrect_corner_t::BottomRight)) {
+  if (jenum_t<jrect_corner_t>{corners}.And(jrect_corner_t::BottomRight)) {
     cairo_save(_cairo_context);
     cairo_translate(_cairo_context, x + w - dx, y + h - dy);
     cairo_scale(_cairo_context, dx, dy);
@@ -825,7 +825,7 @@ void Graphics::DrawRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
     cairo_line_to(_cairo_context, x + w, y + h);
   }
 
-  if (jenum_t{corners}.And(jrect_corner_t::BottomLeft)) {
+  if (jenum_t<jrect_corner_t>{corners}.And(jrect_corner_t::BottomLeft)) {
     cairo_save(_cairo_context);
     cairo_translate(_cairo_context, x + dx, y + h - dy);
     cairo_scale(_cairo_context, dx, dy);
@@ -835,7 +835,7 @@ void Graphics::DrawRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
     cairo_line_to(_cairo_context, x, y + h);
   }
 
-  if (jenum_t{corners}.And(jrect_corner_t::TopLeft)) {
+  if (jenum_t<jrect_corner_t>{corners}.And(jrect_corner_t::TopLeft)) {
     cairo_save(_cairo_context);
     cairo_translate(_cairo_context, x + dx, y + dy);
     cairo_scale(_cairo_context, dx, dy);

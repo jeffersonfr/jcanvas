@@ -1370,10 +1370,10 @@ void Application::Loop()
 
           if (event->e.m.action == MOUSE_BUTTON_PRESS) {
             type = jmouseevent_type_t::Pressed;
-            buttons = jenum_t{buttons}.Or(button);
+            buttons = jenum_t<jmouseevent_button_t>{buttons}.Or(button);
           } else if (event->e.m.action == MOUSE_BUTTON_RELEASE) {
             type = jmouseevent_type_t::Released;
-            buttons = jenum_t{buttons}.And(jenum_t{button}.Not());
+            buttons = jenum_t<jmouseevent_button_t>{buttons}.And(jenum_t<jmouseevent_button_t>{button}.Not());
           }
         } else if (event->e.m.action == MOUSE_CLICK) {
           // action = "click";
@@ -1394,27 +1394,27 @@ void Application::Loop()
         jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
         if ((event->modifiers & MOD_SHIFT_MASK) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
         } else if ((event->modifiers & MOD_CONTROL_MASK) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
         } else if ((event->modifiers & MOD_ALT_MASK) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
         // } else if ((event.key.keysym.mod & KMOD_LGUI) != 0) {
-          // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
+          // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Super);
         // } else if ((event.key.keysym.mod & KMOD_RGUI) != 0) {
-          // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
+          // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Super);
         // } else if ((event.key.keysym.mod & KMOD_MODE) != 0) {
-          // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::AltGr);
+          // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::AltGr);
         // } else if ((event.key.keysym.mod & KMOD_CAPS) != 0) {
-          // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::CapsLock);
+          // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::CapsLock);
         // } else if ((event.key.keysym.mod & KMOD_LMETA) != 0) {
-          // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
+          // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
         // } else if ((event.key.keysym.mod & KMOD_RMETA) != 0) {
-          // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Meta);
+          // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
         // } else if ((event.key.keysym.mod & ) != 0) {
-          // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
+          // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Super);
         // } else if ((event.key.keysym.mod & ) != 0) {
-          // mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Hyper);
+          // mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Hyper);
         }
 
         if (event->e.k.action == KEY_PRESS) {

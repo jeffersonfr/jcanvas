@@ -225,8 +225,8 @@ class SignalMetter {
 
     void SetInterval(int interval) 
     {
-      jpoint_t
-        size = {320, 320};
+      jpoint_t<int>
+        size {320, 320};
 
 			_interval = interval;
 
@@ -251,7 +251,7 @@ class SignalMetter {
 
 		void Plot(int value)
 		{
-			jpoint_t 
+			jpoint_t<int>
 				size {320, 320};
 
 			_points.push_back(value);
@@ -263,8 +263,8 @@ class SignalMetter {
 
 		virtual void Paint(Graphics *g) 
 		{
-			jpoint_t
-				size = {320, 320};
+			jpoint_t<int>
+				size {320, 320};
 			int 
 				x = _interval,
 				y = size.y;

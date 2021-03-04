@@ -462,15 +462,15 @@ void Application::Loop()
           alt = sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) || sf::Keyboard::isKeyPressed(sf::Keyboard::RAlt);
 
         if (shift == true) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
         }
 
         if (control == true) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
         }
 
         if (alt == true) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
         }
 
         if (event.type == sf::Event::KeyPressed) {
@@ -517,10 +517,10 @@ void Application::Loop()
           
           if (event.type == sf::Event::MouseButtonPressed) {
             type = jmouseevent_type_t::Pressed;
-            buttons = jenum_t{buttons}.Or(button);
+            buttons = jenum_t<jmouseevent_button_t>{buttons}.Or(button);
           } else if (event.type == sf::Event::MouseButtonReleased) {
             type = jmouseevent_type_t::Released;
-            buttons = jenum_t{buttons}.And(jenum_t{button}.Not());
+            buttons = jenum_t<jmouseevent_button_t>{buttons}.And(jenum_t<jmouseevent_button_t>{button}.Not());
           }
         } else if (event.type == sf::Event::MouseWheelMoved || event.type == sf::Event::MouseWheelScrolled) {
           type = jmouseevent_type_t::Rotated;

@@ -123,11 +123,11 @@ void CoordinateLayout::DoLayout(Container *target)
     _size.y = tsize.y;
   }
 
-  if (jenum_t{_type}.And(jcoordinatelayout_orientation_t::Horizontal)) {
+  if (jenum_t<jcoordinatelayout_orientation_t>{_type}.And(jcoordinatelayout_orientation_t::Horizontal)) {
     sx = (double)tsize.x/_size.x;
   }
 
-  if (jenum_t{_type}.And(jcoordinatelayout_orientation_t::Vertical)) {
+  if (jenum_t<jcoordinatelayout_orientation_t>{_type}.And(jcoordinatelayout_orientation_t::Vertical)) {
     sy = (double)tsize.y/_size.y;
   }
 

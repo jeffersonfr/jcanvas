@@ -467,17 +467,17 @@ void Application::Loop()
         jkeyevent_modifiers_t mod = jKeyEventModifiersNone;
 
         if ((e->state & XCB_MOD_MASK_SHIFT) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
         } else if ((e->state & XCB_MOD_MASK_CONTROL) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
         } else if ((e->state & XCB_MOD_MASK_LOCK) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::CapsLock);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::CapsLock);
         } else if ((e->state & XCB_MOD_MASK_1) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
         } else if ((e->state & XCB_MOD_MASK_2) != 0) {
         } else if ((e->state & XCB_MOD_MASK_3) != 0) {
         } else if ((e->state & XCB_MOD_MASK_4) != 0) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Super);
         } else if ((e->state & XCB_MOD_MASK_5) != 0) {
         }
 

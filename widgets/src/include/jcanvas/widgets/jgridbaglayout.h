@@ -243,15 +243,15 @@ class GridBagConstraints {
   public:
     GridBagConstraints() 
     {
-      this->gridx = jenum_t{jgridbaglayout_constraints_t::Relative};
-      this->gridy = jenum_t{jgridbaglayout_constraints_t::Relative};
+      this->gridx = jenum_t<jgridbaglayout_constraints_t>{jgridbaglayout_constraints_t::Relative};
+      this->gridy = jenum_t<jgridbaglayout_constraints_t>{jgridbaglayout_constraints_t::Relative};
       this->gridwidth = 1;
       this->gridheight = 1;
 
       this->weightx = 0;
       this->weighty = 0;
-      this->anchor = jenum_t{jgridbaglayout_constraints_t::Center};
-      this->fill = jenum_t{jgridbaglayout_constraints_t::None};
+      this->anchor = jenum_t<jgridbaglayout_constraints_t>{jgridbaglayout_constraints_t::Center};
+      this->fill = jenum_t<jgridbaglayout_constraints_t>{jgridbaglayout_constraints_t::None};
 
       this->ipadx = 0;
       this->ipady = 0;

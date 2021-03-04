@@ -551,15 +551,15 @@ void Application::Loop()
         jkeyevent_modifiers_t mod = jKeyEventModifiersNone;
 
         if (event.xkey.state & ShiftMask) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
         }
 
         if (event.xkey.state & ControlMask) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
         }
 
         if (event.xkey.state & Mod1Mask) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
         }
 
         if (event.type == KeyPress) {
@@ -619,10 +619,10 @@ void Application::Loop()
           }
           
           if (event.type == ButtonPress) {
-            buttons = jenum_t{buttons}.Or(button);
+            buttons = jenum_t<jmouseevent_button_t>{buttons}.Or(button);
             type = jmouseevent_type_t::Pressed;
           } else if (event.type == ButtonRelease) {
-            buttons = jenum_t{buttons}.And(jenum_t{button}.Not());
+            buttons = jenum_t<jmouseevent_button_t>{buttons}.And(jenum_t<jmouseevent_button_t>{button}.Not());
             type = jmouseevent_type_t::Released;
           }
         }

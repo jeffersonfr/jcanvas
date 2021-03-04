@@ -32,8 +32,8 @@ class ColorChooser {
 	public:
 		ColorChooser()
 		{
-			jpoint_t
-				size = {360, 360};
+			jpoint_t<int>
+				size {360, 360};
 			int 
 				border = std::min(size.x, size.y),
 				cx = border / 2 + 1,

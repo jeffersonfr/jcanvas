@@ -352,13 +352,13 @@ class QTWindowRender : public QDialog {
         jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
         if (e->modifiers() & Qt::ShiftModifier) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Shift);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
         } else if (e->modifiers() & Qt::ControlModifier) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Control);
+          mod = jenum_<jkeyevent_modifiers_t>t{mod}.Or(jkeyevent_modifiers_t::Control);
         } else if (e->modifiers() & Qt::AltModifier) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Alt);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
         } else if (e->modifiers() & Qt::MetaModifier) {
-          mod = jenum_t{mod}.Or(jkeyevent_modifiers_t::Super);
+          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Super);
         }
 
         if (event->type() == QEvent::KeyPress) {
@@ -415,13 +415,13 @@ class QTWindowRender : public QDialog {
 
         if (event->type() == QEvent::MouseButtonDblClick) {
           type = jmouseevent_type_t::Pressed;
-          buttons = jenum_t{buttons}.Or(button);
+          buttons = jenum_t<jmouseevent_button_t>{buttons}.Or(button);
         } else if (event->type() == QEvent::MouseButtonPress) {
           type = jmouseevent_type_t::Pressed;
-          buttons = jenum_t{buttons}.And(jenum_t{button}.Not());
+          buttons = jenum_t<jmouseevent_button_t>{buttons}.And(jenum_t<jmouseevent_button_t>{button}.Not());
         } else if (event->type() == QEvent::MouseButtonRelease) {
           type = jmouseevent_type_t::Released;
-          buttons = jenum_t{buttons}.And(jenum_t{button}.Not());
+          buttons = jenum_t<jmouseevent_button_t>{buttons}.And(jenum_t<jmouseevent_button_t>{button}.Not());
         }
 
         if (sg_jcanvas_window->GetEventManager().IsAutoGrab() == true && buttons != jmouseevent_button_t::None) {

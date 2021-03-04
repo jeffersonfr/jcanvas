@@ -62,8 +62,6 @@ set(SRCS
   src/jyesnodialog.cpp
 )
 
-add_definitions (-DJCANVAS_RESOURCES_DIR=\"${CMAKE_INSTALL_PREFIX}/share/jcanvas\")
-
 # find libcairo
 pkg_check_modules(CAIRO REQUIRED cairo)
 
@@ -100,7 +98,6 @@ if (EXAMPLES)
   add_subdirectory(examples)
 endif()
 
-install(DIRECTORY resources/jcanvas DESTINATION ${CMAKE_INSTALL_PREFIX}/share)
 install(DIRECTORY src/include/jcanvas DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 

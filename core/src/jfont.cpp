@@ -22,7 +22,10 @@
 
 #include "jmixin/jstring.h"
 
-#include <filesystem>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 namespace jcanvas {
 
@@ -64,7 +67,13 @@ Font::Font(std::string name, jfont_attributes_t attributes, int size, const jmat
     FT_Init_FreeType(&sg_freetype);
   }
 
-  if (std::filesystem::exists(name) == false) {
+  int fd = open(name.c_str(), O_RDONLY);
+
+  if (fd > 0) {
+    close(fd);
+  }
+
+  if (fd < 0) {
     _is_builtin = true;
   } else {
     if (FT_New_Face(sg_freetype, name.c_str(), 0, &_face) != 0) {
@@ -97,11 +106,11 @@ Font::Font(std::string name, jfont_attributes_t attributes, int size, const jmat
   if (_is_builtin == false) {
     int attr = 0;
 
-    if (jenum_t{_attributes}.And(jfont_attributes_t::Bold)) {
+    if (jenum_t<jfont_attributes_t>{_attributes}.And(jfont_attributes_t::Bold)) {
       attr = attr | CAIRO_FT_SYNTHESIZE_BOLD;
     }
 
-    if (jenum_t{_attributes}.And(jfont_attributes_t::Italic)) {
+    if (jenum_t<jfont_attributes_t>{_attributes}.And(jfont_attributes_t::Italic)) {
       attr = attr | CAIRO_FT_SYNTHESIZE_OBLIQUE;
     }
 
@@ -111,11 +120,11 @@ Font::Font(std::string name, jfont_attributes_t attributes, int size, const jmat
     cairo_font_slant_t slant = CAIRO_FONT_SLANT_NORMAL;
     cairo_font_weight_t weight = CAIRO_FONT_WEIGHT_NORMAL;
 
-    if (jenum_t{_attributes}.And(jfont_attributes_t::Bold)) {
+    if (jenum_t<jfont_attributes_t>{_attributes}.And(jfont_attributes_t::Bold)) {
       weight = CAIRO_FONT_WEIGHT_BOLD;
     }
 
-    if (jenum_t{_attributes}.And(jfont_attributes_t::Italic)) {
+    if (jenum_t<jfont_attributes_t>{_attributes}.And(jfont_attributes_t::Italic)) {
       slant = CAIRO_FONT_SLANT_ITALIC;
     }
 
