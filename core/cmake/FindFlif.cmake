@@ -18,9 +18,22 @@ find_library (FLIF_LIBRARY flif
   /opt/FLIF/src
 )
 
+find_path (FLIF_LIBRARY_DIR libflif.so
+  /usr/lib 
+  /usr/local/lib
+  /opt/FLIF/src
+)
+
 if (FLIF_LIBRARY)
   if (FLIF_INCLUDE_DIR)
     set (FLIF_INCLUDE_DIRS ${FLIF_INCLUDE_DIR})
+    set (FLIF_CFLAGS_OTHER )
+    set (FLIF_CFLAGS)
+
+    set (FLIF_LIBRARY_DIRS ${FLIF_LIBRARY_DIR})
+    set (FLIF_LDFLAGS_OTHER)
+    set (FLIF_LDFLAGS)
+
     set (FLIF_LIBRARIES ${FLIF_LIBRARY})
     set (FLIF_FOUND "YES")
   endif ()

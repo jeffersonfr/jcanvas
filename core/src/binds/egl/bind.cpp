@@ -17,34 +17,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#define RASPBERRY_PI
-
 #include "jcanvas/core/jbufferedimage.h"
 #include "jcanvas/core/jwindowadapter.h"
 #include "jcanvas/core/japplication.h"
 #include "jcanvas/core/jenum.h"
 
+namespace jcanvas {
+  jkeyevent_modifiers_t jKeyEventModifiersNone = jkeyevent_modifiers_t::None;
+  jmouseevent_button_t jMouseEventButtonNone = jmouseevent_button_t::None;
+  jmouseevent_button_t jMouseEventButtonButton1 = jmouseevent_button_t::Button1;
+  jmouseevent_button_t jMouseEventButtonButton2 = jmouseevent_button_t::Button2;
+  jmouseevent_button_t jMouseEventButtonButton3 = jmouseevent_button_t::Button3;
+	jwindow_rotation_t jWindowRotationNone = jwindow_rotation_t::None;
+}
+
 #include <thread>
 #include <mutex>
 #include <atomic>
 #include <stdexcept>
-
-#ifdef RASPBERRY_PI
-
-extern "C" {
-	#include "bcm_host.h"
-}
-
-#include "GLES/gl.h"
-#include "GLES/glext.h"
-#include "EGL/egl.h"
-
-#include <linux/input.h>
-
-#include <termio.h>
-#include <fcntl.h>
-
-#else
 
 #include <xcb/xcb.h>
 #include <xcb/xcb_image.h>
@@ -65,38 +55,16 @@ extern "C" {
 #include <X11/Xatom.h>
 #include <X11/cursorfont.h>
 
-#endif
-
 #include <cairo.h>
 #include <cairo-xcb.h>
 
 namespace jcanvas {
-
-#ifdef RASPBERRY_PI
-
-struct cursor_params_t {
-  Image *cursor;
-  int hot_x;
-  int hot_y;
-};
-
-static std::map<jcursor_style_t, struct cursor_params_t> sg_jcanvas_cursors;
-
-static DISPMANX_DISPLAY_HANDLE_T sg_dispmana_display;
-static DISPMANX_ELEMENT_HANDLE_T sg_dispman_element;
-static DISPMANX_UPDATE_HANDLE_T sg_dispman_update;
-static EGL_DISPMANX_WINDOW_T sg_dispman_window;
-static struct cursor_params_t sg_cursor_params_cursor;
-
-#else
 
 static Display *sg_xcb_display;
 static xcb_connection_t *sg_xcb_connection;
 static xcb_screen_t *sg_xcb_screen;
 static xcb_window_t sg_xcb_window;
 static xcb_gcontext_t sg_xcb_context;
-
-#endif
 
 /** \brief */
 Image *sg_back_buffer = nullptr;
@@ -141,201 +109,6 @@ static jcursor_style_t sg_jcanvas_cursor = jcursor_style_t::Default;
 /** \brief */
 static Window *sg_jcanvas_window = nullptr;
 
-#ifdef RASPBERRY_PI
-
-static jkeyevent_symbol_t TranslateToNativeKeySymbol(int symbol)
-{
-	switch (symbol) {
-		case 0x1c:
-			return jkeyevent_symbol_t::Enter; // jkeyevent_symbol_t::Return;
-		case 0x0e:
-			return jkeyevent_symbol_t::Backspace;
-		case 0x0f:
-			return jkeyevent_symbol_t::Tab;
-		// case SDLK_CANCEL:
-		//	return jkeyevent_symbol_t::Cancel;
-		case 0x01:
-			return jkeyevent_symbol_t::Escape;
-		case 0x39:
-			return jkeyevent_symbol_t::Space;
-		case 0x29:
-			return jkeyevent_symbol_t::Aposthrophe;
-		case 0x33:
-			return jkeyevent_symbol_t::Comma;
-		case 0x0c:
-			return jkeyevent_symbol_t::Minus;
-		case 0x34:  
-			return jkeyevent_symbol_t::Period;
-		case 0x59:
-			return jkeyevent_symbol_t::Slash;
-		case 0x0b:     
-			return jkeyevent_symbol_t::Number0;
-		case 0x02:
-			return jkeyevent_symbol_t::Number1;
-		case 0x03:
-			return jkeyevent_symbol_t::Number2;
-		case 0x04:
-			return jkeyevent_symbol_t::Number3;
-		case 0x05:
-			return jkeyevent_symbol_t::Number4;
-		case 0x06:
-			return jkeyevent_symbol_t::Number5;
-		case 0x07:
-			return jkeyevent_symbol_t::Number6;
-		case 0x08:
-			return jkeyevent_symbol_t::Number7;
-		case 0x09:
-			return jkeyevent_symbol_t::Number8;
-		case 0x0a:
-			return jkeyevent_symbol_t::Number9;
-		case 0x35:
-			return jkeyevent_symbol_t::SemiColon;
-		case 0x0d: 
-			return jkeyevent_symbol_t::Equals;
-		case 0x1b:
-			return jkeyevent_symbol_t::SquareBracketLeft;
-		case 0x56:   
-			return jkeyevent_symbol_t::BackSlash;
-		case 0x2b:
-			return jkeyevent_symbol_t::SquareBracketRight;
-		case 0x1e:       
-			return jkeyevent_symbol_t::a;
-		case 0x30:
-			return jkeyevent_symbol_t::b;
-		case 0x2e:
-			return jkeyevent_symbol_t::c;
-		case 0x20:
-			return jkeyevent_symbol_t::d;
-		case 0x12:
-			return jkeyevent_symbol_t::e;
-		case 0x21:
-			return jkeyevent_symbol_t::f;
-		case 0x22:
-			return jkeyevent_symbol_t::g;
-		case 0x23:
-			return jkeyevent_symbol_t::h;
-		case 0x17:
-			return jkeyevent_symbol_t::i;
-		case 0x24:
-			return jkeyevent_symbol_t::j;
-		case 0x25:
-			return jkeyevent_symbol_t::k;
-		case 0x26:
-			return jkeyevent_symbol_t::l;
-		case 0x32:
-			return jkeyevent_symbol_t::m;
-		case 0x31:
-			return jkeyevent_symbol_t::n;
-		case 0x18:
-			return jkeyevent_symbol_t::o;
-		case 0x19:
-			return jkeyevent_symbol_t::p;
-		case 0x10:
-			return jkeyevent_symbol_t::q;
-		case 0x13:
-			return jkeyevent_symbol_t::r;
-		case 0x1f:
-			return jkeyevent_symbol_t::s;
-		case 0x14:
-			return jkeyevent_symbol_t::t;
-		case 0x16:
-			return jkeyevent_symbol_t::u;
-		case 0x2f:
-			return jkeyevent_symbol_t::v;
-		case 0x11:
-			return jkeyevent_symbol_t::w;
-		case 0x2d:
-			return jkeyevent_symbol_t::x;
-		case 0x15:
-			return jkeyevent_symbol_t::y;
-		case 0x2c:
-			return jkeyevent_symbol_t::z;
-		// case SDLK_BACKQUOTE:
-		//	return jkeyevent_symbol_t::GraveAccent;
-		case 0x28:  
-			return jkeyevent_symbol_t::Tilde;
-		case 0x6f:
-			return jkeyevent_symbol_t::Delete;
-		case 0x69:
-			return jkeyevent_symbol_t::CursorLeft;
-		case 0x6a:
-			return jkeyevent_symbol_t::CursorRight;
-		case 0x67:  
-			return jkeyevent_symbol_t::CursorUp;
-		case 0x6c:
-			return jkeyevent_symbol_t::CursorDown;
-		case 0x6e:  
-			return jkeyevent_symbol_t::Insert;
-		case 0x66:     
-			return jkeyevent_symbol_t::Home;
-		case 0x6b:
-			return jkeyevent_symbol_t::End;
-		case 0x68:
-			return jkeyevent_symbol_t::PageUp;
-		case 0x6d:
-			return jkeyevent_symbol_t::PageDown;
-		case 0x63:   
-			return jkeyevent_symbol_t::Print;
-		case 0x77:
-			return jkeyevent_symbol_t::Pause;
-		// case SDLK_RED:
-		//	return jkeyevent_symbol_t::Red;
-		// case SDLK_GREEN:
-		//	return jkeyevent_symbol_t::Green;
-		// case SDLK_YELLOW:
-		//	return jkeyevent_symbol_t::Yellow;
-		// case SDLK_BLUE:
-		//	return jkeyevent_symbol_t::Blue;
-		case 0x3b:
-			return jkeyevent_symbol_t::F1;
-		case 0x3c:
-			return jkeyevent_symbol_t::F2;
-		case 0x3d:
-			return jkeyevent_symbol_t::F3;
-		case 0x3e:
-			return jkeyevent_symbol_t::F4;
-		case 0x3f:
-			return jkeyevent_symbol_t::F5;
-		case 0x40:
-			return jkeyevent_symbol_t::F6;
-		case 0x41:    
-			return jkeyevent_symbol_t::F7;
-		case 0x42:
-			return jkeyevent_symbol_t::F8;
-		case 0x43:  
-			return jkeyevent_symbol_t::F9;
-		case 0x44: 
-			return jkeyevent_symbol_t::F10;
-		case 0x57:
-			return jkeyevent_symbol_t::F11;
-		case 0x58:
-			return jkeyevent_symbol_t::F12;
-		case 0x2a: // left
-		case 0x36: // right
-			return jkeyevent_symbol_t::Shift;
-		case 0x1d: // left
-		case 0x61: // right
-			return jkeyevent_symbol_t::Control;
-		case 0x38: // left
-			return jkeyevent_symbol_t::Alt;
-		case 0x64: 
-		  return jkeyevent_symbol_t::AltGr;
-		// case SDLK_LMETA:
-		// case SDLK_RMETA:
-		//	return jkeyevent_symbol_t::Meta;
-		case 0x7d:
-			return jkeyevent_symbol_t::Super;
-		// case SDLK_HYPER:
-		//	return jkeyevent_symbol_t::Hyper;
-		default: 
-			break;
-	}
-
-	return jkeyevent_symbol_t::Unknown;
-}
-
-#else 
-
 static jkeyevent_symbol_t TranslateToNativeKeySymbol(xcb_keycode_t symbol, bool capital)
 {
 	switch (symbol) {
@@ -376,7 +149,7 @@ static jkeyevent_symbol_t TranslateToNativeKeySymbol(xcb_keycode_t symbol, bool 
 			return jkeyevent_symbol_t::LessThan;
 		case 0x3c:
 		case 0x5b:
-			return jkeyevent_symbol_t::GreaterTHan;
+			return jkeyevent_symbol_t::GreaterThan;
 		case 0x30:
 			return jkeyevent_symbol_t::Quotation;
 		case 0x33:
@@ -537,23 +310,9 @@ static jkeyevent_symbol_t TranslateToNativeKeySymbol(xcb_keycode_t symbol, bool 
 	return jkeyevent_symbol_t::Unknown;
 }
 
-#endif
-
 void Application::Init(int argc, char **argv)
 {
   EGLint num_config;
-
-#ifdef RASPBERRY_PI
-  
-  bcm_host_init();
-
-  if (!eglBindAPI(EGL_OPENGL_ES_API)) {
-    throw std::runtime_error("Unable to bind opengl es api");
-  }
-
-  sg_egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-
-#else 
 
   sg_xcb_display = XOpenDisplay(nullptr);
 
@@ -576,8 +335,6 @@ void Application::Init(int argc, char **argv)
   }
 
   sg_egl_display = eglGetDisplay(sg_xcb_display);
-
-#endif
 
   const EGLint attribute_list[] = {
     EGL_RED_SIZE, 8,
@@ -610,61 +367,9 @@ void Application::Init(int argc, char **argv)
     throw std::runtime_error("eglCreateContext() failed");
   }
 
-#ifdef RASPBERRY_PI
-
-  uint32_t sw, sh;
-
-  if (graphics_get_display_size(0, &sw, &sh) < 0) {
-    throw std::runtime_error("Unable to get screen size");
-  }
-
-  sg_screen.x = sw;
-  sg_screen.y = sh;
-
-#define CURSOR_INIT(type, ix, iy, hotx, hoty) 													\
-	t.cursor = new BufferedImage(jpixelformat_t::ARGB, {w, h});												\
-																																				\
-	t.hot_x = hotx;																												\
-	t.hot_y = hoty;																												\
-																																				\
-	t.cursor->GetGraphics()->DrawImage(cursors, {ix*w, iy*h, w, h}, jpoint_t<int>{0, 0});	\
-																																				\
-	sg_jcanvas_cursors[type] = t;																										\
-
-	struct cursor_params_t t;
-	int w = 30,
-			h = 30;
-
-	/*
-	Image *cursors = new BufferedImage(JCANVAS_RESOURCES_DIR "/images/cursors.png");
-
-	CURSOR_INIT(jcursor_style_t::Default, 0, 0, 8, 8);
-	CURSOR_INIT(jcursor_style_t::Crosshair, 4, 3, 15, 15);
-	CURSOR_INIT(jcursor_style_t::East, 4, 4, 22, 15);
-	CURSOR_INIT(jcursor_style_t::West, 5, 4, 9, 15);
-	CURSOR_INIT(jcursor_style_t::North, 6, 4, 15, 8);
-	CURSOR_INIT(jcursor_style_t::South, 7, 4, 15, 22);
-	CURSOR_INIT(jcursor_style_t::Hand, 1, 0, 15, 15);
-	CURSOR_INIT(jcursor_style_t::Move, 8, 4, 15, 15);
-	CURSOR_INIT(jcursor_style_t::Vertical, 2, 4, 15, 15);
-	CURSOR_INIT(jcursor_style_t::Horizontal, 3, 4, 15, 15);
-	CURSOR_INIT(jcursor_style_t::NorthWest, 8, 1, 10, 10);
-	CURSOR_INIT(jcursor_style_t::NorthEast, 9, 1, 20, 10);
-	CURSOR_INIT(jcursor_style_t::SouthWest, 6, 1, 10, 20);
-	CURSOR_INIT(jcursor_style_t::SouthEast, 7, 1, 20, 20);
-	CURSOR_INIT(jcursor_style_t::Text, 7, 0, 15, 15);
-	CURSOR_INIT(jcursor_style_t::Wait, 8, 0, 15, 15);
-	
-	delete cursors;
-	*/
-
-#else
-
   sg_screen.x = sg_xcb_screen->width_in_pixels;
   sg_screen.y = sg_xcb_screen->height_in_pixels;
 
-#endif
-  
   sg_quitting = false;
 }
 
@@ -699,14 +404,6 @@ static void InternalPaint()
 
   sg_jcanvas_window->Paint(g);
 
-#ifdef RASPBERRY_PI
-
-  if (sg_cursor_enabled == true) {
-    g->DrawImage(sg_cursor_params_cursor.cursor, jpoint_t<int>{sg_mouse_x, sg_mouse_y});
-  }
-
-#endif
-
   g->Flush();
 
   Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
@@ -716,52 +413,6 @@ static void InternalPaint()
   GLuint texture;
 
   glGenTextures(1, &texture);
-
-#ifdef RASPBERRY_PI
-
-  static const GLfloat coords[4 * 2] = {
-    1.0f,  1.0f,
-    1.0f,  0.0f,
-    0.0f,  1.0f,
-    0.0f,  0.0f,
-  };
-
-  static const GLbyte verts[4*3] = {
-    -1, -1, 0,
-     1, -1, 0,
-    -1,  1, 0,
-     1,  1, 0
-  };
-
-  glBindTexture(GL_TEXTURE_2D, texture);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, sg_screen.x, sg_screen.y, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, data);
-
-  glViewport(0, 0, bounds.size.x, bounds.size.y);
-  glClearColor(0, 0, 0, 0);
-  glMatrixMode(GL_TEXTURE);
-
-  glActiveTexture(texture);
-
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLfloat)GL_NEAREST);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLfloat)GL_NEAREST);
-
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glVertexPointer(3, GL_BYTE, 0, verts);
-
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  glTexCoordPointer(2, GL_FLOAT, 0, coords);
-
-  glEnable(GL_TEXTURE_2D);
-
-  glBindTexture(GL_TEXTURE_2D, texture);
-
-  glRotatef(90, 0.0f, 0.0f, 1.0f);
-
-  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-  glRotatef(-90, 0.0f, 0.0f, 1.0f);
-
-#else
 
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, texture);
@@ -790,8 +441,6 @@ static void InternalPaint()
   
   glEnd();
 
-#endif
-
   if (g->IsVerticalSyncEnabled() == false) {
     glFlush();
   } else {
@@ -815,32 +464,6 @@ void Application::Loop()
 
   std::lock_guard<std::mutex> lock(sg_loop_mutex);
 
-#ifdef RASPBERRY_PI
-
-  struct input_event ev;
-  int mouse_x = 0, mouse_y = 0;
-  uint32_t lastsg_mouse_state = 0x00;
-
-  int 
-    fdk = open("/dev/input/by-path/platform-3f980000.usb-usb-0:1.4:1.0-event-kbd", O_RDONLY);
-
-  if (fdk == -1) {
-    printf("Cannot open the key device\n");
-  }
-
-  fcntl(fdk, F_SETFL, O_NONBLOCK);
-
-  int 
-    fdm = open("/dev/input/mice", O_RDONLY);
-
-  if(fdm == -1) {   
-    printf("Cannot open the mouse device\n");
-  }   
-
-  fcntl(fdm, F_SETFL, O_NONBLOCK);
-
-#else
-
   xcb_generic_event_t *event;
 
   xcb_intern_atom_cookie_t 
@@ -855,118 +478,10 @@ void Application::Loop()
 
   xcb_change_property(sg_xcb_connection, XCB_PROP_MODE_REPLACE, sg_xcb_window, (*reply).atom, 4, 32, 1, &(*reply2).atom);
 
-#endif
-
 	while (sg_quitting == false) {
-#ifdef RASPBERRY_PI
-      if (mouse_x != sg_mouse_x or mouse_y != sg_mouse_y) {
-        mouse_x = sg_mouse_x;
-        mouse_y = sg_mouse_y;
-
-        if (sg_cursor_enabled == true) {
-          sg_repaint.store(true);
-        }
-      }
-#endif
-
     if (sg_repaint.exchange(false) == true) {
       InternalPaint();
     }
-
-#ifdef RASPBERRY_PI
-
-    if (read(fdk, &ev, sizeof ev) == sizeof(ev)) {
-      if (ev.type == EV_KEY) {
-        jkeyevent_type_t type = jkeyevent_type_t::Unknown;
-        jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
-
-        if (ev.code == 0x2a) { //LSHIFT
-          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
-        } else if (ev.code == 0x36) { // RSHIFT
-          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
-        /*
-        } else if ((event.key.keysym.mod & KMOD_LCTRL) != 0) {
-          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
-        } else if ((event.key.keysym.mod & KMOD_RCTRL) != 0) {
-          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
-        } else if ((event.key.keysym.mod & KMOD_LALT) != 0) {
-          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
-        } else if ((event.key.keysym.mod & KMOD_RALT) != 0) {
-          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
-        } else if ((event.key.keysym.mod & ) != 0) {
-          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::AltGr);
-        } else if ((event.key.keysym.mod & KMOD_LMETA) != 0) {
-          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
-        } else if ((event.key.keysym.mod & KMOD_RMETA) != 0) {
-          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Meta);
-        } else if ((event.key.keysym.mod & ) != 0) {
-          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Super);
-        } else if ((event.key.keysym.mod & ) != 0) {
-          mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Hyper);
-        */
-        }
-
-        type = jkeyevent_type_t::Unknown;
-
-        if (ev.value == 1 or ev.value == 2) {
-          type = jkeyevent_type_t::Pressed;
-        } else if (ev.value == 0) {
-          type = jkeyevent_type_t::Released;
-        }
-
-        jkeyevent_symbol_t symbol = TranslateToNativeKeySymbol(ev.code);
-
-        sg_jcanvas_window->GetEventManager().PostEvent(new KeyEvent(sg_jcanvas_window, type, mod, KeyEvent::GetCodeFromSymbol(symbol), symbol));
-      }
-    }
-
-    signed char data[3];
-
-    if (read(fdm, data, sizeof(data)) == sizeof(data)) {
-      int 
-        buttonMask = data[0];
-      int 
-        x = sg_mouse_x + data[1],
-        y = sg_mouse_y - data[2];
-     
-      x = (x < 0)?0:(x > sg_screen.x)?sg_screen.x:x;
-      y = (y < 0)?0:(y > sg_screen.y)?sg_screen.y:y;
-
-      jmouseevent_button_t button = jmouseevent_button_t::None;
-      jmouseevent_type_t type = jmouseevent_type_t::Unknown;
-      int mouse_z = 0;
-
-      type = jmouseevent_type_t::Pressed;
-
-      if (sg_mouse_x != x || sg_mouse_y != y) {
-        type = jmouseevent_type_t::Moved;
-      }
-
-      sg_mouse_x = CLAMP(x, 0, sg_screen.x - 1);
-      sg_mouse_y = CLAMP(y, 0, sg_screen.y - 1);
-
-      if ((buttonMask & 0x01) == 0 && (lastsg_mouse_state & 0x01)) {
-        type = jmouseevent_type_t::Released;
-      } else if ((buttonMask & 0x02) == 0 && (lastsg_mouse_state & 0x02)) {
-        type = jmouseevent_type_t::Released;
-      } else if ((buttonMask & 0x04) == 0 && (lastsg_mouse_state & 0x04)) {
-        type = jmouseevent_type_t::Released;
-      } 
-
-      if ((buttonMask & 0x01) != (lastsg_mouse_state & 0x01)) {
-        button = jmouseevent_button_t::Button1;
-      } else if ((buttonMask & 0x02) != (lastsg_mouse_state & 0x02)) {
-        button = jmouseevent_button_t::Button3;
-      } else if ((buttonMask & 0x04) != (lastsg_mouse_state & 0x04)) {
-        button = jmouseevent_button_t::Button2;
-      }
-
-      lastsg_mouse_state = buttonMask;
-
-      sg_jcanvas_window->GetEventManager().PostEvent(new MouseEvent(sg_jcanvas_window, type, button, jmouseevent_button_t::None, {sg_mouse_x + sg_cursor_params_cursor.hot_x, sg_mouse_y + sg_cursor_params_cursor.hot_y}, mouse_z));
-    }
-
-#else
 
     while ((event = xcb_poll_for_event(sg_xcb_connection))) {
     // while (e = xcb_wait_for_event(sg_xcb_connection)) {
@@ -993,7 +508,7 @@ void Application::Loop()
       } else if (id == XCB_KEY_PRESS || id == XCB_KEY_RELEASE) {
         xcb_key_press_event_t *e = (xcb_key_press_event_t *)event;
         jkeyevent_type_t type = jkeyevent_type_t::Unknown;
-        jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
+        jkeyevent_modifiers_t mod = jKeyEventModifiersNone;
 
         if ((e->state & XCB_MOD_MASK_SHIFT) != 0) {
           mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
@@ -1029,7 +544,7 @@ void Application::Loop()
       } else if (id == XCB_BUTTON_PRESS || id == XCB_BUTTON_RELEASE || id == XCB_MOTION_NOTIFY) {
         xcb_button_press_event_t *e = (xcb_button_press_event_t *)event;
 
-        jmouseevent_button_t button = jmouseevent_button_t::None;
+        jmouseevent_button_t button = jMouseEventButtonNone;
         jmouseevent_type_t type = jmouseevent_type_t::Unknown;
         int mouse_z = 0;
 
@@ -1049,15 +564,15 @@ void Application::Loop()
           }
 
           if (e->detail == 0x01) {
-            button = jmouseevent_button_t::Button1;
+            button = jMouseEventButtonButton1;
           } else if (e->detail == 0x02) {
-            button = jmouseevent_button_t::Button2;
+            button = jMouseEventButtonButton2;
           } else if (e->detail == 0x03) {
-            button = jmouseevent_button_t::Button3;
+            button = jMouseEventButtonButton3;
           }
         }
 
-        sg_jcanvas_window->GetEventManager().PostEvent(new MouseEvent(sg_jcanvas_window, type, button, jmouseevent_button_t::None, {sg_mouse_x, sg_mouse_y}, mouse_z));
+        sg_jcanvas_window->GetEventManager().PostEvent(new MouseEvent(sg_jcanvas_window, type, button, jMouseEventButtonNone, {sg_mouse_x, sg_mouse_y}, mouse_z));
       } else if (id == XCB_CLIENT_MESSAGE) {
         if ((*(xcb_client_message_event_t*)event).data.data32[0] == (*reply2).atom) {
           sg_quitting = true;
@@ -1070,8 +585,6 @@ void Application::Loop()
 
       xcb_flush(sg_xcb_connection);
     }
-    
-#endif
   }
 
   sg_jcanvas_window->SetVisible(false);
@@ -1098,35 +611,6 @@ WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 	sg_mouse_y = 0;
   sg_jcanvas_window = parent;
 
-#ifdef RASPBERRY_PI
-
-  VC_RECT_T dst_rect;
-  VC_RECT_T src_rect;
-
-  dst_rect.x = 0;
-  dst_rect.y = 0;
-  dst_rect.x = sg_screen.x;
-  dst_rect.y = sg_screen.y;
-
-  src_rect.x = 0;
-  src_rect.y = 0;
-  src_rect.x = sg_screen.x << 16;
-  src_rect.y = sg_screen.y << 16;
-
-  sg_dispmana_display = vc_dispmanx_display_open(0);
-  sg_dispman_update = vc_dispmanx_update_start(0);
-
-  sg_dispman_element = vc_dispmanx_element_add (
-		  sg_dispman_update, sg_dispmana_display, 0, &dst_rect, 0, &src_rect, DISPMANX_PROTECTION_NONE, 0, 0, (DISPMANX_TRANSFORM_T)0);
-
-  sg_dispman_window.element = sg_dispman_element;
-  sg_dispman_window.width = sg_screen.x;
-  sg_dispman_window.height = sg_screen.y;
-
-  vc_dispmanx_update_submit_sync(sg_dispman_update);
-
-#else
-
   if (sg_xcb_window != 0) {
 	  throw std::runtime_error("Cannot create more than one window");
   }
@@ -1144,7 +628,7 @@ WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
     XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW | XCB_EVENT_MASK_STRUCTURE_NOTIFY;
 
   xcb_create_window(
-      sg_xcb_connection, XCB_COPY_FROM_PARENT, sg_xcb_window, sg_xcb_screen->root, x, y, width, height, 1, XCB_WINDOW_CLASS_INPUT_OUTPUT, sg_xcb_screen->root_visual, mask, values);
+      sg_xcb_connection, XCB_COPY_FROM_PARENT, sg_xcb_window, sg_xcb_screen->root, bounds.point.x, bounds.point.y, bounds.size.x, bounds.size.y, 1, XCB_WINDOW_CLASS_INPUT_OUTPUT, sg_xcb_screen->root_visual, mask, values);
 
   mask = XCB_GC_FOREGROUND | XCB_GC_GRAPHICS_EXPOSURES;
   values[0] = sg_xcb_screen->black_pixel;
@@ -1160,8 +644,6 @@ WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 
   xcb_map_window(sg_xcb_connection, sg_xcb_window);
   xcb_flush(sg_xcb_connection);
-
-#endif
 
   /*
   const EGLint sg_egl_config_attribs[] = {
@@ -1191,15 +673,7 @@ WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
     EGL_NONE,
   };
 
-#ifdef RASPBERRY_PI
-
-  sg_egl_surface = eglCreateWindowSurface(sg_egl_display, sg_egl_config, &sg_dispman_window, sg_egl_surface_attribs);
-
-#else
-
   sg_egl_surface = eglCreateWindowSurface(sg_egl_display, sg_egl_config, sg_xcb_window, sg_egl_surface_attribs);
-
-#endif
 
   if (!sg_egl_surface) {
     throw std::runtime_error("eglCreateWindowSurface() failed");
@@ -1224,19 +698,9 @@ WindowAdapter::~WindowAdapter()
   eglDestroyContext(sg_egl_display, sg_egl_context);
   eglTerminate(sg_egl_display);
 
-#ifdef RASPBERRY_PI
-
-  vc_dispmanx_element_remove(sg_dispman_update, sg_dispman_element);
-  vc_dispmanx_update_submit_sync(sg_dispman_update);
-  vc_dispmanx_display_close(sg_dispmana_display);
-
-#else
-
   xcb_destroy_window(sg_xcb_connection, sg_xcb_window);
   xcb_disconnect(sg_xcb_connection);
 
-#endif
-  
   delete sg_back_buffer;
   sg_back_buffer = nullptr;
 }
@@ -1248,16 +712,6 @@ void WindowAdapter::Repaint()
 
 void WindowAdapter::ToggleFullScreen()
 {
-#ifdef RASPBERRY_PI
-  
-  if (sg_fullscreen == false) {
-    sg_fullscreen = true;
-  } else {
-    sg_fullscreen = false;
-  }
-
-#else
-
   static jrect_t<int> previous_bounds = {
 	  0, 0, 0, 0
   };
@@ -1277,21 +731,13 @@ void WindowAdapter::ToggleFullScreen()
   }
   
   xcb_flush(sg_xcb_connection);
-
-#endif
 }
 
 void WindowAdapter::SetTitle(std::string title)
 {
 	sg_title = title;
 		
-#ifdef RASPBERRY_PI
-
-#else
-
   xcb_change_property(sg_xcb_connection, XCB_PROP_MODE_REPLACE, sg_xcb_window, XCB_ATOM_WM_NAME, XCB_ATOM_STRING, 8, title.size(), title.c_str());
-
-#endif
 }
 
 std::string WindowAdapter::GetTitle()
@@ -1320,9 +766,6 @@ bool WindowAdapter::IsUndecorated()
 
 void WindowAdapter::SetBounds(jrect_t<int> bounds)
 {
-#ifdef RASPBERRY_PI
-  // do nothing;
-#else
   const uint32_t values[] = {
     (uint32_t)bounds.point.x, 
     (uint32_t)bounds.point.y, 
@@ -1331,21 +774,12 @@ void WindowAdapter::SetBounds(jrect_t<int> bounds)
   };
 
   xcb_configure_window(sg_xcb_connection, sg_xcb_window, XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y | XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, values);
-
-#endif
 }
 
 jrect_t<int> WindowAdapter::GetBounds()
 {
 	jrect_t<int> 
     t = {0, 0, 0, 0};
-
-#ifdef RASPBERRY_PI
-
-	t.size.x = sg_screen.x;
-	t.size.y = sg_screen.y;
-
-#else
 
   xcb_get_geometry_cookie_t 
     cookie = xcb_get_geometry(sg_xcb_connection, sg_xcb_window);
@@ -1363,8 +797,6 @@ jrect_t<int> WindowAdapter::GetBounds()
 
   free(reply);
 
-#endif
-
 	return t;
 }
 		
@@ -1380,16 +812,7 @@ bool WindowAdapter::IsResizable()
 
 void WindowAdapter::SetCursorLocation(int x, int y)
 {
-#ifdef RASPBERRY_PI
-
-  sg_mouse_x = (x < 0)?0:(x > sg_screen.x)?sg_screen.x:x;
-  sg_mouse_y = (y < 0)?0:(y > sg_screen.y)?sg_screen.y:y;
-
-#else
-
   // XWarpPointer(_display, None, sg_xcb_window, 0, 0, size.x, size.y, x, y);
-  
-#endif
 }
 
 jpoint_t<int> WindowAdapter::GetCursorLocation()
@@ -1399,15 +822,7 @@ jpoint_t<int> WindowAdapter::GetCursorLocation()
 		.y = 0
 	};
 
-#ifdef RASPBERRY_PI
-
-	t.x = sg_mouse_x;
-	t.y = sg_mouse_y;
-#else
-
 	// XTranslateCoordinates(_display, sg_xcb_window, XRootWindow(_display, DefaultScreen(_display)), 0, 0, &t.x, &t.y, &child_return);
-
-#endif
 
 	return t;
 }
@@ -1416,10 +831,6 @@ void WindowAdapter::SetVisible(bool visible)
 {
   sg_visible = visible;
 
-#ifdef RASPBERRY_PI
-
-#else
-
   if (visible == true) {
     xcb_map_window(sg_xcb_connection, sg_xcb_window);
   } else {
@@ -1427,8 +838,6 @@ void WindowAdapter::SetVisible(bool visible)
   }
   
   xcb_flush(sg_xcb_connection);
-
-#endif
 }
 
 bool WindowAdapter::IsVisible()
@@ -1457,10 +866,6 @@ bool WindowAdapter::IsCursorEnabled()
 void WindowAdapter::SetCursor(jcursor_style_t style)
 {
   sg_jcanvas_cursor = style;
-
-#ifdef RASPBERRY_PI
-
-#else
 
   int type = XC_arrow;
   
@@ -1507,8 +912,6 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
 
   xcb_change_window_attributes(sg_xcb_connection, sg_xcb_window, mask, &values);
   xcb_free_cursor(sg_xcb_connection, cursor);
-
-#endif
 }
 
 void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
@@ -1516,20 +919,6 @@ void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
 	if ((void *)shape == nullptr) {
 		return;
 	}
-
-#ifdef RASPBERRY_PI
-
-  if (sg_cursor_params_cursor.cursor != nullptr) {
-    delete sg_cursor_params_cursor.cursor;
-    sg_cursor_params_cursor.cursor = nullptr;
-  }
-
-  sg_cursor_params_cursor.cursor = dynamic_cast<Image *>(shape->Clone());
-
-  sg_cursor_params_cursor.hot_x = hotx;
-  sg_cursor_params_cursor.hot_y = hoty;
-
-#else
 
 	/*
 	jpoint_t<int> t = shape->GetSize();
@@ -1573,8 +962,6 @@ void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
 
 	delete [] data;
 	*/
-
-#endif
 }
 
 void WindowAdapter::SetRotation(jwindow_rotation_t t)
@@ -1583,7 +970,7 @@ void WindowAdapter::SetRotation(jwindow_rotation_t t)
 
 jwindow_rotation_t WindowAdapter::GetRotation()
 {
-	return jwindow_rotation_t::None;
+	return jWindowRotationNone;
 }
 
 void WindowAdapter::SetIcon(Image *image)

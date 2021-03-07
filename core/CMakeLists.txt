@@ -51,12 +51,20 @@ include_directories(
   "${CMAKE_SOURCE_DIR}/algebra/src/include"
 )
 
+target_compile_definitions(${PROJECT_NAME} PUBLIC
+  ${GRAPHIC_BINDS_CFLAGS} 
+)
+
 target_include_directories(${PROJECT_NAME} PUBLIC
   ${CAIRO_INCLUDE_DIRS}
   ${FREETYPE_INCLUDE_DIRS}
   ${JMIXIN_INCLUDE_DIRS}
   ${GRAPHIC_BINDS_INCLUDE_DIRS}
   ${IMAGE_PROVIDERS_INCLUDE_DIRS}
+)
+
+target_link_directories(${PROJECT_NAME} PUBLIC
+  ${GRAPHIC_BINDS_LIBRARY_DIRS} 
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
@@ -77,7 +85,13 @@ if (EXAMPLES)
 endif()
 
 message ("\tGraphic Bind: ${GRAPHIC_BIND}")
+message ("\t\tInclude Directories: ${GRAPHIC_BINDS_INCLUDE_DIRS}")
+message ("\t\tLibrary Directories: ${GRAPHIC_BINDS_LIBRARY_DIRS}")
+message ("\t\tLibraries: ${GRAPHIC_BINDS_LIBRARIES}")
 message ("\tImage Providers: ${IMAGE_LIST}")
+message ("\t\tInclude Directories: ${IMAGE_PROVIDERS_INCLUDE_DIRS}")
+message ("\t\tLibrary Directories: ${IMAGE_PROVIDERS_LIBRARY_DIRS}")
+message ("\t\tLibraries: ${IMAGE_PROVIDERS_LIBRARIES}")
 
 install(DIRECTORY src/include/jcanvas DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
 install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

@@ -19,10 +19,24 @@ find_library (FLASCHEN_LIBRARY ftclient
   /opt/flaschen-taschen/api/lib
 )
 
+find_path (FLASCHEN_LIBRARY_DIR libftclient.so
+  /usr/lib 
+  /usr/local/lib 
+  /opt/flaschen-taschen/api/lib
+)
+
 if (FLASCHEN_LIBRARY)
   if (FLASCHEN_INCLUDE_DIR)
     set (FLASCHEN_INCLUDE_DIRS ${FLASCHEN_INCLUDE_DIR})
+    set (FLASCHEN_CFLAGS_OTHER)
+    set (FLASCHEN_CFLAGS)
+
+    set (FLASCHEN_LIBRARY_DIRS ${FLASCHEN_LIBRARY_DIR})
+    set (FLASCHEN_LDFLAGS_OTHER)
+    set (FLASCHEN_LDFLAGS)
+
     set (FLASCHEN_LIBRARIES ${FLASCHEN_LIBRARY})
+
     set (FLASCHEN_FOUND "YES")
   endif ()
 endif ()

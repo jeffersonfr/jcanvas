@@ -19,10 +19,24 @@ find_library (NANAX_LIBRARY X11 pthread Xft fontconfig stdc++fs nana
   /opt/nana/build/bin
 )
 
+find_path (NANAX_LIBRARY libnana.so
+  /usr/lib 
+  /usr/local/lib 
+  /opt/nana/build/bin
+)
+
 if (NANAX_LIBRARY)
   if (NANAX_INCLUDE_DIR)
     set (NANAX_INCLUDE_DIRS ${NANAX_INCLUDE_DIR})
+    set (NANAX_CFLAGS_OTHER)
+    set (NANAX_CFLAGS)
+
+    set (NANAX_LIBRARY_DIRS ${NANAX_LIBRARY_DIR})
+    set (NANAX_LDFLAGS_OTHER)
+    set (NANAX_LDFLAGS)
+
     set (NANAX_LIBRARIES ${NANAX_LIBRARY})
+
     set (NANAX_FOUND "YES")
   endif ()
 endif ()

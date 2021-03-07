@@ -1,9 +1,9 @@
-  /***************************************************************************
-   *   Copyright (C) 2005 by Jeff Ferr                                       *
-   *   root@sat                                                              *
-   *                                                                         *
-   *   This program is free software; you can redistribute it and/or modify  *
-   *   it under the terms of the GNU General Public License as published by  *
+/***************************************************************************
+ *   Copyright (C) 2005 by Jeff Ferr                                       *
+ *   root@sat                                                              *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
@@ -32,8 +32,8 @@ extern "C" {
 }
 
 #include "GLES/gl.h"
+#include "GLES/glext.h"
 #include "EGL/egl.h"
-#include "VG/openvg.h"
 
 #include <linux/input.h>
 
@@ -45,25 +45,24 @@ extern "C" {
 
 namespace jcanvas {
 
-static DISPMANX_DISPLAY_HANDLE_T sg_dispman_display;
-static DISPMANX_ELEMENT_HANDLE_T sg_dispman_element;
-static DISPMANX_UPDATE_HANDLE_T sg_dispman_update;
-static EGL_DISPMANX_WINDOW_T sg_dispman_window;
-
 struct cursor_params_t {
   Image *cursor;
   int hot_x;
   int hot_y;
 };
 
+static std::map<jcursor_style_t, struct cursor_params_t> sg_jcanvas_cursors;
+
+static DISPMANX_DISPLAY_HANDLE_T sg_dispman_display;
+static DISPMANX_ELEMENT_HANDLE_T sg_dispman_element;
+static DISPMANX_UPDATE_HANDLE_T sg_dispman_update;
+static EGL_DISPMANX_WINDOW_T sg_dispman_window;
+static struct cursor_params_t sg_cursor_params_cursor;
+
 /** \brief */
 Image *sg_back_buffer = nullptr;
 /** \brief */
 static std::atomic<bool> sg_repaint;
-/** \brief */
-static std::map<jcursor_style_t, struct cursor_params_t> sg_cursors;
-/** \brief */
-static struct cursor_params_t sg_cursor_params;
 /** \brief */
 static EGLDisplay sg_egl_display;
 /** \brief */
@@ -79,29 +78,29 @@ static int sg_mouse_x = 0;
 /** \brief */
 static int sg_mouse_y = 0;
 /** \brief */
-static std::string sg_title;
-/** \brief */
 static float sg_opacity = 1.0f;
 /** \brief */
 static bool sg_fullscreen = false;
 /** \brief */
 static bool sg_undecorated = false;
 /** \brief */
+static std::string sg_title;
+/** \brief */
 static bool sg_resizable = true;
+/** \brief */
+static bool sg_cursor_enabled = true;
 /** \brief */
 static bool sg_visible = true;
 /** \brief */
-static std::mutex sg_loop_mutex;
-/** \brief */
 static bool sg_quitting = false;
+/** \brief */
+static std::mutex sg_loop_mutex;
 /** \brief */
 static jpoint_t<int> sg_screen = {0, 0};
 /** \brief */
+static jcursor_style_t sg_jcanvas_cursor = jcursor_style_t::Default;
+/** \brief */
 static Window *sg_jcanvas_window = nullptr;
-/** \brief */
-static jcursor_style_t sg_jcanvas_cursor;
-/** \brief */
-static bool sg_cursor_enabled = true;
 
 static jkeyevent_symbol_t TranslateToNativeKeySymbol(int symbol)
 {
@@ -300,75 +299,8 @@ void Application::Init(int argc, char **argv)
 
   bcm_host_init();
 
-  sg_egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-
-#define CURSOR_INIT(type, ix, iy, hotx, hoty)\
-	t.cursor = new BufferedImage(jpixelformat_t::ARGB, {w, h});\
-	t.hot_x = hotx;\
-	t.hot_y = hoty;\
-	t.cursor->GetGraphics()->DrawImage(cursors, {ix*w, iy*h, w, h}, jpoint_t<int>{0, 0});\
-	sg_cursors[type] = t;\
-
-	struct cursor_params_t t;
-	int w = 30,
-			h = 30;
-
-	Image *cursors = new BufferedImage(JCANVAS_RESOURCES_DIR "/images/cursors.png");
-
-	CURSOR_INIT(jcursor_style_t::Default, 0, 0, 8, 8);
-	CURSOR_INIT(jcursor_style_t::Crosshair, 4, 3, 15, 15);
-	CURSOR_INIT(jcursor_style_t::East, 4, 4, 22, 15);
-	CURSOR_INIT(jcursor_style_t::West, 5, 4, 9, 15);
-	CURSOR_INIT(jcursor_style_t::North, 6, 4, 15, 8);
-	CURSOR_INIT(jcursor_style_t::South, 7, 4, 15, 22);
-	CURSOR_INIT(jcursor_style_t::Hand, 1, 0, 15, 15);
-	CURSOR_INIT(jcursor_style_t::Move, 8, 4, 15, 15);
-	CURSOR_INIT(jcursor_style_t::Vertical, 2, 4, 15, 15);
-	CURSOR_INIT(jcursor_style_t::Horizontal, 3, 4, 15, 15);
-	CURSOR_INIT(jcursor_style_t::NorthWest, 8, 1, 10, 10);
-	CURSOR_INIT(jcursor_style_t::NorthEast, 9, 1, 20, 10);
-	CURSOR_INIT(jcursor_style_t::SouthWest, 6, 1, 10, 20);
-	CURSOR_INIT(jcursor_style_t::SouthEast, 7, 1, 20, 20);
-	CURSOR_INIT(jcursor_style_t::Text, 7, 0, 15, 15);
-	CURSOR_INIT(jcursor_style_t::Wait, 8, 0, 15, 15);
-	
-	delete cursors;
-
-  const EGLint attribute_list[] = {
-    EGL_COLOR_BUFFER_TYPE, EGL_RGB_BUFFER,
-    EGL_RED_SIZE, 8,
-    EGL_GREEN_SIZE, 8,
-    EGL_BLUE_SIZE, 8,
-    EGL_ALPHA_SIZE, 8,
-    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-    EGL_NONE
-  };
-
-  const EGLint sg_egl_context_attribs[] = {
-    EGL_NONE,
-  };
-
-  if (sg_egl_display == EGL_NO_DISPLAY) {
-    throw std::runtime_error("Unable to get egl display");
-  }
-
-  if (eglInitialize(sg_egl_display, nullptr, nullptr) == EGL_FALSE) {
-    throw std::runtime_error("Unable to initialize egl");
-  }
-
-  if (!eglBindAPI(EGL_OPENVG_API)) {
-    throw std::runtime_error("Unable to bind opengl es api");
-  }
-
-  if (eglChooseConfig(sg_egl_display, attribute_list, &sg_egl_config, 1, &num_config) == EGL_FALSE) {
-    throw std::runtime_error("Unable to choose egl configuration");
-  }
-
-  sg_egl_context = eglCreateContext(sg_egl_display, sg_egl_config, EGL_NO_CONTEXT, sg_egl_context_attribs); 
-  
-  if (sg_egl_context == EGL_NO_CONTEXT) {
-    throw std::runtime_error("eglCreateContext() failed");
-  }
+  VC_RECT_T dst_rect;
+  VC_RECT_T src_rect;
 
   uint32_t sw, sh;
 
@@ -378,7 +310,147 @@ void Application::Init(int argc, char **argv)
 
   sg_screen.x = sw;
   sg_screen.y = sh;
+
+  dst_rect.x = 0;
+  dst_rect.y = 0;
+  dst_rect.x = sg_screen.x;
+  dst_rect.y = sg_screen.y;
+
+  src_rect.x = 0;
+  src_rect.y = 0;
+  src_rect.x = sg_screen.x << 16;
+  src_rect.y = sg_screen.y << 16;
+
+  sg_dispman_display = vc_dispmanx_display_open(0);
+  sg_dispman_update = vc_dispmanx_update_start(0);
+
+  sg_dispman_element = vc_dispmanx_element_add (
+		  sg_dispman_update, sg_dispman_display, 0, &dst_rect, 0, &src_rect, DISPMANX_PROTECTION_NONE, 0, 0, (DISPMANX_TRANSFORM_T)0);
+
+  sg_dispman_window.element = sg_dispman_element;
+  sg_dispman_window.width = sg_screen.x;
+  sg_dispman_window.height = sg_screen.y;
+
+  vc_dispmanx_update_submit_sync(sg_dispman_update);
+
+  // INFO:: init dispman window
+  /*
+  const EGLint surface_attrs[] = {
+    EGL_COLOR_BUFFER_TYPE,     EGL_RGB_BUFFER,
+    EGL_BUFFER_SIZE,           32,
+
+    EGL_DEPTH_SIZE,            24,
+    EGL_STENCIL_SIZE,          8,
+
+    EGL_SAMPLE_BUFFERS,        0,
+
+    EGL_RENDERABLE_TYPE,       EGL_OPENGL_BIT,
+
+    EGL_NONE,
+  };
+  */
   
+  const EGLint surface_attrs[] = {
+    EGL_RED_SIZE, 8,
+    EGL_GREEN_SIZE, 8,
+    EGL_BLUE_SIZE, 8,
+    EGL_ALPHA_SIZE, 8,
+    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+    EGL_NONE
+  };
+
+
+  /*
+  const EGLint surface_attrs[] = {
+    EGL_RED_SIZE,              8,
+    EGL_GREEN_SIZE,            8,
+    EGL_BLUE_SIZE,             8,
+    EGL_ALPHA_SIZE,            8,
+
+    EGL_LUMINANCE_SIZE,        EGL_DONT_CARE,
+    
+    EGL_SURFACE_TYPE,          EGL_WINDOW_BIT,
+    
+    EGL_SAMPLES,               1,
+    
+    EGL_RENDER_BUFFER, 
+    // EGL_BACK_BUFFER,
+    EGL_NONE,
+  };
+  */
+
+  sg_egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+
+  if (eglInitialize(sg_egl_display, nullptr, nullptr) == EGL_FALSE) {
+    throw std::runtime_error("Unable to initialize egl");
+  }
+
+  if (!eglBindAPI(EGL_OPENGL_ES_API)) {
+    throw std::runtime_error("Unable to bind opengl es api");
+  }
+
+  if (eglChooseConfig(sg_egl_display, surface_attrs, &sg_egl_config, 1, &num_config) == EGL_FALSE) {
+    throw std::runtime_error("Unable to choose egl configuration");
+  }
+
+  sg_egl_surface = eglCreateWindowSurface(sg_egl_display, sg_egl_config, &sg_dispman_window, nullptr);
+		 
+  if (eglGetError() != EGL_SUCCESS) {
+    throw std::runtime_error("eglCreateWindowSurface() failed");
+  }
+
+  sg_egl_context = eglCreateContext(sg_egl_display, sg_egl_config, EGL_NO_CONTEXT, nullptr);
+
+  if (eglGetError() != EGL_SUCCESS) {
+    throw std::runtime_error("eglCreateContext() failed");
+  }
+
+  if (eglMakeCurrent(sg_egl_display, sg_egl_surface, sg_egl_surface, sg_egl_context) == EGL_FALSE) {
+    throw std::runtime_error("eglMakeCurrent() failed");
+  }
+
+  /*
+  if (eglSwapInterval(sg_egl_display, 1) == EGL_FALSE) {
+    throw std::runtime_error("eglSwapInterval() failed");
+  }
+  */
+
+#define CURSOR_INIT(type, ix, iy, hotx, hoty) \
+  t.cursor = new BufferedImage(jpixelformat_t::ARGB, {w, h}); \
+		\
+  t.hot_x = hotx;	\
+  t.hot_y = hoty;	\
+		\
+  t.cursor->GetGraphics()->DrawImage(cursors, {ix*w, iy*h, w, h}, jpoint_t<int>{0, 0}); \
+		\
+  sg_jcanvas_cursors[type] = t; \
+
+  struct cursor_params_t t;
+  int w = 30, h = 30;
+
+  /*
+  Image *cursors = new BufferedImage(JCANVAS_RESOURCES_DIR "/images/cursors.png");
+
+  CURSOR_INIT(jcursor_style_t::Default, 0, 0, 8, 8);
+  CURSOR_INIT(jcursor_style_t::Crosshair, 4, 3, 15, 15);
+  CURSOR_INIT(jcursor_style_t::East, 4, 4, 22, 15);
+  CURSOR_INIT(jcursor_style_t::West, 5, 4, 9, 15);
+  CURSOR_INIT(jcursor_style_t::North, 6, 4, 15, 8);
+  CURSOR_INIT(jcursor_style_t::South, 7, 4, 15, 22);
+  CURSOR_INIT(jcursor_style_t::Hand, 1, 0, 15, 15);
+  CURSOR_INIT(jcursor_style_t::Move, 8, 4, 15, 15);
+  CURSOR_INIT(jcursor_style_t::Vertical, 2, 4, 15, 15);
+  CURSOR_INIT(jcursor_style_t::Horizontal, 3, 4, 15, 15);
+  CURSOR_INIT(jcursor_style_t::NorthWest, 8, 1, 10, 10);
+  CURSOR_INIT(jcursor_style_t::NorthEast, 9, 1, 20, 10);
+  CURSOR_INIT(jcursor_style_t::SouthWest, 6, 1, 10, 20);
+  CURSOR_INIT(jcursor_style_t::SouthEast, 7, 1, 20, 20);
+  CURSOR_INIT(jcursor_style_t::Text, 7, 0, 15, 15);
+  CURSOR_INIT(jcursor_style_t::Wait, 8, 0, 15, 15);
+
+  delete cursors;
+  */
+
   sg_quitting = false;
 }
 
@@ -413,34 +485,68 @@ static void InternalPaint()
 
   sg_jcanvas_window->Paint(g);
 
-  if (sg_cursor_enabled == true) {
-    g->DrawImage(sg_cursor_params.cursor, jpoint_t<int>{sg_mouse_x, sg_mouse_y});
-  }
-
   g->Flush();
 
   Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
 
-  vgLoadIdentity();
-  vgSeti(VG_MATRIX_MODE, VG_MATRIX_IMAGE_USER_TO_SURFACE);
-  vgScale(1.0f, -1.0f);
-  vgTranslate(1.0f, -bounds.size.y);
-
   uint32_t *data = (uint32_t *)sg_back_buffer->LockData();
 
-  VGImage img = vgCreateImage(VG_sARGB_8888, bounds.size.x, bounds.size.y, VG_IMAGE_QUALITY_BETTER);
-  vgImageSubData(img, data, bounds.size.x*4, VG_sARGB_8888, 0, 0, bounds.size.x, bounds.size.y);
-  vgDrawImage(img);
-  vgDestroyImage(img);
+  GLuint texture;
+
+  glGenTextures(1, &texture);
+
+  static const GLfloat coords[4*2] = {
+    1.0f,  1.0f,
+    1.0f,  0.0f,
+    0.0f,  1.0f,
+    0.0f,  0.0f,
+  };
+
+  static const GLbyte verts[4*3] = {
+    -1, -1, 0,
+     1, -1, 0,
+    -1,  1, 0,
+     1,  1, 0
+  };
+
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, sg_screen.x, sg_screen.y, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, data);
+
+  glViewport(0, 0, bounds.size.x, bounds.size.y);
+  glClearColor(0, 0, 0, 0);
+  glMatrixMode(GL_TEXTURE);
+
+  glActiveTexture(texture);
+
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLfloat)GL_NEAREST);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLfloat)GL_NEAREST);
+
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glVertexPointer(3, GL_BYTE, 0, verts);
+
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  glTexCoordPointer(2, GL_FLOAT, 0, coords);
+
+  glEnable(GL_TEXTURE_2D);
+
+  glBindTexture(GL_TEXTURE_2D, texture);
+
+  glRotatef(90, 0.0f, 0.0f, 1.0f);
+
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+  glRotatef(-90, 0.0f, 0.0f, 1.0f);
 
   if (g->IsVerticalSyncEnabled() == false) {
-    vgFlush();
+    glFlush();
   } else {
-    vgFinish();
+    glFinish();
   }
 
   eglSwapBuffers(sg_egl_display, sg_egl_surface);
 
+  glDeleteTextures(1, &texture);
+  
   sg_back_buffer->UnlockData();
 
   sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Painted));
@@ -477,14 +583,14 @@ void Application::Loop()
   fcntl(fdm, F_SETFL, O_NONBLOCK);
 
 	while (sg_quitting == false) {
-    if (mouse_x != sg_mouse_x or mouse_y != sg_mouse_y) {
-      mouse_x = sg_mouse_x;
-      mouse_y = sg_mouse_y;
+      if (mouse_x != sg_mouse_x or mouse_y != sg_mouse_y) {
+        mouse_x = sg_mouse_x;
+        mouse_y = sg_mouse_y;
 
-      if (sg_cursor_enabled == true) {
-        sg_repaint.store(true);
+        if (sg_cursor_enabled == true) {
+          sg_repaint.store(true);
+        }
       }
-    }
 
     if (sg_repaint.exchange(false) == true) {
       InternalPaint();
@@ -495,7 +601,7 @@ void Application::Loop()
         jkeyevent_type_t type = jkeyevent_type_t::Unknown;
         jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
-        if (ev.code == 0x2a) { // LSHIFT
+        if (ev.code == 0x2a) { //LSHIFT
           mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
         } else if (ev.code == 0x36) { // RSHIFT
           mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
@@ -520,6 +626,8 @@ void Application::Loop()
           mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Hyper);
         */
         }
+
+        type = jkeyevent_type_t::Unknown;
 
         if (ev.value == 1 or ev.value == 2) {
           type = jkeyevent_type_t::Pressed;
@@ -576,15 +684,11 @@ void Application::Loop()
 
       lastsg_mouse_state = buttonMask;
 
-      sg_jcanvas_window->GetEventManager().PostEvent(new MouseEvent(sg_jcanvas_window, type, button, jmouseevent_button_t::None, {sg_mouse_x + sg_cursor_params.hot_x, sg_mouse_y + sg_cursor_params.hot_y}, mouse_z));
+      sg_jcanvas_window->GetEventManager().PostEvent(new MouseEvent(sg_jcanvas_window, type, button, jmouseevent_button_t::None, {sg_mouse_x + sg_cursor_params_cursor.hot_x, sg_mouse_y + sg_cursor_params_cursor.hot_y}, mouse_z));
     }
-  
-    std::this_thread::yield();
   }
 
   sg_jcanvas_window->SetVisible(false);
-  // TODO:: what for ??
-  // sg_jcanvas_window->GrabEvents();
 }
 
 jpoint_t<int> Application::GetScreenSize()
@@ -602,70 +706,28 @@ void Application::Quit()
 
 WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 {
-  // sg_jcanvas_icon = new BufferedImage(_DATA_PREFIX"/images/small-gnu.png");
-
-	sg_mouse_x = 0;
-	sg_mouse_y = 0;
+  // sg_jcanvas_icon = new BufferedImage(JCANVAS_RESOURCES_DIR "/images/small-gnu.png");
+  
   sg_jcanvas_window = parent;
 
-  VC_RECT_T dst_rect;
-  VC_RECT_T src_rect;
-
-  dst_rect.x = 0;
-  dst_rect.y = 0;
-  dst_rect.x = sg_screen.x;
-  dst_rect.y = sg_screen.y;
-
-  src_rect.x = 0;
-  src_rect.y = 0;
-  src_rect.x = sg_screen.x << 16;
-  src_rect.y = sg_screen.y << 16;
-
-  sg_dispman_display = vc_dispmanx_display_open(0);
-  sg_dispman_update = vc_dispmanx_update_start(0);
-
-  sg_dispman_element = vc_dispmanx_element_add (
-		  sg_dispman_update, sg_dispman_display, 0, &dst_rect, 0, &src_rect, DISPMANX_PROTECTION_NONE, 0, 0, (DISPMANX_TRANSFORM_T)0);
-
-  sg_dispman_window.element = sg_dispman_element;
-  sg_dispman_window.width = sg_screen.x;
-  sg_dispman_window.height = sg_screen.y;
-
-  vc_dispmanx_update_submit_sync(sg_dispman_update);
-
-  const EGLint sg_egl_surface_attribs[] = {
-    // EGL_RENDER_BUFFER, 
-    // EGL_BACK_BUFFER,
-    EGL_NONE,
-  };
-
-  sg_egl_surface = eglCreateWindowSurface(sg_egl_display, sg_egl_config, &sg_dispman_window, sg_egl_surface_attribs);
-
-  if (!sg_egl_surface) {
-    throw std::runtime_error("eglCreateWindowSurface() failed");
-  }
-
-  if (eglMakeCurrent(sg_egl_display, sg_egl_surface, sg_egl_surface, sg_egl_context) == EGL_FALSE) {
-    throw std::runtime_error("eglMakeCurrent() failed");
-  }
-
-  if (eglSwapInterval(sg_egl_display, 1) == EGL_FALSE) {
-    throw std::runtime_error("eglSwapInterval() failed");
-  }
+  sg_mouse_x = 0;
+  sg_mouse_y = 0;
 }
 
 WindowAdapter::~WindowAdapter()
 {
+  glClear(GL_COLOR_BUFFER_BIT);
+
   eglSwapBuffers(sg_egl_display, sg_egl_surface);
   eglMakeCurrent(sg_egl_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
   eglDestroySurface(sg_egl_display, sg_egl_surface);
   eglDestroyContext(sg_egl_display, sg_egl_context);
   eglTerminate(sg_egl_display);
-  
+
   vc_dispmanx_element_remove(sg_dispman_update, sg_dispman_element);
   vc_dispmanx_update_submit_sync(sg_dispman_update);
   vc_dispmanx_display_close(sg_dispman_display);
-  
+
   delete sg_back_buffer;
   sg_back_buffer = nullptr;
 }
@@ -719,12 +781,13 @@ void WindowAdapter::SetBounds(jrect_t<int> bounds)
 
 jrect_t<int> WindowAdapter::GetBounds()
 {
-	return {
-    0,
-    0,
-    sg_screen.x,
-	  sg_screen.y
-  };
+	jrect_t<int> 
+    t = {0, 0, 0, 0};
+
+	t.size.x = sg_screen.x;
+	t.size.y = sg_screen.y;
+
+	return t;
 }
 		
 void WindowAdapter::SetResizable(bool resizable)
@@ -775,7 +838,7 @@ void WindowAdapter::SetCursorEnabled(bool enabled)
 {
   sg_cursor_enabled = enabled;
 
-	// XDefineCursor(_display, _window, sg_jcanvas_cursor_enabled);
+	// XDefineCursor(_display, sg_xcb_window, sg_cursor_enabled);
 	// XFlush(_display);
 }
 
@@ -795,15 +858,15 @@ void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
 		return;
 	}
 
-  if (sg_cursor_params.cursor != nullptr) {
-    delete sg_cursor_params.cursor;
-    sg_cursor_params.cursor = nullptr;
+  if (sg_cursor_params_cursor.cursor != nullptr) {
+    delete sg_cursor_params_cursor.cursor;
+    sg_cursor_params_cursor.cursor = nullptr;
   }
 
-  sg_cursor_params.cursor = dynamic_cast<Image *>(shape->Clone());
+  sg_cursor_params_cursor.cursor = dynamic_cast<Image *>(shape->Clone());
 
-  sg_cursor_params.hot_x = hotx;
-  sg_cursor_params.hot_y = hoty;
+  sg_cursor_params_cursor.hot_x = hotx;
+  sg_cursor_params_cursor.hot_y = hoty;
 }
 
 void WindowAdapter::SetRotation(jwindow_rotation_t t)

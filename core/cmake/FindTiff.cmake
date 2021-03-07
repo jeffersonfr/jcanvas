@@ -17,10 +17,23 @@ find_library (TIFF_LIBRARY tiffxx
   /usr/local/lib 
 )
 
+find_path (TIFF_LIBRARY libtiffxx.so
+  /usr/lib 
+  /usr/local/lib 
+)
+
 if (TIFF_LIBRARY)
   if (TIFF_INCLUDE_DIR)
     set (TIFF_INCLUDE_DIRS ${TIFF_INCLUDE_DIR})
+    set (TIFF_CFLAGS_OTHER)
+    set (TIFF_CFLAGS)
+
+    set (TIFF_LIBRARY_DIRS ${TIFF_LIBRARY_DIR})
+    set (TIFF_LDFLAGS_OTHER)
+    set (TIFF_LDFLAGS)
+
     set (TIFF_LIBRARIES ${TIFF_LIBRARY})
+
     set (TIFF_FOUND "YES")
   endif ()
 endif ()
