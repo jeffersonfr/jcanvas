@@ -50,8 +50,6 @@ class YesNoDialog : public Dialog, public ActionListener {
     Button _no = {"No"};
     /** \brief */
     Container _buttons_container;
-    /** \brief */
-    std::shared_ptr<FlowLayout> _buttons_layout;
 
   public:
     /**

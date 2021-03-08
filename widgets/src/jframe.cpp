@@ -37,7 +37,7 @@ Frame::Frame(jpoint_t<int> size, jpoint_t<int> point):
 
   SetInsets({8, 8, 8, 8});
   SetTitle("Main");
-  SetLayout(nullptr);
+  SetLayout<BorderLayout>();
   SetBackgroundVisible(true);
   SetUndecorated(false);
 }

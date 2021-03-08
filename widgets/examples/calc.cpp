@@ -164,13 +164,13 @@ Calculator::Calculator():
 		new Button("=")
 	};
 
-	SetLayout(std::make_shared<BorderLayout>());
+	SetLayout<BorderLayout>();
 
 	Add(_display, jborderlayout_align_t::North);
 
 	_container = new Container();
 
-	_container->SetLayout(std::make_shared<GridLayout>(4, 5, 2, 2));
+	_container->SetLayout<GridLayout>(4, 5, 2, 2);
 
 	for (int i=0; i<20; i++) {
 		_buttons.push_back(b[i]);

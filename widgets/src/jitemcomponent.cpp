@@ -76,10 +76,6 @@ Item::Item(std::string value, bool checked)
 
 Item::~Item()
 {
-  if (_image != nullptr) {
-    delete _image;
-    _image = nullptr;
-  }
 }
 
 Item * Item::Clone()

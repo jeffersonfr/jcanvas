@@ -44,7 +44,7 @@
     *container = new Container(),                           \
     *lines[5];                                              \
                                                             \
-  container->SetLayout(std::make_shared<GridLayout>(5, 1, 4, 0)); \
+  container->SetLayout<GridLayout>(5, 1, 4, 0); \
                                                             \
   container->SetScrollableX(false);                         \
   container->SetScrollableY(false);                         \
@@ -53,7 +53,7 @@
   for (int i=0; i<5; i++) {                                 \
     lines[i] = new Container();                             \
                                                             \
-    lines[i]->SetLayout(std::make_shared<FlowLayout>(jflowlayout_align_t::Center, 4, 0)); \
+    lines[i]->SetLayout<FlowLayout>(jflowlayout_align_t::Center, 4, 0); \
                                                             \
     lines[i]->SetScrollableX(false);                        \
     lines[i]->SetScrollableY(false);                        \
@@ -93,7 +93,7 @@ KeyboardDialog::KeyboardDialog(Container *parent, jkeyboard_type_t type, bool te
   _type = type;
   _is_password = is_password;
 
-  SetLayout(std::make_shared<BorderLayout>());
+  SetLayout<BorderLayout>();
 
   if (_type == jkeyboard_type_t::Qwerty) {
     BuildQWERTYKeyboard();

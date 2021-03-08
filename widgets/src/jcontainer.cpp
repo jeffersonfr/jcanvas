@@ -307,15 +307,6 @@ void Container::SetOptimizedPaint(bool b)
   _optimized_paint = b;
 }
 
-void Container::SetLayout(std::shared_ptr<Layout> const &layout)
-{
-  if (layout == nullptr) {
-    return;
-  }
-
-  _layout = layout;
-}
-
 std::shared_ptr<Layout> Container::GetLayout()
 {
   return _layout;

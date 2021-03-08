@@ -42,16 +42,12 @@ class Dialogs : public Frame, public ActionListener {
 			_button5 = {"Messsage"},
 			_button6 = {"Toast"},
 			_button7 = {"Yes/No"};
-    std::shared_ptr<FlowLayout>
-      _layout;
 
 	public:
 		Dialogs():
 			Frame({1280, 720})
 	{
-    _layout = std::make_shared<FlowLayout>();
-
-    SetLayout(_layout);
+    SetLayout<FlowLayout>();
 
     _button1.RegisterActionListener(this);
     _button2.RegisterActionListener(this);

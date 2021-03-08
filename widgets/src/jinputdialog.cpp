@@ -35,15 +35,14 @@ InputDialog::InputDialog(Container *parent, std::string title, std::string msg):
   _ok.RegisterActionListener(this);
   _cancel.RegisterActionListener(this);
   
-  _buttons_layout = std::make_shared<FlowLayout>();
+  std::shared_ptr<FlowLayout> layout = _buttons_container.SetLayout<FlowLayout>();
 
-  _buttons_layout->SetAlign(jflowlayout_align_t::Right);
-  _buttons_container.SetLayout(_buttons_layout);
+  layout->SetAlign(jflowlayout_align_t::Right);
 
   _buttons_container.Add(&_ok);
   _buttons_container.Add(&_cancel);
 
-  _buttons_container.SetPreferredSize(_buttons_layout->GetPreferredLayoutSize(&_buttons_container));
+  _buttons_container.SetPreferredSize(layout->GetPreferredLayoutSize(&_buttons_container));
 
   Add(&_label, jborderlayout_align_t::North);
   Add(&_field, jborderlayout_align_t::Center);

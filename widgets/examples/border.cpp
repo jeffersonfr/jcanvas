@@ -38,14 +38,13 @@ class BorderTest : public Frame{
     Container 
       _top,
       _bottom;
-    std::shared_ptr<FlowLayout>
-      _layout;
 
 	public:
 		BorderTest():
 			Frame({960, 540})
 		{
-      _layout = std::make_shared<FlowLayout>();
+      _top.SetLayout<FlowLayout>();
+      _bottom.SetLayout<FlowLayout>();
 
 			_buttons.push_back(new Button("Empty"));
 			_buttons.push_back(new Button("Line"));
@@ -58,9 +57,6 @@ class BorderTest : public Frame{
 			_buttons.push_back(new Button("Lowered Bevel"));
 			_buttons.push_back(new Button("Raised Etched"));
 			_buttons.push_back(new Button("Lowered Etched"));
-
-      _top.SetLayout(_layout);
-      _bottom.SetLayout(_layout);
 
 			for (int i=0; i<(int)_buttons.size(); i++) {
         Component *cmp = _buttons[i];
@@ -98,9 +94,9 @@ class BorderTest : public Frame{
   				_bottom.Add(cmp);
         }
 			}
-  		
-      _top.SetPreferredSize(_layout->GetPreferredLayoutSize(&_top));
-      _bottom.SetPreferredSize(_layout->GetPreferredLayoutSize(&_bottom));
+ 
+      _top.SetPreferredSize(_top.GetLayout()->GetPreferredLayoutSize(&_top));
+      _bottom.SetPreferredSize(_bottom.GetLayout()->GetPreferredLayoutSize(&_bottom));
 
       Add(&_top, jborderlayout_align_t::North);
       Add(&_bottom, jborderlayout_align_t::South);

@@ -65,14 +65,6 @@ class Main : public Frame, public ActionListener {
 			_c;
 		std::vector<Button *> 
       _buttons;
-    std::shared_ptr<Layout> 
-      _main,
-			_flow,
-			_grid,
-			_border,
-			_card,
-			_null,
-			_gridbag;
 		Button *_first,
 			*_last,
 			*_previous,
@@ -84,15 +76,7 @@ class Main : public Frame, public ActionListener {
 		Main():
 			Frame({1280, 720})
 		{
-      _main = std::make_shared<GridLayout>(2, 3);
-			_flow = std::make_shared<FlowLayout>();
-			_grid = std::make_shared<GridLayout>(3, 3);
-			_border = std::make_shared<BorderLayout>();
-			_card = std::make_shared<BorderLayout>();
-			_gridbag = std::make_shared<GridBagLayout>();
-			_null = std::make_shared<NullLayout>();
-
-			SetLayout(_main);
+			SetLayout<GridLayout>(2, 3);
 
 			for (int i=0; i<6; i++) {
 				// _b.push_back(new Container(0, 0, 0, 0));
@@ -101,18 +85,18 @@ class Main : public Frame, public ActionListener {
 
         auto border_layout = std::make_shared<BorderLayout>();
 
-				_b[i]->SetLayout(border_layout);
+				_b[i]->SetLayout<BorderLayout>();
 				_b[i]->Add(_c[i], jborderlayout_align_t::Center);
 
 				Add(_b[i]);
 			}
 
-			_c[0]->SetLayout(_flow);
-			_c[1]->SetLayout(_grid);
-			_c[2]->SetLayout(_border);
-			_c[3]->SetLayout(_card);
-			_c[4]->SetLayout(_gridbag);
-			_c[5]->SetLayout(_null);
+			_c[0]->SetLayout<FlowLayout>();
+			_c[1]->SetLayout<GridLayout>(3, 3);
+			_c[2]->SetLayout<BorderLayout>();
+			_c[3]->SetLayout<CardLayout>();
+			_c[4]->SetLayout<GridBagLayout>();
+			_c[5]->SetLayout<NullLayout>();
 
 			// flowlayout
 			_c[0]->Add(new Button("Button 1"));
@@ -141,7 +125,7 @@ class Main : public Frame, public ActionListener {
 
       auto flow_layout = std::make_shared<FlowLayout>();
 
-			_c[6]->SetLayout(flow_layout);
+			_c[6]->SetLayout<FlowLayout>();
 
 			_first = new Button("First");
 			_next = new Button("Next");
@@ -160,7 +144,7 @@ class Main : public Frame, public ActionListener {
 
       auto card_layout = std::make_shared<CardLayout>();
 
-			_c[7]->SetLayout(card_layout);
+			_c[7]->SetLayout<CardLayout>();
 			_c[7]->Add(new Button("First Screen"), "01");
 			_c[7]->Add(new Button("Second Screen"), "02");
 			_c[7]->Add(new Button("Third Screen"), "03");

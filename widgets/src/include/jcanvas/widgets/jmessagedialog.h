@@ -48,8 +48,6 @@ class MessageDialog : public Dialog, public ActionListener {
     Button _ok = {"Ok"};
     /** \brief */
     Container _buttons_container;
-    /** \brief */
-    std::shared_ptr<FlowLayout> _buttons_layout;
 
   public:
     /**
