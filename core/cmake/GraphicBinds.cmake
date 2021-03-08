@@ -1,5 +1,11 @@
 set(GRAPHIC_BINDS_SRCS)
 
+if (GRAPHIC_BIND STREQUAL dummy)
+  set(GRAPHIC_BINDS_SRCS 
+    src/binds/${GRAPHIC_BIND}/bind.cpp
+  )
+endif()
+
 if (GRAPHIC_BIND STREQUAL allegro5)
   pkg_check_modules(ALLEGRO5 allegro-5)
   pkg_check_modules(ALLEGRO5VIDEO allegro_video-5)

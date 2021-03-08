@@ -16,7 +16,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(GRAPHIC_BIND "sdl2" CACHE STRING "Default graphic bind")
 set_property(CACHE GRAPHIC_BIND PROPERTY STRINGS 
-  allegro5 caca directfb drm efl egl fb flaschen gl gtk3 nanax qt5 sdl2 sfml2 vdpau vnc wayland xcb xlib jx dispmanx-pi egl-pi openvg-pi)
+  dummy allegro5 caca directfb drm efl egl fb flaschen gl gtk3 nanax qt5 sdl2 sfml2 vdpau vnc wayland xcb xlib jx dispmanx-pi egl-pi openvg-pi)
 
 find_package(PkgConfig REQUIRED)
 
