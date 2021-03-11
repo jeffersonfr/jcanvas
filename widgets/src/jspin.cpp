@@ -148,10 +148,8 @@ bool Spin::MousePressed(MouseEvent *event)
     elocation = event->GetLocation();
   jrect_t<int>
     bounds = GetBounds();
-  jinsets_t<int>
-    padding = GetPadding();
   int
-    h = bounds.size.y - padding.top - padding.bottom;
+    h = bounds.size.y - theme.padding.top - theme.padding.bottom;
   bool 
     catched = false;
 
@@ -170,18 +168,18 @@ bool Spin::MousePressed(MouseEvent *event)
     RequestFocus();
 
     if (_type == jscroll_orientation_t::Horizontal) {
-      if (elocation.y > padding.top && elocation.y < (padding.top + bounds.size.y)) {
-        if (elocation.x > (bounds.size.x - arrow_size - padding.left) && elocation.x < (bounds.size.x - padding.left)) {
+      if (elocation.y > theme.padding.top && elocation.y < (theme.padding.top + bounds.size.y)) {
+        if (elocation.x > (bounds.size.x - arrow_size - theme.padding.left) && elocation.x < (bounds.size.x - theme.padding.left)) {
           NextItem();
-        } else if (elocation.x > padding.left && elocation.x < (padding.left + arrow_size)) {
+        } else if (elocation.x > theme.padding.left && elocation.x < (theme.padding.left + arrow_size)) {
           PreviousItem();
         }
       }
     } else if (_type == jscroll_orientation_t::Vertical) {
-      if (elocation.x > (bounds.size.x - 2*arrow_size - padding.left) && elocation.x < (bounds.size.x - padding.left)) {
-        if (elocation.y > padding.top && elocation.y < (h/2)) {
+      if (elocation.x > (bounds.size.x - 2*arrow_size - theme.padding.left) && elocation.x < (bounds.size.x - theme.padding.left)) {
+        if (elocation.y > theme.padding.top && elocation.y < (h/2)) {
           PreviousItem();
-        } else if (elocation.y > (padding.top + h/2) && elocation.y < (padding.top + h)) {
+        } else if (elocation.y > (theme.padding.top + h/2) && elocation.y < (theme.padding.top + h)) {
           NextItem();
         }
       }
@@ -275,11 +273,9 @@ void Spin::Paint(Graphics *g)
     theme = GetTheme();
   jrect_t<int>
     bounds = GetBounds();
-  jinsets_t<int>
-    padding = GetPadding();
   int
-    w = bounds.size.x - padding.left - padding.right,
-    h = bounds.size.y - padding.top - padding.bottom;
+    w = bounds.size.x - theme.padding.left - theme.padding.right,
+    h = bounds.size.y - theme.padding.top - theme.padding.bottom;
   int
     arrow_size = 8;
 
@@ -293,7 +289,7 @@ void Spin::Paint(Graphics *g)
         g->SetColor(theme.fg.normal);
       }
 
-      g->FillTriangle({w, padding.top + arrow_size + offset}, {padding.left + w - arrow_size, padding.top + offset}, {padding.left + w - arrow_size, padding.top + 2*arrow_size + offset});
+      g->FillTriangle({w, theme.padding.top + arrow_size + offset}, {theme.padding.left + w - arrow_size, theme.padding.top + offset}, {theme.padding.left + w - arrow_size, theme.padding.top + 2*arrow_size + offset});
     }
 
     if (_loop == true || (_index > 0 && _items.size() > 0)) {
@@ -303,7 +299,7 @@ void Spin::Paint(Graphics *g)
         g->SetColor(theme.fg.normal);
       }
 
-      g->FillTriangle({padding.left, padding.top + arrow_size + offset}, {padding.left + arrow_size, padding.top + offset}, {padding.left + arrow_size, padding.top + 2*arrow_size + offset});
+      g->FillTriangle({theme.padding.left, theme.padding.top + arrow_size + offset}, {theme.padding.left + arrow_size, theme.padding.top + offset}, {theme.padding.left + arrow_size, theme.padding.top + 2*arrow_size + offset});
     }
 
     if (_items.size() > 0) {
@@ -326,7 +322,7 @@ void Spin::Paint(Graphics *g)
           text = theme.font.primary->TruncateString(text, "...", w);
         // }
 
-        g->DrawString(text, {padding.left, padding.top, w, h}, _items[_index]->GetHorizontalAlign(), _items[_index]->GetVerticalAlign());
+        g->DrawString(text, {theme.padding.left, theme.padding.top, w, h}, _items[_index]->GetHorizontalAlign(), _items[_index]->GetVerticalAlign());
       }
     }
   } else if (_type == jscroll_orientation_t::Vertical) {
@@ -340,7 +336,7 @@ void Spin::Paint(Graphics *g)
       }
     }
 
-    g->FillTriangle({bounds.size.x - 2*arrow_size - padding.left, padding.top + arrow_size + offset}, {bounds.size.x - padding.left, padding.top + arrow_size + offset}, {bounds.size.x - arrow_size - padding.left, padding.top + offset});
+    g->FillTriangle({bounds.size.x - 2*arrow_size - theme.padding.left, theme.padding.top + arrow_size + offset}, {bounds.size.x - theme.padding.left, theme.padding.top + arrow_size + offset}, {bounds.size.x - arrow_size - theme.padding.left, theme.padding.top + offset});
 
     if (_loop == true || (_index > 0 && _items.size() > 0)) {
       if (HasFocus() == true) {
@@ -350,7 +346,7 @@ void Spin::Paint(Graphics *g)
       }
     }
 
-    g->FillTriangle({bounds.size.x - 2*arrow_size - padding.left, padding.top + arrow_size + bounds.size.y/2}, {bounds.size.x - padding.left, padding.top + arrow_size + bounds.size.y/2}, {bounds.size.x - arrow_size - padding.left, padding.top + bounds.size.y - offset});
+    g->FillTriangle({bounds.size.x - 2*arrow_size - theme.padding.left, theme.padding.top + arrow_size + bounds.size.y/2}, {bounds.size.x - theme.padding.left, theme.padding.top + arrow_size + bounds.size.y/2}, {bounds.size.x - arrow_size - theme.padding.left, theme.padding.top + bounds.size.y - offset});
 
 
     if (_items.size() > 0) {
@@ -373,7 +369,7 @@ void Spin::Paint(Graphics *g)
           text = theme.font.primary->TruncateString(text, "...", w);
         // }
 
-        g->DrawString(text, {padding.left, padding.top, w, h}, _items[_index]->GetHorizontalAlign(), _items[_index]->GetVerticalAlign());
+        g->DrawString(text, {theme.padding.left, theme.padding.top, w, h}, _items[_index]->GetHorizontalAlign(), _items[_index]->GetVerticalAlign());
       }
     }
   }

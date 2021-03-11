@@ -45,8 +45,6 @@ void Text::UpdatePreferredSize()
     theme = GetTheme();
   jrect_t<int>
     bounds = GetBounds();
-  jinsets_t<int>
-    padding = GetPadding();
 
   if (theme.font.primary != nullptr) {
     if (IsWrap() == false) {
@@ -63,7 +61,7 @@ void Text::UpdatePreferredSize()
     }
   }
 
-  SetPreferredSize(t + jpoint_t<int>{padding.left + padding.right + 2*theme.border.size.x, padding.top + padding.bottom + 2*theme.border.size.y});
+  SetPreferredSize(t + jpoint_t<int>{theme.padding.left + theme.padding.right + 2*theme.border.size.x, theme.padding.top + theme.padding.bottom + 2*theme.border.size.y});
 }
 
 void Text::SetWrap(bool wrap)
@@ -132,8 +130,6 @@ void Text::Paint(Graphics *g)
     theme = GetTheme();
   jrect_t<int>
     bounds = GetBounds();
-  jinsets_t<int>
-    padding = GetPadding();
 
   if (theme.font.primary != nullptr) {
     g->SetFont(theme.font.primary);
@@ -154,7 +150,7 @@ void Text::Paint(Graphics *g)
       text = theme.font.primary->TruncateString(text, "...", bounds.size.x);
     }
 
-    g->DrawString(text, padding.bounds(jrect_t<int>{{0, 0}, bounds.size}), _halign, _valign);
+    g->DrawString(text, theme.padding.bounds(jrect_t<int>{{0, 0}, bounds.size}), _halign, _valign);
   }
 }
 

@@ -180,8 +180,6 @@ class Component : public KeyListener, public MouseListener {
     bool _is_scroll_visible;
     /** \brief */
     bool _is_smooth_scroll;
-    /** \brief */
-    jinsets_t<int> _padding;
 
   protected:
     /**
@@ -227,18 +225,6 @@ class Component : public KeyListener, public MouseListener {
      *
      */
     virtual ~Component();
-
-    /**
-     * \brief
-     *
-     */
-    void SetPadding(jinsets_t<int> padding);
-
-    /**
-     * \brief
-     *
-     */
-    jinsets_t<int> GetPadding();
 
     /**
      * \brief

@@ -17,60 +17,58 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "jcanvas/widgets/jicon.h"
+#include "jcanvas/widgets/jflatimage.h"
 
 namespace jcanvas {
 
-Icon::Icon(Image *image):
+FlatImage::FlatImage(Image *image):
   Component()
 {
-  _align = jalign_t::Center;
+  _align = jrect_align_t::Center;
   _image = image;
 }
 
-Icon::~Icon()
+FlatImage::~FlatImage()
 {
 }
 
-void Icon::SetImage(Image *image)
+void FlatImage::SetImage(Image *image)
 {
   _image = image;
 
   Repaint();
 }
 
-Image * Icon::GetImage()
+Image * FlatImage::GetImage()
 {
   return _image;
 }
 
-void Icon::SetAlign(jalign_t align)
+void FlatImage::SetAlign(jrect_align_t align)
 {
   _align = align;
 
   Repaint();
 }
 
-jalign_t Icon::GetAlign()
+jrect_align_t FlatImage::GetAlign()
 {
   return _align;
 }
 
-void Icon::Paint(Graphics *g)
+void FlatImage::Paint(Graphics *g)
 {
   Component::Paint(g);
 
   jtheme_t
     theme = GetTheme();
-  jrect_t<int>
-    bounds = GetBounds();
-  jinsets_t<int>
-    padding = GetPadding();
-
-  bounds = padding.bounds(jrect_t<int>{{0, 0}, bounds.size}).align(_align, jrect_t<int>{{0, 0}, _image->GetSize()});
 
   if (_image != nullptr) {
-    g->DrawImage(_image, bounds);
+    jrect_t<int> bounds = theme.padding.bounds(jrect_t<int>{{0, 0}, GetBounds().size});
+
+    g->ClipRect(bounds);
+
+    g->DrawImage(_image, bounds.align(_align, jrect_t<int>{{0, 0}, _image->GetSize()}));
   }
 }
 

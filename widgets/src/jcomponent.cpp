@@ -81,7 +81,10 @@ Component::Component(jrect_t<int> bounds):
     .y = 0
   };
 
-  _padding = {
+  jtheme_t
+    &theme = GetTheme();
+
+  theme.padding = {
     .left = 2,
     .top = 2,
     .right = 2,
@@ -207,16 +210,6 @@ void Component::ScrollToVisibleArea(jrect_t<int> rect, Component *coordinateSpac
           {GetAbsoluteLocation().x - parent->GetAbsoluteLocation().x + rect.point.x, GetAbsoluteLocation().y - parent->GetAbsoluteLocation().y + rect.point.y, rect.size.x, rect.size.y}, parent);
     }
   }
-}
-
-void Component::SetPadding(jinsets_t<int> padding)
-{
-  _padding = padding;
-}
-
-jinsets_t<int> Component::GetPadding()
-{
-  return _padding;
 }
 
 void Component::SetName(std::string name)
@@ -956,10 +949,10 @@ jpoint_t<int> Component::GetMaximumSize()
 
 jpoint_t<int> Component::GetPreferredSize()
 {
-  jinsets_t<int>
-    padding = GetPadding();
+  jtheme_t
+    theme = GetTheme();
 
-  return _preferred_size + jpoint_t<int>{padding.left + padding.right, padding.top + padding.bottom};
+  return _preferred_size + jpoint_t<int>{theme.padding.left + theme.padding.right, theme.padding.top + theme.padding.bottom};
 }
 
 void Component::Move(int x, int y)

@@ -298,10 +298,8 @@ void TextArea::InitRowsString()
 
   jpoint_t<int>
     size = GetSize();
-  jinsets_t<int>
-    padding = GetPadding();
   int
-    w = size.x - padding.left - padding.right;
+    w = size.x - theme.padding.left - theme.padding.right;
 
   std::string 
     text = _text;
@@ -397,8 +395,6 @@ void TextArea::Paint(Graphics *g)
 
   jtheme_t
     theme = GetTheme();
-  jinsets_t<int>
-    padding = GetPadding();
   jpoint_t 
     slocation = GetScrollLocation();
 
@@ -414,8 +410,8 @@ void TextArea::Paint(Graphics *g)
       current_length = _caret_position,
       fs = theme.font.primary->GetSize()+_rows_gap;
 
-  padding.left = padding.left - slocation.x;
-  padding.top = padding.top - slocation.y;
+  theme.padding.left = theme.padding.left - slocation.x;
+  theme.padding.top = theme.padding.top - slocation.y;
 
   // INFO:: Draw text
   for (int i=0, k=0; i<=(int)_lines.size()-1; i++) {
@@ -437,7 +433,7 @@ void TextArea::Paint(Graphics *g)
       g->SetColor(theme.fg.disable);
     }
 
-    g->DrawString(s, jpoint_t<int>{padding.left, padding.top+k*fs});
+    g->DrawString(s, jpoint_t<int>{theme.padding.left, theme.padding.top+k*fs});
 
     if (_caret_visible == true && current_length < (int)s.size() && current_length >= 0) {
       std::string cursor;
@@ -456,7 +452,7 @@ void TextArea::Paint(Graphics *g)
         g->SetColor(_caret_color);
       }
 
-      g->DrawString(cursor, jpoint_t<int>{padding.left+current_text_size, padding.top+k*fs});
+      g->DrawString(cursor, jpoint_t<int>{theme.padding.left+current_text_size, theme.padding.top+k*fs});
 
       current_length = -1;
     }
@@ -520,8 +516,6 @@ jpoint_t<int> TextArea::GetScrollDimension()
     theme = GetTheme();
   jrect_t<int> 
     bounds = GetBounds();
-  jinsets_t<int>
-    padding = GetPadding();
 
   if (theme.font.primary == nullptr) {
     return bounds.size;
@@ -530,7 +524,7 @@ jpoint_t<int> TextArea::GetScrollDimension()
   if (_is_wrap == false) {
     bounds.size.x = theme.font.primary->GetStringWidth(GetText());
   } else {
-    bounds.size.y = GetRows()*(theme.font.primary->GetSize()) + padding.top + padding.bottom;
+    bounds.size.y = GetRows()*(theme.font.primary->GetSize()) + theme.padding.top + theme.padding.bottom;
   }
 
   return  bounds.size;

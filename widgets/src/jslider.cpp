@@ -125,11 +125,9 @@ bool Slider::MousePressed(MouseEvent *event)
     elocation = event->GetLocation();
   jrect_t<int>
     bounds = GetBounds();
-  jinsets_t<int>
-    padding = GetPadding();
   int
-    dw = bounds.size.x - padding.left - padding.right - _stone_size,
-    dh = bounds.size.y - padding.top - padding.bottom - _stone_size;
+    dw = bounds.size.x - theme.padding.left - theme.padding.right - _stone_size,
+    dh = bounds.size.y - theme.padding.top - theme.padding.bottom - _stone_size;
   bool 
     catched = false;
 
@@ -142,11 +140,11 @@ bool Slider::MousePressed(MouseEvent *event)
 
         _pressed = false;
 
-        if (elocation.x > padding.left && elocation.x < (padding.left+d)) {
+        if (elocation.x > theme.padding.left && elocation.x < (theme.padding.left+d)) {
           SetValue(_value-_maximum_tick);
-        } else if (elocation.x > (padding.left+d+_stone_size) && elocation.x < (bounds.size.x)) {
+        } else if (elocation.x > (theme.padding.left+d+_stone_size) && elocation.x < (bounds.size.x)) {
           SetValue(_value+_maximum_tick);
-        } else if (elocation.x > (padding.left+d) && elocation.x < (padding.left+d+_stone_size)) {
+        } else if (elocation.x > (theme.padding.left+d) && elocation.x < (theme.padding.left+d+_stone_size)) {
           _pressed = true;
         }
       }
@@ -156,9 +154,9 @@ bool Slider::MousePressed(MouseEvent *event)
 
         _pressed = false;
 
-        if (elocation.y > padding.top && elocation.y < (padding.top+d)) {
+        if (elocation.y > theme.padding.top && elocation.y < (theme.padding.top+d)) {
           SetValue(_value-_maximum_tick);
-        } else if (elocation.y > (padding.top+d+_stone_size) && elocation.y < (bounds.size.y)) {
+        } else if (elocation.y > (theme.padding.top+d+_stone_size) && elocation.y < (bounds.size.y)) {
           SetValue(_value+_maximum_tick);
         }
       }
@@ -192,11 +190,9 @@ bool Slider::MouseMoved(MouseEvent *event)
     elocation = event->GetLocation();
   jrect_t<int>
     bounds = GetBounds();
-  jinsets_t<int>
-    padding = GetPadding();
   int
-    dw = bounds.size.x - padding.left - padding.right - _stone_size,
-    dh = bounds.size.y - padding.top - padding.bottom - _stone_size;
+    dw = bounds.size.x - theme.padding.left - theme.padding.right - _stone_size,
+    dh = bounds.size.y - theme.padding.top - theme.padding.bottom - _stone_size;
 
   if (_pressed == true) {
     int diff = GetMaximum()-GetMinimum();
@@ -234,11 +230,9 @@ void Slider::Paint(Graphics *g)
     theme = GetTheme();
   jrect_t<int>
     bounds = GetBounds();
-  jinsets_t<int>
-    padding = GetPadding();
   int
-    w = bounds.size.x - padding.left - padding.right,
-    h = bounds.size.y - padding.top - padding.bottom;
+    w = bounds.size.x - theme.padding.left - theme.padding.right,
+    h = bounds.size.y - theme.padding.top - theme.padding.bottom;
 
   if (_type == jscroll_orientation_t::Horizontal) {
     int 
@@ -254,7 +248,7 @@ void Slider::Paint(Graphics *g)
       g->SetColor(theme.scroll.color.normal);
     }
     
-    g->FillRectangle({padding.left, padding.top+(h-4)/2, w, 4});
+    g->FillRectangle({theme.padding.left, theme.padding.top+(h-4)/2, w, 4});
 
     if (_inverted == false) {
       std::vector<jpoint_t<int>> p = {
@@ -265,7 +259,7 @@ void Slider::Paint(Graphics *g)
         {0, (int)(h*0.4)}
       };
 
-      g->FillPolygon({(int)d + padding.left, padding.top}, p, 5);
+      g->FillPolygon({(int)d + theme.padding.left, theme.padding.top}, p, 5);
     } else {
       std::vector<jpoint_t<int>> p = {
         {_stone_size/2, 0},
@@ -275,7 +269,7 @@ void Slider::Paint(Graphics *g)
         {0, (int)(h*0.6)}
       };
 
-      g->FillPolygon({(int)d + padding.left, padding.top}, p);
+      g->FillPolygon({(int)d + theme.padding.left, theme.padding.top}, p);
     }
   } else if (_type == jscroll_orientation_t::Vertical) {
     int 
@@ -291,7 +285,7 @@ void Slider::Paint(Graphics *g)
       g->SetColor(theme.scroll.color.normal);
     }
     
-    g->FillRectangle({(w-10)/2 + padding.left, padding.top, 10, h});
+    g->FillRectangle({(w-10)/2 + theme.padding.left, theme.padding.top, 10, h});
 
     if (_inverted == false) {
       std::vector<jpoint_t<int>> p = {
@@ -302,7 +296,7 @@ void Slider::Paint(Graphics *g)
         {0, _stone_size}
       };
 
-      g->FillPolygon({padding.left, (int)d + padding.top}, p);
+      g->FillPolygon({theme.padding.left, (int)d + theme.padding.top}, p);
     } else {
       std::vector<jpoint_t<int>> p = {
         {0, _stone_size/2},
@@ -312,7 +306,7 @@ void Slider::Paint(Graphics *g)
         {(int)(bounds.size.x*0.6), _stone_size}
       };
 
-      g->FillPolygon({padding.left, (int)d + padding.top}, p);
+      g->FillPolygon({theme.padding.left, (int)d + theme.padding.top}, p);
     }
   }
 }

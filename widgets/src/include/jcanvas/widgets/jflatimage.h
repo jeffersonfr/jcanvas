@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef J_ICON_H
-#define J_ICON_H
+#ifndef J_FLATIMAGE_H
+#define J_FLATIMAGE_H
 
 #include "jcanvas/widgets/jcomponent.h"
 #include "jcanvas/core/jimage.h"
@@ -30,26 +30,26 @@ namespace jcanvas{
  *
  * \author Jeff Ferr
  */
-class Icon : public Component {
+class FlatImage : public Component {
 
   private:
     /** \brief */
     Image *_image;
     /** \brief */
-    jalign_t _align;
+    jrect_align_t _align;
 
   public:
     /**
      * \brief
      *
      */
-    Icon(Image *image);
+    FlatImage(Image *image);
     
     /**
      * \brief
      *
      */
-    virtual ~Icon();
+    virtual ~FlatImage();
 
     /**
      * \brief
@@ -67,13 +67,13 @@ class Icon : public Component {
      * \brief
      *
      */
-    virtual void SetAlign(jalign_t align);
+    virtual void SetAlign(jrect_align_t align);
     
     /**
      * \brief
      *
      */
-    virtual jalign_t GetAlign();
+    virtual jrect_align_t GetAlign();
     
     /**
      * \brief

@@ -43,18 +43,12 @@ Container::Container(jrect_t<int> bounds):
     .bottom = 0
   };
 
-  _padding = {
-    .left = 0,
-    .top = 0,
-    .right = 0,
-    .bottom = 0
-  };
-
   jtheme_t
     &theme = GetTheme();
 
   theme.border.type = jtheme_border_t::style::Empty;
   theme.border.size = jpoint_t<int>{0, 0};
+  theme.padding = {0, 0, 0, 0};
 
   SetBackgroundVisible(false);
 }
@@ -434,8 +428,6 @@ void Container::Paint(Graphics *g)
       // TODO:: considerar o scroll de um component
       jrect_t 
         bounds = c->GetBounds();
-      jinsets_t<int>
-        padding = c->GetPadding();
 
       bounds.point = bounds.point - slocation;
 

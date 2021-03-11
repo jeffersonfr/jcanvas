@@ -91,8 +91,6 @@ void ProgressBar::Paint(Graphics *g)
     theme = GetTheme();
   jrect_t<int>
     bounds = GetBounds();
-  jinsets_t<int>
-    padding = GetPadding();
   std::string 
     text;
 
@@ -107,7 +105,7 @@ void ProgressBar::Paint(Graphics *g)
     }
 
     g->SetColor(theme.scroll.color.normal);
-    g->FillRectangle({padding.left, padding.top, (int)d, bounds.size.y});
+    g->FillRectangle({theme.padding.left, theme.padding.top, (int)d, bounds.size.y});
 
     snprintf(t, 255-1, "%d %%", _value);
 
@@ -123,7 +121,7 @@ void ProgressBar::Paint(Graphics *g)
     }
 
     g->SetColor(theme.scroll.color.normal);
-    g->FillRectangle({padding.left, padding.top, bounds.size.x, (int)d});
+    g->FillRectangle({theme.padding.left, theme.padding.top, bounds.size.x, (int)d});
 
     snprintf(t, 255-1, "%d %%", _value);
 
@@ -142,7 +140,7 @@ void ProgressBar::Paint(Graphics *g)
 
   int length = theme.font.primary->GetStringWidth(theme.font.primary->TruncateString(text, "...", bounds.size.x));
 
-  g->DrawString(text, {padding.left + (bounds.size.x - length)/2, padding.top, bounds.size.x, bounds.size.y});
+  g->DrawString(text, {theme.padding.left + (bounds.size.x - length)/2, theme.padding.top, bounds.size.x, bounds.size.y});
 }
 
 }

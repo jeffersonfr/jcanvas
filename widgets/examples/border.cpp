@@ -62,8 +62,7 @@ class BorderTest : public Frame{
         Component *cmp = _buttons[i];
         jtheme_t &theme = cmp->GetTheme();
 
-        cmp->SetPadding({16, 16, 16, 16});
-
+        theme.padding = {16, 16, 16, 16};
 			  theme.border.size = {8, 8};
 
         if (i == 0) {

@@ -33,7 +33,7 @@
 
 namespace jcanvas {
 
-enum class jalign_t {
+enum class jrect_align_t {
   Center,
   North,
   South,
@@ -269,86 +269,88 @@ template<typename T, typename = typename std::enable_if<std::is_arithmetic<T>::v
       }
 
     template<typename U>
-      jrect_t<T> align(jalign_t align, jrect_t<U> obj)
+      jrect_t<T> align(jrect_align_t align, jrect_t<U> obj)
       {
         jrect_t<T> rect = {
           {0, 0}, {0, 0}
         };
 
-        if (align == jalign_t::Center) {
+        if (align == jrect_align_t::Center) {
           rect = {
             {(size.x - obj.size.x)/2, (size.y - obj.size.y)/2}, 
             {obj.size.x, obj.size.y}
           };
-        } else if (align == jalign_t::North) {
+        } else if (align == jrect_align_t::North) {
           rect = {
             {(size.x - obj.size.x)/2, 0}, 
             {obj.size.x, obj.size.y}
           };
-        } else if (align == jalign_t::South) {
+        } else if (align == jrect_align_t::South) {
           rect = {
             {(size.x - obj.size.x)/2, size.y - obj.size.y}, 
             {obj.size.x, obj.size.y}
           };
-        } else if (align == jalign_t::East) {
+        } else if (align == jrect_align_t::East) {
           rect = {
             {size.x - obj.size.x, (size.y - obj.size.y)/2}, 
             {obj.size.x, obj.size.y}
           };
-        } else if (align == jalign_t::West) {
+        } else if (align == jrect_align_t::West) {
           rect = {
             {0, (size.y - obj.size.y)/2}, 
             {obj.size.x, obj.size.y}
           };
-        } else if (align == jalign_t::NorthEast) {
+        } else if (align == jrect_align_t::NorthEast) {
           rect = {
             {size.x - obj.size.x, 0}, 
             {obj.size.x, obj.size.y}
           };
-        } else if (align == jalign_t::NorthWest) {
+        } else if (align == jrect_align_t::NorthWest) {
           rect = {
             {0, 0}, 
             {obj.size.x, obj.size.y}
           };
-        } else if (align == jalign_t::SouthEast) {
+        } else if (align == jrect_align_t::SouthEast) {
           rect = {
             {size.x - obj.size.x, size.y - obj.size.y}, 
             {obj.size.x, obj.size.y}
           };
-        } else if (align == jalign_t::SouthWest) {
+        } else if (align == jrect_align_t::SouthWest) {
           rect = {
             {0, size.y - obj.size.y}, 
             {obj.size.x, obj.size.y}
           };
-        } else if (align == jalign_t::Contains) {
-          if (obj.size.x > size.x) {
-            float f = size.x/obj.size.x;
+        } else if (align == jrect_align_t::Contains) {
+          jpoint_t<U> result_size = obj.size;
 
-            obj.size.x = size.x;
-            obj.size.y = obj.size.y*f;
+          if (result_size.x > size.x) {
+            float f = size.x/(float)obj.size.x;
+
+            result_size.x = obj.size.x*f;
+            result_size.y = obj.size.y*f;
           }
 
-          if (obj.size.y > size.y) {
-            float f = size.y/obj.size.y;
+          if (result_size.y > size.y) {
+            float f = size.y/(float)result_size.y;
 
-            obj.size.y = size.y;
-            obj.size.x = obj.size.x*f;
+            result_size.x = result_size.x*f;
+            result_size.y = result_size.y*f;
           }
 
           rect = {
-            {(size.x - obj.size.x)/2, (size.y - obj.size.y)/2}, 
-            {obj.size.x, obj.size.y}
+            {(size.x - result_size.x)/2, (size.y - result_size.y)/2}, 
+            {result_size.x, result_size.y}
           };
-        } else if (align == jalign_t::Cover) {
+        } else if (align == jrect_align_t::Cover) {
           if (obj.size.x < size.x) {
-            float f = size.x/obj.size.x;
+            float f = size.x/(float)obj.size.x;
 
             obj.size.x = size.x;
             obj.size.y = obj.size.y*f;
           }
 
           if (obj.size.y < size.y) {
-            float f = size.y/obj.size.y;
+            float f = size.y/(float)obj.size.y;
 
             obj.size.y = size.y;
             obj.size.x = obj.size.x*f;

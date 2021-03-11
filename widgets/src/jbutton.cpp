@@ -207,16 +207,14 @@ void Button::Paint(Graphics *g)
     theme = GetTheme();
   jrect_t<int>
     bounds = GetBounds();
-  jinsets_t
-    padding = GetPadding();
 
   if (_image != nullptr) {
     jpoint_t<int>
       size = _image->GetSize();
 
-    g->DrawImage(_image, jpoint_t<int>{padding.left, padding.top});
+    g->DrawImage(_image, jpoint_t<int>{theme.padding.left, theme.padding.top});
 
-    padding.left = padding.left + size.x + 4;
+    theme.padding.left = theme.padding.left + size.x + 4;
   }
 
   if (theme.font.primary != nullptr) {
@@ -234,7 +232,7 @@ void Button::Paint(Graphics *g)
 
     std::string text = theme.font.primary->TruncateString(GetText(), "...", bounds.size.x);
 
-    g->DrawString(text, padding.bounds(jrect_t<int>{{0, 0}, bounds.size}), _halign, _valign);
+    g->DrawString(text, theme.padding.bounds(jrect_t<int>{{0, 0}, bounds.size}), _halign, _valign);
   }
 }
 

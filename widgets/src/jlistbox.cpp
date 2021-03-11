@@ -42,13 +42,11 @@ void ListBox::UpdatePreferredSize()
     theme = GetTheme();
   jrect_t<int> 
     bounds = GetBounds();
-  jinsets_t<int>
-    padding = GetPadding();
 
   // TODO:: list all items to see the largest width [+ image.x + gap] 
 
-  bounds.size.x = bounds.size.x + padding.left + padding.right + 2*theme.border.size.x;
-  bounds.size.y = _items.size()*(GetItemSize() + GetItemGap()) - GetItemGap() + padding.top + padding.bottom + 2*theme.border.size.y;
+  bounds.size.x = bounds.size.x + theme.padding.left + theme.padding.right + 2*theme.border.size.x;
+  bounds.size.y = _items.size()*(GetItemSize() + GetItemGap()) - GetItemGap() + theme.padding.top + theme.padding.bottom + 2*theme.border.size.y;
 
   SetPreferredSize(bounds.size);
 }
@@ -247,8 +245,6 @@ bool ListBox::KeyPressed(KeyEvent *event)
     theme = GetTheme();
   jpoint_t<int>
     size = GetSize();
-  jinsets_t<int>
-    padding = GetPadding();
   jkeyevent_symbol_t 
     action = event->GetSymbol();
   bool 
@@ -259,7 +255,7 @@ bool ListBox::KeyPressed(KeyEvent *event)
     
     catched = true;
   } else if (action == jkeyevent_symbol_t::PageUp) {
-    IncrementLines((size.y - padding.top - padding.bottom)/(GetItemSize() + GetItemGap()));
+    IncrementLines((size.y - theme.padding.top - theme.padding.bottom)/(GetItemSize() + GetItemGap()));
     
     catched = true;
   } else if (action == jkeyevent_symbol_t::CursorDown) {
@@ -267,7 +263,7 @@ bool ListBox::KeyPressed(KeyEvent *event)
 
     catched = true;
   } else if (action == jkeyevent_symbol_t::PageDown) {
-    DecrementLines((size.y - padding.top - padding.bottom)/(GetItemSize() + GetItemGap()));
+    DecrementLines((size.y - theme.padding.top - theme.padding.bottom)/(GetItemSize() + GetItemGap()));
 
     catched = true;
   } else if (action == jkeyevent_symbol_t::Home) {
@@ -344,27 +340,25 @@ void ListBox::Paint(Graphics *g)
     scroll_location = GetScrollLocation();
   jrect_t<int>
     bounds = GetBounds();
-  jinsets_t
-    padding = GetPadding();
   int 
     scrollx = (IsScrollableX() == true)?scroll_location.x:0,
     scrolly = (IsScrollableY() == true)?scroll_location.y:0;
   int 
-    offset = padding.left;
+    offset = theme.padding.left;
 
   for (std::vector<Item *>::iterator i=_items.begin(); i!=_items.end(); i++) {
     if ((*i)->GetType() == jitem_type_t::Image) {
-      offset += GetItemSize() + padding.left;
+      offset += GetItemSize() + theme.padding.left;
 
       break;
     }
   }
 
-  padding.left = padding.left - scrollx;
-  padding.top = padding.top - scrolly;
+  theme.padding.left = theme.padding.left - scrollx;
+  theme.padding.top = theme.padding.top - scrolly;
 
   for (int i=0; i<(int)_items.size(); i++) {
-    int dy = padding.top + (GetItemSize() + GetItemGap())*i;
+    int dy = theme.padding.top + (GetItemSize() + GetItemGap())*i;
 
     if ((dy + GetItemSize()) < 0 || dy > bounds.size.y) {
       continue;
@@ -392,7 +386,7 @@ void ListBox::Paint(Graphics *g)
       g->SetColor(theme.bg.focus);
     }
 
-    g->FillRectangle({padding.left, padding.top + (GetItemSize() + GetItemGap())*i, bounds.size.x, GetItemSize()});
+    g->FillRectangle({theme.padding.left, theme.padding.top + (GetItemSize() + GetItemGap())*i, bounds.size.x, GetItemSize()});
 
     if (theme.font.primary != nullptr) {
       g->SetFont(theme.font.primary);
@@ -423,14 +417,14 @@ void ListBox::Paint(Graphics *g)
         text = theme.font.primary->TruncateString(text, "...", bounds.size.x - offset);
       // }
 
-      g->DrawString(text, {padding.left + offset, padding.top + (GetItemSize() + GetItemGap())*i, bounds.size.x - offset, GetItemSize()}, _items[i]->GetHorizontalAlign(), _items[i]->GetVerticalAlign());
+      g->DrawString(text, {theme.padding.left + offset, theme.padding.top + (GetItemSize() + GetItemGap())*i, bounds.size.x - offset, GetItemSize()}, _items[i]->GetHorizontalAlign(), _items[i]->GetVerticalAlign());
     }
     
     if (_items[i]->GetType() == jitem_type_t::Empty) {
     } else if (_items[i]->GetType() == jitem_type_t::Text) {
     } else if (_items[i]->GetType() == jitem_type_t::Image) {
       if (_items[i]->GetImage() != nullptr) {
-        g->DrawImage(_items[i]->GetImage(), {padding.left, padding.top + (GetItemSize() + GetItemGap())*i, GetItemSize(), GetItemSize()});
+        g->DrawImage(_items[i]->GetImage(), {theme.padding.left, theme.padding.top + (GetItemSize() + GetItemGap())*i, GetItemSize(), GetItemSize()});
       }
     }
 
@@ -527,12 +521,10 @@ jpoint_t<int> ListBox::GetScrollDimension()
     theme = GetTheme();
   jrect_t<int> 
     bounds = GetBounds();
-  jinsets_t<int> 
-    padding = GetPadding();
   jtheme_border_t
     border = theme.border;
 
-  bounds.size.y = _items.size()*(GetItemSize() + GetItemGap()) + padding.top + padding.bottom;
+  bounds.size.y = _items.size()*(GetItemSize() + GetItemGap()) + theme.padding.top + theme.padding.bottom;
 
   return bounds.size;
 }

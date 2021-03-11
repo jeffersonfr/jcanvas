@@ -33,7 +33,7 @@
 #include "jcanvas/widgets/jcheckbutton.h"
 #include "jcanvas/widgets/jcheckbuttongroup.h"
 #include "jcanvas/widgets/jlistbox.h"
-#include "jcanvas/widgets/jicon.h"
+#include "jcanvas/widgets/jflatimage.h"
 #include "jcanvas/widgets/jscrollbar.h"
 
 #include <iostream>
@@ -132,7 +132,7 @@ class Widgets : public Frame, public ActionListener, public SelectListener, publ
 			*_label2;
 		ListBox 
 			*_list;
-		Icon 
+		FlatImage 
 			*_staticimage;
 		Slider 
 			*_slider;
@@ -343,7 +343,7 @@ class Widgets : public Frame, public ActionListener, public SelectListener, publ
       jrect_t
         region = _marquee->GetVisibleBounds();
 
-			_staticimage = new Icon(new BufferedImage(JCANVAS_RESOURCES_DIR "/images/green_icon.png"));
+			_staticimage = new FlatImage(new BufferedImage(JCANVAS_RESOURCES_DIR "/images/green_icon.png"));
       
       _staticimage->SetBounds({region.point.x + region.size.x + 16, region.point.y, 196, 196});
 		}

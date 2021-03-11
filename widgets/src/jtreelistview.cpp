@@ -329,8 +329,6 @@ void TreeListView::Paint(Graphics *g)
     size = GetSize();
   jpoint_t 
     scroll_location = GetScrollLocation();
-  jinsets_t
-    padding = GetPadding();
   int
     w = size.x - GetHorizontalPadding();
   int 
@@ -346,8 +344,8 @@ void TreeListView::Paint(Graphics *g)
     }
   }
 
-  padding.left = padding.left - scrollx;
-  padding.top = padding.top - scrolly;
+  theme.padding.left = theme.padding.left - scrollx;
+  theme.padding.top = theme.padding.top - scrolly;
 
   for (int i=0; i<(int)_items.size(); i++) {
     int dy = padding.top + (GetItemSize() + GetItemGap())*i;
@@ -372,7 +370,7 @@ void TreeListView::Paint(Graphics *g)
       g->SetColor(theme.fg.focus);
     }
 
-    g->FillRectangle({padding.left, padding.top+(GetItemSize() + GetItemGap())*i, w, GetItemSize()});
+    g->FillRectangle({theme.padding.left, theme.padding.top+(GetItemSize() + GetItemGap())*i, w, GetItemSize()});
 
     if (_selected_index == i) {
       g->SetColor(theme.fg.select);
@@ -382,7 +380,7 @@ void TreeListView::Paint(Graphics *g)
     } else if (_items[i]->GetType() == JIT_TEXT) {
     } else if (_items[i]->GetType() == JIT_IMAGE) {
       if (_items[i]->GetImage() != nullptr) {
-        g->DrawImage(_items[i]->GetImage(), {GetHorizontalPadding(), padding.top + (GetItemSize() + GetItemGap())*i, GetItemSize(), GetItemSize()});
+        g->DrawImage(_items[i]->GetImage(), {GetHorizontalPadding(), theme.padding.top + (GetItemSize() + GetItemGap())*i, GetItemSize(), GetItemSize()});
       }
     }
 
@@ -405,7 +403,7 @@ void TreeListView::Paint(Graphics *g)
         text = theme.font.primary->TruncateString(text, "...", w - offset);
       // }
 
-      g->DrawString(text, {padding.left + offset, padding.top + (GetItemSize() + GetItemGap())*i, w - offset, GetItemSize()}, _items[i]->GetHorizontalAlign(), _items[i]->GetVerticalAlign());
+      g->DrawString(text, {theme.padding.left + offset, theme.padding.top + (GetItemSize() + GetItemGap())*i, w - offset, GetItemSize()}, _items[i]->GetHorizontalAlign(), _items[i]->GetVerticalAlign());
     }
   }
 }

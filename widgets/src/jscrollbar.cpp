@@ -126,12 +126,10 @@ bool ScrollBar::MousePressed(MouseEvent *event)
     elocation = event->GetLocation();
   jrect_t<int>
     bounds = GetBounds();
-  jinsets_t<int>
-    padding = GetPadding();
   int 
     arrow_size,
-    dx = padding.left,
-    dy = padding.right,
+    dx = theme.padding.left,
+    dy = theme.padding.right,
     dw = bounds.size.x - 2*dx - _stone_size,
     dh = bounds.size.y - 2*dy - _stone_size;
   bool 
@@ -214,12 +212,10 @@ bool ScrollBar::MouseMoved(MouseEvent *event)
     elocation = event->GetLocation();
   jrect_t<int>
     bounds = GetBounds();
-  jinsets_t<int>
-    padding = GetPadding();
   int 
     arrow_size,
-    dx = padding.left,
-    dy = padding.right,
+    dx = theme.padding.left,
+    dy = theme.padding.right,
     dw = bounds.size.x - 2*dx - _stone_size,
     dh = bounds.size.y - 2*dy - _stone_size;
 
@@ -266,8 +262,6 @@ void ScrollBar::Paint(Graphics *g)
     theme = GetTheme();
   jrect_t<int>
     bounds = GetBounds();
-  jinsets_t<int>
-    padding = GetPadding();
 
   if (_type == jscroll_orientation_t::Horizontal) {
     int
@@ -286,14 +280,14 @@ void ScrollBar::Paint(Graphics *g)
       g->SetColor(theme.scroll.color.normal);
     }
 
-    g->FillRectangle({(int)d + arrow_size + padding.left, padding.top, _stone_size, bounds.size.y});
+    g->FillRectangle({(int)d + arrow_size + theme.padding.left, theme.padding.top, _stone_size, bounds.size.y});
 
-    g->FillTriangle({padding.left + bounds.size.x, padding.top+arrow_size}, {padding.left + bounds.size.x - arrow_size, padding.top}, {padding.left + bounds.size.x - arrow_size, padding.top+2*arrow_size});
-    g->FillTriangle({padding.left, padding.top+arrow_size}, {padding.left+arrow_size, padding.top}, {padding.left+arrow_size, padding.top+2*arrow_size});
+    g->FillTriangle({theme.padding.left + bounds.size.x, theme.padding.top+arrow_size}, {theme.padding.left + bounds.size.x - arrow_size, theme.padding.top}, {theme.padding.left + bounds.size.x - arrow_size, theme.padding.top+2*arrow_size});
+    g->FillTriangle({theme.padding.left, theme.padding.top+arrow_size}, {theme.padding.left+arrow_size, theme.padding.top}, {theme.padding.left+arrow_size, theme.padding.top+2*arrow_size});
   } else if (_type == jscroll_orientation_t::Vertical) {
     int 
       arrow_size = bounds.size.x/2,
-      limit = bounds.size.y - _stone_size - 2*arrow_size - padding.top - padding.bottom;
+      limit = bounds.size.y - _stone_size - 2*arrow_size - theme.padding.top - theme.padding.bottom;
     double 
       d = (_value*limit)/(GetMaximum()-GetMinimum());
 
@@ -307,9 +301,9 @@ void ScrollBar::Paint(Graphics *g)
       g->SetColor(theme.scroll.color.normal);
     }
 
-    g->FillRectangle({padding.left, (int)d + arrow_size + padding.top + padding.top + padding.bottom, bounds.size.x, _stone_size});
-    g->FillTriangle({padding.left, padding.top+arrow_size}, {padding.left + bounds.size.x/2, padding.top}, {padding.left + bounds.size.x, padding.top+arrow_size});
-    g->FillTriangle({padding.left, padding.top + bounds.size.y -arrow_size}, {padding.left + bounds.size.x/2, padding.top + bounds.size.y}, {padding.left + bounds.size.x, padding.top + bounds.size.y -arrow_size});
+    g->FillRectangle({theme.padding.left, (int)d + arrow_size + theme.padding.top + theme.padding.top + theme.padding.bottom, bounds.size.x, _stone_size});
+    g->FillTriangle({theme.padding.left, theme.padding.top+arrow_size}, {theme.padding.left + bounds.size.x/2, theme.padding.top}, {theme.padding.left + bounds.size.x, theme.padding.top+arrow_size});
+    g->FillTriangle({theme.padding.left, theme.padding.top + bounds.size.y -arrow_size}, {theme.padding.left + bounds.size.x/2, theme.padding.top + bounds.size.y}, {theme.padding.left + bounds.size.x, theme.padding.top + bounds.size.y -arrow_size});
   }
 }
 

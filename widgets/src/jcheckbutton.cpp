@@ -34,7 +34,11 @@ CheckButton::CheckButton(jcheckbox_type_t type, std::string text):
   _checked = false;
   _is_wrap = false;
 
-  SetPadding({8, 0, 0, 0});
+  jtheme_t
+    &theme = GetTheme();
+
+  theme.padding = {8, 0, 0, 0};
+
   SetFocusable(true);
 }
 
@@ -223,10 +227,8 @@ void CheckButton::Paint(Graphics *g)
     theme = GetTheme();
   jrect_t<int>
     bounds = GetBounds();
-  jinsets_t<int>
-    padding = GetPadding();
 
-  bounds = padding.bounds(jrect_t<int>{{0, 0}, bounds.size});
+  bounds = theme.padding.bounds(jrect_t<int>{{0, 0}, bounds.size});
 
   int
     major = 16,
@@ -236,22 +238,22 @@ void CheckButton::Paint(Graphics *g)
   g->SetColor(theme.border.color.select);
 
   if (_type == jcheckbox_type_t::Check) {
-    g->FillRectangle({padding.left, padding.top + (bounds.size.y - cs)/2, major, major});
+    g->FillRectangle({theme.padding.left, theme.padding.top + (bounds.size.y - cs)/2, major, major});
   } else if (_type == jcheckbox_type_t::Radio) {
-    g->FillCircle({padding.left + major/2, bounds.size.y/2}, major/2);
+    g->FillCircle({theme.padding.left + major/2, bounds.size.y/2}, major/2);
   }
 
   if (IsSelected() == true) {
     g->SetColor(theme.border.color.normal);
 
     if (_type == jcheckbox_type_t::Check) {
-      g->FillRectangle({padding.left + minor, padding.top + (bounds.size.y - cs)/2 + minor, 2*minor, 2*minor});
+      g->FillRectangle({theme.padding.left + minor, theme.padding.top + (bounds.size.y - cs)/2 + minor, 2*minor, 2*minor});
     } else {
-      g->FillCircle({padding.left + major/2, bounds.size.y/2}, minor);
+      g->FillCircle({theme.padding.left + major/2, bounds.size.y/2}, minor);
     }
   }
 
-  padding.left = padding.left + major + padding.left;
+  theme.padding.left = theme.padding.left + major + theme.padding.left;
 
   if (theme.font.primary != nullptr) {
     g->SetFont(theme.font.primary);
@@ -272,7 +274,7 @@ void CheckButton::Paint(Graphics *g)
       text = theme.font.primary->TruncateString(text, "...", bounds.size.x);
     }
 
-    g->DrawString(text, padding.bounds(bounds), _halign, _valign);
+    g->DrawString(text, theme.padding.bounds(bounds), _halign, _valign);
   }
 }
 

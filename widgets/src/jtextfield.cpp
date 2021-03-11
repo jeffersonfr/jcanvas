@@ -146,11 +146,9 @@ void TextField::Paint(Graphics *g)
   
   jrect_t<int>
     bounds = GetBounds();
-  jinsets_t<int>
-    padding = GetPadding();
   int
-    w = bounds.size.x - padding.left - padding.right,
-    h = bounds.size.y - padding.top - padding.bottom;
+    w = bounds.size.x - theme.padding.left - theme.padding.right,
+    h = bounds.size.y - theme.padding.top - theme.padding.bottom;
   std::string 
     paint_text = _text,
     text = paint_text,
@@ -245,14 +243,14 @@ void TextField::Paint(Graphics *g)
       current_text_size = theme.font.primary->GetStringWidth(text.substr(0, _caret_position));
     }
 
-    g->DrawString(text, {padding.left + offset, padding.top, w, h}, jhorizontal_align_t::Left, _valign);
+    g->DrawString(text, {theme.padding.left + offset, theme.padding.top, w, h}, jhorizontal_align_t::Left, _valign);
 
     if (_caret_visible == true) {
       if (HasFocus() == true && IsEditable() == true) {
         g->SetColor(_caret_color);
       }
 
-      g->DrawString(cursor, {padding.left + current_text_size+offset, padding.top, w, h}, jhorizontal_align_t::Left, _valign);
+      g->DrawString(cursor, {theme.padding.left + current_text_size + offset, theme.padding.top, w, h}, jhorizontal_align_t::Left, _valign);
     }
   }
 }

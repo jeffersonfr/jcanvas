@@ -23,13 +23,13 @@ set(SRCS
   src/jcoordinatelayout.cpp
   src/jdialog.cpp
   src/jfilechooserdialog.cpp
+  src/jflatimage.cpp
   src/jflowlayout.cpp
   src/jfocusevent.cpp
   src/jfocuslistener.cpp
   src/jframe.cpp
   src/jgridbaglayout.cpp
   src/jgridlayout.cpp
-  src/jicon.cpp
   src/jinputdialog.cpp
   src/jitemcomponent.cpp
   src/jkeyboarddialog.cpp

@@ -97,7 +97,7 @@ struct jtheme_t {
       0xff808080
     },
     .size {
-      4, 4
+      2, 2
     },
     .type = jtheme_border_t::style::Line
   };
@@ -117,6 +117,8 @@ struct jtheme_t {
       4, 4
     }
   };
+
+  jinsets_t<int> padding;
 
   jtheme_font_t font {
    &Font::Small,
