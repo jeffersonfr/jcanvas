@@ -36,7 +36,7 @@ class Dialog : public Container {
 
   protected:
     /** \brief */
-    Component *_focus_owner;
+    std::shared_ptr<Component> _focus_owner;
     /** \brief */
     jtheme_t _dialog_theme;
     /** \brief */
@@ -53,19 +53,25 @@ class Dialog : public Container {
      * \brief
      *
      */
-    Dialog(Container *parent, jrect_t<int> bounds = {0, 0, 0, 0});
+    Dialog(std::shared_ptr<Container> parent, jrect_t<int> bounds = {0, 0, 0, 0});
     
     /**
      * \brief
      *
      */
-    Dialog(std::string title, Container *parent, jrect_t<int> bounds = {0, 0, 0, 0});
+    Dialog(std::string title, std::shared_ptr<Container> parent, jrect_t<int> bounds = {0, 0, 0, 0});
     
     /**
      * \brief
      *
      */
     virtual ~Dialog();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void Init() = 0;
 
     /**
      * \brief
@@ -101,23 +107,23 @@ class Dialog : public Container {
      * \brief
      *
      */
-    Component * GetFocusOwner();
+    std::shared_ptr<Component> GetFocusOwner();
 
     /**
      * \brief
      *
      */
-    void RequestComponentFocus(Component *c);
+    void RequestComponentFocus(std::shared_ptr<Component> c);
     /**
      * \brief
      *
      */
-    void ReleaseComponentFocus(Component *c);
+    void ReleaseComponentFocus(std::shared_ptr<Component> c);
     /**
      * \brief
      *
      */
-    Container * GetFocusCycleRootAncestor();
+    std::shared_ptr<Container> GetFocusCycleRootAncestor();
 
     /**
      * \brief

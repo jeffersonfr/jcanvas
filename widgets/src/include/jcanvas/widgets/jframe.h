@@ -38,7 +38,7 @@ class Frame : public Window, public Container {
 
   private:
     /** \brief */
-    Component *_focus_owner;
+    std::shared_ptr<Component> _focus_owner;
     /** \brief */
     Image *_icon;
 
@@ -71,25 +71,25 @@ class Frame : public Window, public Container {
      * \brief
      *
      */
-    Component * GetFocusOwner();
+    std::shared_ptr<Component>  GetFocusOwner();
     
     /**
      * \brief
      *
      */
-    void RequestComponentFocus(Component *c);
+    void RequestComponentFocus(std::shared_ptr<Component> c);
     
     /**
      * \brief
      *
      */
-    void ReleaseComponentFocus(Component *c);
+    void ReleaseComponentFocus(std::shared_ptr<Component> c);
     
     /**
      * \brief
      *
      */
-    Container * GetFocusCycleRootAncestor();
+    std::shared_ptr<Container> GetFocusCycleRootAncestor();
 
     /**
      * \brief
@@ -137,7 +137,7 @@ class Frame : public Window, public Container {
      * \brief
      *
      */
-    virtual void Repaint(Component *cmp = nullptr);
+    virtual void Repaint(std::shared_ptr<Component> cmp = nullptr);
     
     /**
      * \brief

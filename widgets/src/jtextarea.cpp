@@ -324,37 +324,20 @@ void TextArea::InitRowsString()
     .for_each([&](auto const &token) {
           std::vector<std::string> words;
           std::string line = token + "\n";
-          std::string temp, previous;
 
           jmixin::String(line)
             .split(" ")
-            .for_each([&](auto const &emp) {
-                  if (theme.font.primary->GetStringWidth(temp) > w) {
-                    int p = 1;
-
-                    while (p < (int)temp.size()) {
-                      if (theme.font.primary->GetStringWidth(temp.substr(0, ++p)) > w) {
-                        words.push_back(temp.substr(0, p-1));
-
-                        temp = temp.substr(p-1);
-
-                        p = 1;
-                      }
-                    }
-
-                    if (temp != "") {
-                      words.push_back(temp.substr(0, p));
-                    }
-                  } else {
-                    words.push_back(temp);
-                  }
+            .for_each([&](auto const &word) {
+                  words.push_back(word);
                 });
+
+          std::string temp, previous;
 
           temp = words[0];
 
           for (int j=1; j<(int)words.size(); j++) {
             previous = temp;
-            temp += words[j];
+            temp = temp + " " + words[j];
 
             if (theme.font.primary->GetStringWidth(temp.c_str()) > w) {
               temp = words[j];

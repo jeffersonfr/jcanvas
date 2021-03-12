@@ -125,16 +125,20 @@ class Observable {
     }
     
 };
+
 class SortAlgorithm : public Observable {
 
 	protected:
 		std::string _name;
-		int *_array,
-				_array_size;
-		int _index0,
-				_index1;
-		bool _is_locked,
-				 _stop_requested;
+		int 
+      *_array,
+			_array_size;
+		int 
+      _index0,
+			_index1;
+		bool 
+      _is_locked,
+		  _stop_requested;
 
 	public:
 		SortAlgorithm(std::string name)
@@ -1804,15 +1808,28 @@ class SortComponent : public Component, public Observer {
 
 };
 
-class SortFrame : public Frame {
+class App : public Frame {
 
-	private:
-		std::vector<SortComponent *> _components;
+  private:
+    std::vector<std::shared_ptr<SortComponent>> components;
 
 	public:
-		SortFrame():
+		App():
 			Frame(/*"Sort Algorithms", */ {1280, 720})
 		{
+    }
+
+		virtual ~App()
+		{
+			RemoveAll();
+
+			for (auto c : components) {
+        c->Stop();
+			}
+		}
+
+    void Init()
+    {
       jpoint_t
         size = GetSize();
 			int 
@@ -1824,65 +1841,53 @@ class SortFrame : public Frame {
         dx = (size.x-6*w-5*gapx)/2,
         dy = (size.y-3*h-2*gapy)/2;
 
-			_components.push_back(new SortComponent(array_size, dx+0*(w+gapx), dy+0*(h+gapy), w, h));
-			_components.push_back(new SortComponent(array_size, dx+1*(w+gapx), dy+0*(h+gapy), w, h));
-			_components.push_back(new SortComponent(array_size, dx+2*(w+gapx), dy+0*(h+gapy), w, h));
-			_components.push_back(new SortComponent(array_size, dx+3*(w+gapx), dy+0*(h+gapy), w, h));
-			_components.push_back(new SortComponent(array_size, dx+4*(w+gapx), dy+0*(h+gapy), w, h));
-			_components.push_back(new SortComponent(array_size, dx+5*(w+gapx), dy+0*(h+gapy), w, h));
+      components = {
+        std::make_shared<SortComponent>(array_size, dx+0*(w+gapx), dy+0*(h+gapy), w, h),
+        std::make_shared<SortComponent>(array_size, dx+1*(w+gapx), dy+0*(h+gapy), w, h),
+        std::make_shared<SortComponent>(array_size, dx+2*(w+gapx), dy+0*(h+gapy), w, h),
+        std::make_shared<SortComponent>(array_size, dx+3*(w+gapx), dy+0*(h+gapy), w, h),
+        std::make_shared<SortComponent>(array_size, dx+4*(w+gapx), dy+0*(h+gapy), w, h),
+        std::make_shared<SortComponent>(array_size, dx+5*(w+gapx), dy+0*(h+gapy), w, h),
 
-			_components.push_back(new SortComponent(array_size, dx+0*(w+gapx), dy+1*(h+gapy), w, h));
-			_components.push_back(new SortComponent(array_size, dx+1*(w+gapx), dy+1*(h+gapy), w, h));
-			_components.push_back(new SortComponent(array_size, dx+2*(w+gapx), dy+1*(h+gapy), w, h));
-			_components.push_back(new SortComponent(array_size, dx+3*(w+gapx), dy+1*(h+gapy), w, h));
-			_components.push_back(new SortComponent(array_size, dx+4*(w+gapx), dy+1*(h+gapy), w, h));
-			_components.push_back(new SortComponent(array_size, dx+5*(w+gapx), dy+1*(h+gapy), w, h));
+        std::make_shared<SortComponent>(array_size, dx+0*(w+gapx), dy+1*(h+gapy), w, h),
+        std::make_shared<SortComponent>(array_size, dx+1*(w+gapx), dy+1*(h+gapy), w, h),
+        std::make_shared<SortComponent>(array_size, dx+2*(w+gapx), dy+1*(h+gapy), w, h),
+        std::make_shared<SortComponent>(array_size, dx+3*(w+gapx), dy+1*(h+gapy), w, h),
+        std::make_shared<SortComponent>(array_size, dx+4*(w+gapx), dy+1*(h+gapy), w, h),
+        std::make_shared<SortComponent>(array_size, dx+5*(w+gapx), dy+1*(h+gapy), w, h),
 
-			_components.push_back(new SortComponent(array_size, dx+0*(w+gapx), dy+2*(h+gapy), w, h));
-			_components.push_back(new SortComponent(array_size, dx+1*(w+gapx), dy+2*(h+gapy), w, h));
-			_components.push_back(new SortComponent(array_size, dx+2*(w+gapx), dy+2*(h+gapy), w, h));
-			_components.push_back(new SortComponent(array_size, dx+3*(w+gapx), dy+2*(h+gapy), w, h));
-			_components.push_back(new SortComponent(array_size, dx+4*(w+gapx), dy+2*(h+gapy), w, h));
-			_components.push_back(new SortComponent(array_size, dx+5*(w+gapx), dy+2*(h+gapy), w, h));
+        std::make_shared<SortComponent>(array_size, dx+0*(w+gapx), dy+2*(h+gapy), w, h),
+        std::make_shared<SortComponent>(array_size, dx+1*(w+gapx), dy+2*(h+gapy), w, h),
+        std::make_shared<SortComponent>(array_size, dx+2*(w+gapx), dy+2*(h+gapy), w, h),
+        std::make_shared<SortComponent>(array_size, dx+3*(w+gapx), dy+2*(h+gapy), w, h),
+        std::make_shared<SortComponent>(array_size, dx+4*(w+gapx), dy+2*(h+gapy), w, h),
+        std::make_shared<SortComponent>(array_size, dx+5*(w+gapx), dy+2*(h+gapy), w, h)
+      };
 
-			_components[0]->SetAlgorithm(new BubbleSort2Algorithm());
-			_components[1]->SetAlgorithm(new BidirectionalBubbleSortAlgorithm());
-			_components[2]->SetAlgorithm(new SelectionSortAlgorithm());
-			_components[3]->SetAlgorithm(new ShakerSortAlgorithm());
-			_components[4]->SetAlgorithm(new InsertionSortAlgorithm());
-			_components[5]->SetAlgorithm(new MergeSortAlgorithm());
-			_components[6]->SetAlgorithm(new CombSort11Algorithm());
-			_components[7]->SetAlgorithm(new ShellSortAlgorithm());
-			_components[8]->SetAlgorithm(new HeapSortAlgorithm());
-			_components[9]->SetAlgorithm(new QSortAlgorithm());
-			_components[10]->SetAlgorithm(new QubbleSortAlgorithm());
-			_components[11]->SetAlgorithm(new EQSortAlgorithm());
-			_components[12]->SetAlgorithm(new FastQSortAlgorithm());
-			_components[13]->SetAlgorithm(new RadixSortAlgorithm());
-			_components[14]->SetAlgorithm(new CocktailSortAlgorithm());
-			_components[15]->SetAlgorithm(new CountingSortAlgorithm());
-			_components[16]->SetAlgorithm(new GnomeSortAlgorithm());
-			_components[17]->SetAlgorithm(new StoogeSortAlgorithm());
+			components[0]->SetAlgorithm(new BubbleSort2Algorithm());
+			components[1]->SetAlgorithm(new BidirectionalBubbleSortAlgorithm());
+			components[2]->SetAlgorithm(new SelectionSortAlgorithm());
+			components[3]->SetAlgorithm(new ShakerSortAlgorithm());
+			components[4]->SetAlgorithm(new InsertionSortAlgorithm());
+			components[5]->SetAlgorithm(new MergeSortAlgorithm());
+			components[6]->SetAlgorithm(new CombSort11Algorithm());
+			components[7]->SetAlgorithm(new ShellSortAlgorithm());
+			components[8]->SetAlgorithm(new HeapSortAlgorithm());
+			components[9]->SetAlgorithm(new QSortAlgorithm());
+			components[10]->SetAlgorithm(new QubbleSortAlgorithm());
+			components[11]->SetAlgorithm(new EQSortAlgorithm());
+			components[12]->SetAlgorithm(new FastQSortAlgorithm());
+			components[13]->SetAlgorithm(new RadixSortAlgorithm());
+			components[14]->SetAlgorithm(new CocktailSortAlgorithm());
+			components[15]->SetAlgorithm(new CountingSortAlgorithm());
+			components[16]->SetAlgorithm(new GnomeSortAlgorithm());
+			components[17]->SetAlgorithm(new StoogeSortAlgorithm());
 
-			for (std::vector<SortComponent *>::iterator i=_components.begin(); i!=_components.end(); i++) {
-				Add(*i);
+			for (auto c : components) {
+				Add(c);
 			}
 
 			SetOptimizedPaint(true);
-		}
-
-		virtual ~SortFrame()
-		{
-			RemoveAll();
-
-			for (std::vector<SortComponent *>::iterator i=_components.begin(); i!=_components.end(); i++) {
-				SortComponent *cmp = (*i);
-
-				cmp->Stop();
-
-				delete cmp;
-        cmp = nullptr;
-			}
 		}
 
 };
@@ -1891,9 +1896,10 @@ int main(int argc, char **argv)
 {
 	Application::Init(argc, argv);
 
-	SortFrame app;
+	auto app = std::make_shared<App>();
 
-	app.SetTitle("Sort");
+  app->Init();
+	app->SetTitle("Sort");
 
 	Application::Loop();
 

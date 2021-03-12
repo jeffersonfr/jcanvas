@@ -31,81 +31,78 @@
 
 using namespace jcanvas;
 
-class Dialogs : public Frame, public ActionListener {
+class App : public Frame, public ActionListener {
 
-	private:
-		Button 
-			_button1 = {"Calendar"},
-			_button2 = {"FileChooser"},
-			_button3 = {"Input"},
-			_button4 = {"Keyboard"},
-			_button5 = {"Messsage"},
-			_button6 = {"Toast"},
-			_button7 = {"Yes/No"};
+  private:
+    std::vector<std::shared_ptr<Button>> buttons {
+      std::make_shared<Button>("Calendar"),
+      std::make_shared<Button>("FileChooser"),
+      std::make_shared<Button>("Input"),
+      std::make_shared<Button>("Keyboard"),
+      std::make_shared<Button>("Messsage"),
+      std::make_shared<Button>("Toast"),
+      std::make_shared<Button>("Yes/No")
+    };
 
 	public:
-		Dialogs():
+		App():
 			Frame({1280, 720})
-	{
-    SetLayout<FlowLayout>();
-
-    _button1.RegisterActionListener(this);
-    _button2.RegisterActionListener(this);
-    _button3.RegisterActionListener(this);
-    _button4.RegisterActionListener(this);
-    _button5.RegisterActionListener(this);
-    _button6.RegisterActionListener(this);
-    _button7.RegisterActionListener(this);
-
-    Add(&_button1);
-    Add(&_button2);
-    Add(&_button3);
-    Add(&_button4);
-    Add(&_button5);
-    Add(&_button6);
-    Add(&_button7);
-
-		_button1.RequestFocus();
-	}
-
-	virtual ~Dialogs()
-	{
-	}
-
-	virtual void ActionPerformed(ActionEvent *event)
-	{
-    static Dialog *dialog = nullptr;
-
-    if (dialog != nullptr) {
-      delete dialog;
-      dialog = nullptr;
+	  {
     }
 
-		if (event->GetSource() == &_button1) {
-      dialog = new CalendarDialog(this);
-		} else if (event->GetSource() == &_button2) {
-      dialog = new FileChooserDialog(this, "File Chooser", "/tmp", jfilechooser_type_t::SaveFile);
-		} else if (event->GetSource() == &_button3) {
-      dialog = new InputDialog(this, "Input", "Warning");
-		} else if (event->GetSource() == &_button4) {
-      dialog = new KeyboardDialog(this, jkeyboard_type_t::Qwerty);
-		} else if (event->GetSource() == &_button5) {
-      dialog = new MessageDialog(this, "Message", "Some message ...");
-		} else if (event->GetSource() == &_button6) {
-      ToastDialog *toast = new ToastDialog(this, "Toast");
-
-      toast->SetTimeout(2000);
-
-      dialog = toast;
-		} else if (event->GetSource() == &_button7) {
-      dialog = new YesNoDialog(this, "Yes/No", "Si or no ?");
-		}
-
-    if (dialog != nullptr) {
-      dialog->SetLocation(100, 100);
-      dialog->Exec();
+    virtual ~App()
+    {
     }
-	}
+
+    void Init()
+    {
+      SetLayout<FlowLayout>();
+
+      for (auto &button : buttons) {
+        button->RegisterActionListener(this);
+      
+        Add(button);
+      }
+
+      buttons[0]->RequestFocus();
+    }
+
+    virtual void ActionPerformed(ActionEvent *event)
+    {
+      static std::shared_ptr<Dialog> dialog;
+
+      if (dialog != nullptr) {
+        dialog.reset();
+      }
+
+      auto parent = GetSharedPointer<Container>();
+
+      if (event->GetSource() == buttons[0].get()) {
+        dialog = std::make_shared<CalendarDialog>(parent);
+      } else if (event->GetSource() == buttons[1].get()) {
+        dialog = std::make_shared<FileChooserDialog>(parent, "File Chooser", "/tmp", jfilechooser_type_t::SaveFile);
+      } else if (event->GetSource() == buttons[2].get()) {
+        dialog = std::make_shared<InputDialog>(parent, "Input", "Warning");
+      } else if (event->GetSource() == buttons[3].get()) {
+        dialog = std::make_shared<KeyboardDialog>(parent, jkeyboard_type_t::Qwerty);
+      } else if (event->GetSource() == buttons[4].get()) {
+        dialog = std::make_shared<MessageDialog>(parent, "Message", "Some message ...");
+      } else if (event->GetSource() == buttons[5].get()) {
+        std::shared_ptr<ToastDialog> toast = std::make_shared<ToastDialog>(parent, "Toast");
+
+        toast->SetTimeout(2000);
+
+        dialog = toast;
+      } else if (event->GetSource() == buttons[6].get()) {
+        dialog = std::make_shared<YesNoDialog>(parent, "Yes/No", "Si or no ?");
+      }
+
+      if (dialog != nullptr) {
+        dialog->SetLocation(100, 100);
+        dialog->Init();
+        dialog->Exec();
+      }
+    }
 
 };
 
@@ -113,9 +110,10 @@ int main(int argc, char **argv)
 {
 	Application::Init(argc, argv);
 
-	Dialogs app;
+	auto app = std::make_shared<App>();
 
-  app.Exec();
+  app->Init();
+  app->Exec();
 
   Application::Loop();
 

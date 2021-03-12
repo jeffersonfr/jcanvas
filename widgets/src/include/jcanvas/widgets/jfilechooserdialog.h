@@ -66,11 +66,11 @@ class FileChooserDialog : public Dialog, public SelectListener {
     /** \brief */
     std::vector<std::string> _extensions;
     /** \brief */
-    Text *_label;
+    std::shared_ptr<Text> _label;
     /** \brief */
-    ListBox *_list;
+    std::shared_ptr<ListBox> _list;
     /** \brief */
-    TextField *_file;
+    std::shared_ptr<TextField> _file;
     /** \brief */
     Image *_image_file;
     /** \brief */
@@ -108,13 +108,19 @@ class FileChooserDialog : public Dialog, public SelectListener {
      * \brief
      *
      */
-    FileChooserDialog(Container *parent, std::string title, std::string directory, jfilechooser_type_t type = jfilechooser_type_t::OpenFile, jfilechooser_filter_t filter = jfilechooser_filter_t::None);
+    FileChooserDialog(std::shared_ptr<Container> parent, std::string title, std::string directory, jfilechooser_type_t type = jfilechooser_type_t::OpenFile, jfilechooser_filter_t filter = jfilechooser_filter_t::None);
 
     /**
      * \brief
      *
      */
     virtual ~FileChooserDialog();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void Init();
 
     /**
      * \brief

@@ -60,11 +60,11 @@ Container::~Container()
   RemoveAll();
 }
 
-bool Container::MoveScrollTowards(Component *next, jkeyevent_symbol_t symbol)
+bool Container::MoveScrollTowards(std::shared_ptr<Component> next, jkeyevent_symbol_t symbol)
 {
   if (IsScrollable()) {
-    Component 
-      *current = GetFocusOwner();
+    std::shared_ptr<Component>
+      current = GetFocusOwner();
     jpoint_t 
       slocation = GetScrollLocation();
     jpoint_t<int> 
@@ -115,8 +115,8 @@ bool Container::MoveScrollTowards(Component *next, jkeyevent_symbol_t symbol)
     }
     
     //if the Form doesn't contain a focusable Component simply move the viewport by pixels
-    if (next == nullptr || next == this){
-      ScrollToVisibleArea({x, y, w, h}, this);
+    if (next == nullptr || next == GetSharedPointer<Container>()){
+      ScrollToVisibleArea({x, y, w, h}, GetSharedPointer());
 
       return false;
     }
@@ -143,7 +143,7 @@ bool Container::MoveScrollTowards(Component *next, jkeyevent_symbol_t symbol)
         jrect_t<int>
           region3 {cl.x, cl.y, cs.x, cs.y};
 
-        ScrollToVisibleArea({x, y, w, h}, this);
+        ScrollToVisibleArea({x, y, w, h}, GetSharedPointer());
 
         // if after moving the scroll the current focus is out of the view port and the next focus is in the view port move the focus
         if (nextIntersects == false || region3.Intersects(jrect_t<int>{al.x + x, al.y + y, w, h}) != 0) {
@@ -158,7 +158,7 @@ bool Container::MoveScrollTowards(Component *next, jkeyevent_symbol_t symbol)
   return true;
 }
 
-void Container::InternalAddDialog(Dialog *dialog)
+void Container::InternalAddDialog(std::shared_ptr<Dialog> dialog)
 {
   _dialogs_mutex.lock();
 
@@ -175,7 +175,7 @@ void Container::InternalAddDialog(Dialog *dialog)
   Repaint();
 }
 
-void Container::InternalRemoveDialog(Dialog *dialog)
+void Container::InternalRemoveDialog(std::shared_ptr<Dialog> dialog)
 {
   _dialogs_mutex.lock();
 
@@ -199,9 +199,9 @@ jpoint_t<int> Container::GetScrollDimension()
   jpoint_t<int>
     size = GetSize();
 
-  for (std::vector<Component *>::iterator i=_components.begin(); i!=_components.end(); i++) {
-    Component 
-      *cmp = (*i);
+  for (std::vector<std::shared_ptr<Component>>::iterator i=_components.begin(); i!=_components.end(); i++) {
+    std::shared_ptr<Component>
+      cmp = (*i);
     jpoint_t 
       cl = cmp->GetLocation();
     jpoint_t<int> 
@@ -259,7 +259,7 @@ jpoint_t<int> Container::GetScrollDimension()
   return scroll_dimension;
 }
 
-Component * Container::GetTargetComponent(Container *target, int x, int y, int *dx, int *dy)
+std::shared_ptr<Component> Container::GetTargetComponent(std::shared_ptr<Container> target, int x, int y, int *dx, int *dy)
 {
   jpoint_t slocation = GetScrollLocation();
   int scrollx = (IsScrollableX() == true)?slocation.x:0,
@@ -273,8 +273,8 @@ Component * Container::GetTargetComponent(Container *target, int x, int y, int *
     *dy = y;
   }
 
-  for (std::vector<Component *>::const_reverse_iterator i=target->GetComponents().rbegin(); i!=target->GetComponents().rend(); i++) {
-    Component *c = (*i);
+  for (std::vector<std::shared_ptr<Component>>::const_reverse_iterator i=target->GetComponents().rbegin(); i!=target->GetComponents().rend(); i++) {
+    std::shared_ptr<Component> c = (*i);
   
     if (c->IsVisible() == true) {
       if (c->GetBounds().Intersects(jpoint_t<int>{x + scrollx, y + scrolly}) == true) {
@@ -311,10 +311,10 @@ void Container::DoLayout()
   if (_layout != nullptr) {
     SetIgnoreRepaint(true);
 
-    _layout->DoLayout(this);
+    _layout->DoLayout(GetSharedPointer<Container>());
 
-    for (std::vector<Component *>::iterator i=_components.begin(); i!=_components.end(); i++) {
-      Container *container = dynamic_cast<Container *>(*i);
+    for (std::vector<std::shared_ptr<Component>>::iterator i=_components.begin(); i!=_components.end(); i++) {
+      std::shared_ptr<Container> container = std::dynamic_pointer_cast<Container>(*i);
       
       if (container != nullptr) {
         container->DoLayout();
@@ -327,8 +327,8 @@ void Container::DoLayout()
 
 void Container::Pack(bool fit)
 {
-  Component 
-    *c = nullptr;
+  std::shared_ptr<Component> 
+    c;
   jinsets_t<int> 
     insets = GetInsets();
   int 
@@ -342,7 +342,7 @@ void Container::Pack(bool fit)
   DoLayout();
 
   if (fit == true) {
-    for (std::vector<Component *>::iterator i=_components.begin(); i!=_components.end(); i++) {
+    for (std::vector<std::shared_ptr<Component>>::iterator i=_components.begin(); i!=_components.end(); i++) {
       c = (*i);
 
       jpoint_t cl = c->GetLocation();
@@ -359,7 +359,7 @@ void Container::Pack(bool fit)
     min_x = insets.left - min_x;
     min_y = insets.top - min_y;
 
-    for (std::vector<Component *>::iterator i=_components.begin(); i!=_components.end(); i++) {
+    for (std::vector<std::shared_ptr<Component>>::iterator i=_components.begin(); i!=_components.end(); i++) {
       c = (*i);
 
       jpoint_t cl = c->GetLocation();
@@ -368,7 +368,7 @@ void Container::Pack(bool fit)
     }
   }
 
-  for (std::vector<Component *>::iterator i=_components.begin(); i!=_components.end(); i++) {
+  for (std::vector<std::shared_ptr<Component>>::iterator i=_components.begin(); i!=_components.end(); i++) {
     c = (*i);
 
     jpoint_t cl = c->GetLocation();
@@ -408,7 +408,7 @@ void Container::Paint(Graphics *g)
 {
   // JDEBUG(JINFO, "paint\n");
 
-  // std::lock_guard<std::mutex> guard(_container_mutex);
+  // std::lock_guard<std::recursive_mutex> guard(_container_mutex);
 
   jpoint_t 
     slocation = GetScrollLocation();
@@ -421,8 +421,8 @@ void Container::Paint(Graphics *g)
     PaintBackground(g);
   }
 
-  for (std::vector<Component *>::iterator i=_components.begin(); i!=_components.end(); i++) {
-    Component *c = (*i);
+  for (std::vector<std::shared_ptr<Component>>::iterator i=_components.begin(); i!=_components.end(); i++) {
+    std::shared_ptr<Component> c = (*i);
 
     if (c->IsVisible() == true) {
       // TODO:: considerar o scroll de um component
@@ -462,8 +462,8 @@ void Container::Paint(Graphics *g)
   // INFO:: paint dialogs
   _dialogs_mutex.lock();
 
-  for (std::vector<Dialog *>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
-    Dialog *c = (*i);
+  for (std::vector<std::shared_ptr<Dialog>>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
+    std::shared_ptr<Dialog>c = (*i);
 
     if (c->IsVisible() == true) {
       jpoint_t 
@@ -496,22 +496,22 @@ void Container::Paint(Graphics *g)
   PaintGlassPane(g);
 }
 
-void Container::Repaint(Component *cmp)
+void Container::Repaint(std::shared_ptr<Component> cmp)
 {
   if (IsIgnoreRepaint() == true || IsVisible() == false) {
     return;
   }
 
-  Container *parent = GetParent();
+  std::shared_ptr<Container> parent = GetParent();
 
   if (parent != nullptr) {
-    parent->Repaint((cmp == nullptr)?this:cmp);
+    parent->Repaint((cmp == nullptr)?GetSharedPointer():cmp);
   }
 
   Component::DispatchComponentEvent(new ComponentEvent(this, jcomponentevent_type_t::Paint));
 }
 
-void Container::Add(Component *c, int index)
+void Container::Add(std::shared_ptr<Component> c, int index)
 {
   if (index < 0 || index > GetComponentCount()) {
     throw std::out_of_range("Index out of range");
@@ -521,11 +521,11 @@ void Container::Add(Component *c, int index)
     throw std::invalid_argument("Component must have a valid pointer");
   }
 
-  if (dynamic_cast<Container *>(c) == this) {
+  if (std::dynamic_pointer_cast<Container>(c) == GetSharedPointer()) {
     throw std::runtime_error("Adding own container");
   }
 
-  if (dynamic_cast<Dialog *>(c) != nullptr) {
+  if (std::dynamic_pointer_cast<Dialog>(c) != nullptr) {
     throw std::invalid_argument("Unable to add dialogs to container");
   }
 
@@ -534,21 +534,21 @@ void Container::Add(Component *c, int index)
   if (std::find(_components.begin(), _components.end(), c) == _components.end()) {
     _components.insert(_components.begin()+index, c);
 
-    Container *container = dynamic_cast<Container *>(c);
+    std::shared_ptr<Container> container = std::dynamic_pointer_cast<Container>(c);
     
     if (container != nullptr) {
-      Component *focus = container->GetFocusOwner();
+      std::shared_ptr<Component> focus = container->GetFocusOwner();
 
-      c->SetParent(this);
+      c->SetParent(GetSharedPointer<Container>());
 
-      if ((void *)focus != nullptr) {
+      if (focus != nullptr) {
         RequestComponentFocus(focus);
       }
     } else {
-      c->SetParent(this);
+      c->SetParent(GetSharedPointer<Container>());
     }
 
-    DispatchContainerEvent(new ContainerEvent(c, jcontainerevent_type_t::Add));
+    DispatchContainerEvent(new ContainerEvent(c.get(), jcontainerevent_type_t::Add));
   }
 
   _container_mutex.unlock();
@@ -558,12 +558,12 @@ void Container::Add(Component *c, int index)
   DoLayout();
 }
 
-void Container::Add(Component *c)
+void Container::Add(std::shared_ptr<Component> c)
 {
   Add(c, GetComponentCount());
 }
 
-void Container::Add(Component *c, GridBagConstraints *constraints)
+void Container::Add(std::shared_ptr<Component> c, GridBagConstraints *constraints)
 {
   Add(c, GetComponentCount());
 
@@ -577,10 +577,10 @@ void Container::Add(Component *c, GridBagConstraints *constraints)
  
   DoLayout();
 
-  DispatchContainerEvent(new ContainerEvent(c, jcontainerevent_type_t::Add));
+  DispatchContainerEvent(new ContainerEvent(c.get(), jcontainerevent_type_t::Add));
 }
 
-void Container::Add(Component *c, std::string id)
+void Container::Add(std::shared_ptr<Component> c, std::string id)
 {
   Add(c, GetComponentCount());
 
@@ -594,10 +594,10 @@ void Container::Add(Component *c, std::string id)
 
   DoLayout();
 
-  DispatchContainerEvent(new ContainerEvent(c, jcontainerevent_type_t::Add));
+  DispatchContainerEvent(new ContainerEvent(c.get(), jcontainerevent_type_t::Add));
 }
 
-void Container::Add(Component *c, jborderlayout_align_t align)
+void Container::Add(std::shared_ptr<Component> c, jborderlayout_align_t align)
 {
   Add(c, GetComponentCount());
 
@@ -611,25 +611,25 @@ void Container::Add(Component *c, jborderlayout_align_t align)
   
   DoLayout();
 
-  DispatchContainerEvent(new ContainerEvent(c, jcontainerevent_type_t::Add));
+  DispatchContainerEvent(new ContainerEvent(c.get(), jcontainerevent_type_t::Add));
 }
 
-void Container::Remove(Component *c)
+void Container::Remove(std::shared_ptr<Component> c)
 {
   if (c == nullptr) {
     return;
   }
 
   // INFO:: se o componente em foco pertencer ao container remover o foco
-  Container *container = dynamic_cast<Container *>(c);
+  std::shared_ptr<Container> container = std::dynamic_pointer_cast<Container>(c);
 
   if (container != nullptr) {
-    Component *focus = GetFocusOwner();
+    std::shared_ptr<Component> focus = GetFocusOwner();
 
-    if ((void *)focus != nullptr) {
-      Container *parent = focus->GetParent();
+    if (focus != nullptr) {
+      std::shared_ptr<Container> parent = focus->GetParent();
 
-      while ((void *)parent != nullptr) {
+      while (parent != nullptr) {
         if (parent == container) {
           focus->ReleaseFocus();
 
@@ -657,7 +657,7 @@ void Container::Remove(Component *c)
 
   _container_mutex.lock();
 
-  for (std::vector<Component *>::iterator i=_components.begin(); i!=_components.end(); i++) {
+  for (std::vector<std::shared_ptr<Component>>::iterator i=_components.begin(); i!=_components.end(); i++) {
     if (c == (*i)) {
       c->SetParent(nullptr);
 
@@ -667,7 +667,7 @@ void Container::Remove(Component *c)
         break;
       }
 
-      DispatchContainerEvent(new ContainerEvent(c, jcontainerevent_type_t::Remove));
+      DispatchContainerEvent(new ContainerEvent(c.get(), jcontainerevent_type_t::Remove));
     }
   }
   
@@ -680,13 +680,13 @@ void Container::Remove(Component *c)
 
 void Container::RemoveAll()
 {
-  Component *focus = GetFocusOwner();
+  std::shared_ptr<Component> focus = GetFocusOwner();
 
-  if ((void *)focus != nullptr) {
-    Container *parent = focus->GetParent();
+  if (focus != nullptr) {
+    std::shared_ptr<Container> parent = focus->GetParent();
 
-    while ((void *)parent != nullptr) {
-      if (parent == this) {
+    while (parent != nullptr) {
+      if (parent == GetSharedPointer<Container>()) {
         focus->ReleaseFocus();
 
         break;
@@ -702,12 +702,12 @@ void Container::RemoveAll()
 
    _container_mutex.lock();
 
-  for (std::vector<Component *>::iterator i=_components.begin(); i!=_components.end(); i++) {
-    Component *c = (*i);
+  for (std::vector<std::shared_ptr<Component>>::iterator i=_components.begin(); i!=_components.end(); i++) {
+    std::shared_ptr<Component> c = (*i);
 
     c->SetParent(nullptr);
 
-    DispatchContainerEvent(new ContainerEvent(c, jcontainerevent_type_t::Remove));
+    DispatchContainerEvent(new ContainerEvent(c.get(), jcontainerevent_type_t::Remove));
   }
 
   _components.clear();
@@ -719,13 +719,13 @@ void Container::RemoveAll()
   DoLayout();
 }
 
-bool Container::Contains(Component *cmp)
+bool Container::Contains(std::shared_ptr<Component> cmp)
 {
-  std::vector<Component *> components;
+  std::vector<std::shared_ptr<Component>> components;
 
-  GetInternalComponents(this, &components);
+  GetInternalComponents(GetSharedPointer<Container>(), &components);
 
-  for (std::vector<Component *>::iterator i=components.begin(); i!=components.end(); i++) {
+  for (std::vector<std::shared_ptr<Component>>::iterator i=components.begin(); i!=components.end(); i++) {
     if (cmp == (*i)) {
       return true;
     }
@@ -736,24 +736,24 @@ bool Container::Contains(Component *cmp)
 
 int Container::GetComponentCount()
 {
-   std::lock_guard<std::mutex> guard(_container_mutex);
+   std::lock_guard<std::recursive_mutex> guard(_container_mutex);
 
   return _components.size();
 }
 
-const std::vector<Component *> & Container::GetComponents()
+const std::vector<std::shared_ptr<Component>> & Container::GetComponents()
 {
   return _components;
 }
 
-Component * Container::GetComponentAt(int x, int y)
+std::shared_ptr<Component> Container::GetComponentAt(int x, int y)
 {
-  return GetTargetComponent(this, x, y, nullptr, nullptr);
+  return GetTargetComponent(GetSharedPointer<Container>(), x, y, nullptr, nullptr);
 }
 
-Component * Container::GetFocusOwner()
+std::shared_ptr<Component> Container::GetFocusOwner()
 {
-  Container *parent = GetParent();
+  std::shared_ptr<Container> parent = GetParent();
 
   if (parent != nullptr) {
     return parent->GetFocusOwner();
@@ -762,26 +762,26 @@ Component * Container::GetFocusOwner()
   return nullptr;
 }
 
-void Container::RequestComponentFocus(Component *c)
+void Container::RequestComponentFocus(std::shared_ptr<Component> c)
 {
   if (c == nullptr or c->IsFocusable() == false) {
     return;
   }
 
-  Container *parent = GetParent();
+  std::shared_ptr<Container> parent = GetParent();
 
   if (parent != nullptr) {
     parent->RequestComponentFocus(c);
   }
 }
 
-void Container::ReleaseComponentFocus(Component *c)
+void Container::ReleaseComponentFocus(std::shared_ptr<Component> c)
 {
   if (c == nullptr or c->IsFocusable() == false) {
     return;
   }
 
-  Container *parent = GetParent();
+  std::shared_ptr<Container> parent = GetParent();
 
   if (parent != nullptr) {
     parent->ReleaseComponentFocus(c);
@@ -795,15 +795,15 @@ bool Container::KeyPressed(KeyEvent *event)
   }
 
   // INFO:: process dialogs first
-  for (std::vector<Dialog *>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
+  for (std::vector<std::shared_ptr<Dialog>>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
     if ((*i)->KeyPressed(event) == true) {
       return true;
     }
   }
 
-  Component *current = GetFocusOwner();
+  std::shared_ptr<Component> current = GetFocusOwner();
 
-  if (current != nullptr && current != this) {
+  if (current != nullptr && current != GetSharedPointer()) {
     if (current->KeyPressed(event) == true) {
       return true;
     }
@@ -823,7 +823,7 @@ bool Container::KeyReleased(KeyEvent *event)
   }
 
   // INFO:: process dialogs first
-  for (std::vector<Dialog *>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
+  for (std::vector<std::shared_ptr<Dialog>>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
     if ((*i)->KeyReleased(event) == true) {
       return true;
     }
@@ -839,7 +839,7 @@ bool Container::KeyTyped(KeyEvent *event)
   }
 
   // INFO:: process dialogs first
-  for (std::vector<Dialog *>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
+  for (std::vector<std::shared_ptr<Dialog>>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
     if ((*i)->KeyTyped(event) == true) {
       return true;
     }
@@ -858,9 +858,9 @@ bool Container::MousePressed(MouseEvent *event)
     elocation = event->GetLocation();
 
   // INFO:: process dialogs first
-  for (std::vector<Dialog *>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
-    Dialog
-      *dialog = (*i);
+  for (std::vector<std::shared_ptr<Dialog>>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
+    std::shared_ptr<Dialog>
+      dialog = (*i);
     jpoint_t
       dlocation = dialog->GetLocation();
     MouseEvent 
@@ -875,9 +875,9 @@ bool Container::MousePressed(MouseEvent *event)
     dx,
     dy;
 
-  Component *c = GetTargetComponent(this, elocation.x, elocation.y, &dx, &dy);
+  std::shared_ptr<Component> c = GetTargetComponent(GetSharedPointer<Container>(), elocation.x, elocation.y, &dx, &dy);
 
-  if (c != nullptr && c != this) {
+  if (c != nullptr && c != GetSharedPointer()) {
     jpoint_t 
       slocation = GetScrollLocation();
     MouseEvent 
@@ -896,7 +896,7 @@ bool Container::MouseReleased(MouseEvent *event)
   }
 
   // INFO:: process dialogs first
-  for (std::vector<Dialog *>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
+  for (std::vector<std::shared_ptr<Dialog>>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
     if ((*i)->MouseReleased(event) == true) {
       return true;
     }
@@ -906,8 +906,8 @@ bool Container::MouseReleased(MouseEvent *event)
     elocation = event->GetLocation();
   jpoint_t 
     slocation = GetScrollLocation();
-  Component 
-    *focus = GetFocusOwner();
+  std::shared_ptr<Component>
+    focus = GetFocusOwner();
 
   if (focus != nullptr) {
     MouseEvent
@@ -920,9 +920,9 @@ bool Container::MouseReleased(MouseEvent *event)
     dx,
     dy;
 
-  Component *c = GetTargetComponent(this, elocation.x, elocation.y, &dx, &dy);
+  std::shared_ptr<Component> c = GetTargetComponent(GetSharedPointer<Container>(), elocation.x, elocation.y, &dx, &dy);
 
-  if (c != nullptr && c != this) {
+  if (c != nullptr && c != GetSharedPointer()) {
     MouseEvent 
       evt(event->GetSource(), event->GetType(), event->GetButton(), event->GetButtons(), {dx + slocation.x, dy + slocation.y}, event->GetClicks());
 
@@ -939,7 +939,7 @@ bool Container::MouseMoved(MouseEvent *event)
   }
 
   // INFO:: process dialogs first
-  for (std::vector<Dialog *>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
+  for (std::vector<std::shared_ptr<Dialog>>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
     if ((*i)->MouseMoved(event) == true) {
       return true;
     }
@@ -949,8 +949,8 @@ bool Container::MouseMoved(MouseEvent *event)
     elocation = event->GetLocation();
   jpoint_t 
     slocation = GetScrollLocation();
-  Component 
-    *focus = GetFocusOwner();
+  std::shared_ptr<Component>
+    focus = GetFocusOwner();
 
   if (focus != nullptr) {
     MouseEvent 
@@ -963,9 +963,9 @@ bool Container::MouseMoved(MouseEvent *event)
     dx,
     dy;
 
-  Component *c = GetTargetComponent(this, elocation.x, elocation.y, &dx, &dy);
+  std::shared_ptr<Component> c = GetTargetComponent(GetSharedPointer<Container>(), elocation.x, elocation.y, &dx, &dy);
 
-  if (c != nullptr && c != this) {
+  if (c != nullptr && c != GetSharedPointer()) {
     MouseEvent 
       evt(event->GetSource(), event->GetType(), event->GetButton(), event->GetButtons(), {dx + slocation.x, dy + slocation.y}, event->GetClicks());
 
@@ -982,7 +982,7 @@ bool Container::MouseWheel(MouseEvent *event)
   }
 
   // INFO:: process dialogs first
-  for (std::vector<Dialog *>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
+  for (std::vector<std::shared_ptr<Dialog>>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
     if ((*i)->MouseWheel(event) == true) {
       return true;
     }
@@ -990,8 +990,8 @@ bool Container::MouseWheel(MouseEvent *event)
 
   jpoint_t
     elocation = event->GetLocation();
-  Component 
-    *focus = GetFocusOwner();
+  std::shared_ptr<Component>
+    focus = GetFocusOwner();
 
   if (focus != nullptr) {
     MouseEvent
@@ -1004,9 +1004,9 @@ bool Container::MouseWheel(MouseEvent *event)
     dx,
     dy;
 
-  Component *c = GetTargetComponent(this, elocation.x, elocation.y, &dx, &dy);
+  std::shared_ptr<Component> c = GetTargetComponent(GetSharedPointer<Container>(), elocation.x, elocation.y, &dx, &dy);
 
-  if (c != nullptr && c != this) {
+  if (c != nullptr && c != GetSharedPointer()) {
     jpoint_t 
       slocation = GetScrollLocation();
     MouseEvent 
@@ -1018,13 +1018,13 @@ bool Container::MouseWheel(MouseEvent *event)
   return false;
 }
 
-void Container::RaiseComponentToTop(Component *c)
+void Container::RaiseComponentToTop(std::shared_ptr<Component> c)
 {
   bool b = false;
 
-   std::lock_guard<std::mutex> guard(_container_mutex);
+   std::lock_guard<std::recursive_mutex> guard(_container_mutex);
 
-  for (std::vector<Component *>::iterator i=_components.begin(); i!=_components.end(); i++) {
+  for (std::vector<std::shared_ptr<Component>>::iterator i=_components.begin(); i!=_components.end(); i++) {
     if (c == (*i)) {
       i = _components.erase(i) - 1;
 
@@ -1041,13 +1041,13 @@ void Container::RaiseComponentToTop(Component *c)
   }
 }
 
-void Container::LowerComponentToBottom(Component *c)
+void Container::LowerComponentToBottom(std::shared_ptr<Component> c)
 {
   bool b = false;
 
-   std::lock_guard<std::mutex> guard(_container_mutex);
+   std::lock_guard<std::recursive_mutex> guard(_container_mutex);
 
-  for (std::vector<Component *>::iterator i=_components.begin(); i!=_components.end(); i++) {
+  for (std::vector<std::shared_ptr<Component>>::iterator i=_components.begin(); i!=_components.end(); i++) {
     if (c == (*i)) {
       i = _components.erase(i) - 1;
 
@@ -1064,11 +1064,11 @@ void Container::LowerComponentToBottom(Component *c)
   }
 }
 
-void Container::PutComponentATop(Component *c, Component *c1)
+void Container::PutComponentATop(std::shared_ptr<Component> c, std::shared_ptr<Component> c1)
 {
-   std::lock_guard<std::mutex> guard(_container_mutex);
+   std::lock_guard<std::recursive_mutex> guard(_container_mutex);
 
-  std::vector<Component *>::iterator 
+  std::vector<std::shared_ptr<Component>>::iterator 
     i = std::find(_components.begin(), _components.end(), c1);
 
   if (i == _components.end()) {
@@ -1078,11 +1078,11 @@ void Container::PutComponentATop(Component *c, Component *c1)
   _components.insert(i + 1, c);
 }
 
-void Container::PutComponentBelow(Component *c, Component *c1)
+void Container::PutComponentBelow(std::shared_ptr<Component> c, std::shared_ptr<Component> c1)
 {
-   std::lock_guard<std::mutex> guard(_container_mutex);
+   std::lock_guard<std::recursive_mutex> guard(_container_mutex);
 
-  std::vector<Component *>::iterator 
+  std::vector<std::shared_ptr<Component>>::iterator 
     i = std::find(_components.begin(), _components.end(), c1);
 
   if (i == _components.end()) {

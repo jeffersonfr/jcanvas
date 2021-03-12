@@ -51,23 +51,23 @@ class BorderLayout : public Layout {
 
   private:
     /** \brief */
-    Component *north;
+    std::shared_ptr<Component> north;
     /** \brief */
-    Component *west;
+    std::shared_ptr<Component> west;
     /** \brief */
-    Component *east;
+    std::shared_ptr<Component> east;
     /** \brief */
-    Component *south;
+    std::shared_ptr<Component> south;
     /** \brief */
-    Component *center;
+    std::shared_ptr<Component> center;
     /** \brief */
-    Component *firstLine;
+    std::shared_ptr<Component> firstLine;
     /** \brief */
-    Component *lastLine;
+    std::shared_ptr<Component> lastLine;
     /** \brief */
-    Component *firstItem;
+    std::shared_ptr<Component> firstItem;
     /** \brief */
-    Component *lastItem;
+    std::shared_ptr<Component> lastItem;
     /** \brief */
     int _hgap;
     /** \brief */
@@ -114,13 +114,13 @@ class BorderLayout : public Layout {
      * \brief
      *
      */
-    virtual void AddLayoutComponent(Component *c, jborderlayout_align_t align);
+    virtual void AddLayoutComponent(std::shared_ptr<Component> c, jborderlayout_align_t align);
     
     /**
      * \brief
      *
      */
-    virtual void RemoveLayoutComponent(Component *c);
+    virtual void RemoveLayoutComponent(std::shared_ptr<Component> c);
     
     /**
      * \brief
@@ -132,49 +132,49 @@ class BorderLayout : public Layout {
      * \brief
      *
      */
-    virtual jborderlayout_align_t GetConstraints(Component *c);
+    virtual jborderlayout_align_t GetConstraints(std::shared_ptr<Component> c);
 
     /**
      * \brief
      *
      */
-    virtual Component * GetLayoutComponent(jborderlayout_align_t align);
+    virtual std::shared_ptr<Component> GetLayoutComponent(jborderlayout_align_t align);
     
     /**
      * \brief
      *
      */
-    virtual Component * GetLayoutComponent(Container *target, jborderlayout_align_t align);
+    virtual std::shared_ptr<Component> GetLayoutComponent(std::shared_ptr<Container> target, jborderlayout_align_t align);
     
     /**
      * \brief
      *
      */
-    virtual Component * GetChild(jborderlayout_align_t key, bool ltr);
+    virtual std::shared_ptr<Component> GetChild(jborderlayout_align_t key, bool ltr);
 
     /**
      * \brief
      *
      */
-    virtual jpoint_t<int> GetMinimumLayoutSize(Container *parent);
+    virtual jpoint_t<int> GetMinimumLayoutSize(std::shared_ptr<Container> parent);
     
     /**
      * \brief
      *
      */
-    virtual jpoint_t<int> GetMaximumLayoutSize(Container *parent);
+    virtual jpoint_t<int> GetMaximumLayoutSize(std::shared_ptr<Container> parent);
     
     /**
      * \brief
      *
      */
-    virtual jpoint_t<int> GetPreferredLayoutSize(Container *parent);
+    virtual jpoint_t<int> GetPreferredLayoutSize(std::shared_ptr<Container> parent);
 
     /**
      * \brief
      *
      */
-    virtual void DoLayout(Container *target);
+    virtual void DoLayout(std::shared_ptr<Container> target);
 
 };
 

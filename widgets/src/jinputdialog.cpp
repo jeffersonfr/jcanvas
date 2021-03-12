@@ -21,63 +21,75 @@
 
 namespace jcanvas {
 
-InputDialog::InputDialog(Container *parent, std::string title, std::string msg):
+InputDialog::InputDialog(std::shared_ptr<Container> parent, std::string title, std::string msg):
   Dialog(title, parent, {0, 0, 560, 280})
 {
   jtheme_t &theme = GetTheme();
 
   theme.font.primary = &Font::Big;
 
-  _label.SetText(msg);
-  _label.SetWrap(true);
-  _label.SetHorizontalAlign(jhorizontal_align_t::Left);
+  _label = std::make_shared<Text>(msg);
+
+  _label->SetWrap(true);
+  _label->SetHorizontalAlign(jhorizontal_align_t::Left);
   
-  _ok.RegisterActionListener(this);
-  _cancel.RegisterActionListener(this);
+  _label = std::make_shared<Text>("Input");
+  _ok = std::make_shared<Button>("Ok");
+  _cancel = std::make_shared<Button>("Cancel");
+
+  _ok->RegisterActionListener(this);
+  _cancel->RegisterActionListener(this);
   
-  std::shared_ptr<FlowLayout> layout = _buttons_container.SetLayout<FlowLayout>();
+  _buttons_container = std::make_shared<Container>();
+
+  std::shared_ptr<FlowLayout> layout = _buttons_container->SetLayout<FlowLayout>();
 
   layout->SetAlign(jflowlayout_align_t::Right);
 
-  _buttons_container.Add(&_ok);
-  _buttons_container.Add(&_cancel);
+  _buttons_container->Add(_ok);
+  _buttons_container->Add(_cancel);
 
-  _buttons_container.SetPreferredSize(layout->GetPreferredLayoutSize(&_buttons_container));
+  _buttons_container->SetPreferredSize(layout->GetPreferredLayoutSize(_buttons_container));
 
-  Add(&_label, jborderlayout_align_t::North);
-  Add(&_field, jborderlayout_align_t::Center);
-  Add(&_buttons_container, jborderlayout_align_t::South);
-
-  _cancel.RequestFocus();
+  _field = std::make_shared<TextField>();
 }
 
 InputDialog::~InputDialog() 
 {
 }
 
+void InputDialog::Init()
+{
+  Add(_label, jborderlayout_align_t::North);
+  Add(_field, jborderlayout_align_t::Center);
+  Add(_buttons_container, jborderlayout_align_t::South);
+
+  _cancel->RequestFocus();
+}
+
 std::string InputDialog::GetText()
 {
-  return _field.GetText();
+  return _field->GetText();
 }
 
 void InputDialog::SetHorizontalAlign(jhorizontal_align_t align)
 {
-  _label.SetHorizontalAlign(align);
+  _label->SetHorizontalAlign(align);
 }
 
 jhorizontal_align_t InputDialog::GetHorizontalAlign()
 {
-  return _label.GetHorizontalAlign();
+  return _label->GetHorizontalAlign();
 }
 
 void InputDialog::SetVerticalAlign(jvertical_align_t align)
 {
-  _label.SetVerticalAlign(align);
+  _label->SetVerticalAlign(align);
 }
 
 jvertical_align_t InputDialog::GetVerticalAlign()
 {
-  return _label.GetVerticalAlign();
+  return _label->GetVerticalAlign();
 }
 
 void InputDialog::ActionPerformed(ActionEvent *event)

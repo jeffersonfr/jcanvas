@@ -52,29 +52,31 @@ class RectangleContainer : public Container {
 		}
 };
 
-class Main : public Frame {
-
-	private:
-		RectangleContainer 
-      _container1 = {100, 100, 400, 400},
-			_container2 = {100, 100, 400, 400};
-		Button 
-      _button1 = {"Testing Clipping"};
+class App : public Frame {
 
 	public:
-		Main(std::string title, int w, int h):
+		App(std::string title, int w, int h):
 			Frame(/*title, */ {w, h})
 		{
-      _button1.SetBounds({200, 100, 300, 100});
+    }
 
-			_container2.Add(&_button1);
-			_container1.Add(&_container2);
-
-			Add(&_container1);
+		virtual ~App()
+		{
 		}
 
-		virtual ~Main()
-		{
+    void Init()
+    {
+      auto button1 = std::make_shared<Button>("Testing Clipping");
+
+      button1->SetBounds({200, 100, 300, 100});
+
+      auto container1 = std::make_shared<RectangleContainer>(100, 100, 400, 400);
+      auto container2 = std::make_shared<RectangleContainer>(100, 100, 400, 400);
+
+      container2->Add(button1);
+      container1->Add(container2);
+
+      Add(container1);
 		}
 
 };
@@ -83,9 +85,10 @@ int main(int argc, char **argv)
 {
 	Application::Init(argc, argv);
 
-	Main app("Clip", 720, 480);
+	auto app = std::make_shared<App>("Clip", 720, 480);
 
-	app.SetTitle("Clip");
+  app->Init();
+	app->SetTitle("Clip");
 
 	Application::Loop();
 

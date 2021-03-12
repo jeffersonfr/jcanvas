@@ -31,7 +31,7 @@ class ToastDialog : public Dialog {
 
   private:
     /** \brief */
-    Text _label;
+    std::shared_ptr<Text> _label;
     /** \brief */
     int _timeout;
 
@@ -40,13 +40,19 @@ class ToastDialog : public Dialog {
      * \brief
      *
      */
-    ToastDialog(Container *parent, std::string msg, bool wrap = false);
+    ToastDialog(std::shared_ptr<Container> parent, std::string msg, bool wrap = false);
     
     /**
      * \brief
      *
      */
     virtual ~ToastDialog();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void Init();
 
     /**
      * \brief

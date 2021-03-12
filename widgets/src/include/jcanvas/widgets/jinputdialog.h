@@ -44,28 +44,34 @@ class InputDialog : public Dialog, public ActionListener {
 
   private:
     /** \brief */
-    Text _label = {"Input"};
+    std::shared_ptr<Text> _label;
     /** \brief */
-    TextField _field;
+    std::shared_ptr<TextField> _field;
     /** \brief */
-    Button _ok = {"Ok"};
+    std::shared_ptr<Button> _ok;
     /** \brief */
-    Button _cancel = {"Cancel"};
+    std::shared_ptr<Button> _cancel;
     /** \brief */
-    Container _buttons_container;
+    std::shared_ptr<Container> _buttons_container;
 
   public:
     /**
      * \brief
      *
      */
-    InputDialog(Container *parent, std::string title, std::string warn);
+    InputDialog(std::shared_ptr<Container> parent, std::string title, std::string warn);
     
     /**
      * \brief
      *
      */
     virtual ~InputDialog();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void Init();
 
     /**
      * \brief

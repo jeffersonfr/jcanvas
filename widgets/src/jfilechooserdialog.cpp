@@ -27,7 +27,7 @@
 
 namespace jcanvas {
 
-FileChooserDialog::FileChooserDialog(Container *parent, std::string title, std::string directory, jfilechooser_type_t type, jfilechooser_filter_t filter):
+FileChooserDialog::FileChooserDialog(std::shared_ptr<Container> parent, std::string title, std::string directory, jfilechooser_type_t type, jfilechooser_filter_t filter):
   Dialog(title, parent, {0, 0, 720, 480})
 {
   _file = NULL;
@@ -39,38 +39,12 @@ FileChooserDialog::FileChooserDialog(Container *parent, std::string title, std::
   _image_file = new BufferedImage(JCANVAS_RESOURCES_DIR "/images/file.png");
   _image_folder = new BufferedImage(JCANVAS_RESOURCES_DIR "/images/folder.png");
 
-  if (_type == jfilechooser_type_t::SaveFile) {
-    _list = new ListBox();
-    _file = new TextField();
-
-    Add(_file, jborderlayout_align_t::North);
-    Add(_list, jborderlayout_align_t::Center);
-  } else {
-    _list = new ListBox();
-  
-    Add(_list, jborderlayout_align_t::Center);
-  }
-
-  _list->RegisterSelectListener(this);
-  _list->RequestFocus();
-
-  ShowFiles(_directory);
 }
 
 FileChooserDialog::~FileChooserDialog()
 {
   _list->RemoveSelectListener(this);
 
-  if (_list != NULL) {
-    delete _list;
-    _list = nullptr;
-  }
-
-  if (_file != NULL) {
-    delete _file;
-    _file = nullptr;
-  }
-  
   if (_image_file != nullptr) {
     delete _image_file;
     _image_file = nullptr;
@@ -80,6 +54,26 @@ FileChooserDialog::~FileChooserDialog()
     delete _image_folder;
     _image_folder = nullptr;
   }
+}
+
+void FileChooserDialog::Init()
+{
+  if (_type == jfilechooser_type_t::SaveFile) {
+    _list = std::make_shared<ListBox>();
+    _file = std::make_shared<TextField>();
+
+    Add(_file, jborderlayout_align_t::North);
+    Add(_list, jborderlayout_align_t::Center);
+  } else {
+    _list = std::make_shared<ListBox>();
+  
+    Add(_list, jborderlayout_align_t::Center);
+  }
+
+  _list->RegisterSelectListener(this);
+  _list->RequestFocus();
+
+  ShowFiles(_directory);
 }
 
 std::string FileChooserDialog::GetPath()

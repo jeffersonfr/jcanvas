@@ -48,7 +48,7 @@ class Display : public Component {
 };
 
 Display::Display(int x, int y, int width, int height):
-   	Component({x, y, width, height})
+ 	Component({x, y, width, height})
 {
   SetPreferredSize({0, 64});
 
@@ -107,20 +107,22 @@ void Display::Clear()
   SetText("0");
 }
 
-class Calculator : public Frame, public ActionListener {
+class App : public Frame, public ActionListener {
 
 		private:
-			std::list<Button *> _buttons;
+			std::list<std::shared_ptr<Button>> _buttons;
+      std::shared_ptr<Container> _container;
+      std::shared_ptr<Display> _display;
 			std::string _number0;
 			std::string _number1;
 			std::string _operation;
-			Display *_display;
-      Container *_container;
 			int _state;
 
 		public:
-			Calculator();
-			virtual ~Calculator();
+			App();
+			virtual ~App();
+
+      void Init();
 
 			void Process(std::string type);
 
@@ -129,46 +131,55 @@ class Calculator : public Frame, public ActionListener {
 
 };
 
-Calculator::Calculator():
-	Frame(/*"Calculator", */ {500, 400})
+App::App():
+	Frame(/*"App", */ {500, 400})
+{
+}
+
+App::~App() 
+{
+  RemoveAll();
+}
+
+void App::Init()
 {
 	_number0 = "";
 	_number1 = "";
 	_operation = -1;
 	_state = 1;
 
-	_display = new Display(0, 0, 0, 0);
+	_display = std::make_shared<Display>(0, 0, 0, 0);
 
 	_display->Clear();
 
-	Button *b[] = { 
-		new Button("7"),
-		new Button("8"),
-		new Button("9"),
-		new Button("/"),
-		new Button("C"),
-		new Button("4"),
-		new Button("5"),
-		new Button("6"),
-		new Button("x"),
-		new Button("raiz"),
-		new Button("1"),
-		new Button("2"),
-		new Button("3"),
-		new Button("-"),
-		new Button("del"),
-		new Button("0"),
-		new Button("."),
-		new Button("%"),
-		new Button("+"),
-		new Button("=")
+  std::shared_ptr<Button> b[] = { 
+		std::make_shared<Button>("7"),
+		std::make_shared<Button>("8"),
+		std::make_shared<Button>("9"),
+		std::make_shared<Button>("/"),
+		std::make_shared<Button>("C"),
+		std::make_shared<Button>("4"),
+		std::make_shared<Button>("5"),
+		std::make_shared<Button>("6"),
+		std::make_shared<Button>("x"),
+		std::make_shared<Button>("raiz"),
+		std::make_shared<Button>("1"),
+		std::make_shared<Button>("2"),
+		std::make_shared<Button>("3"),
+		std::make_shared<Button>("-"),
+		std::make_shared<Button>("del"),
+		std::make_shared<Button>("0"),
+		std::make_shared<Button>("."),
+		std::make_shared<Button>("%"),
+		std::make_shared<Button>("+"),
+		std::make_shared<Button>("=")
 	};
 
 	SetLayout<BorderLayout>();
 
 	Add(_display, jborderlayout_align_t::North);
 
-	_container = new Container();
+	_container = std::make_shared<Container>();
 
 	_container->SetLayout<GridLayout>(4, 5, 2, 2);
 
@@ -185,32 +196,9 @@ Calculator::Calculator():
 	b[10]->RequestFocus();
 }
 
-Calculator::~Calculator() 
+void App::Process(std::string type)
 {
-  std::shared_ptr<Layout> layout = GetLayout();
-
-  RemoveAll();
-
-	delete _display;
-  _display = nullptr;
-  
-  _container->RemoveAll();
-
-  delete _container;
-  _container = nullptr;
-
-	while (_buttons.size() > 0) {
-		Button *b = _buttons.back();
-
-		_buttons.pop_back();
-
-		delete b;
-	}
-}
-
-void Calculator::Process(std::string type)
-{
-	Button *button = (Button *)GetFocusOwner();
+  std::shared_ptr<Button> button = GetFocusOwner()->GetSharedPointer<Button>();
 
   std::string text = button->GetText();
 
@@ -490,7 +478,7 @@ void Calculator::Process(std::string type)
 	}
 }
 
-bool Calculator::KeyPressed(KeyEvent *event)
+bool App::KeyPressed(KeyEvent *event)
 {
 	if (Frame::KeyPressed(event) == true) {
 		return true;
@@ -627,7 +615,7 @@ bool Calculator::KeyPressed(KeyEvent *event)
 	return true;
 }
 
-void Calculator::ActionPerformed(ActionEvent *event)
+void App::ActionPerformed(ActionEvent *event)
 {
 	Button *button = (Button *)event->GetSource();
 
@@ -710,9 +698,10 @@ int main(int argc, char **argv)
 {
 	Application::Init(argc, argv);
 
-	Calculator app;
+	auto app = std::make_shared<App>();
 
-	app.SetTitle("Calculator");
+  app->Init();
+	app->SetTitle("App");
 
 	Application::Loop();
 

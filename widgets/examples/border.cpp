@@ -30,85 +30,62 @@
 
 using namespace jcanvas;
 
-class BorderTest : public Frame{
-
-	private:
-		std::vector<Component *> 
-      _buttons;
-    Container 
-      _top,
-      _bottom;
+class App : public Frame{
 
 	public:
-		BorderTest():
+		App():
 			Frame({960, 540})
 		{
-      _top.SetLayout<FlowLayout>();
-      _bottom.SetLayout<FlowLayout>();
-
-			_buttons.push_back(new Button("Empty"));
-			_buttons.push_back(new Button("Line"));
-			_buttons.push_back(new Button("Bevel"));
-			_buttons.push_back(new Button("Round"));
-			_buttons.push_back(new Button("Raised Gradient"));
-			
-			_buttons.push_back(new Button("Lowered Gradient"));
-			_buttons.push_back(new Button("Raised Bevel"));
-			_buttons.push_back(new Button("Lowered Bevel"));
-			_buttons.push_back(new Button("Raised Etched"));
-			_buttons.push_back(new Button("Lowered Etched"));
-
-			for (int i=0; i<(int)_buttons.size(); i++) {
-        Component *cmp = _buttons[i];
-        jtheme_t &theme = cmp->GetTheme();
-
-        theme.padding = {16, 16, 16, 16};
-			  theme.border.size = {8, 8};
-
-        if (i == 0) {
-  			  theme.border.type = jtheme_border_t::style::Empty;
-        } else if (i == 1) {
-  			  theme.border.type = jtheme_border_t::style::Line;
-        } else if (i == 2) {
-  			  theme.border.type = jtheme_border_t::style::Bevel;
-        } else if (i == 3) {
-  			  theme.border.type = jtheme_border_t::style::Round;
-        } else if (i == 4) {
-  			  theme.border.type = jtheme_border_t::style::RaisedGradient;
-        } else if (i == 5) {
-  			  theme.border.type = jtheme_border_t::style::LoweredGradient;
-        } else if (i == 6) {
-  			  theme.border.type = jtheme_border_t::style::RaisedBevel;
-        } else if (i == 7) {
-  			  theme.border.type = jtheme_border_t::style::LoweredBevel;
-        } else if (i == 8) {
-  			  theme.border.type = jtheme_border_t::style::RaisedEtched;
-        } else if (i == 9) {
-  			  theme.border.type = jtheme_border_t::style::LoweredEtched;
-        }
-
-        if (i < (int)_buttons.size()/2) {
-  				_top.Add(cmp);
-        } else {
-  				_bottom.Add(cmp);
-        }
-			}
- 
-      _top.SetPreferredSize(_top.GetLayout()->GetPreferredLayoutSize(&_top));
-      _bottom.SetPreferredSize(_bottom.GetLayout()->GetPreferredLayoutSize(&_bottom));
-
-      Add(&_top, jborderlayout_align_t::North);
-      Add(&_bottom, jborderlayout_align_t::South);
     }
 
-		virtual ~BorderTest()
-		{
-			RemoveAll();
+    void Init()
+    {
+       auto top = std::make_shared<Container>();
+       auto bottom = std::make_shared<Container>();
 
-			for (std::vector<Component *>::iterator i=_buttons.begin(); i!=_buttons.end(); i++) {
-        delete (*i);
-			}
-		}
+       top->SetLayout<FlowLayout>();
+       bottom->SetLayout<FlowLayout>();
+
+       std::vector<std::shared_ptr<Component>> buttons {
+         std::make_shared<Button>("Empty"),
+         std::make_shared<Button>("Line"),
+         std::make_shared<Button>("Bevel"),
+         std::make_shared<Button>("Round"),
+         std::make_shared<Button>("Raised Gradient"),
+
+         std::make_shared<Button>("Lowered Gradient"),
+         std::make_shared<Button>("Raised Bevel"),
+         std::make_shared<Button>("Lowered Bevel"),
+         std::make_shared<Button>("Raised Etched"),
+         std::make_shared<Button>("Lowered Etched")
+       };
+
+       for (int i=0; i<(int)buttons.size(); i++) {
+         std::shared_ptr<Component> cmp = buttons[i];
+         jtheme_t &theme = cmp->GetTheme();
+
+         theme.padding = {16, 16, 16, 16};
+         theme.border.size = {8, 8};
+         theme.border.type = static_cast<jtheme_border_t::style>(i);
+
+         if (i < (int)buttons.size()/2) {
+           top->Add(cmp);
+         } else {
+           bottom->Add(cmp);
+         }
+       }
+
+       top->SetPreferredSize(top->GetLayout()->GetPreferredLayoutSize(top));
+       bottom->SetPreferredSize(bottom->GetLayout()->GetPreferredLayoutSize(bottom));
+
+       Add(top, jborderlayout_align_t::North);
+       Add(bottom, jborderlayout_align_t::South);
+    }
+
+    virtual ~App()
+    {
+      RemoveAll();
+    }
 
 };
 
@@ -116,9 +93,10 @@ int main(int argc, char **argv)
 {
 	Application::Init(argc, argv);
 
-	BorderTest app;
+	auto app = std::make_shared<App>();
 
-	app.SetTitle("Border");
+  app->Init();
+	app->SetTitle("Border");
 	
 	Application::Loop();
 

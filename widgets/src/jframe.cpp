@@ -96,12 +96,12 @@ Image * Frame::GetIcon()
   return _icon;
 }
 
-Component * Frame::GetFocusOwner()
+std::shared_ptr<Component> Frame::GetFocusOwner()
 {
   return _focus_owner;
 }
 
-void Frame::RequestComponentFocus(Component *c)
+void Frame::RequestComponentFocus(std::shared_ptr<Component> c)
 {
   if (_focus_owner != nullptr && _focus_owner != c) {
     _focus_owner->ReleaseFocus();
@@ -111,10 +111,10 @@ void Frame::RequestComponentFocus(Component *c)
 
   Repaint();
 
-  dynamic_cast<Component *>(c)->DispatchFocusEvent(new jcanvas::FocusEvent(c, jcanvas::jfocusevent_type_t::Gain));
+  c->DispatchFocusEvent(new jcanvas::FocusEvent(c.get(), jcanvas::jfocusevent_type_t::Gain));
 }
 
-void Frame::ReleaseComponentFocus(Component *c)
+void Frame::ReleaseComponentFocus(std::shared_ptr<Component> c)
 {
   if (_focus_owner == nullptr or _focus_owner != c) {
     return;
@@ -124,15 +124,15 @@ void Frame::ReleaseComponentFocus(Component *c)
 
   Repaint();
 
-  dynamic_cast<Component *>(c)->DispatchFocusEvent(new jcanvas::FocusEvent(c, jcanvas::jfocusevent_type_t::Lost));
+  c->DispatchFocusEvent(new jcanvas::FocusEvent(c.get(), jcanvas::jfocusevent_type_t::Lost));
 }
 
-Container * Frame::GetFocusCycleRootAncestor()
+std::shared_ptr<Container> Frame::GetFocusCycleRootAncestor()
 {
-  return this;
+  return GetSharedPointer<Container>();
 }
 
-void Frame::Repaint(Component *cmp)
+void Frame::Repaint(std::shared_ptr<Component> cmp)
 {
   Window::Repaint();
 }

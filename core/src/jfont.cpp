@@ -365,7 +365,7 @@ void Font::GetStringBreak(std::vector<std::string> *lines, std::string text, jpo
 
           for (int j=1; j<(int)words.size(); j++) {
             previous = temp;
-            temp += words[j];
+            temp = temp + " " + words[j];
 
             if (GetStringWidth(temp.c_str()) > size.x) {
               temp = words[j];

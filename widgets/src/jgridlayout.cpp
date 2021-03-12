@@ -107,7 +107,7 @@ void GridLayout::SetVerticalGap(int vgap)
   _vgap = vgap;
 }
 
-jpoint_t<int> GridLayout::GetMinimumLayoutSize(Container *parent)
+jpoint_t<int> GridLayout::GetMinimumLayoutSize(std::shared_ptr<Container> parent)
 {
   // WARN:: sync parent
   jinsets_t insets = parent->GetInsets();
@@ -124,7 +124,7 @@ jpoint_t<int> GridLayout::GetMinimumLayoutSize(Container *parent)
   int h = 0;
 
   for (int i = 0 ; i < ncomponents ; i++) {
-    Component *comp = parent->GetComponents()[i];
+    std::shared_ptr<Component> comp = parent->GetComponents()[i];
     
     jpoint_t<int> d = comp->GetMinimumSize();
 
@@ -141,14 +141,14 @@ jpoint_t<int> GridLayout::GetMinimumLayoutSize(Container *parent)
   return t;
 }
 
-jpoint_t<int> GridLayout::GetMaximumLayoutSize(Container *parent)
+jpoint_t<int> GridLayout::GetMaximumLayoutSize(std::shared_ptr<Container> parent)
 {
   jpoint_t<int> t = {INT_MAX, INT_MAX};
 
   return t;
 }
 
-jpoint_t<int> GridLayout::GetPreferredLayoutSize(Container *parent)
+jpoint_t<int> GridLayout::GetPreferredLayoutSize(std::shared_ptr<Container> parent)
 {
   // WARN:: sync parent
   jinsets_t insets = parent->GetInsets();
@@ -166,7 +166,7 @@ jpoint_t<int> GridLayout::GetPreferredLayoutSize(Container *parent)
   int h = 0;
 
   for (int i = 0 ; i < ncomponents ; i++) {
-    Component *comp = parent->GetComponents()[i];
+    std::shared_ptr<Component> comp = parent->GetComponents()[i];
 
     jpoint_t<int> d = comp->GetPreferredSize();
 
@@ -183,7 +183,7 @@ jpoint_t<int> GridLayout::GetPreferredLayoutSize(Container *parent)
   return t;
 }
 
-void GridLayout::DoLayout(Container *parent)
+void GridLayout::DoLayout(std::shared_ptr<Container> parent)
 {
   // WARN:: sync with parent container
   int 

@@ -88,29 +88,31 @@ class CustomContainer : public Container {
 
 };
 
-class Main : public Frame {
-
-	private:
-		CustomContainer
-      _container1 = {100, 100, 400, 400},
-			_container2 = {100, 100, 400, 400};
-		Button 
-      _button1 = {"Testing Clipping"};
+class App : public Frame {
 
 	public:
-		Main(std::string title, int w, int h):
+		App(std::string title, int w, int h):
 			Frame(/*title, */ {w, h})
 		{
-			_button1.SetBounds({200, 100, 300, 100});
+    }
 
-			_container2.Add(&_button1);
-			_container1.Add(&_container2);
-
-			Add(&_container1);
+		virtual ~App()
+		{
 		}
 
-		virtual ~Main()
-		{
+    void Init()
+    {
+      auto button1 = std::make_shared<Button>("Testing Clipping");
+
+			button1->SetBounds({200, 100, 300, 100});
+
+      auto container1 = std::make_shared<CustomContainer>(100, 100, 400, 400);
+			auto container2 = std::make_shared<CustomContainer>(100, 100, 400, 400);
+
+			container2->Add(button1);
+			container1->Add(container2);
+
+			Add(container1);
 		}
 
 };
@@ -119,9 +121,10 @@ int main(int argc, char **argv)
 {
 	Application::Init(argc, argv);
 
-	Main app("Custom Frame", 720, 480);
+	auto app = std::make_shared<App>("Custom Frame", 720, 480);
 
-	app.SetTitle("Custom");
+  app->Init();
+	app->SetTitle("Custom");
 
 	Application::Loop();
 

@@ -21,60 +21,69 @@
 
 namespace jcanvas {
 
-YesNoDialog::YesNoDialog(Container *parent, std::string title, std::string msg):
+YesNoDialog::YesNoDialog(std::shared_ptr<Container> parent, std::string title, std::string msg):
   Dialog(title, parent, {0, 0, 560, 280})
 {
-  _label.SetText(msg);
-  _label.SetWrap(true);
-  _label.SetHorizontalAlign(jhorizontal_align_t::Left);
+  _label = std::make_shared<Text>("Yes or No ?");
+  _yes = std::make_shared<Button>("Yes");
+  _no = std::make_shared<Button>("No");
 
-  _yes.RegisterActionListener(this);
-  _no.RegisterActionListener(this);
-  
-  std::shared_ptr<FlowLayout> layout = _buttons_container.SetLayout<FlowLayout>();
+  _label->SetText(msg);
+  _label->SetWrap(true);
+  _label->SetHorizontalAlign(jhorizontal_align_t::Left);
+
+  _yes->RegisterActionListener(this);
+  _no->RegisterActionListener(this);
+ 
+  _buttons_container = std::make_shared<Container>();
+
+  std::shared_ptr<FlowLayout> layout = _buttons_container->SetLayout<FlowLayout>();
   
   layout->SetAlign(jflowlayout_align_t::Right);
 
-  _buttons_container.Add(&_yes);
-  _buttons_container.Add(&_no);
+  _buttons_container->Add(_yes);
+  _buttons_container->Add(_no);
 
-  _buttons_container.SetPreferredSize(layout->GetPreferredLayoutSize(&_buttons_container));
-
-  Add(&_label, jborderlayout_align_t::Center);
-  Add(&_buttons_container, jborderlayout_align_t::South);
-
-  _no.RequestFocus();
+  _buttons_container->SetPreferredSize(layout->GetPreferredLayoutSize(_buttons_container));
 }
 
 YesNoDialog::~YesNoDialog() 
 {
 }
 
+void YesNoDialog::Init()
+{
+  Add(_label, jborderlayout_align_t::Center);
+  Add(_buttons_container, jborderlayout_align_t::South);
+
+  _no->RequestFocus();
+}
+
 void YesNoDialog::SetHorizontalAlign(jhorizontal_align_t align)
 {
-  _label.SetHorizontalAlign(align);
+  _label->SetHorizontalAlign(align);
 }
 
 jhorizontal_align_t YesNoDialog::GetHorizontalAlign()
 {
-  return _label.GetHorizontalAlign();
+  return _label->GetHorizontalAlign();
 }
 
 void YesNoDialog::SetVerticalAlign(jvertical_align_t align)
 {
-  _label.SetVerticalAlign(align);
+  _label->SetVerticalAlign(align);
 }
 
 jvertical_align_t YesNoDialog::GetVerticalAlign()
 {
-  return _label.GetVerticalAlign();
+  return _label->GetVerticalAlign();
 }
 
 std::string YesNoDialog::GetResponse()
 {
   std::string response = "no";
 
-  if (GetFocusOwner() == &_yes) {
+  if (GetFocusOwner() == _yes) {
     response = "yes";
   }
 

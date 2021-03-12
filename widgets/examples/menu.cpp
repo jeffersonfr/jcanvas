@@ -242,15 +242,23 @@ class MenuManager : public Component {
 
 };
 
-class Dummy : public Frame {
+class App : public Frame {
 
   private:
-    MenuManager _manager;
+    std::shared_ptr<MenuManager> _manager = std::make_shared<MenuManager>();
     Menu _menu;
 
   public:
-    Dummy():
+    App():
       Frame(jpoint_t<int>{740, 480})
+    {
+    }
+
+    virtual ~App()
+    {
+    }
+
+    void Init()
     {
       _menu["main"]["item1"];
       _menu["main"]["item2"].Id(100);
@@ -271,15 +279,11 @@ class Dummy : public Frame {
       _menu["main"]["item2"]["item22"]["item222"];
       _menu["main"]["item2"]["item22"]["item223"];
 
-      _manager.Push(_menu["main"]);
+      _manager->Push(_menu["main"]);
 
-      Add(&_manager);
+      Add(_manager);
 
-      _manager.RequestFocus();
-    }
-
-    virtual ~Dummy()
-    {
+      _manager->RequestFocus();
     }
 
     virtual bool KeyPressed(KeyEvent *event)
@@ -289,7 +293,7 @@ class Dummy : public Frame {
       }
 
       if (event->GetSymbol() == jkeyevent_symbol_t::m) {
-        _manager.Push(_menu["main"]);
+        _manager->Push(_menu["main"]);
 
         Repaint();
       }
@@ -301,7 +305,7 @@ class Dummy : public Frame {
     {
       Frame::Paint(g);
 
-      _manager.Paint(g);
+      _manager->Paint(g);
     }
 
 };
@@ -310,7 +314,9 @@ int main(int argc, char *argv[])
 {
   Application::Init(argc, argv);
 
-  Dummy app;
+  auto app = std::make_shared<App>();
+
+  app->Init();
 
   Application::Loop();
 

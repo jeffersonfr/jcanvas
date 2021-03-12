@@ -37,7 +37,7 @@ class CheckButtonGroup : public ToggleListener {
 
   private:
     /** \brief */
-    std::vector<CheckButton *> _buttons;
+    std::vector<std::shared_ptr<CheckButton>> _buttons;
     /** \brief */
     std::recursive_mutex _group_mutex;
 
@@ -65,19 +65,19 @@ class CheckButtonGroup : public ToggleListener {
      * \brief
      *
      */
-    virtual void Add(CheckButton *button);
+    virtual void Add(std::shared_ptr<CheckButton> button);
     
     /**
      * \brief
      *
      */
-    virtual void Remove(CheckButton *button);
+    virtual void Remove(std::shared_ptr<CheckButton> button);
 
     /**
      * \brief
      *
      */
-    virtual CheckButton * GetSelected();
+    virtual std::shared_ptr<CheckButton> GetSelected();
 
 };
 

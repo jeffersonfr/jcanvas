@@ -427,14 +427,14 @@ class GridBagLayoutInfo {
 class GridBagLayout : public Layout {
 
   private:
-    std::map<Component *, GridBagConstraints *> comptable;
+    std::map<std::shared_ptr<Component>, GridBagConstraints *> comptable;
     GridBagConstraints *defaultConstraints;
     GridBagLayoutInfo *layoutInfo;
-    Component *componentAdjusting;
-    int columnWidthsSize,
-        rowHeightsSize,
-        columnWeightsSize,
-        rowWeightsSize;
+    std::shared_ptr<Component> componentAdjusting;
+    int columnWidthsSize;
+    int rowHeightsSize;
+    int columnWeightsSize;
+    int rowWeightsSize;
     bool rightToLeft;
 
   public:
@@ -454,25 +454,25 @@ class GridBagLayout : public Layout {
      * \brief
      *
      */
-    virtual void SetConstraints(Component *comp, GridBagConstraints *constraints);
+    virtual void SetConstraints(std::shared_ptr<Component> comp, GridBagConstraints *constraints);
     
     /**
      * \brief
      *
      */
-    virtual GridBagConstraints * GetConstraints(Component *comp);
+    virtual GridBagConstraints * GetConstraints(std::shared_ptr<Component> comp);
     
     /**
      * \brief
      *
      */
-    virtual GridBagConstraints * LookupConstraints(Component *comp);
+    virtual GridBagConstraints * LookupConstraints(std::shared_ptr<Component> comp);
     
     /**
      * \brief
      *
      */
-    virtual void RemoveConstraints(Component *comp);
+    virtual void RemoveConstraints(std::shared_ptr<Component> comp);
     
     /**
      * \brief
@@ -484,31 +484,31 @@ class GridBagLayout : public Layout {
      * \brief
      *
      */
-    virtual void AddLayoutComponent(Component *comp, GridBagConstraints *constraints);
+    virtual void AddLayoutComponent(std::shared_ptr<Component> comp, GridBagConstraints *constraints);
     
     /**
      * \brief
      *
      */
-    virtual void RemoveLayoutComponent(Component *comp);
+    virtual void RemoveLayoutComponent(std::shared_ptr<Component> comp);
     
     /**
      * \brief
      *
      */
-    virtual GridBagLayoutInfo * GetLayoutInfo(Container *parent, jgridbaglayout_style_t sizeflag);
+    virtual GridBagLayoutInfo * GetLayoutInfo(std::shared_ptr<Container> parent, jgridbaglayout_style_t sizeflag);
     
     /**
      * \brief
      *
      */
-    virtual jpoint_t<int> PreInitMaximumArraySizes(Container *parent);
+    virtual jpoint_t<int> PreInitMaximumArraySizes(std::shared_ptr<Container> parent);
     
     /**
      * \brief
      *
      */
-    virtual bool CalculateBaseline(Component *c, GridBagConstraints *constraints, jpoint_t<int> size);
+    virtual bool CalculateBaseline(std::shared_ptr<Component> c, GridBagConstraints *constraints, jpoint_t<int> size);
     
     /**
      * \brief
@@ -544,37 +544,37 @@ class GridBagLayout : public Layout {
      * \brief
      *
      */
-    virtual jpoint_t<int> GetMinSize(Container *parent, GridBagLayoutInfo *info);
+    virtual jpoint_t<int> GetMinSize(std::shared_ptr<Container> parent, GridBagLayoutInfo *info);
     
     /**
      * \brief
      *
      */
-    virtual void ArrangeGrid(Container *parent);
+    virtual void ArrangeGrid(std::shared_ptr<Container> parent);
 
     /**
      * \brief
      *
      */
-    virtual jpoint_t<int> GetMinimumLayoutSize(Container *parent);
+    virtual jpoint_t<int> GetMinimumLayoutSize(std::shared_ptr<Container> parent);
     
     /**
      * \brief
      *
      */
-    virtual jpoint_t<int> GetMaximumLayoutSize(Container *parent);
+    virtual jpoint_t<int> GetMaximumLayoutSize(std::shared_ptr<Container> parent);
     
     /**
      * \brief
      *
      */
-    virtual jpoint_t<int> GetPreferredLayoutSize(Container *parent);
+    virtual jpoint_t<int> GetPreferredLayoutSize(std::shared_ptr<Container> parent);
 
     /**
      * \brief
      *
      */
-    virtual void DoLayout(Container *parent);
+    virtual void DoLayout(std::shared_ptr<Container> parent);
 
 };
 

@@ -23,8 +23,16 @@
 
 namespace jcanvas {
 
-CalendarDialog::CalendarDialog(Container *parent):
+CalendarDialog::CalendarDialog(std::shared_ptr<Container> parent):
   Dialog("Calendar", parent)
+{
+}
+
+CalendarDialog::~CalendarDialog() 
+{
+}
+
+void CalendarDialog::Init()
 {
   std::time_t 
     t1 = std::time(0);
@@ -44,7 +52,7 @@ CalendarDialog::CalendarDialog(Container *parent):
     dx = ds + 2,
     dy = ds + 2;
 
-  _syear = new Spin();
+  _syear = std::make_shared<Spin>();
   
   _syear->SetBounds({insets.left, insets.top + 0*dy, 7*dx - 2, ds});
 
@@ -57,7 +65,7 @@ CalendarDialog::CalendarDialog(Container *parent):
   _syear->SetLoop(true);
   _syear->RegisterSelectListener(this);
 
-  _smonth = new Spin();
+  _smonth = std::make_shared<Spin>();
   
   _smonth->SetBounds({insets.left, insets.top + 1*dy, 7*dx - 2, ds});
 
@@ -77,13 +85,13 @@ CalendarDialog::CalendarDialog(Container *parent):
   _smonth->SetLoop(true);
   _smonth->RegisterSelectListener(this);
 
-  _ldom = new Text("D");
-  _lseg = new Text("S");
-  _lter = new Text("T");
-  _lqua = new Text("Q");
-  _lqui = new Text("Q");
-  _lsex = new Text("S");
-  _lsab = new Text("S");
+  _ldom = std::make_shared<Text>("D");
+  _lseg = std::make_shared<Text>("S");
+  _lter = std::make_shared<Text>("T");
+  _lqua = std::make_shared<Text>("Q");
+  _lqui = std::make_shared<Text>("Q");
+  _lsex = std::make_shared<Text>("S");
+  _lsab = std::make_shared<Text>("S");
 
   _ldom->SetBounds({insets.left + 0*dx, insets.top + 2*dy, ds, ds});
   _lseg->SetBounds({insets.left + 1*dx, insets.top + 2*dy, ds, ds});
@@ -118,62 +126,6 @@ CalendarDialog::CalendarDialog(Container *parent):
   _syear->SetCurrentIndex(_select_year);
 
   BuildCalendar();
-}
-
-CalendarDialog::~CalendarDialog() 
-{
-  while (_buttons.size() > 0) {
-    Button *b = (*_buttons.begin());
-
-    _buttons.erase(_buttons.begin());
-
-    delete b;
-  }
-
-  if (_syear != nullptr) {
-    delete _syear;
-    _syear = nullptr;
-  }
-
-  if (_smonth != nullptr) {
-    delete _smonth;
-    _smonth = nullptr;
-  }
-
-  if (_ldom != nullptr) {
-    delete _ldom;
-    _ldom = nullptr;
-  }
-
-  if (_lseg != nullptr) {
-    delete _lseg;
-    _lseg = nullptr;
-  }
-
-  if (_lter != nullptr) {
-    delete _lter;
-    _lter = nullptr;
-  }
-
-  if (_lqua != nullptr) {
-    delete _lqua;
-    _lqua = nullptr;
-  }
-
-  if (_lqui != nullptr) {
-    delete _lqui;
-    _lqui = nullptr;
-  }
-
-  if (_lsex != nullptr) {
-    delete _lsex;
-    _lsex = nullptr;
-  }
-  
-  if (_lsab != nullptr) {
-    delete _lsab;
-    _lsab = nullptr;
-  }
 }
 
 void CalendarDialog::SetDay(int d)
@@ -262,8 +214,6 @@ void CalendarDialog::RemoveAll()
 
 void CalendarDialog::BuildCalendar()
 {
-  Button 
-    *button = nullptr;
   int 
     day_count = 0,
     first_day = 0;
@@ -315,13 +265,11 @@ void CalendarDialog::BuildCalendar()
   }
 
   while (_buttons.size() > 0) {
-    button = (*_buttons.begin());
+    auto i = _buttons.begin();
 
-    _buttons.erase(_buttons.begin());
+    Remove(*i);
 
-    Remove(button);
-
-    delete button;
+    _buttons.erase(i);
   }
 
   jinsets_t 
@@ -337,7 +285,8 @@ void CalendarDialog::BuildCalendar()
 
     sprintf(tmp, "%d", (i+1));
 
-    button = new Button(tmp);
+    std::shared_ptr<Button> 
+      button = std::make_shared<Button>(tmp);
     
     button->SetBounds({insets.left + dx*first_day, insets.top + dy*k + 16, ds, ds});
 
@@ -381,8 +330,8 @@ void CalendarDialog::ActionPerformed(ActionEvent *event)
 
 void CalendarDialog::ItemChanged(SelectEvent *event)
 {
-  Spin 
-    *spin = reinterpret_cast<Spin *>(event->GetSource());
+  std::shared_ptr<Spin>
+    spin = reinterpret_cast<Spin *>(event->GetSource())->GetSharedPointer<Spin>();
 
   if (event->GetType() == jselectevent_type_t::Left) {
     if (spin == _smonth and _smonth->GetCurrentIndex() == (12 - 1)) {

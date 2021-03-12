@@ -31,6 +31,7 @@
 
 #include <vector>
 #include <mutex>
+#include <memory>
 
 namespace jcanvas {
 
@@ -96,7 +97,7 @@ class Container;
  *
  * \author Jeff Ferr
  */
-class Component : public KeyListener, public MouseListener {
+class Component : public std::enable_shared_from_this<Component>, public KeyListener, public MouseListener {
 
   friend class Container;
   friend class Frame;
@@ -113,15 +114,15 @@ class Component : public KeyListener, public MouseListener {
     /** \brief */
     std::mutex _data_listener_mutex;
     /** \brief */
-    Container *_parent;
+    std::shared_ptr<Container> _parent;
     /** \brief */
-    Component *_left;
+    std::shared_ptr<Component> _left;
     /** \brief */
-    Component *_right;
+    std::shared_ptr<Component> _right;
     /** \brief */
-    Component *_up;
+    std::shared_ptr<Component> _up;
     /** \brief */
-    Component *_down;
+    std::shared_ptr<Component> _down;
     /** \brief */
     KeyMap *_keymap;
     /** \brief */
@@ -186,7 +187,7 @@ class Component : public KeyListener, public MouseListener {
      * \brief
      *
      */
-    virtual void GetInternalComponents(Container *current, std::vector<Component *> *components);
+    virtual void GetInternalComponents(std::shared_ptr<Container> current, std::vector<std::shared_ptr<Component>> *components);
 
     /**
      * \brief
@@ -198,7 +199,7 @@ class Component : public KeyListener, public MouseListener {
      * \brief
      *
      */
-    virtual void FindNextComponentFocus(jrect_t<int> rect, Component **left, Component **right, Component **up, Component **down);
+    virtual void FindNextComponentFocus(jrect_t<int> rect, std::shared_ptr<Component> &left, std::shared_ptr<Component> &right, std::shared_ptr<Component> &up, std::shared_ptr<Component> &down);
 
     /**
      * \brief Makes sure the component is visible in the scroll if this container is scrollable.
@@ -211,7 +212,7 @@ class Component : public KeyListener, public MouseListener {
      *     x/y are relative to that component (they are not absolute).
      *
      */
-    virtual void ScrollToVisibleArea(jrect_t<int> rect, Component *coordinateSpace);
+    virtual void ScrollToVisibleArea(jrect_t<int> rect, std::shared_ptr<Component> coordinateSpace);
 
   public:
     /**
@@ -230,6 +231,16 @@ class Component : public KeyListener, public MouseListener {
      * \brief
      *
      */
+    template <typename T = Component>
+    std::shared_ptr<T> GetSharedPointer()
+    {
+      return std::dynamic_pointer_cast<T>(shared_from_this());
+    }
+
+    /**
+     * \brief
+     *
+     */
     virtual void SetName(std::string name);
     
     /**
@@ -242,13 +253,13 @@ class Component : public KeyListener, public MouseListener {
      * \brief
      *
      */
-    virtual Container * GetParent();
+    virtual std::shared_ptr<Container> GetParent();
     
     /**
      * \brief
      *
      */
-    virtual Container * GetTopLevelAncestor();
+    virtual std::shared_ptr<Container> GetTopLevelAncestor();
 
     /**
      * \brief
@@ -476,7 +487,7 @@ class Component : public KeyListener, public MouseListener {
      * \brief
      *
      */
-    virtual void SetParent(Container *parent);
+    virtual void SetParent(std::shared_ptr<Container> parent);
     
     /**
      * \brief
@@ -518,55 +529,55 @@ class Component : public KeyListener, public MouseListener {
      * \brief
      *
      */
-    virtual Component * GetNextFocusLeft();
+    virtual std::shared_ptr<Component> GetNextFocusLeft();
     
     /**
      * \brief
      *
      */
-    virtual Component * GetNextFocusRight();
+    virtual std::shared_ptr<Component> GetNextFocusRight();
     
     /**
      * \brief
      *
      */
-    virtual Component * GetNextFocusUp();
+    virtual std::shared_ptr<Component> GetNextFocusUp();
     
     /**
      * \brief
      *
      */
-    virtual Component * GetNextFocusDown();
+    virtual std::shared_ptr<Component> GetNextFocusDown();
     
     /**
      * \brief
      *
      */
-    virtual void SetNextFocusLeft(Component *cmp);
+    virtual void SetNextFocusLeft(std::shared_ptr<Component> cmp);
     
     /**
      * \brief
      *
      */
-    virtual void SetNextFocusRight(Component *cmp);
+    virtual void SetNextFocusRight(std::shared_ptr<Component> cmp);
     
     /**
      * \brief
      *
      */
-    virtual void SetNextFocusUp(Component *cmp);
+    virtual void SetNextFocusUp(std::shared_ptr<Component> cmp);
     
     /**
      * \brief
      *
      */
-    virtual void SetNextFocusDown(Component *cmp);
+    virtual void SetNextFocusDown(std::shared_ptr<Component> cmp);
     
     /**
      * \brief
      *
      */
-    virtual void SetNextComponentFocus(Component *left, Component *right, Component *up, Component *down);
+    virtual void SetNextComponentFocus(std::shared_ptr<Component> left, std::shared_ptr<Component> right, std::shared_ptr<Component> up, std::shared_ptr<Component> down);
 
     /**
      * \brief
@@ -776,13 +787,13 @@ class Component : public KeyListener, public MouseListener {
      * \brief
      *
      */
-    virtual void PutAtop(Component *c);
+    virtual void PutAtop(std::shared_ptr<Component> c);
     
     /**
      * \brief
      *
      */
-    virtual void PutBelow(Component *c);
+    virtual void PutBelow(std::shared_ptr<Component> c);
 
     /**
      * \brief
@@ -800,7 +811,7 @@ class Component : public KeyListener, public MouseListener {
      * \brief
      *
      */
-    virtual Container * GetFocusCycleRootAncestor();
+    virtual std::shared_ptr<Container> GetFocusCycleRootAncestor();
 
     /**
      * \brief
@@ -830,7 +841,7 @@ class Component : public KeyListener, public MouseListener {
      * \brief
      *
      */
-    virtual void Repaint(Component *cmp = nullptr);
+    virtual void Repaint(std::shared_ptr<Component> cmp = nullptr);
 
     /**
      * \brief

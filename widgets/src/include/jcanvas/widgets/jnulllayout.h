@@ -50,25 +50,25 @@ class NullLayout : public Layout {
      * \brief
      *
      */
-    virtual jpoint_t<int> GetMinimumLayoutSize(Container *parent);
+    virtual jpoint_t<int> GetMinimumLayoutSize(std::shared_ptr<Container> parent);
     
     /**
      * \brief
      *
      */
-    virtual jpoint_t<int> GetMaximumLayoutSize(Container *parent);
+    virtual jpoint_t<int> GetMaximumLayoutSize(std::shared_ptr<Container> parent);
     
     /**
      * \brief
      *
      */
-    virtual jpoint_t<int> GetPreferredLayoutSize(Container *parent);
+    virtual jpoint_t<int> GetPreferredLayoutSize(std::shared_ptr<Container> parent);
 
     /**
      * \brief
      *
      */
-    virtual void DoLayout(Container *c);
+    virtual void DoLayout(std::shared_ptr<Container> c);
 
 };
 

@@ -65,10 +65,10 @@ void BorderLayout::SetVgap(int vgap)
   _vgap = vgap;
 }
 
-jpoint_t<int> BorderLayout::GetMinimumLayoutSize(Container *parent)
+jpoint_t<int> BorderLayout::GetMinimumLayoutSize(std::shared_ptr<Container> parent)
 {
   // WARN:: sync parent
-  Component *cmp = nullptr;
+  std::shared_ptr<Component> cmp = nullptr;
   jpoint_t<int> t = {0, 0};
   bool ltr = (parent->GetComponentOrientation() == jcomponent_orientation_t::LeftToRight);
       
@@ -110,17 +110,17 @@ jpoint_t<int> BorderLayout::GetMinimumLayoutSize(Container *parent)
   return t;
 }
 
-jpoint_t<int> BorderLayout::GetMaximumLayoutSize(Container *parent)
+jpoint_t<int> BorderLayout::GetMaximumLayoutSize(std::shared_ptr<Container> parent)
 {
   jpoint_t<int> t = {INT_MAX, INT_MAX};
 
   return t;
 }
 
-jpoint_t<int> BorderLayout::GetPreferredLayoutSize(Container *parent)
+jpoint_t<int> BorderLayout::GetPreferredLayoutSize(std::shared_ptr<Container> parent)
 {
   // WARN:: sync parent
-  Component *cmp = nullptr;
+  std::shared_ptr<Component> cmp = nullptr;
   jpoint_t<int> t = {0, 0};
   bool ltr = (parent->GetComponentOrientation() == jcomponent_orientation_t::LeftToRight);
       
@@ -162,11 +162,11 @@ jpoint_t<int> BorderLayout::GetPreferredLayoutSize(Container *parent)
   return t;
 }
 
-void BorderLayout::DoLayout(Container *target)
+void BorderLayout::DoLayout(std::shared_ptr<Container> target)
 {
   // WARN:: sync with jframe
-  Component 
-    *c = nullptr;
+  std::shared_ptr<Component>
+    c;
   jinsets_t 
     insets = target->GetInsets();
   jpoint_t<int> 
@@ -220,7 +220,7 @@ void BorderLayout::DoLayout(Container *target)
   }
 }
 
-void BorderLayout::AddLayoutComponent(Component *c, jborderlayout_align_t align) 
+void BorderLayout::AddLayoutComponent(std::shared_ptr<Component> c, jborderlayout_align_t align) 
 {
   // WARN:: sync with jframe
   if (align == jborderlayout_align_t::Center) {
@@ -244,7 +244,7 @@ void BorderLayout::AddLayoutComponent(Component *c, jborderlayout_align_t align)
   }
 }
 
-void BorderLayout::RemoveLayoutComponent(Component *c) 
+void BorderLayout::RemoveLayoutComponent(std::shared_ptr<Component> c) 
 {
   // WARN:: sync with jframe
   if (c == center) {
@@ -284,7 +284,7 @@ void BorderLayout::RemoveLayoutComponents()
   lastItem = nullptr;
 }
 
-Component * BorderLayout::GetLayoutComponent(jborderlayout_align_t align) 
+std::shared_ptr<Component> BorderLayout::GetLayoutComponent(jborderlayout_align_t align) 
 {
   if (align == jborderlayout_align_t::Center) {
     return center;
@@ -309,9 +309,9 @@ Component * BorderLayout::GetLayoutComponent(jborderlayout_align_t align)
   return nullptr;
 }
 
-Component * BorderLayout::GetLayoutComponent(Container *target, jborderlayout_align_t align) 
+std::shared_ptr<Component> BorderLayout::GetLayoutComponent(std::shared_ptr<Container> target, jborderlayout_align_t align) 
 {
-  Component *result = nullptr;
+  std::shared_ptr<Component> result;
   bool ltr = (target->GetComponentOrientation() == jcomponent_orientation_t::LeftToRight || target->GetComponentOrientation() == jcomponent_orientation_t::RightToLeft);
 
   if (align == jborderlayout_align_t::North) {
@@ -337,7 +337,7 @@ Component * BorderLayout::GetLayoutComponent(Container *target, jborderlayout_al
   return result;
 }
 
-jborderlayout_align_t BorderLayout::GetConstraints(Component *c) 
+jborderlayout_align_t BorderLayout::GetConstraints(std::shared_ptr<Component> c) 
 {
   if (c == nullptr){
     return jborderlayout_align_t::Unknown;
@@ -366,9 +366,9 @@ jborderlayout_align_t BorderLayout::GetConstraints(Component *c)
   return jborderlayout_align_t::Unknown;
 }
 
-Component * BorderLayout::GetChild(jborderlayout_align_t key, bool ltr) 
+std::shared_ptr<Component> BorderLayout::GetChild(jborderlayout_align_t key, bool ltr) 
 {
-  Component *result = nullptr;
+  std::shared_ptr<Component> result;
 
   if (key == jborderlayout_align_t::North) {
     result = (firstLine != nullptr) ? firstLine : north;

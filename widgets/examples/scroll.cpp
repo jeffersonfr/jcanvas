@@ -23,48 +23,51 @@
 
 using namespace jcanvas;
 
-class Main : public Frame {
+class App : public Frame {
 
 	private:
-		Container 
-      _container1 = {{100, 100, 960, 540}},
-			_container2 = {{-200, 200, 960, 540}};
-		Button 
-      _button1 = {"Button 1"},
-			_button2 = {"Button 2"},
-			_button3 = {"Button 3"},
-			_button4 = {"Button 4"},
-			_button5 = {"Button 5"};
-
 	public:
-		Main(std::string title, int width, int height):
+		App(std::string title, int width, int height):
 			Frame({width, height})
 		{
+    }
+
+		virtual ~App()
+		{
+			RemoveAll();
+		}
+
+    void Init()
+    {
 			int 
         ws = 128,
 				hs = 48;
 
-			_button1.SetBounds({50, 100, ws, hs});
-			_button2.SetBounds({100, 100, ws, hs});
-			_button3.SetBounds({400, 100, ws, hs});
-			_button4.SetBounds({800, 100, ws, hs});
-			_button5.SetBounds({100, 800, ws, hs});
+      auto button1 = std::make_shared<Button>("Button 1");
+      auto button2 = std::make_shared<Button>("Button 2");
+      auto button3 = std::make_shared<Button>("Button 3");
+      auto button4 = std::make_shared<Button>("Button 4");
+      auto button5 = std::make_shared<Button>("Button 5");
 
-			_container1.Add(&_button1);
-			_container1.Add(&_button5);
-			_container1.Add(&_container2);
+      button1->SetBounds({50, 100, ws, hs});
+      button2->SetBounds({100, 100, ws, hs});
+      button3->SetBounds({400, 100, ws, hs});
+      button4->SetBounds({800, 100, ws, hs});
+      button5->SetBounds({100, 800, ws, hs});
 
-			_container2.Add(&_button2);
-			_container2.Add(&_button3);
-			_container2.Add(&_button4);
+      auto container1 = std::make_shared<Container>(jrect_t<int>{100, 100, 960, 540});
+      auto container2 = std::make_shared<Container>(jrect_t<int>{-200, 200, 960, 540});
 
-			Add(&_container1);
-		}
+      container1->Add(button1);
+      container1->Add(button5);
+      container1->Add(container2);
 
-		virtual ~Main()
-		{
-			RemoveAll();
-		}
+      container2->Add(button2);
+      container2->Add(button3);
+      container2->Add(button4);
+
+      Add(container1);
+    }
 
 };
 
@@ -72,9 +75,10 @@ int main(int argc, char **argv)
 {
 	Application::Init(argc, argv);
 
-	Main app("Clip", 720, 480);
+	auto app = std::make_shared<App>("Clip", 720, 480);
 
-	app.SetTitle("Scroll");
+  app->Init();
+	app->SetTitle("Scroll");
 
 	Application::Loop();
 

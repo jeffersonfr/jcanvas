@@ -49,13 +49,13 @@ class Container : public Component {
     /** \brief */
     std::vector<ContainerListener *> _container_listeners;
     /** \brief */
-    std::mutex _container_mutex;
+    std::recursive_mutex _container_mutex;
     /** \brief */
     std::mutex _container_listener_mutex;
     /** \brief */
-    std::vector<Component *> _components;
+    std::vector<std::shared_ptr<Component>> _components;
     /** \brief */
-    std::vector<Dialog *> _dialogs;
+    std::vector<std::shared_ptr<Dialog>> _dialogs;
     /** \brief */
     std::mutex _dialogs_mutex;
     /** \brief */
@@ -70,19 +70,19 @@ class Container : public Component {
      * \brief
      *
      */
-    virtual void RequestComponentFocus(Component *c);
+    virtual void RequestComponentFocus(std::shared_ptr<Component> c);
     
     /**
      * \brief
      *
      */
-    virtual Component * GetTargetComponent(Container *target, int x, int y, int *dx = nullptr, int *dy = nullptr);
+    virtual std::shared_ptr<Component> GetTargetComponent(std::shared_ptr<Container> target, int x, int y, int *dx = nullptr, int *dy = nullptr);
 
     /**
      * \brief
      *
      */
-    virtual void ReleaseComponentFocus(Component *c);
+    virtual void ReleaseComponentFocus(std::shared_ptr<Component> c);
 
     /**
      * \brief This method scrolls the Container if Scrollable towards the given Component based on the given direction.
@@ -92,19 +92,19 @@ class Container : public Component {
      * 
      * \return true if next Component is now visible
      */    
-    virtual bool MoveScrollTowards(Component *next, jkeyevent_symbol_t symbol);
+    virtual bool MoveScrollTowards(std::shared_ptr<Component> next, jkeyevent_symbol_t symbol);
 
     /**
      * \brief
      *
      */
-    void InternalAddDialog(Dialog *dialog);
+    void InternalAddDialog(std::shared_ptr<Dialog> dialog);
 
     /**
      * \brief
      *
      */
-    void InternalRemoveDialog(Dialog *dialog);
+    void InternalRemoveDialog(std::shared_ptr<Dialog> dialog);
 
   public:
     /**
@@ -161,37 +161,37 @@ class Container : public Component {
      * \brief
      *
      */
-    virtual void Add(Component *c, int index);
+    virtual void Add(std::shared_ptr<Component> c, int index);
     
     /**
      * \brief
      *
      */
-    virtual void Add(Component *c);
+    virtual void Add(std::shared_ptr<Component> c);
     
     /**
      * \brief
      *
      */
-    virtual void Add(Component *c, GridBagConstraints *constraints);
+    virtual void Add(std::shared_ptr<Component> c, GridBagConstraints *constraints);
     
     /**
      * \brief
      *
      */
-    virtual void Add(Component *c, std::string id);
+    virtual void Add(std::shared_ptr<Component> c, std::string id);
     
     /**
      * \brief Appends the specified component to the end of this container.
      *
      */
-    virtual void Add(Component *c, jborderlayout_align_t align);
+    virtual void Add(std::shared_ptr<Component> c, jborderlayout_align_t align);
     
     /**
      * \brief
      *
      */
-    virtual void Remove(Component *c);
+    virtual void Remove(std::shared_ptr<Component> c);
     
     /**
      * \brief
@@ -203,7 +203,7 @@ class Container : public Component {
      * \brief
      *
      */
-    virtual bool Contains(Component *cmp);
+    virtual bool Contains(std::shared_ptr<Component> cmp);
 
     /**
      * \brief
@@ -215,13 +215,13 @@ class Container : public Component {
      * \brief
      *
      */
-    virtual const std::vector<Component *> & GetComponents();
+    virtual const std::vector<std::shared_ptr<Component>> & GetComponents();
 
     /**
      * \brief
      *
      */
-    virtual Component * GetComponentAt(int x, int y);
+    virtual std::shared_ptr<Component> GetComponentAt(int x, int y);
 
     /**
      * \brief
@@ -251,7 +251,7 @@ class Container : public Component {
      * \brief
      *
      */
-    virtual void Repaint(Component *cmp = nullptr);
+    virtual void Repaint(std::shared_ptr<Component> cmp = nullptr);
     
     /**
      * \brief
@@ -305,31 +305,31 @@ class Container : public Component {
      * \brief
      *
      */
-    virtual Component * GetFocusOwner();
+    virtual std::shared_ptr<Component> GetFocusOwner();
 
     /**
      * \brief
      *
      */
-    virtual void RaiseComponentToTop(Component *c);
+    virtual void RaiseComponentToTop(std::shared_ptr<Component> c);
     
     /**
      * \brief
      *
      */
-    virtual void LowerComponentToBottom(Component *c);
+    virtual void LowerComponentToBottom(std::shared_ptr<Component> c);
     
     /**
      * \brief
      *
      */
-    virtual void PutComponentATop(Component *c, Component *c1);
+    virtual void PutComponentATop(std::shared_ptr<Component> c, std::shared_ptr<Component> c1);
     
     /**
      * \brief
      *
      */
-    virtual void PutComponentBelow(Component *c, Component *c1);
+    virtual void PutComponentBelow(std::shared_ptr<Component> c, std::shared_ptr<Component> c1);
 
     /**
      * \brief

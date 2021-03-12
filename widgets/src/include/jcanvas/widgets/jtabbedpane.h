@@ -64,7 +64,7 @@ class TabbedPane : public Container {
      * \brief
      *
      */
-    virtual void AddTab(std::string title, Image *image, Component *component, int index = -1);
+    virtual void AddTab(std::string title, Image *image, std::shared_ptr<Component> component, int index = -1);
     
     /**
      * \brief
@@ -76,7 +76,7 @@ class TabbedPane : public Container {
      * \brief
      *
      */
-    virtual Component * GetTabComponentAt(int index);
+    virtual std::shared_ptr<Component> GetTabComponentAt(int index);
 
     /**
      * \brief
@@ -106,7 +106,7 @@ class TabbedPane : public Container {
      * \brief
      *
      */
-    virtual int IndexOfComponent(Component *cmp);
+    virtual int IndexOfComponent(std::shared_ptr<Component> cmp);
 
     /**
      * \brief

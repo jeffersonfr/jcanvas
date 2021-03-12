@@ -63,7 +63,7 @@ class KeyboardDialog : public Dialog, public ActionListener {
     /** \brief */
     std::mutex _key_listeners_mutex;
     /** \brief */
-    TextArea *_display;
+    std::shared_ptr<TextArea> _display;
     /** \brief */
     std::string _text;
     /** \brief */
@@ -112,7 +112,7 @@ class KeyboardDialog : public Dialog, public ActionListener {
      * \brief
      *
      */
-    virtual void ProcessCaps(Button *button);
+    virtual void ProcessCaps(std::shared_ptr<Button> button);
     
     /**
      * \brief
@@ -125,7 +125,7 @@ class KeyboardDialog : public Dialog, public ActionListener {
      * \brief
      *
      */
-    KeyboardDialog(Container *parent, jkeyboard_type_t type, bool text_visible = true, bool is_password = false);
+    KeyboardDialog(std::shared_ptr<Container> parent, jkeyboard_type_t type, bool text_visible = true, bool is_password = false);
     
     /**
      * \brief
@@ -137,7 +137,13 @@ class KeyboardDialog : public Dialog, public ActionListener {
      * \brief
      *
      */
-    virtual TextComponent * GetTextComponent();
+    virtual void Init();
+    
+    /**
+     * \brief
+     *
+     */
+    virtual std::shared_ptr<TextComponent> GetTextComponent();
     
     /**
      * \brief

@@ -85,7 +85,7 @@ void FlowLayout::SetAlignOnBaseline(bool align_on_baseline)
     _align_on_baseline = align_on_baseline;
 }
 
-int FlowLayout::MoveComponents(Container *target, int x, int y, int width, int height, int rowStart, int rowEnd, bool ltr, bool useBaseline, int *ascent, int *descent)
+int FlowLayout::MoveComponents(std::shared_ptr<Container> target, int x, int y, int width, int height, int rowStart, int rowEnd, bool ltr, bool useBaseline, int *ascent, int *descent)
 {
   switch (_newalign) {
     case jflowlayout_align_t::Left:
@@ -112,7 +112,7 @@ int FlowLayout::MoveComponents(Container *target, int x, int y, int width, int h
     int maxDescent = 0;
 
     for (int i = rowStart ; i < rowEnd ; i++) {
-      Component *m = target->GetComponents()[i];
+      std::shared_ptr<Component> m = target->GetComponents()[i];
       jpoint_t<int> size = m->GetSize();
 
       if (m->IsVisible() == true) {
@@ -131,7 +131,7 @@ int FlowLayout::MoveComponents(Container *target, int x, int y, int width, int h
   }
 
   for (int i = rowStart ; i < rowEnd ; i++) {
-    Component *m = target->GetComponents()[i];
+    std::shared_ptr<Component> m = target->GetComponents()[i];
     jpoint_t<int> size = m->GetSize();
 
     if (m->IsVisible() == true) {
@@ -158,7 +158,7 @@ int FlowLayout::MoveComponents(Container *target, int x, int y, int width, int h
   return height;
 }
 
-jpoint_t<int> FlowLayout::GetMinimumLayoutSize(Container *target)
+jpoint_t<int> FlowLayout::GetMinimumLayoutSize(std::shared_ptr<Container> target)
 {
   jpoint_t<int> t = {0, 0};
 
@@ -172,7 +172,7 @@ jpoint_t<int> FlowLayout::GetMinimumLayoutSize(Container *target)
     firstVisibleComponent = true;
 
   for (int i = 0 ; i < nmembers ; i++) {
-    Component *m = target->GetComponents()[i];
+    std::shared_ptr<Component> m = target->GetComponents()[i];
 
     if (m->IsVisible()) {
       jpoint_t<int> d = m->GetMinimumSize();
@@ -210,14 +210,14 @@ jpoint_t<int> FlowLayout::GetMinimumLayoutSize(Container *target)
   return t;
 }
 
-jpoint_t<int> FlowLayout::GetMaximumLayoutSize(Container *target)
+jpoint_t<int> FlowLayout::GetMaximumLayoutSize(std::shared_ptr<Container> target)
 {
   jpoint_t<int> t = {INT_MAX, INT_MAX};
 
   return t;
 }
 
-jpoint_t<int> FlowLayout::GetPreferredLayoutSize(Container *target)
+jpoint_t<int> FlowLayout::GetPreferredLayoutSize(std::shared_ptr<Container> target)
 {
   jpoint_t<int> t = {0, 0};
 
@@ -231,7 +231,7 @@ jpoint_t<int> FlowLayout::GetPreferredLayoutSize(Container *target)
     useBaseline = GetAlignOnBaseline();
 
   for (int i = 0 ; i < nmembers ; i++) {
-    Component *m = target->GetComponents()[i];
+    std::shared_ptr<Component> m = target->GetComponents()[i];
 
     if (m->IsVisible()) {
       jpoint_t<int> d = m->GetPreferredSize();
@@ -268,7 +268,7 @@ jpoint_t<int> FlowLayout::GetPreferredLayoutSize(Container *target)
   return t;
 }
 
-void FlowLayout::DoLayout(Container *target)
+void FlowLayout::DoLayout(std::shared_ptr<Container> target)
 {
   // WARN:: syn with jframe
   jinsets_t 
@@ -297,7 +297,7 @@ void FlowLayout::DoLayout(Container *target)
   }
 
   for (int i = 0 ; i < nmembers ; i++) {
-    Component *m = target->GetComponents()[i];
+    std::shared_ptr<Component> m = target->GetComponents()[i];
 
     if (m->IsVisible() == true) {
       jpoint_t<int> psize = m->GetPreferredSize();

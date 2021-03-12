@@ -21,49 +21,57 @@
 
 namespace jcanvas {
 
-MessageDialog::MessageDialog(Container *parent, std::string title, std::string msg):
+MessageDialog::MessageDialog(std::shared_ptr<Container> parent, std::string title, std::string msg):
   Dialog(title, parent, {0, 0, 560, 280})
 {
-  _label.SetText(msg);
-  _label.SetWrap(true);
-  _label.SetHorizontalAlign(jhorizontal_align_t::Left);
+  _label = std::make_shared<Text>("Message");
+  _ok = std::make_shared<Button>("Ok");
 
-  _ok.RegisterActionListener(this);
+  _label->SetText(msg);
+  _label->SetWrap(true);
+  _label->SetHorizontalAlign(jhorizontal_align_t::Left);
+
+  _ok->RegisterActionListener(this);
   
-  std::shared_ptr<FlowLayout> layout = _buttons_container.SetLayout<FlowLayout>();
+  _buttons_container = std::make_shared<Container>();
 
-  _buttons_container.Add(&_ok);
+  std::shared_ptr<FlowLayout> layout = _buttons_container->SetLayout<FlowLayout>();
 
-  _buttons_container.SetPreferredSize(layout->GetPreferredLayoutSize(&_buttons_container));
+  _buttons_container->Add(_ok);
 
-  Add(&_label, jborderlayout_align_t::Center);
-  Add(&_buttons_container, jborderlayout_align_t::South);
-
-  _ok.RequestFocus();
+  _buttons_container->SetPreferredSize(layout->GetPreferredLayoutSize(_buttons_container));
 }
 
 MessageDialog::~MessageDialog() 
 {
 }
 
+void MessageDialog::Init()
+{
+  Add(_label, jborderlayout_align_t::Center);
+  Add(_buttons_container, jborderlayout_align_t::South);
+
+  _ok->RequestFocus();
+}
+
 void MessageDialog::SetHorizontalAlign(jhorizontal_align_t align)
 {
-  _label.SetHorizontalAlign(align);
+  _label->SetHorizontalAlign(align);
 }
 
 jhorizontal_align_t MessageDialog::GetHorizontalAlign()
 {
-  return _label.GetHorizontalAlign();
+  return _label->GetHorizontalAlign();
 }
 
 void MessageDialog::SetVerticalAlign(jvertical_align_t align)
 {
-  _label.SetVerticalAlign(align);
+  _label->SetVerticalAlign(align);
 }
 
 jvertical_align_t MessageDialog::GetVerticalAlign()
 {
-  return _label.GetVerticalAlign();
+  return _label->GetVerticalAlign();
 }
 
 void MessageDialog::ActionPerformed(ActionEvent *event)

@@ -29,93 +29,84 @@
 
 using namespace jcanvas;
 
-class ImageAlign : public Frame {
+class App : public Frame {
 
 	private:
     Image
       *_image;
-    Container
-      *_containers[11];
-		Text
-			*_titles[11];
-		FlatImage 
-			*_flatimages[11];
 
 	public:
-		ImageAlign():
+		App():
 			Frame({1280, 720})
-	{
-    SetLayout<GridLayout>(4, 3);
+	  {
+    }
 
-    _image = new BufferedImage("images/image.png");
-    // _image = new BufferedImage("images/red_icon.png");
+    void Init()
+    {
+      SetLayout<GridLayout>(4, 3);
 
-    for (int i=0; i<11; i++) {
-      jrect_align_t align;
-      std::string id;
+      _image = new BufferedImage("images/image.png");
+      // _image = new BufferedImage("images/red_icon.png");
 
-      if (i == 0) {
-        align = jrect_align_t::Center;
-        id = "center";
-      } else if (i == 1) {
-        align = jrect_align_t::North;
-        id = "north";
-      } else if (i == 2) {
-        align = jrect_align_t::South;
-        id = "south";
-      } else if (i == 3) {
-        align = jrect_align_t::East;
-        id = "east";
-      } else if (i == 4) {
-        align = jrect_align_t::West;
-        id = "west";
-      } else if (i == 5) {
-        align = jrect_align_t::NorthEast;
-        id = "northeast";
-      } else if (i == 6) {
-        align = jrect_align_t::NorthWest;
-        id = "northwest";
-      } else if (i == 7) {
-        align = jrect_align_t::SouthEast;
-        id = "southeast";
-      } else if (i == 8) {
-        align = jrect_align_t::SouthWest;
-        id = "southwest";
-      } else if (i == 9) {
-        align = jrect_align_t::Contains;
-        id = "contains";
-      } else if (i == 10) {
-        align = jrect_align_t::Cover;
-        id = "cover";
+      for (int i=0; i<11; i++) {
+        jrect_align_t align;
+        std::string id;
+
+        if (i == 0) {
+          align = jrect_align_t::Center;
+          id = "center";
+        } else if (i == 1) {
+          align = jrect_align_t::North;
+          id = "north";
+        } else if (i == 2) {
+          align = jrect_align_t::South;
+          id = "south";
+        } else if (i == 3) {
+          align = jrect_align_t::East;
+          id = "east";
+        } else if (i == 4) {
+          align = jrect_align_t::West;
+          id = "west";
+        } else if (i == 5) {
+          align = jrect_align_t::NorthEast;
+          id = "northeast";
+        } else if (i == 6) {
+          align = jrect_align_t::NorthWest;
+          id = "northwest";
+        } else if (i == 7) {
+          align = jrect_align_t::SouthEast;
+          id = "southeast";
+        } else if (i == 8) {
+          align = jrect_align_t::SouthWest;
+          id = "southwest";
+        } else if (i == 9) {
+          align = jrect_align_t::Contains;
+          id = "contains";
+        } else if (i == 10) {
+          align = jrect_align_t::Cover;
+          id = "cover";
+        }
+
+        auto title = std::make_shared<Text>(id);
+        auto flatimage = std::make_shared<FlatImage>(_image);
+        
+        flatimage->SetAlign(static_cast<jrect_align_t>(i));
+
+        auto container = std::make_shared<Container>();
+
+        container->SetLayout<BorderLayout>();
+
+        container->Add(title, jborderlayout_align_t::North);
+        container->Add(flatimage, jborderlayout_align_t::Center);
+
+        Add(container);
       }
-
-      _titles[i] = new Text(id);
-
-      _flatimages[i] = new FlatImage(_image);
-      _flatimages[i]->SetAlign(static_cast<jrect_align_t>(i));
-
-      _containers[i] = new Container();
-
-      _containers[i]->SetLayout<BorderLayout>();
-
-      _containers[i]->Add(_titles[i], jborderlayout_align_t::North);
-      _containers[i]->Add(_flatimages[i], jborderlayout_align_t::Center);
-
-      Add(_containers[i]);
-    }
-	}
-
-	virtual ~ImageAlign()
-	{
-    RemoveAll();
-
-    for (int i=0; i<11; i++) {
-      delete _titles[i];
-      delete _flatimages[i];
     }
 
-    delete _image;
-	}
+    virtual ~App()
+    {
+      delete _image;
+    }
 
 };
 
@@ -123,9 +114,10 @@ int main(int argc, char **argv)
 {
 	Application::Init(argc, argv);
 
-	ImageAlign app;
+  auto app = std::make_shared<App>();
 
-  app.Exec();
+  app->Init();
+  app->Exec();
 
   Application::Loop();
 

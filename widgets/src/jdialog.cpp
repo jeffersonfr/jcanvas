@@ -22,19 +22,19 @@
 
 namespace jcanvas {
 
-Dialog::Dialog(Container *parent, jrect_t<int> bounds):
+Dialog::Dialog(std::shared_ptr<Container> parent, jrect_t<int> bounds):
   Dialog("", parent, bounds)
 {
 }
 
-Dialog::Dialog(std::string title, Container *parent, jrect_t<int> bounds):
+Dialog::Dialog(std::string title, std::shared_ptr<Container> parent, jrect_t<int> bounds):
   Container(bounds)
 {
   if (parent == nullptr) {
     throw std::invalid_argument("Parent must have a valid pointer");
   }
 
-  if (dynamic_cast<Window *>(parent) == nullptr) {
+  if (std::dynamic_pointer_cast<Window>(parent) == nullptr) {
     throw std::invalid_argument("Unable to convert parent to Frame");
   }
 
@@ -114,7 +114,7 @@ bool Dialog::IsModal()
 
 void Dialog::Exec(bool modal)
 {
-  GetParent()->InternalAddDialog(this);
+  GetParent()->InternalAddDialog(GetSharedPointer<Dialog>());
 
   if (modal == true) {
     std::unique_lock<std::mutex> lock(_modal_mutex);
@@ -125,17 +125,17 @@ void Dialog::Exec(bool modal)
 
 void Dialog::Close()
 {
-  GetParent()->InternalRemoveDialog(this);
+  GetParent()->InternalRemoveDialog(GetSharedPointer<Dialog>());
 
   _modal_condition.notify_one();
 }
 
-Component * Dialog::GetFocusOwner()
+std::shared_ptr<Component> Dialog::GetFocusOwner()
 {
   return _focus_owner;
 }
 
-void Dialog::RequestComponentFocus(Component *c)
+void Dialog::RequestComponentFocus(std::shared_ptr<Component> c)
 {
   if (_focus_owner != nullptr && _focus_owner != c) {
     _focus_owner->ReleaseFocus();
@@ -145,10 +145,10 @@ void Dialog::RequestComponentFocus(Component *c)
 
   Repaint();
 
-  dynamic_cast<Component *>(c)->DispatchFocusEvent(new FocusEvent(c, jfocusevent_type_t::Gain));
+  c->DispatchFocusEvent(new FocusEvent(c.get(), jfocusevent_type_t::Gain));
 }
 
-void Dialog::ReleaseComponentFocus(Component *c)
+void Dialog::ReleaseComponentFocus(std::shared_ptr<Component> c)
 {
   if (_focus_owner == nullptr or _focus_owner != c) {
     return;
@@ -158,12 +158,12 @@ void Dialog::ReleaseComponentFocus(Component *c)
 
   Repaint();
 
-  dynamic_cast<Component *>(c)->DispatchFocusEvent(new FocusEvent(c, jfocusevent_type_t::Lost));
+  c->DispatchFocusEvent(new FocusEvent(c.get(), jfocusevent_type_t::Lost));
 }
 
-Container * Dialog::GetFocusCycleRootAncestor()
+std::shared_ptr<Container> Dialog::GetFocusCycleRootAncestor()
 {
-  return this;
+  return GetSharedPointer<Container>();
 }
 
 bool Dialog::KeyPressed(KeyEvent *event)
