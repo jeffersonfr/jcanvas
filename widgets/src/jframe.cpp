@@ -159,6 +159,8 @@ void Frame::PaintGlassPane(Graphics *g)
 
 void Frame::Paint(Graphics *g)
 {
+  DoLayout();
+
 	g->Clear();
 
   Container::Paint(g);

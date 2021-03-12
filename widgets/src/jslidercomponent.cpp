@@ -47,8 +47,6 @@ void SliderComponent::SetScrollOrientation(jscroll_orientation_t type)
   }
 
   _type = type;
-
-  Repaint();
 }
 
 jscroll_orientation_t SliderComponent::GetScrollOrientation()
@@ -88,8 +86,6 @@ void SliderComponent::SetValue(int i)
   } else if (diff < 0 && diff >= -_minimum_tick) {
     DispatchAdjustmentEvent(new AdjustmentEvent(this, jadjustmentevent_type_t::UnitDown, _value));
   }
-
-  Repaint();
 }
 
 

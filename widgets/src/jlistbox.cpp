@@ -167,16 +167,12 @@ void ListBox::SetSelected(int i)
     } else {
       _selected_index = i;
     }
-
-    Repaint();
   } else if (_mode == jlistbox_selection_t::Multiple) {
     if (item->IsSelected()) {
       item->SetSelected(false);
     } else {
       item->SetSelected(true);
     }
-
-    Repaint();
   }
 }
 
@@ -194,12 +190,8 @@ void ListBox::Select(int i)
 
   if (_mode == jlistbox_selection_t::Single) {
     _selected_index = i;
-
-    Repaint();
   } else if (_mode == jlistbox_selection_t::Multiple) {
     item->SetSelected(true);
-
-    Repaint();
   }
 }
 
@@ -217,12 +209,8 @@ void ListBox::Deselect(int i)
 
   if (_mode == jlistbox_selection_t::Single) {
     _selected_index = -1;
-
-    Repaint();
   } else if (_mode == jlistbox_selection_t::Multiple) {
     item->SetSelected(false);
-
-    Repaint();
   }
 }
 

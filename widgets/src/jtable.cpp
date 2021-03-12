@@ -37,8 +37,6 @@ void Cell::SetHorizontalAlign(jhorizontal_align_t align)
 {
   if (_halign != align) {
     _halign = align;
-
-    _table->Repaint();
   }
 }
 
@@ -51,8 +49,6 @@ void Cell::SetVerticalAlign(jvertical_align_t align)
 {
   if (_valign != align) {
     _valign = align;
-
-    _table->Repaint();
   }
 }
 
@@ -64,8 +60,6 @@ jvertical_align_t Cell::GetVerticalAlign()
 void Cell::SetValue(std::string value)
 {
   _value = value;
-  
-  _table->Repaint();
 }
 
 std::string Cell::GetValue()
@@ -86,15 +80,11 @@ jcolor_t<float> & Cell::GetCellForegroundColor()
 void Cell::SetCellBackgroundColor(const jcolor_t<float> &color)
 {
   _cell_bgcolor = color;
-  
-  _table->Repaint();
 }
 
 void Cell::SetCellForegroundColor(const jcolor_t<float> &color)
 {
   _cell_fgcolor = color;
-  
-  _table->Repaint();
 }
 
 Table::Table():
@@ -126,8 +116,6 @@ void Table::SetLoop(bool loop)
   }
 
   _loop = loop;
-
-  Repaint();
 }
 
 int Table::GetNumberOfColumns()
@@ -185,8 +173,6 @@ void Table::InsertColumn(std::string text, int index)
   }
 
   _columns++;
-
-  Repaint();
 }
 
 void Table::InsertRow(std::string text, int index)
@@ -204,8 +190,6 @@ void Table::InsertRow(std::string text, int index)
   _cells.insert(_cells.begin()+index, columns);
 
   _rows++;
-
-  Repaint();
 }
 
 void Table::RemoveColumn(int index)
@@ -230,8 +214,6 @@ void Table::RemoveColumn(int index)
   }
 
   _columns--;
-
-  Repaint();
 }
 
 void Table::RemoveRow(int index)
@@ -256,8 +238,6 @@ void Table::RemoveRow(int index)
   _cells.clear();
 
   _rows--;
-
-  Repaint();
 }
 
 void Table::SetHeaderValue(std::string text, int index)
@@ -271,8 +251,6 @@ void Table::SetHeaderValue(std::string text, int index)
   if (c != nullptr) {
     c->SetValue(text);
   }
-
-  Repaint();
 }
 
 std::string Table::GetHeaderValue(int index)
@@ -293,8 +271,6 @@ std::string Table::GetHeaderValue(int index)
 void Table::SetHeaderVisible(bool visible)
 {
   _header_visible = visible;
-
-  Repaint();
 }
 
 bool Table::IsHeaderVisible()
@@ -329,8 +305,6 @@ void Table::SetCurrentCell(int row, int column)
 
   _row = row;
   _column = column;
-
-  Repaint();
 }
 
 Cell * Table::GetCell(int row, int column)
@@ -367,8 +341,6 @@ void Table::SetCell(Cell *cell, int row, int column)
   }
 
   (*v)[column] = cell;
-
-  Repaint();
 }
 
 jcolor_t<float> & Table::GetGridColor()
@@ -442,8 +414,6 @@ bool Table::KeyPressed(KeyEvent *event)
       }
 
       if (_row != old_index) {
-        Repaint();
-
         // TODO:: DispatchSelectEvent(new SelectEvent(this, _cells[_index].text, _index, UP_ITEM)); 
       }
     }
@@ -468,8 +438,6 @@ bool Table::KeyPressed(KeyEvent *event)
       }
 
       if (_row != old_index) {
-        Repaint();
-
         // TODO:: DispatchSelectEvent(new SelectEvent(this, _items[_index].text, _index, DOWN_ITEM)); 
       }
     }

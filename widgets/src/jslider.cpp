@@ -43,8 +43,6 @@ int Slider::GetStoneSize()
 void Slider::SetStoneSize(int size)
 {
   _stone_size = size;
-
-  Repaint();
 }
 
 void Slider::SetInverted(bool b)
@@ -54,8 +52,6 @@ void Slider::SetInverted(bool b)
   }
 
   _inverted = b;
-
-  Repaint();
 }
 
 bool Slider::KeyPressed(KeyEvent *event)

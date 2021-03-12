@@ -47,16 +47,12 @@ int TextArea::GetRowsGap()
 void TextArea::SetRowsGap(int gap)
 {
   _rows_gap = gap;
-
-  Repaint();
 }
 
 void TextArea::SetWrap(bool b)
 {
   if (b != _is_wrap) {
     _is_wrap = b;
-
-    Repaint();
   }
 }
 
@@ -484,8 +480,6 @@ void TextArea::SetCurrentRow(int row)
   }
 
   _current_row = row;
-
-  Repaint();
 }
 
 int TextArea::GetCurrentRow()

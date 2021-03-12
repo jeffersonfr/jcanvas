@@ -318,6 +318,7 @@ void CalendarDialog::BuildCalendar()
   }
 
   Pack(true);
+  Repaint();
 }
 
 void CalendarDialog::ActionPerformed(ActionEvent *event)

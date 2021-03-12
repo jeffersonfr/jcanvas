@@ -70,7 +70,6 @@ void Text::SetWrap(bool wrap)
     _is_wrap = wrap;
 
     UpdatePreferredSize();
-    Repaint();
   }
 }
 
@@ -90,7 +89,6 @@ void Text::SetText(std::string text)
     _text = text;
 
     UpdatePreferredSize();
-    Repaint();
   }
 }
 
@@ -98,8 +96,6 @@ void Text::SetHorizontalAlign(jhorizontal_align_t align)
 {
   if (_halign != align) {
     _halign = align;
-
-    Repaint();
   }
 }
 
@@ -112,8 +108,6 @@ void Text::SetVerticalAlign(jvertical_align_t align)
 {
   if (_valign != align) {
     _valign = align;
-
-    Repaint();
   }
 }
 

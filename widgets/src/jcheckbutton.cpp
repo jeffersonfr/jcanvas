@@ -53,8 +53,6 @@ void CheckButton::SetWrap(bool b)
   }
 
   _is_wrap = b;
-
-  Repaint();
 }
 
 bool CheckButton::IsWrap()
@@ -65,8 +63,6 @@ bool CheckButton::IsWrap()
 void CheckButton::SetText(std::string text)
 {
   _text = text;
-
-  Repaint();
 }
 
 std::string CheckButton::GetText()
@@ -89,8 +85,6 @@ void CheckButton::SetSelected(bool b)
   if (_checked != b) {
     _checked = b;
 
-    Repaint();
-
     DispatchToggleEvent(new ToggleEvent(this, _checked));
   }
 }
@@ -99,8 +93,6 @@ void CheckButton::SetHorizontalAlign(jhorizontal_align_t align)
 {
   if (_halign != align) {
     _halign = align;
-
-    Repaint();
   }
 }
 
@@ -113,8 +105,6 @@ void CheckButton::SetVerticalAlign(jvertical_align_t align)
 {
   if (_valign != align) {
     _valign = align;
-
-    Repaint();
   }
 }
 

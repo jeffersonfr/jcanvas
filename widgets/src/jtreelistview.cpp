@@ -89,8 +89,6 @@ void TreeListView::SetItemSize(int size)
   }
 
   _item_size = size;
-  
-  Repaint();
 }
 
 void TreeListView::SetCurrentIndex(int i)
@@ -137,8 +135,6 @@ void TreeListView::SetSelected(int i)
   } else {
     _selected_index = i;
   }
-
-  Repaint();
 }
 
 void TreeListView::Select(int i)
@@ -154,8 +150,6 @@ void TreeListView::Select(int i)
   }
 
   _selected_index = i;
-
-  Repaint();
 }
 
 void TreeListView::Deselect(int i)
@@ -171,22 +165,16 @@ void TreeListView::Deselect(int i)
   }
 
   _selected_index = -1;
-
-  Repaint();
 }
 
 void TreeListView::Expand(Item *item)
 {
   _expanded_items[item] = true;
-
-  Repaint();
 }
 
 void TreeListView::Collapse(Item *item)
 {
   _expanded_items[item] = false;
-
-  Repaint();
 }
 
 bool TreeListView::IsExpanded(Item *item)
@@ -199,8 +187,6 @@ void TreeListView::ExpandAll(Item *item)
   for (std::map<Item *, bool>::iterator i=_expanded_items.begin(); i!=_expanded_items.end(); i++) {
     _expanded_items[i->first] = true;
   }
-
-  Repaint();
 }
 
 void TreeListView::CollapseAll(Item *item)
@@ -208,8 +194,6 @@ void TreeListView::CollapseAll(Item *item)
   for (std::map<Item *, bool>::iterator i=_expanded_items.begin(); i!=_expanded_items.end(); i++) {
     _expanded_items[i->first] = false;
   }
-
-  Repaint();
 }
 
 int TreeListView::GetItemGap()
@@ -441,8 +425,6 @@ void TreeListView::IncrementLines(int lines)
   }
 
   if (_index != old_index) {
-    Repaint();
-
     DispatchSelectEvent(new SelectEvent(_items[_index], _index, JSET_UP)); 
   }
 }
@@ -483,8 +465,6 @@ void TreeListView::DecrementLines(int lines)
   }
 
   if (_index != old_index) {
-    Repaint();
-
     DispatchSelectEvent(new SelectEvent(_items[_index], _index, JSET_DOWN)); 
   }
 }

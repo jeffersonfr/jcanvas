@@ -88,7 +88,6 @@ void Button::SetText(std::string text)
     _text = text;
 
     UpdatePreferredSize();
-    Repaint();
   }
 }
 
@@ -103,7 +102,6 @@ void Button::SetImage(Image *image)
     _image = image;
 
     UpdatePreferredSize();
-    Repaint();
   }
 }
 
@@ -116,8 +114,6 @@ void Button::SetHorizontalAlign(jhorizontal_align_t align)
 {
   if (_halign != align) {
     _halign = align;
-
-    Repaint();
   }
 }
 
@@ -130,8 +126,6 @@ void Button::SetVerticalAlign(jvertical_align_t align)
 {
   if (_valign != align) {
     _valign = align;
-
-    Repaint();
   }
 }
 

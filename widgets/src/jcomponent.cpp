@@ -713,15 +713,9 @@ void Component::SetEnabled(bool b)
 {
   _is_enabled = b;
 
-  SetIgnoreRepaint(true);
-
   if (HasFocus() == true) {
     ReleaseFocus();
   }
-
-  SetIgnoreRepaint(false);
-
-  Repaint();
 }
 
 void Component::SetNavigationEnabled(bool b)
@@ -799,8 +793,6 @@ void Component::SetBackgroundVisible(bool b)
   }
 
   _is_background_visible = b;
-
-  Repaint();
 }
 
 void Component::SetIgnoreRepaint(bool b)
@@ -1003,8 +995,6 @@ void Component::SetBounds(int x, int y, int width, int height)
   if (sized == true) {
     DispatchComponentEvent(new ComponentEvent(this, jcomponentevent_type_t::Size));
   }
-
-  Repaint();
 }
 
 void Component::SetBounds(jpoint_t<int> point, jpoint_t<int> size)
@@ -1605,8 +1595,6 @@ void Component::SetVisible(bool visible)
   } else {
     DispatchComponentEvent(new ComponentEvent(this, jcomponentevent_type_t::Show));
   }
-  
-  Repaint();
 }
 
 void Component::RegisterFocusListener(FocusListener *listener)

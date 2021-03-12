@@ -42,8 +42,6 @@ void ProgressBar::SetScrollOrientation(jscroll_orientation_t type)
   }
 
   _type = type;
-
-  Repaint();
 }
 
 jscroll_orientation_t ProgressBar::GetScrollOrientation()
@@ -59,8 +57,6 @@ int ProgressBar::GetStoneSize()
 void ProgressBar::SetStoneSize(int size)
 {
   _stone_size = size;
-
-  Repaint();
 }
     
 double ProgressBar::GetValue()
@@ -79,8 +75,6 @@ void ProgressBar::SetValue(double i)
   if (_value > 100) {
     _value = 100;
   }
-
-  Repaint();
 }
 
 void ProgressBar::Paint(Graphics *g)

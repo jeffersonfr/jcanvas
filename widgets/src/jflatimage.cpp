@@ -35,8 +35,6 @@ FlatImage::~FlatImage()
 void FlatImage::SetImage(Image *image)
 {
   _image = image;
-
-  Repaint();
 }
 
 Image * FlatImage::GetImage()
@@ -47,8 +45,6 @@ Image * FlatImage::GetImage()
 void FlatImage::SetAlign(jrect_align_t align)
 {
   _align = align;
-
-  Repaint();
 }
 
 jrect_align_t FlatImage::GetAlign()

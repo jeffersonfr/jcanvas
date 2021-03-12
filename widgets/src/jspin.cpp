@@ -42,8 +42,6 @@ void Spin::SetScrollOrientation(jscroll_orientation_t type)
   }
 
   _type = type;
-
-  Repaint();
 }
 
 jscroll_orientation_t Spin::GetScrollOrientation()
@@ -63,8 +61,6 @@ void Spin::NextItem()
     }
   }
 
-  Repaint();
-
   DispatchSelectEvent(new SelectEvent(this, _index, jselectevent_type_t::Right));
 }
 
@@ -79,8 +75,6 @@ void Spin::PreviousItem()
       _index = _items.size() - 1;
     }
   }
-
-  Repaint();
 
   DispatchSelectEvent(new SelectEvent(this, _index, jselectevent_type_t::Left));
 }

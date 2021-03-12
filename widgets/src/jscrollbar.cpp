@@ -42,8 +42,6 @@ void ScrollBar::SetScrollOrientation(jscroll_orientation_t type)
   }
 
   _type = type;
-
-  Repaint();
 }
 
 jscroll_orientation_t ScrollBar::GetScrollOrientation()
@@ -54,8 +52,6 @@ jscroll_orientation_t ScrollBar::GetScrollOrientation()
 void ScrollBar::SetStoneSize(int size)
 {
   _stone_size = size;
-
-  Repaint();
 }
 
 int ScrollBar::GetStoneSize()
