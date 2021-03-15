@@ -31,7 +31,7 @@ namespace jcanvas {
 class Raster {
 
 	private:
-    Font *_font;
+    std::shared_ptr<Font> _font;
     jrect_t<int> _clip;
     jpoint_t<int> _size;
     uint32_t *_buffer;
@@ -205,7 +205,7 @@ class Raster {
      * \brief
      *
      */
-    virtual void DrawImage(Image *image, const jpoint_t<int> &v1);
+    virtual void DrawImage(std::shared_ptr<Image> image, const jpoint_t<int> &v1);
 
     /**
      * \brief
@@ -223,7 +223,7 @@ class Raster {
      * \brief
      *
      */
-    virtual void SetFont(Font *font);
+    virtual void SetFont(std::shared_ptr<Font> font);
 
     /**
      * \brief

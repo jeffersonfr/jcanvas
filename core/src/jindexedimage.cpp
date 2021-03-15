@@ -81,11 +81,11 @@ IndexedImage::~IndexedImage()
   }
 }
 
-IndexedImage * IndexedImage::Pack(Image *image)
+std::shared_ptr<IndexedImage> IndexedImage::Pack(std::shared_ptr<Image> image)
 {
-  IndexedImage *packed = nullptr;
+  std::shared_ptr<IndexedImage> packed;
 
-  if ((void *)image != nullptr) {
+  if (image != nullptr) {
     if (image->GetGraphics() != nullptr) {
       jpoint_t<int> 
         size = image->GetSize();
@@ -101,7 +101,7 @@ IndexedImage * IndexedImage::Pack(Image *image)
   return packed;
 }
 
-IndexedImage * IndexedImage::Pack(uint32_t *rgb, jpoint_t<int> size)
+std::shared_ptr<IndexedImage> IndexedImage::Pack(uint32_t *rgb, jpoint_t<int> size)
 {
   if ((void *)rgb == nullptr) {
     return nullptr;
@@ -136,10 +136,10 @@ IndexedImage * IndexedImage::Pack(uint32_t *rgb, jpoint_t<int> size)
     }
   }
 
-  return new IndexedImage(palette, palette_location, rgb, size);
+  return std::make_shared<IndexedImage>(palette, palette_location, rgb, size);
 }
 
-Image * IndexedImage::Flip(jflip_t t)
+std::shared_ptr<Image> IndexedImage::Flip(jflip_t t)
 {
   jpoint_t<int> 
     size = GetSize();
@@ -175,17 +175,15 @@ Image * IndexedImage::Flip(jflip_t t)
     }
   }
 
-  IndexedImage *image = new IndexedImage(_palette, _palette_size, data, size);
+  std::shared_ptr<Image> image = std::make_shared<IndexedImage>(_palette, _palette_size, data, size);
 
   delete [] data;
 
   return image;
 }
 
-Image * IndexedImage::Rotate(double radians, bool resize)
+std::shared_ptr<Image> IndexedImage::Rotate(double radians, bool resize)
 {
-  IndexedImage *image = nullptr;
-
   jpoint_t<int> 
     isize = GetSize();
   double 
@@ -230,14 +228,14 @@ Image * IndexedImage::Rotate(double radians, bool resize)
     }
   }
 
-  image = new IndexedImage(_palette, _palette_size, data, {iw, ih});
+  std::shared_ptr<Image> image = std::make_shared<IndexedImage>(_palette, _palette_size, data, jpoint_t<int>{iw, ih});
 
   delete[] data;
 
   return image;
 }
 
-Image * IndexedImage::Scale(jpoint_t<int> size)
+std::shared_ptr<Image> IndexedImage::Scale(jpoint_t<int> size)
 {
   if (size.x <= 0 || size.y <= 0) {
     return nullptr;
@@ -264,14 +262,14 @@ Image * IndexedImage::Scale(jpoint_t<int> size)
     }
   }
 
-  IndexedImage *image = new IndexedImage(_palette, _palette_size, data, size);
+  std::shared_ptr<Image> image = std::make_shared<IndexedImage>(_palette, _palette_size, data, size);
 
   delete [] data;
 
   return image;
 }
 
-Image * IndexedImage::Crop(jrect_t<int> rect)
+std::shared_ptr<Image> IndexedImage::Crop(jrect_t<int> rect)
 {
   if (rect.size.x <= 0 || rect.size.y <= 0) {
     return nullptr;
@@ -286,19 +284,19 @@ Image * IndexedImage::Crop(jrect_t<int> rect)
     data[i] = _data[rect.point.x + i%rect.size.x + ((rect.point.y + i/rect.size.x) * _size.x)];
   }
 
-  IndexedImage *image = new IndexedImage(_palette, _palette_size, data, rect.size);
+  std::shared_ptr<Image> image = std::make_shared<IndexedImage>(_palette, _palette_size, data, rect.size);
 
   delete [] data;
 
   return image;
 }
 
-Image * IndexedImage::Blend(double alpha)
+std::shared_ptr<Image> IndexedImage::Blend(double alpha)
 {
   return nullptr;
 }
 
-Image * IndexedImage::Colorize(jcolor_t<float> color)
+std::shared_ptr<Image> IndexedImage::Colorize(jcolor_t<float> color)
 {
   jpoint_t<int> 
     size = GetSize();
@@ -323,7 +321,7 @@ Image * IndexedImage::Colorize(jcolor_t<float> color)
     palette[i] = (0xff << 24) | (r << 16) | (g << 8) | (b << 0);
   }
 
-  return new IndexedImage(palette, _palette_size, _data, size);
+  return std::shared_ptr<IndexedImage>(new IndexedImage(palette, _palette_size, _data, size));
 }
 
 uint8_t * IndexedImage::LockData()
@@ -379,9 +377,9 @@ void IndexedImage::SetPalette(uint32_t *palette, int palette_size)
   memcpy(_palette, palette, palette_size*sizeof(uint32_t));
 }
 
-Image * IndexedImage::Clone()
+std::shared_ptr<Image> IndexedImage::Clone()
 {
-  return new IndexedImage(_palette, _palette_size, _data, _size);
+  return std::make_shared<IndexedImage>(_palette, _palette_size, _data, _size);
 }
 
 }

@@ -44,7 +44,7 @@ using namespace jcanvas;
 class ImageAnimation : public Animation {
 
   private:
-    std::vector<Image *>
+    std::vector<std::shared_ptr<Image>>
       _images;
     int 
       _index = 0;
@@ -55,34 +55,31 @@ class ImageAnimation : public Animation {
     {
       SetBounds(bounds);
 
-			_images.push_back(new BufferedImage("images/tux-alien.png"));
-			_images.push_back(new BufferedImage("images/tux-bart.png"));
-			_images.push_back(new BufferedImage("images/tux-batman.png"));
-			_images.push_back(new BufferedImage("images/tux-freddy.png"));
-			_images.push_back(new BufferedImage("images/tux-homer.png"));
-			_images.push_back(new BufferedImage("images/tux-indiana.png"));
-			_images.push_back(new BufferedImage("images/tux-ipod.png"));
-			_images.push_back(new BufferedImage("images/tux-jamaican.png"));
-			_images.push_back(new BufferedImage("images/tux-jason.png"));
-			_images.push_back(new BufferedImage("images/tux-kenny.png"));
-			_images.push_back(new BufferedImage("images/tux-mario.png"));
-			_images.push_back(new BufferedImage("images/tux-neo.png"));
-			_images.push_back(new BufferedImage("images/tux-potter.png"));
-			_images.push_back(new BufferedImage("images/tux-raider.png"));
-			_images.push_back(new BufferedImage("images/tux-rambo.png"));
-			_images.push_back(new BufferedImage("images/tux-rapper.png"));
-			_images.push_back(new BufferedImage("images/tux-shrek.png"));
-			_images.push_back(new BufferedImage("images/tux-spiderman.png"));
-			_images.push_back(new BufferedImage("images/tux-turtle.png"));
-			_images.push_back(new BufferedImage("images/tux-wolverine.png"));
-			_images.push_back(new BufferedImage("images/tux-zombie.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-alien.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-bart.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-batman.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-freddy.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-homer.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-indiana.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-ipod.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-jamaican.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-jason.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-kenny.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-mario.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-neo.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-potter.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-raider.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-rambo.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-rapper.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-shrek.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-spiderman.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-turtle.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-wolverine.png"));
+			_images.push_back(std::make_shared<BufferedImage>("images/tux-zombie.png"));
     }
 
     virtual ~ImageAnimation()
     {
-      for (auto image : _images) {
-        delete image;
-      }
     }
 
     virtual void Update(std::chrono::milliseconds tick)
@@ -222,9 +219,9 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         jrect_t
           region = _toggle->GetVisibleBounds();
 
-        _imagebutton1 = std::make_shared<Button>("", new BufferedImage("images/alert_icon.png"));
-        _imagebutton2 = std::make_shared<Button>("", new BufferedImage("images/info_icon.png"));
-        _imagebutton3 = std::make_shared<Button>("", new BufferedImage("images/error_icon.png"));
+        _imagebutton1 = std::make_shared<Button>("", std::make_shared<BufferedImage>("images/alert_icon.png"));
+        _imagebutton2 = std::make_shared<Button>("", std::make_shared<BufferedImage>("images/info_icon.png"));
+        _imagebutton3 = std::make_shared<Button>("", std::make_shared<BufferedImage>("images/error_icon.png"));
         
         _imagebutton1->SetBounds({insets.left + 0*(48 + 18), region.point.y + 1*(region.size.y + 8), 64, 64});
         _imagebutton2->SetBounds({insets.left + 1*(48 + 18), region.point.y + 1*(region.size.y + 8), 64, 64});
@@ -353,7 +350,7 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         jrect_t
           region = _marquee->GetVisibleBounds();
 
-        _staticimage = std::make_shared<FlatImage>(new BufferedImage(JCANVAS_RESOURCES_DIR "/images/green_icon.png"));
+        _staticimage = std::make_shared<FlatImage>(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/green_icon.png"));
         
         _staticimage->SetBounds({region.point.x + region.size.x + 16, region.point.y, 196, 196});
       }
@@ -366,47 +363,47 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         
         _list->SetBounds({region.point.x, region.point.y + region.size.y + 8, 196, 196});
 
-        _list->AddImageItem("Item 01", new BufferedImage(("images/tux-alien.png")));
+        _list->AddImageItem("Item 01", std::make_shared<BufferedImage>(("images/tux-alien.png")));
         _list->AddTextItem("Item 02");
-        _list->AddImageItem("Item 03", new BufferedImage(("images/tux-bart.png")));
+        _list->AddImageItem("Item 03", std::make_shared<BufferedImage>(("images/tux-bart.png")));
         _list->AddTextItem("Item 04");
-        _list->AddImageItem("Item 05", new BufferedImage(("images/tux-batman.png")));
+        _list->AddImageItem("Item 05", std::make_shared<BufferedImage>(("images/tux-batman.png")));
         _list->AddTextItem("Item 06");
-        _list->AddImageItem("Item 07", new BufferedImage(("images/tux-freddy.png")));
+        _list->AddImageItem("Item 07", std::make_shared<BufferedImage>(("images/tux-freddy.png")));
         _list->AddTextItem("Item 08");
-        _list->AddImageItem("Item 09", new BufferedImage(("images/tux-homer.png")));
+        _list->AddImageItem("Item 09", std::make_shared<BufferedImage>(("images/tux-homer.png")));
         _list->AddTextItem("Item 10");
-        _list->AddImageItem("Item 11", new BufferedImage(("images/tux-indiana.png")));
+        _list->AddImageItem("Item 11", std::make_shared<BufferedImage>(("images/tux-indiana.png")));
         _list->AddTextItem("Item 12");
-        _list->AddImageItem("Item 13", new BufferedImage(("images/tux-ipod.png")));
+        _list->AddImageItem("Item 13", std::make_shared<BufferedImage>(("images/tux-ipod.png")));
         _list->AddTextItem("Item 14");
-        _list->AddImageItem("Item 15", new BufferedImage(("images/tux-jamaican.png")));
+        _list->AddImageItem("Item 15", std::make_shared<BufferedImage>(("images/tux-jamaican.png")));
         _list->AddTextItem("Item 16");
-        _list->AddImageItem("Item 17", new BufferedImage(("images/tux-jason.png")));
+        _list->AddImageItem("Item 17", std::make_shared<BufferedImage>(("images/tux-jason.png")));
         _list->AddTextItem("Item 18");
-        _list->AddImageItem("Item 19", new BufferedImage(("images/tux-kenny.png")));
+        _list->AddImageItem("Item 19", std::make_shared<BufferedImage>(("images/tux-kenny.png")));
         _list->AddTextItem("Item 20");
-        _list->AddImageItem("Item 21", new BufferedImage(("images/tux-mario.png")));
+        _list->AddImageItem("Item 21", std::make_shared<BufferedImage>(("images/tux-mario.png")));
         _list->AddTextItem("Item 22");
-        _list->AddImageItem("Item 23", new BufferedImage(("images/tux-neo.png")));
+        _list->AddImageItem("Item 23", std::make_shared<BufferedImage>(("images/tux-neo.png")));
         _list->AddTextItem("Item 24");
-        _list->AddImageItem("Item 25", new BufferedImage(("images/tux-potter.png")));
+        _list->AddImageItem("Item 25", std::make_shared<BufferedImage>(("images/tux-potter.png")));
         _list->AddTextItem("Item 26");
-        _list->AddImageItem("Item 27", new BufferedImage(("images/tux-raider.png")));
+        _list->AddImageItem("Item 27", std::make_shared<BufferedImage>(("images/tux-raider.png")));
         _list->AddTextItem("Item 28");
-        _list->AddImageItem("Item 29", new BufferedImage(("images/tux-rambo.png")));
+        _list->AddImageItem("Item 29", std::make_shared<BufferedImage>(("images/tux-rambo.png")));
         _list->AddTextItem("Item 30");
-        _list->AddImageItem("Item 31", new BufferedImage(("images/tux-rapper.png")));
+        _list->AddImageItem("Item 31", std::make_shared<BufferedImage>(("images/tux-rapper.png")));
         _list->AddTextItem("Item 32");
-        _list->AddImageItem("Item 33", new BufferedImage(("images/tux-shrek.png")));
+        _list->AddImageItem("Item 33", std::make_shared<BufferedImage>(("images/tux-shrek.png")));
         _list->AddTextItem("Item 34");
-        _list->AddImageItem("Item 35", new BufferedImage(("images/tux-spiderman.png")));
+        _list->AddImageItem("Item 35", std::make_shared<BufferedImage>(("images/tux-spiderman.png")));
         _list->AddTextItem("Item 36");
-        _list->AddImageItem("Item 37", new BufferedImage(("images/tux-turtle.png")));
+        _list->AddImageItem("Item 37", std::make_shared<BufferedImage>(("images/tux-turtle.png")));
         _list->AddTextItem("Item 38");
-        _list->AddImageItem("Item 39", new BufferedImage(("images/tux-wolverine.png")));
+        _list->AddImageItem("Item 39", std::make_shared<BufferedImage>(("images/tux-wolverine.png")));
         _list->AddTextItem("Item 40");
-        _list->AddImageItem("Item 41", new BufferedImage(("images/tux-zombie.png")));
+        _list->AddImageItem("Item 41", std::make_shared<BufferedImage>(("images/tux-zombie.png")));
         _list->AddTextItem("Item 42");
       }
 

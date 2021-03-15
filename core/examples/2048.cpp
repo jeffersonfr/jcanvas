@@ -55,7 +55,7 @@ class Tile {
 class Game2048 : public Window, public KeyListener {
 	
 	private:
-		std::map<int, Image *> _images;
+		std::map<int, std::shared_ptr<Image>> _images;
 		Tile _board[4][4];
 		int _score;
 		bool _is_win;
@@ -72,10 +72,8 @@ class Game2048 : public Window, public KeyListener {
       int right = 0;
       int bottom = 0;
 
-			Font *font = &Font::Size16;
-
 			g->SetColor(jcolorname::White);
-			g->SetFont(font);
+			g->SetFont(Font::Size16);
 
 			jpoint_t<int>
 				size = GetSize();
@@ -336,7 +334,7 @@ class Game2048 : public Window, public KeyListener {
 
 				o << i;
 
-				_images[i] = new BufferedImage("images/2048/tux-n" + o.str() + ".png");
+				_images[i] = std::make_shared<BufferedImage>("images/2048/tux-n" + o.str() + ".png");
 
 				i = i*2;
 			}
@@ -346,13 +344,6 @@ class Game2048 : public Window, public KeyListener {
 
 		virtual ~Game2048()
 		{
-			for (int i=0; i<(int)_images.size(); i++) {
-				Image *image = _images[i];
-
-				delete image;
-			}
-
-			_images.clear();
 		}
 
 };

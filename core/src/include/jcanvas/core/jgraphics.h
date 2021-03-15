@@ -24,6 +24,8 @@
 #include "jcanvas/core/jeventobject.h"
 #include "jcanvas/algebra/jrect.h"
 
+#include <memory>
+
 #include <cairo.h>
 
 #include <math.h>
@@ -230,7 +232,7 @@ class Graphics {
     /** \brief */
     std::vector<struct jgradient_t> _gradient_stops;
     /** \brief */
-    Font *_font;
+    std::shared_ptr<Font> _font;
     /** \brief */
     jcolor_t<float> _color;
     /** \brief */
@@ -349,13 +351,13 @@ class Graphics {
      * \brief
      *
      */
-    virtual void SetFont(Font *font); 
+    virtual void SetFont(std::shared_ptr<Font> font); 
     
     /**
      * \brief
      *
      */
-    virtual Font * GetFont(); 
+    virtual std::shared_ptr<Font> GetFont(); 
     
     /**
      * \brief
@@ -575,25 +577,25 @@ class Graphics {
      * \brief
      *
      */
-    virtual bool DrawImage(Image *img, jpoint_t<int> point);
+    virtual bool DrawImage(std::shared_ptr<Image> img, jpoint_t<int> point);
     
     /**
      * \brief
      *
      */
-    virtual bool DrawImage(Image *img, jrect_t<int> dst);
+    virtual bool DrawImage(std::shared_ptr<Image> img, jrect_t<int> dst);
     
     /**
      * \brief
      *
      */
-    virtual bool DrawImage(Image *img, jrect_t<int> src, jpoint_t<int> dst);
+    virtual bool DrawImage(std::shared_ptr<Image> img, jrect_t<int> src, jpoint_t<int> dst);
     
     /**
      * \brief
      *
      */
-    virtual bool DrawImage(Image *img, jrect_t<int> src, jrect_t<int> dst);
+    virtual bool DrawImage(std::shared_ptr<Image> img, jrect_t<int> src, jrect_t<int> dst);
     
     /**
      * \brief
@@ -641,7 +643,7 @@ class Graphics {
      * \brief
      *
      */
-    virtual void SetPattern(Image *image);
+    virtual void SetPattern(std::shared_ptr<Image> image);
 
     /**
      * \brief
@@ -707,13 +709,13 @@ class Graphics {
      * \brief
      *
      */
-    virtual void SetSource(Image *image);
+    virtual void SetSource(std::shared_ptr<Image> image);
     
     /**
      * \brief
      *
      */
-    virtual void SetMask(Image *image);
+    virtual void SetMask(std::shared_ptr<Image> image);
     
     /**
      * \brief

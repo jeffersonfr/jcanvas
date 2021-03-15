@@ -68,16 +68,16 @@ bool
 class AssetsManager {
 
   struct image_resource_t {
-    Image 
-      *image;
-    std::map<Image *, jrect_t<int>> 
+    std::shared_ptr<Image>
+      image;
+    std::map<std::shared_ptr<Image>, jrect_t<int>> 
       crops;
   };
 
   private:
     std::map<std::string, image_resource_t>
       _images;
-    std::map<std::pair<std::string, int>, Font *>
+    std::map<std::pair<std::string, int>, std::shared_ptr<Font>>
       _fonts;
 
   public:
@@ -88,7 +88,7 @@ class AssetsManager {
       return instance;
     }
 
-    Image * LoadImage(std::string path)
+    std::shared_ptr<Image> LoadImage(std::string path)
     {
       auto pair = _images.find(path);
       
@@ -96,24 +96,24 @@ class AssetsManager {
         return pair->second.image;
       }
 
-      Image *image = new BufferedImage(path);
+      std::shared_ptr<Image> image = std::make_shared<BufferedImage>(path);
 
       _images[path].image = image;
 
       return image;
     }
 
-    std::vector<Image *> LoadImageMap(std::string path, const std::vector<jrect_t<int>> &rects) {
-      std::vector<Image *>
+    std::vector<std::shared_ptr<Image>> LoadImageMap(std::string path, const std::vector<jrect_t<int>> &rects) {
+      std::vector<std::shared_ptr<Image>>
         ilist;
 
-      Image 
-        *image = LoadImage(path);
-      std::map<Image *, jrect_t<int>> 
+      std::shared_ptr<Image>
+        image = LoadImage(path);
+      std::map<std::shared_ptr<Image>, jrect_t<int>> 
         &crops = _images[path].crops;
 
       for (auto rect : rects) {
-        Image *cropped = nullptr;
+        std::shared_ptr<Image> cropped;
 
         for (auto crop : crops) {
           if (crop.second == rect) {
@@ -135,10 +135,10 @@ class AssetsManager {
       return ilist;
     }
 
-    Font * LoadFont(std::string path, int size)
+    std::shared_ptr<Font> LoadFont(std::string path, int size)
     {
-      Font
-        *font = new Font(path, jfont_attributes_t::None, size);
+      std::shared_ptr<Font>
+        font = std::make_shared<Font>(path, jfont_attributes_t::None, size);
 
       _fonts[{path, size}] = font;
 
@@ -147,14 +147,6 @@ class AssetsManager {
 
     void Release()
     {
-      for (auto &pair : _images) {
-        delete pair.second.image;
-
-        for (auto &image : pair.second.crops) {
-          delete image.first;
-        }
-      }
-
       _images.clear();
     }
 
@@ -479,8 +471,8 @@ class ProjectileComponent : public TransformComponent {
 class SpriteComponent : public Component {
 
   protected:
-    Image 
-      *_image;
+    std::shared_ptr<Image>
+      _image;
 
   public:
     jrect_t<int>
@@ -488,7 +480,7 @@ class SpriteComponent : public Component {
       dst;
 
   public:
-    SpriteComponent(Image *image):
+    SpriteComponent(std::shared_ptr<Image> image):
       Component(),
       _image(image)
     {
@@ -515,11 +507,7 @@ class SpriteComponent : public Component {
       if (transform->radians == 0.0f) {
         g->DrawImage(_image, src, {dst.point - sgCamera, dst.size});
       } else {
-        Image *rotate = _image->Rotate(transform->radians);
-
-        g->DrawImage(rotate, src, {dst.point - sgCamera, dst.size});
-
-        delete rotate;
+        g->DrawImage(_image->Rotate(transform->radians), src, {dst.point - sgCamera, dst.size});
       }
     }
 
@@ -530,7 +518,7 @@ class TileComponent : public SpriteComponent {
   private:
 
   public:
-    TileComponent(Image *image):
+    TileComponent(std::shared_ptr<Image> image):
       SpriteComponent(image)
     {
     }
@@ -547,7 +535,7 @@ class AnimatedSpriteComponent : public Component {
 		class Animation {
 
 			private:
-				std::vector<Image *> 
+				std::vector<std::shared_ptr<Image>> 
 					_images;
         float
           _counter;
@@ -559,7 +547,7 @@ class AnimatedSpriteComponent : public Component {
           _loop;
 
 			public:
-				Animation(const std::vector<Image *> &images, bool loop = true, int fps = 16)
+				Animation(const std::vector<std::shared_ptr<Image>> &images, bool loop = true, int fps = 16)
 				{
 					if (images.size() == 0) {
 						throw std::runtime_error("Animation must have at least one image");
@@ -595,7 +583,7 @@ class AnimatedSpriteComponent : public Component {
           return _active;
         }
 
-				Image * GetFrame()
+        std::shared_ptr<Image> GetFrame()
 				{
 					return _images[_index];
 				}
@@ -690,11 +678,7 @@ class AnimatedSpriteComponent : public Component {
       if (transform->radians != 0.0f) {
         g->DrawImage(animation->second.GetFrame(), src, {dst.point - sgCamera, dst.size});
       } else {
-        Image *rotate = animation->second.GetFrame()->Rotate(transform->radians);
-
-        g->DrawImage(rotate, src, {dst.point - sgCamera, dst.size});
-
-        delete rotate;
+        g->DrawImage(animation->second.GetFrame()->Rotate(transform->radians), src, {dst.point - sgCamera, dst.size});
       }
     }
 
@@ -712,8 +696,8 @@ class CollisionComponent : public Component {
     };
 
   private:
-    Image
-      *_image;
+    std::shared_ptr<Image>
+      _image;
 
 	public:
     jrect_t<int>
@@ -761,8 +745,8 @@ class CollisionComponent : public Component {
 class TextComponent : public Component {
 
   private:
-    Font
-      *_font;
+    std::shared_ptr<Font>
+      _font;
 
   public:
     std::string
@@ -773,7 +757,7 @@ class TextComponent : public Component {
       color;
 
   public:
-    TextComponent(std::string text, Font *font):
+    TextComponent(std::string text, std::shared_ptr<Font> font):
       Component(),
       _font(font),
       text(text),
@@ -964,7 +948,7 @@ class EntityManager : public Component {
               thisEntity->valid = false;
               thatEntity->valid = false;
 
-              std::vector<Image *>
+              std::vector<std::shared_ptr<Image>>
                 crops = AssetsManager::Instance().LoadImageMap("assets/images/explosion.png", {
                     {0*32, 0*32, 32, 32},
                     {1*32, 0*32, 32, 32},
@@ -1200,8 +1184,8 @@ class RadarComponent : public Component {
 	private:
     EntityManager
       &_entityManager;
-    Image
-      *_image;
+    std::shared_ptr<Image>
+      _image;
     float
       _angle;
 
@@ -1210,7 +1194,7 @@ class RadarComponent : public Component {
       Component(),
       _entityManager(entityManager)
     {
-      _image = new BufferedImage(jpixelformat_t::ARGB, size);
+      _image = std::make_shared<BufferedImage>(jpixelformat_t::ARGB, size);
 
       _angle = 0.0f;
     }
@@ -1351,8 +1335,8 @@ class KeyboardComponent : public Component {
 
           Entity 
             &entity = _entityManager.Create(Entity::entity_t::PLAYER_PROJECTILE);
-          Image
-            *image = AssetsManager::Instance().LoadImage("assets/images/bullet-enemy.png");
+          std::shared_ptr<Image>
+            image = AssetsManager::Instance().LoadImage("assets/images/bullet-enemy.png");
           jpoint_t<int>
             dst {0, 0};
           float
@@ -1566,8 +1550,8 @@ class Game : public Window, public KeyListener {
 
       std::cout << "Map: " << map_size << std::endl;
 
-      Image 
-        *tiles = AssetsManager::Instance().LoadImage(tile_name);
+      std::shared_ptr<Image>
+        tiles = AssetsManager::Instance().LoadImage(tile_name);
 
       block_size = tiles->GetSize()/tile_size;
 
@@ -1635,8 +1619,8 @@ class Game : public Window, public KeyListener {
             point, scale);
         
         if (type == Entity::entity_t::ENEMY) {
-          Image
-            *image = nullptr;
+          std::shared_ptr<Image>
+            image;
           
           image = AssetsManager::Instance().LoadImage("assets/images/tank-big-down.png");
 
@@ -1661,7 +1645,7 @@ class Game : public Window, public KeyListener {
                   rect.point + jpoint_t<float>(rect.size)/2, jpoint_t<float>{0.0f, sinf(M_PI/2)}*256*2, 32);
               }, true);
         } else if (type == Entity::entity_t::PLAYER) {
-          std::vector<Image *>
+          std::vector<std::shared_ptr<Image>>
             crops = AssetsManager::Instance().LoadImageMap("assets/images/chopper-spritesheet.png", {
               {0*32, 0*32, 32, 32},
               {1*32, 0*32, 32, 32},

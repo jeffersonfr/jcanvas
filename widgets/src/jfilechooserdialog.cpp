@@ -36,24 +36,14 @@ FileChooserDialog::FileChooserDialog(std::shared_ptr<Container> parent, std::str
   _filter = filter;
   _extension_ignorecase = true;
 
-  _image_file = new BufferedImage(JCANVAS_RESOURCES_DIR "/images/file.png");
-  _image_folder = new BufferedImage(JCANVAS_RESOURCES_DIR "/images/folder.png");
+  _image_file = std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/file.png");
+  _image_folder = std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/folder.png");
 
 }
 
 FileChooserDialog::~FileChooserDialog()
 {
   _list->RemoveSelectListener(this);
-
-  if (_image_file != nullptr) {
-    delete _image_file;
-    _image_file = nullptr;
-  }
-  
-  if (_image_folder != nullptr) {
-    delete _image_folder;
-    _image_folder = nullptr;
-  }
 }
 
 void FileChooserDialog::Init()

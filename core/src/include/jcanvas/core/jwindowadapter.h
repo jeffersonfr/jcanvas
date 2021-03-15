@@ -48,13 +48,13 @@ class WindowAdapter {
      * \brief
      *
      */
-    virtual void SetIcon(Image *image);
+    virtual void SetIcon(std::shared_ptr<Image> image);
 
     /**
      * \brief
      *
      */
-    virtual Image * GetIcon();
+    virtual std::shared_ptr<Image> GetIcon();
 
     /**
      * \brief
@@ -174,7 +174,7 @@ class WindowAdapter {
      * \brief
      *
      */
-    virtual void SetCursor(Image *shape, int hotx, int hoty);
+    virtual void SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty);
 
     /**
      * \brief

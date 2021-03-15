@@ -26,7 +26,7 @@ InputDialog::InputDialog(std::shared_ptr<Container> parent, std::string title, s
 {
   jtheme_t &theme = GetTheme();
 
-  theme.font.primary = &Font::Big;
+  theme.font.primary = Font::Big;
 
   _label = std::make_shared<Text>(msg);
 

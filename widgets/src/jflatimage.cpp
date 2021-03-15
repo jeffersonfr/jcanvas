@@ -21,7 +21,7 @@
 
 namespace jcanvas {
 
-FlatImage::FlatImage(Image *image):
+FlatImage::FlatImage(std::shared_ptr<Image> image):
   Component()
 {
   _align = jrect_align_t::Center;
@@ -32,12 +32,12 @@ FlatImage::~FlatImage()
 {
 }
 
-void FlatImage::SetImage(Image *image)
+void FlatImage::SetImage(std::shared_ptr<Image> image)
 {
   _image = image;
 }
 
-Image * FlatImage::GetImage()
+std::shared_ptr<Image> FlatImage::GetImage()
 {
   return _image;
 }

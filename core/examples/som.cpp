@@ -86,8 +86,8 @@ class SOM : public Window {
 		};
 	
 	public:
-		Image 
-      *offscreen;
+    std::shared_ptr<Image>
+      offscreen;
 		int	
       W,
       H,
@@ -131,8 +131,6 @@ class SOM : public Window {
 			}
 			
       delete [] r;
-
-      delete offscreen;
 		}
 
 		void kohonenInit()
@@ -311,7 +309,7 @@ class SOM : public Window {
 			g->FillRectangle({0, 0, size.x, size.y});
 
 			if ((offscreen == nullptr) || ((imagewidth != w) || (imageheight != h))) {
-				offscreen = new BufferedImage(jpixelformat_t::RGB32, {w, h});
+				offscreen = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, jpoint_t<int>{w, h});
 
 				imagewidth = w;
 				imageheight = h;

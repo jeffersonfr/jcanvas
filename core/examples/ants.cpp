@@ -59,8 +59,8 @@ class Main : public Window {
 
 	private:
 #if ENABLE_GUI == 1
-		Image 
-      *foffscreen;
+    std::shared_ptr<Image>
+      foffscreen;
     std::mutex
       _mutex;
 #endif
@@ -273,11 +273,6 @@ class Main : public Window {
 			delete [] try_solutions;
       try_solutions = nullptr;
 
-#if ENABLE_GUI == 1
-      delete foffscreen;
-      foffscreen = nullptr;
-#endif
-      
 			std::cout << std::endl;
 
       Application::Quit();
@@ -299,7 +294,7 @@ class Main : public Window {
       g->SetCompositeFlags(jcomposite_t::SrcOver);
 
 			if (foffscreen == nullptr) {
-				foffscreen = new BufferedImage(jpixelformat_t::RGB32, size);
+				foffscreen = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, size);
 			
 				Graphics *goff = foffscreen->GetGraphics();
 
@@ -310,7 +305,7 @@ class Main : public Window {
 				goff->SetColor({0x00, 0x00, 0x00, 0xff});
 				goff->DrawString(tmp, jpoint_t<int>{0, size.y - 32});
 
-				goff->SetFont(&Font::Size8);
+				goff->SetFont(Font::Size8);
 
 				for (int i=0; i<MAX_COLS*MAX_ROWS; i++) {
 					sprintf(tmp, "%d", board[i].value);

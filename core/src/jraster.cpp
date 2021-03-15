@@ -687,7 +687,7 @@ void Raster::FillPolygon(const jpoint_t<int> &v1, const std::vector<jpoint_t<int
 	FillPolygon0(this, v, {x1, y1}, {x2, y2});
 }
 
-void Raster::DrawImage(Image *image, const jpoint_t<int> &v1)
+void Raster::DrawImage(std::shared_ptr<Image> image, const jpoint_t<int> &v1)
 {
   if (image == nullptr) {
     return;
@@ -751,7 +751,7 @@ float Raster::GetBlendEnabled()
   return _blend_enabled;
 }
 
-void Raster::SetFont(Font *font)
+void Raster::SetFont(std::shared_ptr<Font> font)
 {
   _font = font;
 }

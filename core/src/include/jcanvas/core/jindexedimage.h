@@ -64,49 +64,49 @@ class IndexedImage : public Image {
      * \brief Packs the source argb image.
      *
      */
-    static IndexedImage * Pack(Image *image);
+    static std::shared_ptr<IndexedImage> Pack(std::shared_ptr<Image> image);
 
     /**
      * \brief Packs the source argb image.
      *
      */
-    static IndexedImage * Pack(uint32_t *rgb, jpoint_t<int> size);
+    static std::shared_ptr<IndexedImage> Pack(uint32_t *rgb, jpoint_t<int> size);
 
     /**
      * \brief
      *
      */
-    virtual Image * Flip(jflip_t t);
+    virtual std::shared_ptr<Image> Flip(jflip_t t);
     
     /**
      * \brief
      *
      */
-    virtual Image * Rotate(double radians, bool resize = true);
+    virtual std::shared_ptr<Image> Rotate(double radians, bool resize = true);
     
     /**
      * \brief
      *
      */
-    virtual Image * Scale(jpoint_t<int> size);
+    virtual std::shared_ptr<Image> Scale(jpoint_t<int> size);
 
     /**
      * \brief
      *
      */
-    virtual Image * Crop(jrect_t<int> rect);
+    virtual std::shared_ptr<Image> Crop(jrect_t<int> rect);
 
     /**
      * \brief
      *
      */
-    virtual Image * Blend(double alpha);
+    virtual std::shared_ptr<Image> Blend(double alpha);
 
     /**
      * \brief
      *
      */
-    virtual Image * Colorize(jcolor_t<float> color);
+    virtual std::shared_ptr<Image> Colorize(jcolor_t<float> color);
 
     /**
      * \brief
@@ -142,7 +142,7 @@ class IndexedImage : public Image {
      * \brief
      *
      */
-    virtual Image * Clone();
+    virtual std::shared_ptr<Image> Clone();
 
 };
 

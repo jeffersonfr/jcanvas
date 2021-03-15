@@ -48,8 +48,8 @@ double myrandom()
 class Breakout : public Window, public KeyListener {
 
 	private:
-		Image 
-      *off;
+    std::shared_ptr<Image>
+      off;
 		Graphics 
       *goff;
 		int	player1score,
@@ -98,8 +98,6 @@ class Breakout : public Window, public KeyListener {
 
 		virtual ~Breakout()
 		{
-      delete off;
-
       delete [] showbrick;
 		}
 
@@ -174,7 +172,7 @@ class Breakout : public Window, public KeyListener {
         size = GetSize();
 
 			if (goff == nullptr && size.x > 0 && size.y > 0) {
-				off = new BufferedImage(jpixelformat_t::RGB32, size);
+				off = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, size);
 
 				goff = off->GetGraphics();
 			}
@@ -226,7 +224,7 @@ class Breakout : public Window, public KeyListener {
 				showtitle = !showtitle;
 			}
 			
-			Font *font = &Font::Size16;
+      std::shared_ptr<Font> font = Font::Size16;
 			jpoint_t<int> size = GetSize();
 
 			if (font != nullptr) {
@@ -279,8 +277,8 @@ class Breakout : public Window, public KeyListener {
 
 		void ShowScore()
 		{
-			Font 
-        *font = &Font::Size16;
+      std::shared_ptr<Font>
+        font = Font::Size16;
       jpoint_t<int>
         size = GetSize();
 

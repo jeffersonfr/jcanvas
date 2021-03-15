@@ -49,14 +49,15 @@ class Mines : public Window, public KeyListener {
 	};
 
 	private:
-		Image *small_bomb;
-		Image *huge_bomb;
-		Image *flag;
-		Image *smile_face;
-		Image *dead_face;
-		Image *image1;
-		Image *image2;
-		Image *image3;
+    std::shared_ptr<Image>
+      small_bomb,
+      huge_bomb,
+      flag,
+      smile_face,
+      dead_face,
+      image1,
+      image2,
+      image3;
     std::mutex mines_mutex;
 		block_t *board;
 		int isize;
@@ -93,30 +94,26 @@ Mines::Mines(int x, int y):
 
 	board = new block_t[max_rows*max_cols+10];
 
-	Image *image;
+  std::shared_ptr<Image> image;
 
-	image = new BufferedImage("images/bomb.png");
+	image = std::make_shared<BufferedImage>("images/bomb.png");
 	small_bomb = image->Scale({isize, isize});
 	huge_bomb = image->Scale({4*isize, 4*isize});
-	delete image;
 
-	image = new BufferedImage("images/flag.png");
+	image = std::make_shared<BufferedImage>("images/flag.png");
 	flag = image->Scale({isize, isize});
-	delete image;
 
-	image = new BufferedImage("images/smile_face.png");
+	image = std::make_shared<BufferedImage>("images/smile_face.png");
 	smile_face = image->Scale({4*isize, 4*isize});
-	delete image;
 
-	image = new BufferedImage("images/dead_face.png");
+	image = std::make_shared<BufferedImage>("images/dead_face.png");
 	dead_face = image->Scale({4*isize, 4*isize});
-	delete image;
 
 	SetupBoard();
 
-  image1 = new BufferedImage("images/blue_icon.png");
-  image2 = new BufferedImage("images/yellow_icon.png");
-  image3 = new BufferedImage("images/green_icon.png");
+  image1 = std::make_shared<BufferedImage>("images/blue_icon.png");
+  image2 = std::make_shared<BufferedImage>("images/yellow_icon.png");
+  image3 = std::make_shared<BufferedImage>("images/green_icon.png");
 
 	// AddSubtitle(image1, "Novo Jogo");
 	// AddSubtitle(image2, "Flag");
@@ -126,23 +123,13 @@ Mines::Mines(int x, int y):
 Mines::~Mines() 
 {
 	delete [] board;
-
-	delete small_bomb;
-	delete huge_bomb;
-	delete flag;
-	delete smile_face;
-	delete dead_face;
-
-  delete image1;
-  delete image2;
-  delete image3;
 }
 
 void Mines::Paint(Graphics *g)
 {
 	Window::Paint(g);
 
-	Font *font = &Font::Size16;
+  std::shared_ptr<Font> font = Font::Size16;
 	int delta = 4;
   int left = 0;
   int top = 0;

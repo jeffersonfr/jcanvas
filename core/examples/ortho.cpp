@@ -313,7 +313,7 @@ class Grid : public Window, public KeyListener, public MouseListener {
 				}
 			}
 
-      Font *font = &Font::Size16;
+      std::shared_ptr<Font> font = Font::Size16;
       int fsize = font->GetSize();
 
       g->SetFont(font);

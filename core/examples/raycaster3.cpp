@@ -142,7 +142,7 @@ void CombSort(int* order, double* dist, int amount)
 
 int loadImage(std::vector<uint32_t>& out, unsigned long& w, unsigned long& h, const std::string& filename)
 {
-	Image *image = new BufferedImage(filename);
+  std::shared_ptr<Image> image = std::make_shared<BufferedImage>(filename);
 
 	if (image == nullptr) {
 		return 1;
@@ -156,8 +156,6 @@ int loadImage(std::vector<uint32_t>& out, unsigned long& w, unsigned long& h, co
 	for (int i=0; i<length; i++) {
 		out[i] = image->GetGraphics()->GetRGB({i%size.x, i/size.x});
 	}
-
-  delete image;
 
 	return 0;
 }
@@ -222,8 +220,7 @@ class GraphicsTeste : public Window, public KeyListener {
 		{
 			// Window::Paint(g);
 
-      static BufferedImage 
-        image(jpixelformat_t::RGB32, {SCREEN_WIDTH, SCREEN_HEIGHT});
+      static std::shared_ptr<Image> image = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, jpoint_t<int>{SCREEN_WIDTH, SCREEN_HEIGHT});
 
       // process events
 			double frameTime = 0.1;	//frameTime is the time this frame has taken, in seconds
@@ -268,7 +265,7 @@ class GraphicsTeste : public Window, public KeyListener {
 			}
 
       uint32_t 
-        *buffer = (uint32_t *)image.LockData();
+        *buffer = (uint32_t *)image->LockData();
 			int 
         w = SCREEN_WIDTH,
 			  h = SCREEN_HEIGHT;
@@ -517,9 +514,9 @@ class GraphicsTeste : public Window, public KeyListener {
 				}
 			}
 
-      image.UnlockData();
+      image->UnlockData();
 
-      g->DrawImage(&image, jpoint_t<int>{0, 0});
+      g->DrawImage(image, jpoint_t<int>{0, 0});
 
       Repaint();
 		}

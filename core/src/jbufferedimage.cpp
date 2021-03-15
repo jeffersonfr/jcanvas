@@ -578,7 +578,7 @@ Graphics * BufferedImage::GetGraphics()
   return _graphics;
 }
 
-Image * BufferedImage::Flip(jflip_t mode)
+std::shared_ptr<Image> BufferedImage::Flip(jflip_t mode)
 {
   cairo_format_t 
     format = CAIRO_FORMAT_INVALID;
@@ -615,7 +615,7 @@ Image * BufferedImage::Flip(jflip_t mode)
   cairo_set_source_surface(context, _cairo_surface, 0, 0);
   cairo_paint(context);
 
-  Image *tmp = new BufferedImage(surface);
+  std::shared_ptr<Image> tmp = std::make_shared<BufferedImage>(surface);
 
   cairo_destroy(context);
   cairo_surface_destroy(surface);
@@ -623,7 +623,7 @@ Image * BufferedImage::Flip(jflip_t mode)
   return tmp;
 }
 
-Image * BufferedImage::Shear(jpoint_t<float> size)
+std::shared_ptr<Image> BufferedImage::Shear(jpoint_t<float> size)
 {
   int 
     tx = _size.x*fabs(size.x),
@@ -670,14 +670,14 @@ Image * BufferedImage::Shear(jpoint_t<float> size)
   cairo_set_source_surface(context, _cairo_surface, 0, 0);
   cairo_paint(context);
 
-  Image *tmp = new BufferedImage(surface);
+  std::shared_ptr<Image> tmp = std::make_shared<BufferedImage>(surface);
 
   cairo_destroy(context);
 
   return tmp;
 }
 
-Image * BufferedImage::Rotate(double radians, bool resize)
+std::shared_ptr<Image> BufferedImage::Rotate(double radians, bool resize)
 {
   double angle = fmod(radians, 2*M_PI);
 
@@ -708,8 +708,8 @@ Image * BufferedImage::Rotate(double radians, bool resize)
     cairo_surface_t 
       *surface = cairo_image_surface_create(format, iw, ih);
 
-    Image 
-      *image = new BufferedImage(surface);
+    std::shared_ptr<Image> 
+      image = std::make_shared<BufferedImage>(surface);
 
     if (GetGraphics()->GetAntialias() == jantialias_mode_t::None) {
       uint32_t *src = new uint32_t[_size.x*_size.y];
@@ -754,8 +754,8 @@ Image * BufferedImage::Rotate(double radians, bool resize)
   cairo_surface_t 
     *surface = cairo_image_surface_create(format, iw, ih);
 
-  Image 
-    *image = new BufferedImage(surface);
+  std::shared_ptr<Image>
+    image = std::make_shared<BufferedImage>(surface);
   
   if (GetGraphics()->GetAntialias() == jantialias_mode_t::None) {
     uint32_t *src = new uint32_t[_size.x*_size.y];
@@ -786,7 +786,7 @@ Image * BufferedImage::Rotate(double radians, bool resize)
   return image;
 }
 
-Image * BufferedImage::Scale(jpoint_t<int> size)
+std::shared_ptr<Image> BufferedImage::Scale(jpoint_t<int> size)
 {
   cairo_format_t 
     format = CAIRO_FORMAT_INVALID;
@@ -815,7 +815,7 @@ Image * BufferedImage::Scale(jpoint_t<int> size)
     cairo_set_source_surface(context, svg_surface, 0, 0);
     cairo_paint(context);
 
-    Image *tmp = new BufferedImage(surface);
+    std::shared_ptr<Image> tmp = std::make_shared<BufferedImage>(surface);
 
     cairo_surface_destroy(svg_surface);
     cairo_destroy(context);
@@ -824,8 +824,8 @@ Image * BufferedImage::Scale(jpoint_t<int> size)
   }
 #endif
 
-  Image
-    *image = new BufferedImage(surface);
+  std::shared_ptr<Image>
+    image = std::make_shared<BufferedImage>(surface);
 
   if (GetGraphics()->GetAntialias() == jantialias_mode_t::None) {
     jblitting_t method = GetBlittingFlags();
@@ -863,7 +863,7 @@ Image * BufferedImage::Scale(jpoint_t<int> size)
   return image;
 }
 
-Image * BufferedImage::Crop(jrect_t<int> rect)
+std::shared_ptr<Image> BufferedImage::Crop(jrect_t<int> rect)
 {
   cairo_format_t 
     format = CAIRO_FORMAT_INVALID;
@@ -887,14 +887,14 @@ Image * BufferedImage::Crop(jrect_t<int> rect)
   cairo_set_source_surface(context, _cairo_surface, -rect.point.x, -rect.point.y);
   cairo_paint(context);
 
-  Image *tmp = new BufferedImage(surface);
+  std::shared_ptr<Image> tmp = std::make_shared<BufferedImage>(surface);
 
   cairo_destroy(context);
 
   return tmp;
 }
 
-Image * BufferedImage::Blend(double alpha)
+std::shared_ptr<Image> BufferedImage::Blend(double alpha)
 {
   if (alpha < 0.0) {
     alpha = 0.0;
@@ -926,32 +926,28 @@ Image * BufferedImage::Blend(double alpha)
   cairo_set_source_surface(context, _cairo_surface, 0, 0);
   cairo_paint_with_alpha(context, alpha);
 
-  Image *tmp = new BufferedImage(surface);
+  std::shared_ptr<Image> tmp = std::make_shared<BufferedImage>(surface);
 
   cairo_destroy(context);
 
   return tmp;
 }
 
-Image * BufferedImage::Colorize(jcolor_t<float> color)
+std::shared_ptr<Image> BufferedImage::Colorize(jcolor_t<float> color)
 {
-  Image 
-    *image = (Image *)Blend(1.0);
+  std::shared_ptr<Image>
+    image = Blend(1.0);
 
   cairo_surface_t 
     *surface = image->GetGraphics()->GetCairoSurface();
 
   if (surface == nullptr) {
-    delete image;
-
     return nullptr;
   }
 
   uint8_t *data = cairo_image_surface_get_data(surface);
 
   if (data == nullptr) {
-    delete image;
-
     return nullptr;
   }
 
@@ -1063,7 +1059,7 @@ void BufferedImage::GetRGBArray(uint32_t *rgb, jrect_t<int> rect)
   _graphics->GetRGBArray(rgb, rect);
 }
     
-Image * BufferedImage::Clone()
+std::shared_ptr<Image> BufferedImage::Clone()
 {
   cairo_format_t 
     format = CAIRO_FORMAT_INVALID;
@@ -1081,18 +1077,19 @@ Image * BufferedImage::Clone()
   cairo_surface_t 
     *surface = cairo_image_surface_create(format, _size.x, _size.y);
 
-  Image 
-    *clone = new BufferedImage(surface);
+  std::shared_ptr<Image>
+    clone = std::make_shared<BufferedImage>(surface);
   Graphics 
     *g = clone->GetGraphics();
   jcomposite_t 
     flags = g->GetCompositeFlags();
 
+  cairo_surface_destroy(surface);
+
   g->SetCompositeFlags(jcomposite_t::Src);
 
-  if (g->DrawImage(this, jpoint_t<int>{0, 0}) == false) {
-    delete clone;
-    clone = nullptr;
+  if (g->DrawImage(shared_from_this(), jpoint_t<int>{0, 0}) == false) {
+    return nullptr;
   }
 
   g->SetCompositeFlags(flags);

@@ -409,8 +409,6 @@ class Noise : public Window {
 
     virtual void Paint(Graphics *g)
     {
-      Font 
-        *font = &Font::Size16;
       double 
         scalex = 8.0,
         scaley = 64.0,
@@ -424,9 +422,7 @@ class Noise : public Window {
         dx = 48,
         dy = 240;
 
-
-      g->SetFont(font);
-
+      g->SetFont(Font::Size16);
       g->SetColor(jcolorname::White);
 
       g->DrawString("Sinal Original", jpoint_t<int>{dx+40, dy-200});

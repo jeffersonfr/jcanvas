@@ -284,7 +284,7 @@ class Window {
      * \brief
      *
      */
-    virtual void SetCursor(Image *shape, int hotx, int hoty);
+    virtual void SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty);
 
     /**
      * \brief

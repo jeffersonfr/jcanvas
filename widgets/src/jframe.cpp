@@ -33,7 +33,7 @@ Frame::Frame(jpoint_t<int> size, jpoint_t<int> point):
     &theme = GetTheme();
 
   theme.border.type = jtheme_border_t::style::RaisedGradient;
-  theme.font.primary = &Font::Big;
+  theme.font.primary = Font::Big;
 
   SetInsets({8, 8, 8, 8});
   SetTitle("Main");
@@ -86,12 +86,12 @@ void Frame::SetBounds(jrect_t<int> bounds)
   Window::SetBounds(bounds);
 }
     
-void Frame::SetIcon(Image *image)
+void Frame::SetIcon(std::shared_ptr<Image> image)
 {
   _icon = image;
 }
 
-Image * Frame::GetIcon()
+std::shared_ptr<Image> Frame::GetIcon()
 {
   return _icon;
 }

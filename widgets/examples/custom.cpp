@@ -27,18 +27,17 @@ using namespace jcanvas;
 class CustomContainer : public Container {
 
 	private:
-		Image *_image;
+    std::shared_ptr<Image> _image;
 
 	public:
 		CustomContainer(int x, int y, int w, int h):
 			Container({x, y, w, h})
 		{
-			_image = new BufferedImage("images/bubble.png");
+			_image = std::make_shared<BufferedImage>("images/bubble.png");
 		}
 
 		virtual ~CustomContainer()
 		{
-      delete _image;
 		}
 
 		virtual void PaintScrollbars(Graphics *g) 

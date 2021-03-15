@@ -70,9 +70,7 @@ class RasterTest : public Window {
       raster.DrawPolygon({300, 300}, hourglass);
       raster.DrawArc({500, 200}, {50, 50}, M_PI/4, 3*M_PI/2);
       
-      Font font(JCANVAS_RESOURCES_DIR "/fonts/default.ttf", jfont_attributes_t::None, 10);
-      
-      raster.SetFont(&font);
+      raster.SetFont(Font::Normal);
       raster.SetColor(0xfff0f0f0);
       raster.DrawString("Hello, world !", {300, 100});
     }

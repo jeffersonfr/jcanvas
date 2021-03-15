@@ -18,6 +18,7 @@ file(COPY assets DESTINATION .)
 file(COPY images DESTINATION .)
 file(COPY pics DESTINATION .)
 file(COPY roms DESTINATION .)
+file(COPY objs DESTINATION .)
 
 module_test(2048)
 module_test(ants)

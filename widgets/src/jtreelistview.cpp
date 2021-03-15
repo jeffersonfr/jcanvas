@@ -57,7 +57,7 @@ void TreeListView::AddTextItem(std::string text)
   AddItem(item);
 }
 
-void TreeListView::AddImageItem(std::string text, Image *image)
+void TreeListView::AddImageItem(std::string text, std::shared_ptr<Image> image)
 {
   Item *item = new Item(text, image);
 

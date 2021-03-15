@@ -27,24 +27,24 @@ using namespace jcanvas;
 class Fullscreen : public Window, public KeyListener {
 
 	private:
-		Image *_bg;
+    std::shared_ptr<Image> _bg;
 
 	public:
 		Fullscreen():
 			Window(jpoint_t<int>{720, 480})
 		{
-			_bg = new BufferedImage("images/background.png");
+			_bg = std::make_shared<BufferedImage>("images/background.png");
 		}
 
 		virtual ~Fullscreen()
 		{
-      delete _bg;
 		}
 
 		virtual bool KeyReleased(KeyEvent *event)
 		{
 			if (event->GetSymbol() == jkeyevent_symbol_t::F || event->GetSymbol() == jkeyevent_symbol_t::f) {
         ToggleFullScreen();
+        Repaint();
 			}
 
 			return true;
@@ -69,7 +69,7 @@ class Fullscreen : public Window, public KeyListener {
 			g->FillRectangle({100, 100, 100, 100});
 			
 			g->SetColor(jcolorname::White);
-      g->SetFont(&Font::Size16);
+      g->SetFont(Font::Size16);
 			g->DrawString("Press F to use enable/disable fullscreen mode", jpoint_t<int>{100, 100});
 		}
 

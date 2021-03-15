@@ -47,7 +47,7 @@ class Item {
     /** \brief */
     std::string _value;
     /** \brief */
-    Image *_image;
+    std::shared_ptr<Image> _image;
     /** \brief */
     jitem_type_t _type;
     /** \brief */
@@ -78,7 +78,7 @@ class Item {
      * \brief
      *
      */
-    Item(std::string value, Image *image);
+    Item(std::string value, std::shared_ptr<Image> image);
 
     /**
      * \brief
@@ -210,7 +210,7 @@ class Item {
      * \brief
      *
      */
-    virtual Image * GetImage();
+    virtual std::shared_ptr<Image> GetImage();
 
     /**
      * \brief
@@ -323,7 +323,7 @@ class ItemComponent {
      * \brief
      *
      */
-    virtual void AddImageItem(std::string text, Image *image);
+    virtual void AddImageItem(std::string text, std::shared_ptr<Image> image);
     
     /**
      * \brief

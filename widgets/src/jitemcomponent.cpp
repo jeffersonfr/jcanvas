@@ -48,7 +48,7 @@ Item::Item(std::string value)
   _type = jitem_type_t::Text;
 }
 
-Item::Item(std::string value, Image *image)
+Item::Item(std::string value, std::shared_ptr<Image> image)
 {
   _halign = jhorizontal_align_t::Center;
   _valign = jvertical_align_t::Center;
@@ -199,7 +199,7 @@ std::string Item::GetValue()
   return _value;
 }
 
-Image * Item::GetImage()
+std::shared_ptr<Image> Item::GetImage()
 {
   return _image;
 }
@@ -288,7 +288,7 @@ void ItemComponent::AddTextItem(std::string text)
   AddItem(item);
 }
 
-void ItemComponent::AddImageItem(std::string text, Image *image)
+void ItemComponent::AddImageItem(std::string text, std::shared_ptr<Image> image)
 {
   Item *item = new Item(text, image);
 

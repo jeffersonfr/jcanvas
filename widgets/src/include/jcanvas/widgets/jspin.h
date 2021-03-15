@@ -84,7 +84,7 @@ class Spin : public Component, public ItemComponent {
      * \brief
      *
      */
-    virtual void AddImageItem(std::string text, Image *image);
+    virtual void AddImageItem(std::string text, std::shared_ptr<Image> image);
     
     /**
      * \brief

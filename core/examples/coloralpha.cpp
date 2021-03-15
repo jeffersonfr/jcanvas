@@ -26,10 +26,10 @@ using namespace jcanvas;
 class ColorAlphaTeste : public Window, public MouseListener {
 
 	private:
-		Image 
-      *_fg;
-		Image 
-      *_bg;
+    std::shared_ptr<Image>
+      _fg;
+		std::shared_ptr<Image>
+      _bg;
     jcolor_t<float>
       _ref_color;
 
@@ -91,8 +91,8 @@ class ColorAlphaTeste : public Window, public MouseListener {
 		ColorAlphaTeste():
 			Window(/*"Color Alpha Teste", */ {320, 320})
 		{
-			_fg = new BufferedImage("images/image.bmp");
-			_bg = new BufferedImage("images/tux-zombie.jpg");
+			_fg = std::make_shared<BufferedImage>("images/image.bmp");
+			_bg = std::make_shared<BufferedImage>("images/tux-zombie.jpg");
 
 			_ref_color.red = 0x00;
 			_ref_color.green = 0x00;
@@ -101,8 +101,6 @@ class ColorAlphaTeste : public Window, public MouseListener {
 
 		virtual ~ColorAlphaTeste()
 		{
-			delete _fg;
-			delete _bg;
 		}
 
 		virtual bool MousePressed(MouseEvent *event)
@@ -155,14 +153,12 @@ class ColorAlphaTeste : public Window, public MouseListener {
 
 			g->DrawImage(_bg, {left, top, size.x-left-right, size.y-top-bottom});
 
-      Image *image = new BufferedImage(jpixelformat_t::ARGB, size);
+      std::shared_ptr<Image> image = std::make_shared<BufferedImage>(jpixelformat_t::ARGB, size);
 
       image->GetGraphics()->SetCompositeFlags(jcomposite_t::Src);
       image->GetGraphics()->SetRGBArray(buffer, {0, 0, size.x, size.y});
 
 			g->DrawImage(image, {left, top, size.x-left-right, size.y-top-bottom});
-
-			delete image;
 		}
 
 };

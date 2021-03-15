@@ -127,26 +127,24 @@ class Main : public Window {
 				}
 			}
 
-			static Image *off = nullptr;
-			static Image *offsub = nullptr;
+			static std::shared_ptr<Image> off;
+			static std::shared_ptr<Image> offsub;
 			
       g->SetCompositeFlags(jcomposite_t::SrcOver);
 
 			if (off == nullptr) {
-				Image *image = new BufferedImage("images/square.png");
+        std::shared_ptr<Image> image = std::make_shared<BufferedImage>("images/square.png");
 
 				off = image->Scale({iw, ih});
 				offsub = off->Crop({0, 0, iw/2, ih/2});
-
-				delete image;
 			}
 		 
 			for (int k=0,j=-1; j<=1; k++,j++) {
 				g->Translate({j*gapx, j*gapy});
 
 				for (int i=0; i<3; i++) {
-					Image *image = off->Rotate(radians[i], false);
-					Image *simage = offsub->Rotate(radians[i], false);
+          std::shared_ptr<Image> image = off->Rotate(radians[i], false);
+					std::shared_ptr<Image> simage = offsub->Rotate(radians[i], false);
  
 					g->DrawImage(image, jpoint_t<int>{(int)(x+gapx+(i+k*3)*boxw), (int)(y+gapy+0*boxh)});
 					g->DrawImage(image, {(int)(x+gapx+(i+k*3)*boxw), (int)(y+gapy+1*boxh), iw, ih});
@@ -157,9 +155,6 @@ class Main : public Window {
 					g->DrawImage(image, {(int)(x+gapx+(i+k*3)*boxw), (int)(y+gapy+5*boxh), iw, ih});
 					g->DrawImage(simage, jpoint_t<int>{(int)(x+gapx+(i+k*3)*boxw), (int)(y+gapy+6*boxh)});
 					g->DrawImage(simage, {(int)(x+gapx+(i+k*3)*boxw), (int)(y+gapy+7*boxh), iw, ih});
-
-					delete image;
-					delete simage;
 				}
 
 				g->Translate({-j*gapx, -j*gapy});

@@ -161,8 +161,8 @@ class Test : public Window, public KeyListener {
 	
 	private:
 		Hough _transform;
-		Image *_image;
-		Image *_hough;
+    std::shared_ptr<Image> _image;
+		std::shared_ptr<Image> _hough;
 		int _binary_threshold;
 		int _lines_threshold;
 
@@ -173,19 +173,17 @@ class Test : public Window, public KeyListener {
 			_binary_threshold = 195;
 			_lines_threshold = 195;
 
-			_image = new BufferedImage("images/robin.png");
+			_image = std::make_shared<BufferedImage>("images/robin.png");
 
       jpoint_t
         size = _image->GetSize();
 
-      _hough = new BufferedImage(jpixelformat_t::RGB32, size);
+      _hough = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, size);
 
 		}
 
 		virtual ~Test()
 		{
-			delete _hough;
-			delete _image;
 		}
 
 		virtual void ProcessFrame()

@@ -26,8 +26,8 @@ using namespace jcanvas;
 class Main : public Window, public KeyListener {
 
 	private:
-		Image *_image;
-		Image *_tiles;
+    std::shared_ptr<Image> _image;
+		std::shared_ptr<Image> _tiles;
 		double _tx;
 		double _ty;
 		double _tw;
@@ -66,15 +66,8 @@ class Main : public Window, public KeyListener {
 
 			_tc = _tc/2;
 
-			Image *image;
-
-			image = new BufferedImage("images/tank2.png");
-			_image = image->Scale({(int)_tw, (int)_th});
-			delete image;
-
-			image = new BufferedImage("images/tiles.png");
-			_tiles = image->Scale({(int)(10*_tile_w), (int)(4*_tile_h)});
-			delete image;
+			_image = std::make_shared<BufferedImage>("images/tank2.png")->Scale({(int)_tw, (int)_th});
+			_tiles = std::make_shared<BufferedImage>("images/tiles.png")->Scale({(int)(10*_tile_w), (int)(4*_tile_h)});
 
 			SetSize(jpoint_t<int>{(int)(10.0*_tile_w), (int)(8.0*_tile_h)});
 		}
@@ -84,9 +77,6 @@ class Main : public Window, public KeyListener {
       SetVisible(false);
 
 			_running = false;
-
-			delete _image;
-			delete _tiles;
 		}
 
 		virtual void Paint(Graphics *g)
@@ -140,12 +130,10 @@ class Main : public Window, public KeyListener {
 				g->FillCircle({(int)_bullet_x, (int)_bullet_y}, 3);
 			}
 			
-			Image *image = _image->Rotate(_angle);
+      std::shared_ptr<Image> image = _image->Rotate(_angle);
 			jpoint_t<int> isize = image->GetSize();
 
 			g->DrawImage(image, jpoint_t<int>{(int)_tx - isize.x/2, (int)_ty - isize.y/2});
-
-			delete image;
 
       Repaint();
 		}

@@ -653,6 +653,10 @@ class Component {
     {
     }
 
+    virtual ~Component()
+    {
+    }
+
     jrect_t<int> GetBounds()
     {
       return _bounds;
@@ -671,7 +675,7 @@ class Component {
 class Picture : public Component {
 
 	protected:
-		Image *_image;
+    std::shared_ptr<Image> _image;
 		std::string _title;
 
 	public:
@@ -689,8 +693,8 @@ class Picture : public Component {
 		{
 			Component::Paint(g);
 
-			Font 
-				*font = &Font::Size16;
+      std::shared_ptr<Font>
+        font = Font::Size16;
 			jpoint_t
 				size = GetSize();
 			int 
@@ -715,14 +719,12 @@ class FilePathImageTest : public Picture {
 		FilePathImageTest(int x, int y, int w, int h):
 			Picture(x, y, w, h)
 		{
-			_image = new BufferedImage(FILENAME);
+			_image = std::make_shared<BufferedImage>(FILENAME);
 			_title = "File Path";
 		}
 
 		virtual ~FilePathImageTest()
 		{
-      delete _image;
-      _image = nullptr;
 		}
 
 };
@@ -735,14 +737,12 @@ class FileImageTest : public Picture {
 		FileImageTest(int x, int y, int w, int h):
 			Picture(x, y, w, h)
 		{
-			_image = new BufferedImage(FILENAME);
+			_image = std::make_shared<BufferedImage>(FILENAME);
 			_title = "File Object";
 		}
 
 		virtual ~FileImageTest()
 		{
-      delete _image;
-      _image = nullptr;
 		}
 
 };
@@ -760,15 +760,13 @@ class InputStreamImageTest : public Picture {
       fs.open(FILENAME);
 
       if (fs) {
-			  _image = new BufferedImage(fs);
+			  _image = std::make_shared<BufferedImage>(fs);
 			  _title = "InputStream";
       }
 		}
 
 		virtual ~InputStreamImageTest()
 		{
-      delete _image;
-      _image = nullptr;
 		}
 
 };
@@ -781,18 +779,14 @@ class CopyImageTest : public Picture {
 		CopyImageTest(int x, int y, int w, int h):
 			Picture(x, y, w, h)
 		{
-			Image *image = new BufferedImage(FILENAME);
+      std::shared_ptr<Image> image = std::make_shared<BufferedImage>(FILENAME);
 
-			_image = dynamic_cast<Image *>(image->Clone());
+			_image = image->Clone();
 			_title = "Clone Image";
-
-			delete image;
 		}
 
 		virtual ~CopyImageTest()
 		{
-      delete _image;
-      _image = nullptr;
 		}
 
 };
@@ -805,24 +799,20 @@ class BufferedImageTest : public Picture {
 		BufferedImageTest(int x, int y, int w, int h):
 			Picture(x, y, w, h)
 		{
-			Image *image = new BufferedImage(FILENAME);
+      std::shared_ptr<Image> image = std::make_shared<BufferedImage>(FILENAME);
 
 			jpoint_t
 				size = image->GetSize();
 
-			_image = new BufferedImage(jpixelformat_t::RGB32, size);
+			_image = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, size);
 
 			_image->GetGraphics()->DrawImage(image, jpoint_t<int>{0, 0});
-
-			delete image;
 
 			_title = "Buffered Image";
 		}
 
 		virtual ~BufferedImageTest()
 		{
-      delete _image;
-      _image = nullptr;
 		}
 
 };
@@ -835,7 +825,7 @@ class RGBImageTest : public Picture {
 		RGBImageTest(int x, int y, int w, int h):
 			Picture(x, y, w, h)
 		{
-			Image *image = new BufferedImage(FILENAME);
+      std::shared_ptr<Image> image = std::make_shared<BufferedImage>(FILENAME);
 
 			jpoint_t
 				size = image->GetSize();
@@ -844,10 +834,7 @@ class RGBImageTest : public Picture {
 
 			image->GetRGBArray(rgb, {0, 0, size.x, size.y});
 
-      delete image;
-      image = nullptr;
-
-			_image = new BufferedImage(jpixelformat_t::RGB32, size);
+			_image = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, size);
 
       _image->GetGraphics()->SetCompositeFlags(jcomposite_t::Src);
       _image->GetGraphics()->SetRGBArray(rgb, {0, 0, size.x, size.y});
@@ -857,8 +844,6 @@ class RGBImageTest : public Picture {
 
 		virtual ~RGBImageTest()
 		{
-      delete _image;
-      _image = nullptr;
 		}
 
 };
@@ -887,7 +872,7 @@ class RawImageTest : public Picture {
         std::string str(buffer, size);
         std::istringstream is{str};
 
-			  _image = new BufferedImage(is);
+			  _image = std::make_shared<BufferedImage>(is);
 			  _title = "Raw Image";
         
         delete [] buffer;
@@ -896,8 +881,6 @@ class RawImageTest : public Picture {
 
 		virtual ~RawImageTest()
 		{
-      delete _image;
-      _image = nullptr;
 		}
 
 };
@@ -910,7 +893,7 @@ class IndexedImageTest : public Picture {
 		IndexedImageTest(int x, int y, int w, int h):
 			Picture(x, y, w, h)
 		{
-			Image *image = new BufferedImage(FILENAME);
+      std::shared_ptr<Image> image = std::make_shared<BufferedImage>(FILENAME);
 
 			jpoint_t
 				size = image->GetSize();
@@ -921,9 +904,6 @@ class IndexedImageTest : public Picture {
 				*pixels = new uint32_t[length];
 
 			image->GetRGBArray(rgb, {0, 0, size.x, size.y});
-
-      delete image;
-      image = nullptr;
 
    		Quantization q(rgb, size.x, size.y, 255, 1.0);
 
@@ -943,8 +923,6 @@ class IndexedImageTest : public Picture {
 
 		virtual ~IndexedImageTest()
 		{
-      delete _image;
-      _image = nullptr;
 		}
 
 };
@@ -970,7 +948,7 @@ class Test : public Picture {
 class Main : public Window {
 
 	private:
-    std::vector<Component *> _components;
+    std::vector<std::shared_ptr<Component>> _components;
 
 	public:
 		Main():
@@ -989,36 +967,24 @@ class Main : public Window {
 			gapx = gapx/2;
 			gapy = gapy/3;
 
-			Add(new FilePathImageTest(dx+0*(w+gapx)+gapx, dy+0*(h+gapy)+gapy, w, h));
-			Add(new FileImageTest(dx+1*(w+gapx)+gapx, dy+0*(h+gapy)+gapy, w, h));
-			Add(new InputStreamImageTest(dx+2*(w+gapx)+gapx, dy+0*(h+gapy)+gapy, w, h));
-			Add(new CopyImageTest(dx+3*(w+gapx)+gapx, dy+0*(h+gapy)+gapy, w, h));
+			Add(std::make_shared<FilePathImageTest>(dx+0*(w+gapx)+gapx, dy+0*(h+gapy)+gapy, w, h));
+			Add(std::make_shared<FileImageTest>(dx+1*(w+gapx)+gapx, dy+0*(h+gapy)+gapy, w, h));
+			Add(std::make_shared<InputStreamImageTest>(dx+2*(w+gapx)+gapx, dy+0*(h+gapy)+gapy, w, h));
+			Add(std::make_shared<CopyImageTest>(dx+3*(w+gapx)+gapx, dy+0*(h+gapy)+gapy, w, h));
 		
-			Add(new BufferedImageTest(dx+0*(w+gapx)+gapx, dy+1*(h+gapy)+gapy, w, h));
-			Add(new RGBImageTest(dx+1*(w+gapx)+gapx, dy+1*(h+gapy)+gapy, w, h));
-			Add(new RawImageTest(dx+2*(w+gapx)+gapx, dy+1*(h+gapy)+gapy, w, h));
-			Add(new IndexedImageTest(dx+3*(w+gapx)+gapx, dy+1*(h+gapy)+gapy, w, h));
+			Add(std::make_shared<BufferedImageTest>(dx+0*(w+gapx)+gapx, dy+1*(h+gapy)+gapy, w, h));
+			Add(std::make_shared<RGBImageTest>(dx+1*(w+gapx)+gapx, dy+1*(h+gapy)+gapy, w, h));
+			Add(std::make_shared<RawImageTest>(dx+2*(w+gapx)+gapx, dy+1*(h+gapy)+gapy, w, h));
+			Add(std::make_shared<IndexedImageTest>(dx+3*(w+gapx)+gapx, dy+1*(h+gapy)+gapy, w, h));
 		}
 
 		virtual ~Main()
 		{
-			while (_components.size() > 0) {
-        Component *c = *_components.begin();
-
-				delete c;
-			}
-
-      _components.clear();
 		}
-
-    std::vector<Component *> & GetComponents()
-    {
-      return _components;
-    }
 
     void Paint(Graphics *g)
     {
-      for (auto cmp : _components) {
+      for (auto &cmp : _components) {
         auto bounds = cmp->GetBounds();
 
         g->Translate(bounds.point);
@@ -1027,9 +993,9 @@ class Main : public Window {
       }
     }
 
-    void Add(Component *cmp)
+    void Add(std::shared_ptr<Component> cmp)
     {
-      _components.push_back(cmp);
+      _components.emplace_back(cmp);
     }
 
 };

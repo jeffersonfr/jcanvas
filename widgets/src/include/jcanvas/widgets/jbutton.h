@@ -43,7 +43,7 @@ class Button : public Component {
     /** \brief */
     std::mutex _action_listener_mutex;
     /** \brief */
-    Image *_image;
+    std::shared_ptr<Image> _image;
     /** \brief */
     jhorizontal_align_t _halign;
     /** \brief */
@@ -71,7 +71,7 @@ class Button : public Component {
      * \brief
      *
      */
-    Button(std::string label, Image *image);
+    Button(std::string label, std::shared_ptr<Image> image);
     
     /**
      * \brief
@@ -89,13 +89,13 @@ class Button : public Component {
      * \brief
      *
      */
-    virtual void SetImage(Image *image);
+    virtual void SetImage(std::shared_ptr<Image> image);
     
     /**
      * \brief
      *
      */
-    virtual Image * GetImage();
+    virtual std::shared_ptr<Image> GetImage();
     
     /**
      * \brief

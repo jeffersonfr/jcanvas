@@ -211,7 +211,7 @@ void Window::SetCursor(jcursor_style_t t)
   _window_adapter->SetCursor(t);
 }
 
-void Window::SetCursor(Image *shape, int hotx, int hoty)
+void Window::SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty)
 {
   _window_adapter->SetCursor(shape, hotx, hoty);
 }

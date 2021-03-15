@@ -57,37 +57,37 @@ jblitting_t Image::GetBlittingFlags()
   return _blitting;
 }
 
-Image * Image::Flip(jflip_t mode)
+std::shared_ptr<Image> Image::Flip(jflip_t mode)
 {
   return nullptr;
 }
     
-Image * Image::Shear(jpoint_t<float> size)
+std::shared_ptr<Image> Image::Shear(jpoint_t<float> size)
 {
   return nullptr;
 }
 
-Image * Image::Rotate(double radians, bool resize)
+std::shared_ptr<Image> Image::Rotate(double radians, bool resize)
 {
   return nullptr;
 }
 
-Image * Image::Scale(jpoint_t<int> size)
+std::shared_ptr<Image> Image::Scale(jpoint_t<int> size)
 {
   return nullptr;
 }
 
-Image * Image::Crop(jrect_t<int> rect)
+std::shared_ptr<Image> Image::Crop(jrect_t<int> rect)
 {
   return nullptr;
 }
 
-Image * Image::Blend(double alpha)
+std::shared_ptr<Image> Image::Blend(double alpha)
 {
   return nullptr;
 }
 
-Image * Image::Colorize(jcolor_t<float> color)
+std::shared_ptr<Image> Image::Colorize(jcolor_t<float> color)
 {
   return nullptr;
 }
@@ -105,7 +105,7 @@ void Image::GetRGBArray(uint32_t *rgb, jrect_t<int> rect)
 {
 }
     
-Image * Image::Clone()
+std::shared_ptr<Image> Image::Clone()
 {
   return nullptr;
 }

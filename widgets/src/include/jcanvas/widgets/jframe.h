@@ -40,7 +40,7 @@ class Frame : public Window, public Container {
     /** \brief */
     std::shared_ptr<Component> _focus_owner;
     /** \brief */
-    Image *_icon;
+    std::shared_ptr<Image> _icon;
 
   public:
     /**
@@ -59,13 +59,13 @@ class Frame : public Window, public Container {
      * \brief
      *
      */
-    virtual void SetIcon(Image *image);
+    virtual void SetIcon(std::shared_ptr<Image> image);
 
     /**
      * \brief
      *
      */
-    virtual Image * GetIcon();
+    virtual std::shared_ptr<Image> GetIcon();
 
     /**
      * \brief

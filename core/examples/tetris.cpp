@@ -51,11 +51,10 @@ int figures[7][4] =
 class Tetris : public Window, public KeyListener {
 
   private:
-    struct jpoint_t<int> a[4];
-    struct jpoint_t<int> b[4];
-    Image *s1;
-    Image *s2;
-    Image *s3;
+    std::shared_ptr<Image> s1;
+    std::shared_ptr<Image> s2;
+    jpoint_t<int> a[4];
+    jpoint_t<int> b[4];
     int colorNum;
     int field[M][N];
     int dx; 
@@ -78,9 +77,8 @@ class Tetris : public Window, public KeyListener {
 		{
       SetFramesPerSecond(30);
 
-      s1 = new BufferedImage("images/tetris/tiles.png");
-      s2 = new BufferedImage("images/tetris/background.png");
-      s3 = new BufferedImage("images/tetris/frame.png");
+      s1 = std::make_shared<BufferedImage>("images/tetris/tiles.png");
+      s2 = std::make_shared<BufferedImage>("images/tetris/background.png");
     
       colorNum = 0;
       rotate = false;
@@ -103,21 +101,12 @@ class Tetris : public Window, public KeyListener {
 
     virtual ~Tetris()
     {
-      delete s1;
-      delete s2;
-      delete s3;
     }
 
     bool KeyPressed(KeyEvent *event)
     {
-      if (event->GetSymbol() == jkeyevent_symbol_t::CursorUp) {
+			if (event->GetSymbol() == jkeyevent_symbol_t::CursorUp) {
         rotate = true;
-      } else if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {
-        dx = -1;
-      } else if (event->GetSymbol() == jkeyevent_symbol_t::CursorRight) {
-        dx = 1;
-      } else if (event->GetSymbol() == jkeyevent_symbol_t::CursorDown) {
-        timer = timer + 4;
       }
 
       return true;
@@ -125,21 +114,27 @@ class Tetris : public Window, public KeyListener {
 
     bool KeyReleased(KeyEvent *event)
     {
-      if (event->GetSymbol() == jkeyevent_symbol_t::CursorUp) {
+			if (event->GetSymbol() == jkeyevent_symbol_t::CursorUp) {
         rotate = false;
-      } else if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {
-        dx = 0;
-      } else if (event->GetSymbol() == jkeyevent_symbol_t::CursorRight) {
-        dx = 0;
-      } else if (event->GetSymbol() == jkeyevent_symbol_t::CursorDown) {
-        // timer = 0;
       }
 
       return true;
     }
-
 		void Paint(Graphics *g) 
 		{
+      EventManager 
+        &ev = GetEventManager();
+
+      dx = 0;
+
+      if (ev.IsKeyDown(jkeyevent_symbol_t::CursorLeft)) {
+        dx = -1;
+      } else if (ev.IsKeyDown(jkeyevent_symbol_t::CursorRight)) {
+        dx = 1;
+      } else if (ev.IsKeyDown(jkeyevent_symbol_t::CursorDown)) {
+        timer = timer + 4;
+      }
+
       g->SetCompositeFlags(jcomposite_t::SrcOver);
 
       //// <- Move -> ///
@@ -237,8 +232,6 @@ class Tetris : public Window, public KeyListener {
         g->DrawImage(s1, {colorNum*18, 0, 18, 18}, {a[i].x*18 + 28, a[i].y*18 + 31, 18, 18});
       }
       
-      g->DrawImage(s3, jpoint_t<int>{0, 0});
-
       Repaint();
     }
 

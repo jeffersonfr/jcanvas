@@ -25,20 +25,18 @@ using namespace jcanvas;
 
 class Dummy : public Window {
 
-  Image
-    *buffer;
+  std::shared_ptr<Image>
+    buffer;
 
   public:
     Dummy():
       Window({256, 256})
     {
-      buffer = new BufferedImage(jpixelformat_t::RGB32, {256, 256});
+      buffer = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, jpoint_t<int>{256, 256});
     }
 
     virtual ~Dummy()
     {
-      delete buffer;
-      buffer = nullptr;
     }
 
     virtual void Paint(Graphics *g) 

@@ -493,8 +493,8 @@ class chip8 {
 class Emulator : public Window {
 
   private:
-    Image
-      *buffer;
+    std::shared_ptr<Image>
+      buffer;
     chip8 
       myChip8;
 
@@ -502,7 +502,7 @@ class Emulator : public Window {
     Emulator(std::string file):
       Window({640, 320})
     {
-      buffer = new BufferedImage(jpixelformat_t::RGB32, {SCREEN_WIDTH, SCREEN_HEIGHT});
+      buffer = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, jpoint_t<int>{SCREEN_WIDTH, SCREEN_HEIGHT});
 
       if (!myChip8.loadApplication(file.c_str()))	{
         throw std::runtime_error("Invalid app");

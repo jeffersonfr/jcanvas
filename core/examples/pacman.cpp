@@ -50,8 +50,8 @@ class PacMan : public Window, public KeyListener {
 	private:
   	Graphics 
       *goff;
-	  Image 
-      *ii;
+    std::shared_ptr<Image>
+      ii;
 	  jrect_t<int>
       d;
 	uint32_t 
@@ -108,9 +108,9 @@ class PacMan : public Window, public KeyListener {
 		scared,
 		dying,
 		flag;
-	Image 
-		*ghost_bmp,
-		*pacman_bmp;
+  std::shared_ptr<Image>
+		ghost_bmp,
+		pacman_bmp;
 
 	public:
 
@@ -199,12 +199,6 @@ class PacMan : public Window, public KeyListener {
 		flag = false;
 
     delete [] screendata;
-		
-    delete ghost_bmp;
-		delete pacman_bmp;
-
-    delete ii;
-		
     delete [] ghostx;
 		delete [] ghostdx;
 		delete [] ghosty;
@@ -293,14 +287,9 @@ class PacMan : public Window, public KeyListener {
 		scared=false;
 	}
 
-	Image * GetImage(std::string file, int w, int h)
+  std::shared_ptr<Image> GetImage(std::string file, int w, int h)
 	{
-		Image *image = new BufferedImage(file);
-		Image *scale = image->Scale({w, h});
-
-		delete image;
-		
-		return scale;
+	  return std::make_shared<BufferedImage>(file)->Scale(jpoint_t<int>{w, h});
 	}
 
 	void GetImages()
@@ -368,7 +357,7 @@ class PacMan : public Window, public KeyListener {
 		std::string s;
 
 		if (goff == nullptr && d.size.x > 0 && d.size.y > 0) {
-			ii = new BufferedImage(jpixelformat_t::RGB32, d.size);
+			ii = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, d.size);
 
 			goff = ii->GetGraphics();
 		}
@@ -705,7 +694,7 @@ class PacMan : public Window, public KeyListener {
 
 		sprintf(tmp, "Score: %d", score);
 		
-		goff->SetFont(&Font::Size16);
+		goff->SetFont(Font::Size16);
 		goff->SetColor({96, 128, 255, 0xff});
 		goff->DrawString(tmp, jpoint_t<int>{size.x - 180, scrsize + 16});
 

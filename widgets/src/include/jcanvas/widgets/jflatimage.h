@@ -34,7 +34,7 @@ class FlatImage : public Component {
 
   private:
     /** \brief */
-    Image *_image;
+    std::shared_ptr<Image> _image;
     /** \brief */
     jrect_align_t _align;
 
@@ -43,7 +43,7 @@ class FlatImage : public Component {
      * \brief
      *
      */
-    FlatImage(Image *image);
+    FlatImage(std::shared_ptr<Image> image);
     
     /**
      * \brief
@@ -55,13 +55,13 @@ class FlatImage : public Component {
      * \brief
      *
      */
-    virtual void SetImage(Image *image);
+    virtual void SetImage(std::shared_ptr<Image> image);
 
     /**
      * \brief
      *
      */
-    virtual Image * GetImage();
+    virtual std::shared_ptr<Image> GetImage();
 
     /**
      * \brief

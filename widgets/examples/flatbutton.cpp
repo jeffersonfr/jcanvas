@@ -32,8 +32,8 @@ using namespace jcanvas;
 class App : public Frame {
 
 	private:
-    Image
-      *_image;
+    std::shared_ptr<Image>
+      _image;
 
 	public:
 		App():
@@ -45,7 +45,7 @@ class App : public Frame {
     {
       SetLayout<GridLayout>(4, 3);
 
-      _image = new BufferedImage("images/image.png");
+      _image = std::make_shared<BufferedImage>("images/image.png");
       // _image = new BufferedImage("images/red_icon.png");
 
       for (int i=0; i<11; i++) {
@@ -105,7 +105,6 @@ class App : public Frame {
 
     virtual ~App()
     {
-      delete _image;
     }
 
 };

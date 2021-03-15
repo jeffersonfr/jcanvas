@@ -42,8 +42,8 @@ struct jtheme_color_t {
 };
 
 struct jtheme_font_t {
-  Font *primary {nullptr};
-  Font *secondary {nullptr};
+  std::shared_ptr<Font> primary;
+  std::shared_ptr<Font> secondary;
 };
 
 struct jtheme_border_t {
@@ -121,8 +121,8 @@ struct jtheme_t {
   jinsets_t<int> padding;
 
   jtheme_font_t font {
-   &Font::Small,
-   &Font::Tiny
+   Font::Small,
+   Font::Tiny
   };
 
 };

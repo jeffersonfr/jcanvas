@@ -55,7 +55,7 @@ Display::Display(int x, int y, int width, int height):
   jtheme_t
     &theme = GetTheme();
 
-  theme.font.primary = &Font::Big;
+  theme.font.primary = Font::Big;
 }
 
 Display::~Display()

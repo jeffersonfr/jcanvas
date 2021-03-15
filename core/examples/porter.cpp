@@ -28,9 +28,9 @@ using namespace jcanvas;
 class PorterTeste : public Window {
 
 	private:
-		Image *_img1;
-		Image *_img2;
-		Image *_bg;
+    std::shared_ptr<Image> _img1;
+		std::shared_ptr<Image> _img2;
+		std::shared_ptr<Image> _bg;
 		bool _is_drawimage;
 
 	public:
@@ -39,10 +39,10 @@ class PorterTeste : public Window {
 		{
 			_is_drawimage = true;
 
-			_bg = new BufferedImage("images/background.png");
+			_bg = std::make_shared<BufferedImage>("images/background.png");
 
-			_img1 = new BufferedImage(jpixelformat_t::ARGB, {RECT_SIZE, RECT_SIZE});
-			_img2 = new BufferedImage(jpixelformat_t::ARGB, {RECT_SIZE, RECT_SIZE});
+			_img1 = std::make_shared<BufferedImage>(jpixelformat_t::ARGB, jpoint_t<int>{RECT_SIZE, RECT_SIZE});
+			_img2 = std::make_shared<BufferedImage>(jpixelformat_t::ARGB, jpoint_t<int>{RECT_SIZE, RECT_SIZE});
 
 			_img1->GetGraphics()->SetColor(0xa0ff0000);
 			_img1->GetGraphics()->FillRectangle({0, 0, RECT_SIZE, RECT_SIZE});
@@ -53,14 +53,11 @@ class PorterTeste : public Window {
 
 		virtual ~PorterTeste()
 		{
-      delete _img1;
-      delete _img2;
-      delete _bg;
 		}
 
 		virtual void PaintComposition(Graphics *g, std::string name, jcomposite_t t, int x, int y)
 		{
-			Image *image = new BufferedImage(jpixelformat_t::ARGB, {2*RECT_SIZE, 2*RECT_SIZE});
+			std::shared_ptr<Image> image = std::make_shared<BufferedImage>(jpixelformat_t::ARGB, jpoint_t<int>{2*RECT_SIZE, 2*RECT_SIZE});
 			Graphics *ig = image->GetGraphics();
 
 			ig->SetCompositeFlags(jcomposite_t::SrcOver);
@@ -81,13 +78,9 @@ class PorterTeste : public Window {
 			g->SetCompositeFlags(jcomposite_t::SrcOver);
 			g->DrawImage(image, jpoint_t<int>{x, y});
 			
-			Font *font = &Font::Size16;
-
 			g->SetColor(jcolorname::White);
-			g->SetFont(font);
+			g->SetFont(Font::Size16);
 			g->DrawString(name, jpoint_t<int>{x+RECT_SIZE/2, y});
-
-			delete image;
 		}
 
 		virtual bool KeyPressed(KeyEvent *event)
@@ -112,10 +105,8 @@ class PorterTeste : public Window {
       
 			g->DrawImage(_bg, {0, 0, size.x, size.y});
 
-			Font *font = &Font::Size16;
-
 			g->SetColor(jcolorname::White);
-			g->SetFont(font);
+			g->SetFont(Font::Size16);
 			g->DrawString("Press 1 to use DrawImage() and 2 to use SetRGBArray()", jpoint_t<int>{0, 0});
 
 			PaintComposition(g, "CLEAR", jcomposite_t::Clear, 0*(2*RECT_SIZE+16), 1*(2*RECT_SIZE+16));

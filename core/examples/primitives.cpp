@@ -117,12 +117,12 @@ class Primitives : public Window {
       g->SetAntialias(jantialias_mode_t::Normal);
 
       // draw image
-      Image *path = new BufferedImage("images/blue_icon.png");
+      std::shared_ptr<Image> path = std::make_shared<BufferedImage>("images/blue_icon.png");
 
-      Image *path1 = path->Blend(1.0);
-      Image *path2 = path->Blend(0.5);
-      Image *path3 = path->Blend(0.25);
-      Image *path4 = path->Blend(0.125);
+      std::shared_ptr<Image> path1 = path->Blend(1.0);
+      std::shared_ptr<Image> path2 = path->Blend(0.5);
+      std::shared_ptr<Image> path3 = path->Blend(0.25);
+      std::shared_ptr<Image> path4 = path->Blend(0.125);
 
       g->SetColor({0x00, 0x00, 0x00, 0xf0});
       g->DrawImage(path1, {400+40+0*(200+10), 0*(100+10)+20, 200, 100});
@@ -132,12 +132,6 @@ class Primitives : public Window {
       g->DrawImage(path3, {400+40+0*(200+10), 1*(100+10)+20, 200, 100});
       g->SetColor({0x00, 0x00, 0x00, 0x10});
       g->DrawImage(path4, {400+40+1*(200+10), 1*(100+10)+20, 200, 100});
-
-      delete path4;
-      delete path3;
-      delete path2;
-      delete path1;
-      delete path;
 
       jcolor_t<float> pcolor(0xf0, 0xf0, 0xf0, 0x80),
         ccolor(0x20, 0xf0, 0x20, 0x80),
@@ -512,11 +506,11 @@ class Primitives : public Window {
       g->DrawBezierCurve(pb1, 100);
       g->DrawBezierCurve(pb2, 100);
 
-      Font 
-        *f1 = new Font("default", jfont_attributes_t::None, 50),
-        *f2 = new Font("default", jfont_attributes_t::None, 40),
-        *f3 = new Font("default", jfont_attributes_t::None, 30),
-        *f4 = new Font("default", jfont_attributes_t::None, 20);
+      std::shared_ptr<Font> 
+        f1 = std::make_shared<Font>("default", jfont_attributes_t::None, 50),
+        f2 = std::make_shared<Font>("default", jfont_attributes_t::None, 40),
+        f3 = std::make_shared<Font>("default", jfont_attributes_t::None, 30),
+        f4 = std::make_shared<Font>("default", jfont_attributes_t::None, 20);
       int shadow = 4;
 
       std::string text = "DrawString";
@@ -551,7 +545,7 @@ class Primitives : public Window {
       int sw = f1->GetStringWidth(text);
       int sh = (3*(45+10)+20+shadow)+f4->GetSize()-(0*(45+10)+20+shadow);
 
-      Image *timage = new BufferedImage(jpixelformat_t::RGB32, {sw, sh});
+      std::shared_ptr<Image> timage = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, jpoint_t<int>{sw, sh});
       Graphics *gt = timage->GetGraphics();
 
       gt->SetColor(rcolor);
@@ -566,22 +560,13 @@ class Primitives : public Window {
       gt->SetFont(f3); gt->DrawString(text, jpoint_t<int>{0, 2*(45+10)});
       gt->SetFont(f4); gt->DrawString(text, jpoint_t<int>{0, 3*(45+10)});
 
-      Image *rotate = timage->Rotate(M_PI);
-
-      delete timage;
+      std::shared_ptr<Image> rotate = timage->Rotate(M_PI);
 
       g->DrawImage(rotate, jpoint_t<int>{10+7*(120+10)+10, 1*(45+10)});
-
-      delete rotate;
 
       g->Translate({-320, 0});
 
       g->SetFont(nullptr);
-
-      delete f1;
-      delete f2;
-      delete f3;
-      delete f4;
     }
 
     virtual void Paint2(Graphics *g) 
@@ -717,8 +702,8 @@ class Primitives : public Window {
       g->SetPen(pen);
 
       // draw text
-      Font *font = new Font("Sans Serif", jfont_attributes_t::None, 64);
-      Font *old = g->GetFont();
+      std::shared_ptr<Font> font = std::make_shared<Font>("Sans Serif", jfont_attributes_t::None, 64);
+      std::shared_ptr<Font> old = g->GetFont();
 
       g->SetFont(font);
 
@@ -868,10 +853,10 @@ class Primitives : public Window {
       g->SetPattern({5*(150+32)+32+150/2, 3*(150+32)+64+150/2}, 150/2, {5*(150+32)+32+150/2-32, 3*(150+32)+64+150/2+32}, 150/6);
 
       // draw image pattern
-      Image *image1 = new BufferedImage("images/red_icon.png");
-      Image *image2 = new BufferedImage("images/green_icon.png");
-      Image *image3 = new BufferedImage("images/yellow_icon.png");
-      Image *image4 = new BufferedImage("images/blue_icon.png");
+      std::shared_ptr<Image> image1 = std::make_shared<BufferedImage>("images/red_icon.png");
+      std::shared_ptr<Image> image2 = std::make_shared<BufferedImage>("images/green_icon.png");
+      std::shared_ptr<Image> image3 = std::make_shared<BufferedImage>("images/yellow_icon.png");
+      std::shared_ptr<Image> image4 = std::make_shared<BufferedImage>("images/blue_icon.png");
 
       g->MoveTo({6*(150+32)+32, 0*(150+32)+64});
       g->LineTo({6*(150+32)+32+150, 0*(150+32)+64});
@@ -901,11 +886,6 @@ class Primitives : public Window {
       g->Close();
       g->SetPattern(image4);
 
-      delete image1;
-      delete image2;
-      delete image3;
-      delete image4;
-
       // draw mask
       g->SetFont(font);
 
@@ -924,8 +904,6 @@ class Primitives : public Window {
 
       g->TextTo(text, {7*(150+32)+32, 3*(150+32)+64});
       g->SetPattern({7*(150+32)+32, 3*(150+32)+64+150}, {7*(150+32)+32+150, 3*(150+32)+64});
-
-      delete font;
     }
 
 };

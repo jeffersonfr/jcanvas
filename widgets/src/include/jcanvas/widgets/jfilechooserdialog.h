@@ -72,9 +72,9 @@ class FileChooserDialog : public Dialog, public SelectListener {
     /** \brief */
     std::shared_ptr<TextField> _file;
     /** \brief */
-    Image *_image_file;
+    std::shared_ptr<Image> _image_file;
     /** \brief */
-    Image *_image_folder;
+    std::shared_ptr<Image> _image_folder;
     /** \brief */
     std::string _directory;
     /** \brief */

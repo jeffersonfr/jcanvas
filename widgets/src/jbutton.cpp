@@ -29,7 +29,7 @@ Button::Button(std::string text):
 {
 }
 
-Button::Button(std::string text, Image *image):
+Button::Button(std::string text, std::shared_ptr<Image> image):
   Component()
 {
   _halign = jhorizontal_align_t::Center;
@@ -43,10 +43,6 @@ Button::Button(std::string text, Image *image):
 
 Button::~Button()
 {
-  if (_image != nullptr) {
-    delete _image;
-    _image = nullptr;
-  }
 }
 
 void Button::UpdatePreferredSize()
@@ -96,7 +92,7 @@ std::string Button::GetText()
   return _text;
 }
 
-void Button::SetImage(Image *image)
+void Button::SetImage(std::shared_ptr<Image> image)
 {
   if (_image != image) {
     _image = image;
@@ -105,7 +101,7 @@ void Button::SetImage(Image *image)
   }
 }
 
-Image * Button::GetImage()
+std::shared_ptr<Image> Button::GetImage()
 {
   return _image;
 }

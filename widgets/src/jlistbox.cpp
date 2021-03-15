@@ -94,7 +94,7 @@ void ListBox::AddTextItem(std::string text)
   UpdatePreferredSize();
 }
 
-void ListBox::AddImageItem(std::string text, Image *image)
+void ListBox::AddImageItem(std::string text, std::shared_ptr<Image> image)
 {
   Item *item = new Item(text, image);
 

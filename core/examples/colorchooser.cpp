@@ -26,7 +26,7 @@ using namespace jcanvas;
 class ColorChooser {
 
 	private:
-		Image *_image;
+    std::shared_ptr<Image> _image;
     uint32_t _color = 0xff000000;
 
 	public:
@@ -40,7 +40,7 @@ class ColorChooser {
 				cy = border / 2 + 1;
 			double border2 = border / 2;
 
-			_image = new BufferedImage(jpixelformat_t::ARGB, size);
+			_image = std::make_shared<BufferedImage>(jpixelformat_t::ARGB, size);
 
 			for (double i = 0; i<360.; i+=.15) {
 				for (double j = 0; j<border2; j++) {
@@ -51,8 +51,6 @@ class ColorChooser {
 
 		virtual ~ColorChooser()
 		{
-      delete _image;
-      _image = nullptr;
 		}
 
 		uint8_t FixRGB(double rm1, double rm2, double rh)

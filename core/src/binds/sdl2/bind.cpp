@@ -36,7 +36,7 @@ namespace jcanvas {
 #endif
 
 /** \brief */
-Image *sg_back_buffer = nullptr;
+std::shared_ptr<Image> sg_back_buffer = nullptr;
 /** \brief */
 static std::atomic<bool> sg_repaint;
 /** \brief */
@@ -56,7 +56,7 @@ static jpoint_t<int> sg_screen = {0, 0};
 /** \brief */
 static std::mutex sg_loop_mutex;
 /** \brief */
-static Image *sg_jcanvas_icon = nullptr;
+static std::shared_ptr<Image> sg_jcanvas_icon = nullptr;
 /** \brief */
 static Window *sg_jcanvas_window = nullptr;
 /** \brief */
@@ -383,13 +383,12 @@ static void InternalPaint()
       size = sg_back_buffer->GetSize();
 
     if (size.x != bounds.size.x or size.y != bounds.size.y) {
-      delete sg_back_buffer;
       sg_back_buffer = nullptr;
     }
   }
 
   if (sg_back_buffer == nullptr) {
-    sg_back_buffer = new BufferedImage(jpixelformat_t::RGB32, bounds.size);
+    sg_back_buffer = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, bounds.size);
   }
 
   Graphics 
@@ -647,7 +646,6 @@ WindowAdapter::~WindowAdapter()
   SDL_DestroyWindow(sg_window);
 	SDL_Quit();
 
-  delete sg_back_buffer;
   sg_back_buffer = nullptr;
 }
 
@@ -821,9 +819,9 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
   sg_jcanvas_cursor = style;
 }
 
-void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
+void WindowAdapter::SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty)
 {
-	if ((void *)shape == nullptr) {
+	if (shape == nullptr) {
 		return;
 	}
 
@@ -861,7 +859,7 @@ jwindow_rotation_t WindowAdapter::GetRotation()
 	return jwindow_rotation_t::None;
 }
 
-void WindowAdapter::SetIcon(Image *image)
+void WindowAdapter::SetIcon(std::shared_ptr<Image> image)
 {
   if (image == nullptr) {
     return;
@@ -886,7 +884,7 @@ void WindowAdapter::SetIcon(Image *image)
   image->UnlockData();
 }
 
-Image * WindowAdapter::GetIcon()
+std::shared_ptr<Image> WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }

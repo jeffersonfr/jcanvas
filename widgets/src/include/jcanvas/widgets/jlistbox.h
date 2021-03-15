@@ -112,7 +112,7 @@ class ListBox : public Component, public ItemComponent {
      * \brief
      *
      */
-    void AddImageItem(std::string text, Image *image);
+    void AddImageItem(std::string text, std::shared_ptr<Image> image);
     
     /**
      * \brief

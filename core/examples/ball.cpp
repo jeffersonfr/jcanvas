@@ -47,6 +47,8 @@ double myrandom()
 class Ball {
 
 	public:
+    std::shared_ptr<Image>
+      _image;
 		double 
       r,
       x,
@@ -57,8 +59,6 @@ class Ball {
 		int 
       w,
 			h;
-		Image 
-      *_image;
 
 	public:
 		Ball(double tx, double ty) 
@@ -142,7 +142,7 @@ class Ball {
 			return false;
 		}
 
-		void SetImage(Image *image) 
+		void SetImage(std::shared_ptr<Image> image) 
 		{
 			jpoint_t<int>
 				size = image->GetSize();
@@ -161,7 +161,7 @@ class Ball {
 				g->DrawImage(_image, jpoint_t<int>{(int)x-w/2, (int)y-h/2});
 		}
 
-		void Update(Image *img, int x, int y, int width, int height) 
+		void Update(std::shared_ptr<Image> img, int x, int y, int width, int height) 
 		{
 			if (img == _image) {
 				w = width;
@@ -177,11 +177,11 @@ class BallDrop : public Window {
 	private:
 		std::vector<Ball *> 
       _balls;
-		Image 
-      *offImage,
-		  *backImage,
-		  *pin,
-		  *ball;
+    std::shared_ptr<Image>
+      offImage,
+		  backImage,
+		  pin,
+		  ball;
 		jpoint_t<int> 
       offDimension,
 		  backDimension;
@@ -202,21 +202,14 @@ class BallDrop : public Window {
 		{
       SetFramesPerSecond(60);
 
-			Image 
-        *image;
       jpoint_t<int>
         size = GetSize();
 			int 
         w = 16,
 				h = 16;
 			
-			image = new BufferedImage("images/smallball.png");
-			ball = image->Scale({w/2, h/2});
-			delete image;
-
-			image = new BufferedImage("images/smallpin.png");
-			pin = image->Scale({w, h});
-			delete image;
+			ball = std::make_shared<BufferedImage>("images/smallball.png")->Scale({w/2, h/2});
+			pin = std::make_shared<BufferedImage>("images/smallpin.png")->Scale({w, h});
 
 			jpoint_t<int>
 				ps = pin->GetSize(),
@@ -262,11 +255,6 @@ class BallDrop : public Window {
 
       delete [] rackheight;
       delete [] rackdel;
-
-      delete offImage;
-      delete backImage;
-      delete pin;
-      delete ball;
 		}
 
 		void Paint(Graphics *g) 
@@ -281,7 +269,7 @@ class BallDrop : public Window {
 				Graphics *backGraphics;
 
 				backDimension = size;
-				backImage = new BufferedImage(jpixelformat_t::RGB32, size);
+				backImage = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, size);
 				backGraphics = backImage->GetGraphics();
 
 				// Erase the previous image.
@@ -296,8 +284,8 @@ class BallDrop : public Window {
 			}
 
 			if ( (offImage == nullptr) || (size.x != offDimension.x) || (size.y != offDimension.y) ) {
+				offImage = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, size);
 				offDimension = size;
-				offImage = new BufferedImage(jpixelformat_t::RGB32, size);
 			}
 
 			offImage->GetGraphics()->DrawImage(backImage, jpoint_t<int>{0, 0});

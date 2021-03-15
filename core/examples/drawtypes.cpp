@@ -26,7 +26,7 @@ using namespace jcanvas;
 class Main : public Window {
 
 	private:
-		std::map<std::string, Image *> _types;
+		std::map<std::string, std::shared_ptr<Image>> _types;
 
   protected:
     virtual void LoadImage(std::string format)
@@ -34,7 +34,7 @@ class Main : public Window {
       try {
         std::string path = "images/image." + format;
 
-			  _types[format] = new BufferedImage(path);
+			  _types[format] = std::make_shared<BufferedImage>(path);
       } catch (...) {
 			  _types[format] = nullptr;
       }
@@ -65,12 +65,6 @@ class Main : public Window {
 
 		virtual ~Main()
 		{
-			for (std::map<std::string, Image *>::iterator i=_types.begin(); i!=_types.end(); i++) {
-				Image *image = i->second;
-
-				delete image;
-			}
-
 			_types.clear();
 		}
 
@@ -90,11 +84,11 @@ class Main : public Window {
 			  bs = (size.x-6*gap-top-bottom)/(items),
 			  count = 0;
 
-      g->SetFont(&Font::Size16);
+      g->SetFont(Font::Size16);
 
-			for (std::map<std::string, Image *>::iterator i=_types.begin(); i!=_types.end(); i++) {
-				Image 
-          *image = i->second;
+			for (std::map<std::string, std::shared_ptr<Image>>::iterator i=_types.begin(); i!=_types.end(); i++) {
+        std::shared_ptr<Image>
+          image = i->second;
 				int 
           x = count%items,
 				  y = count/items;

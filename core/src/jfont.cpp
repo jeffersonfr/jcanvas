@@ -34,24 +34,6 @@ static int sg_freetype_refcounter = 0;
 
 #define DEFAULT_FONT_NAME "default"
 
-Font Font::Tiny(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 8);
-Font Font::Small(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 12);
-Font Font::Normal(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 16);
-Font Font::Big(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 20);
-Font Font::Huge(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 24);
-
-Font Font::Size8(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 8);
-Font Font::Size12(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 12);
-Font Font::Size16(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 16);
-Font Font::Size20(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 20);
-Font Font::Size24(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 24);
-Font Font::Size28(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 28);
-Font Font::Size32(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 32);
-Font Font::Size36(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 36);
-Font Font::Size40(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 40);
-Font Font::Size44(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 44);
-Font Font::Size48(DEFAULT_FONT_NAME, (jfont_attributes_t)(jfont_attributes_t::None), 48);
-
 Font::Font(std::string name, jfont_attributes_t attributes, int size, const jmatrix_t<3, 2, float> &m)
 {
   _name = name;

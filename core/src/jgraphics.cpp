@@ -323,7 +323,7 @@ bool Graphics::HasFont()
   return (_font != nullptr);
 }
 
-void Graphics::SetFont(Font *font)
+void Graphics::SetFont(std::shared_ptr<Font> font)
 {
   _font = font;
   
@@ -334,7 +334,7 @@ void Graphics::SetFont(Font *font)
   }
 }
 
-Font * Graphics::GetFont()
+std::shared_ptr<Font> Graphics::GetFont()
 {
   return _font;
 }
@@ -1174,7 +1174,7 @@ void Graphics::DrawString(std::string text, jpoint_t<int> point)
 
   struct jpoint_t<int> t = Translate();
 
-  Font *font = dynamic_cast<Font *>(_font);
+  std::shared_ptr<Font> font = GetFont();
   std::string utf8 = text;
   cairo_glyph_t *glyphs = nullptr;
   int glyphs_len = 0;
@@ -1865,9 +1865,9 @@ void Graphics::SetRGBArray(uint32_t *rgb, jrect_t<int> rect)
   cairo_surface_mark_dirty(_cairo_surface);
 }
 
-bool Graphics::DrawImage(Image *img, jpoint_t<int> point)
+bool Graphics::DrawImage(std::shared_ptr<Image> img, jpoint_t<int> point)
 {
-  if ((void *)img == nullptr) {
+  if (img == nullptr) {
     return false;
   }
 
@@ -1902,9 +1902,9 @@ bool Graphics::DrawImage(Image *img, jpoint_t<int> point)
   return true;
 }
 
-bool Graphics::DrawImage(Image *img, jrect_t<int> dst)
+bool Graphics::DrawImage(std::shared_ptr<Image> img, jrect_t<int> dst)
 {
-  if ((void *)img == nullptr or dst.size.x <= 0 or dst.size.x > IMAGE_LIMIT or dst.size.y <= 0 or dst.size.y > IMAGE_LIMIT) {
+  if (img == nullptr or dst.size.x <= 0 or dst.size.x > IMAGE_LIMIT or dst.size.y <= 0 or dst.size.y > IMAGE_LIMIT) {
     return false;
   }
 
@@ -1930,7 +1930,7 @@ bool Graphics::DrawImage(Image *img, jrect_t<int> dst)
   	cairo_fill(_cairo_context);
     cairo_restore(_cairo_context);
   } else {
-    Image *scl = img->Scale(dst.size);
+    std::shared_ptr<Image> scl = img->Scale(dst.size);
 
     if (scl == nullptr) {
       return false;
@@ -1942,26 +1942,24 @@ bool Graphics::DrawImage(Image *img, jrect_t<int> dst)
   
     SetRGBArray(rgb, dst);
   
-    delete scl;
-
     delete [] rgb;
   }
 
   return true;
 }
 
-bool Graphics::DrawImage(Image *img, jrect_t<int> src, jpoint_t<int> dst)
+bool Graphics::DrawImage(std::shared_ptr<Image> img, jrect_t<int> src, jpoint_t<int> dst)
 {
-  if ((void *)img == nullptr) {
+  if (img == nullptr) {
     return false;
   }
 
   return DrawImage(img, src, {dst, src.size});
 }
 
-bool Graphics::DrawImage(Image *img, jrect_t<int> src, jrect_t<int> dst)
+bool Graphics::DrawImage(std::shared_ptr<Image> img, jrect_t<int> src, jrect_t<int> dst)
 {
-  if ((void *)img == nullptr or dst.size.x <= 0 or dst.size.x > IMAGE_LIMIT or dst.size.y <= 0 or dst.size.y > IMAGE_LIMIT) {
+  if (img == nullptr or dst.size.x <= 0 or dst.size.x > IMAGE_LIMIT or dst.size.y <= 0 or dst.size.y > IMAGE_LIMIT) {
     return false;
   }
 
@@ -1987,19 +1985,17 @@ bool Graphics::DrawImage(Image *img, jrect_t<int> src, jrect_t<int> dst)
   	cairo_fill(_cairo_context);
     cairo_restore(_cairo_context);
   } else {
-    Image *aux = img->Crop({src.point, src.size});
+    std::shared_ptr<Image> aux = img->Crop({src.point, src.size});
 
     if (aux == nullptr) {
       return false;
     }
 
-    Image *scl = aux->Scale(dst.size);
+    std::shared_ptr<Image> scl = aux->Scale(dst.size);
 
     if (scl == nullptr) {
       return false;
     }
-
-    delete aux;
 
     uint32_t *rgb = new uint32_t[dst.size.x*dst.size.y];
 
@@ -2007,15 +2003,13 @@ bool Graphics::DrawImage(Image *img, jrect_t<int> src, jrect_t<int> dst)
   
     SetRGBArray(rgb, dst);
   
-    delete scl;
-
     delete [] rgb;
   }
 
   return true;
 }
 
-void Graphics::SetPattern(Image *image)
+void Graphics::SetPattern(std::shared_ptr<Image> image)
 {
   if (image == nullptr or image->GetGraphics() == nullptr) {
     return;
@@ -2143,7 +2137,7 @@ void Graphics::ArcTo(jpoint_t<int> point, int radius, float arc0, float arc1, bo
 
 void Graphics::TextTo(std::string text, jpoint_t<int> point)
 {
-  Font *font = dynamic_cast<Font *>(GetFont());
+  std::shared_ptr<Font> font = GetFont();
 
   if (font == nullptr) {
     return;
@@ -2190,7 +2184,7 @@ void Graphics::Fill()
   cairo_fill(_cairo_context);
 }
 
-void Graphics::SetSource(Image *image)
+void Graphics::SetSource(std::shared_ptr<Image> image)
 {
   if (image == nullptr or image->GetGraphics() == nullptr) {
     return;
@@ -2201,7 +2195,7 @@ void Graphics::SetSource(Image *image)
   SetBlittingFlags(_blitting);
 }
 
-void Graphics::SetMask(Image *image)
+void Graphics::SetMask(std::shared_ptr<Image> image)
 {
   if (image == nullptr or image->GetGraphics() == nullptr) {
     return;

@@ -467,7 +467,7 @@ class CAD : public Window, public KeyListener, public MouseListener {
       g->SetColor(jcolorname::White);
       g->DrawCircle({sx, sy}, 3);
 
-      g->SetFont(&Font::Size16);
+      g->SetFont(Font::Size16);
       g->DrawString("X:[" + std::to_string(vCursor.x) + "], Y:[" + std::to_string(vCursor.y) + "]", jpoint_t<int>{10, 10});
 
       Repaint();

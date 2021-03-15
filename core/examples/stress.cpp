@@ -26,8 +26,8 @@ using namespace jcanvas;
 class GraphicPanel : public Window {
 
 	private:
-    Image 
-      *_buffer;
+    std::shared_ptr<Image>
+      _buffer;
 
 	public:
 		GraphicPanel():
@@ -35,7 +35,7 @@ class GraphicPanel : public Window {
 	{
 		srand(time(nullptr));
 
-    _buffer = new BufferedImage(jpixelformat_t::ARGB, {1920, 1080});
+    _buffer = std::make_shared<BufferedImage>(jpixelformat_t::ARGB, jpoint_t<int>{1920, 1080});
 	}
 
 	virtual ~GraphicPanel()
@@ -76,13 +76,13 @@ class GraphicPanel : public Window {
 
   virtual void ShowApp()
   {
-		Image 
-      *off = nullptr,
-      *pimage = nullptr;
+    std::shared_ptr<Image>
+      off,
+      pimage;
     Graphics 
       *g = _buffer->GetGraphics();
-		Font 
-      *font = new Font("default", jfont_attributes_t::None, 48);
+    std::shared_ptr<Font>
+      font = std::make_shared<Font>("default", jfont_attributes_t::None, 48);
     jpoint_t
       t = GetSize();
 		
@@ -165,8 +165,8 @@ class GraphicPanel : public Window {
 		x = (t.x - sw)/2;
 		y = (t.y + sh)/2;
 
-		Image 
-      *fimage = new BufferedImage(jpixelformat_t::ARGB, {2*sw, sh});
+    std::shared_ptr<Image>
+      fimage = std::make_shared<BufferedImage>(jpixelformat_t::ARGB, jpoint_t<int>{2*sw, sh});
 		Graphics 
       *gf = fimage->GetGraphics();
 
@@ -175,21 +175,19 @@ class GraphicPanel : public Window {
 		gf->DrawString("Rotate String", jpoint_t<int>{0, 0});
 
 		for (int i=0; i<iterations; i++) {
-			Image *rotate = fimage->Rotate(angle, true);
+      std::shared_ptr<Image> rotate = fimage->Rotate(angle, true);
 
 			r1 = rand()%0xff;
 			g1 = rand()%0xff;
 			b1 = rand()%0xff;
 			// a1 = rand()%0x80;
 
-			Image 
-        *colorize = rotate->Colorize({r1, g1, b1});
+      std::shared_ptr<Image>
+        colorize = rotate->Colorize({r1, g1, b1});
       jpoint_t 
         t = rotate->GetSize();
 			
 			g->DrawImage(colorize, jpoint_t<int>{x - (t.x)/2, y - (t.y)/2});
-
-			delete colorize;
 
 			angle = angle + 0.1;
 
@@ -197,12 +195,8 @@ class GraphicPanel : public Window {
 				angle = 0.1;
 			}
 
-			delete rotate;
-
       Repaint();
 		}
-
-		delete fimage;
 
     if (IsVisible() == false) {
       break;
@@ -611,7 +605,7 @@ class GraphicPanel : public Window {
     //////////////////////////////////////////////
 		DrawString("Blits [offscreen]");
 
-		off = new BufferedImage("images/tux-zombie.png");
+		off = std::make_shared<BufferedImage>("images/tux-zombie.png");
 
 		for (int i=0; i<iterations; i++) {
 			uint32_t color = (rand()%0xf0f0f0) | 0xff000000;
@@ -646,14 +640,12 @@ class GraphicPanel : public Window {
 			x = (t.x-size)/2;
 			y = (t.y-size)/2;
 
-			Image *colorize = off->Colorize(color);
+      std::shared_ptr<Image> colorize = off->Colorize(color);
 
 			g->DrawImage(colorize, {x, y, size, size});
 
       Repaint();
 			
-			delete colorize;
-
 			if (size > 900) {
 				size = 10;
 			}
@@ -673,14 +665,14 @@ class GraphicPanel : public Window {
 
 		g->Translate({0, 0});
 			
-		pimage = new BufferedImage("images/tux-zombie.png");
+		pimage = std::make_shared<BufferedImage>("images/tux-zombie.png");
 
 		for (int i=0; i<iterations; i++) {
-			Image *image = new BufferedImage(jpixelformat_t::ARGB, {size, size});
+      std::shared_ptr<Image> image = std::make_shared<BufferedImage>(jpixelformat_t::ARGB, jpoint_t<int>{size, size});
 
 			image->GetGraphics()->DrawImage(pimage, {0, 0, size, size});
 
-			Image *rotate = image->Rotate(angle, true);
+      std::shared_ptr<Image> rotate = image->Rotate(angle, true);
 
 			if (fmod(angle, 0.1) == 0) {
 				color = (rand()%0xf0f0f0) | 0xff000000;
@@ -708,18 +700,8 @@ class GraphicPanel : public Window {
 			if (angle > 2*M_PI) {
 				angle = 0.1;
 			}
-
-			delete rotate;
-			delete image;
 		}
     } while (false);
-
-    delete _buffer;
-    _buffer = nullptr;
-
-		delete pimage;
-		delete off;
-		delete font;
 
 	  Application::Quit();
   }

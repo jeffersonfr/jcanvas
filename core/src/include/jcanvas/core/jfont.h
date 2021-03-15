@@ -93,23 +93,26 @@ class Font {
     jfont_encoding_t _encoding;
 
   public:
-    static Font Tiny;
-    static Font Small;
-    static Font Normal;
-    static Font Big;
-    static Font Huge;
+#define StaticFont(Name, Size) \
+    inline static std::shared_ptr<Font> Name = std::make_shared<Font>("Tiresias", (jfont_attributes_t)(jfont_attributes_t::None), Size);
     
-    static Font Size8;
-    static Font Size12;
-    static Font Size16;
-    static Font Size20;
-    static Font Size24;
-    static Font Size28;
-    static Font Size32;
-    static Font Size36;
-    static Font Size40;
-    static Font Size44;
-    static Font Size48;
+    StaticFont(Tiny, 8);
+    StaticFont(Small, 12);
+    StaticFont(Normal, 16);
+    StaticFont(Big, 20);
+    StaticFont(Huge, 24);
+    
+    StaticFont(Size8, 8);
+    StaticFont(Size12, 12);
+    StaticFont(Size16, 16);
+    StaticFont(Size20, 20);
+    StaticFont(Size24, 24);
+    StaticFont(Size28, 28);
+    StaticFont(Size32, 32);
+    StaticFont(Size36, 36);
+    StaticFont(Size40, 40);
+    StaticFont(Size44, 44);
+    StaticFont(Size48, 48);
 
   public:
     /**
