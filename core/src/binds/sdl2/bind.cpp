@@ -395,7 +395,7 @@ static void InternalPaint()
     *g = sg_back_buffer->GetGraphics();
 
   g->Reset();
-  g->SetCompositeFlags(jcomposite_t::Src);
+  g->SetCompositeFlags(jcomposite_flags_t::Src);
 
   sg_jcanvas_window->Paint(g);
 

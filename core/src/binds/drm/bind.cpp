@@ -71,7 +71,7 @@ struct modeset_dev {
 };
 
 struct cursor_params_t {
-  Image *cursor;
+  std::shared_ptr<Image> cursor;
   int hot_x;
   int hot_y;
 };
@@ -110,7 +110,7 @@ static Window *sg_jcanvas_window = nullptr;
 /** \brief */
 static jcursor_style_t sg_jcanvas_cursor = jcursor_style_t::Default;
 /** \brief */
-static Image *sg_jcanvas_icon = nullptr;
+static std::shared_ptr<Image> sg_jcanvas_icon = nullptr;
 
 static int modeset_create_fb(struct modeset_buf *buf)
 {
@@ -595,7 +595,7 @@ void Application::Init(int argc, char **argv)
   sg_quitting = false;
 
 #define CURSOR_INIT(type, ix, iy, hotx, hoty) \
-	t.cursor = new BufferedImage(jpixelformat_t::ARGB, {w, h}); \
+	t.cursor = std::make_shared<BufferedImage>(jpixelformat_t::ARGB, {w, h}); \
 	t.hot_x = hotx; \
 	t.hot_y = hoty; \
 	t.cursor->GetGraphics()->DrawImage(cursors, {ix*w, iy*h, w, h}, jpoint_t<int>{0, 0}); \
@@ -606,7 +606,7 @@ void Application::Init(int argc, char **argv)
 	int w = 30,
 			h = 30;
 
-	Image *cursors = new BufferedImage(_DATA_PREFIX"/images/cursors.png");
+	std::shared_ptr<Image> cursors = std::make_shared<BufferedImage>(_DATA_PREFIX"/images/cursors.png");
 
 	CURSOR_INIT(jcursor_style_t::Default, 0, 0, 8, 8);
 	CURSOR_INIT(jcursor_style_t::Crosshair, 4, 3, 15, 15);
@@ -653,7 +653,7 @@ static void InternalPaint()
     *g = buffer.GetGraphics();
 
   g->Reset();
-  g->SetCompositeFlags(jcomposite_t::Src);
+  g->SetCompositeFlags(jcomposite_flags_t::Src);
 
   sg_jcanvas_window->Paint(g);
 
@@ -836,7 +836,7 @@ WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
   // 	throw std::runtime_error("Cannot create more than one window");
   // }
 
-  // sg_jcanvas_icon = new BufferedImage(_DATA_PREFIX"/images/small-gnu.png");
+  // sg_jcanvas_icon = std::make_shared<BufferedImage>(_DATA_PREFIX"/images/small-gnu.png");
 
   sg_mouse_x = 0;
   sg_mouse_y = 0;
@@ -848,7 +848,6 @@ WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 WindowAdapter::~WindowAdapter()
 {
   if (sg_cursor_params.cursor != nullptr) {
-    delete sg_cursor_params.cursor;
     sg_cursor_params.cursor = nullptr;
   }
 
@@ -962,18 +961,17 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
 	SetCursor(sg_jcanvas_cursors[style].cursor, sg_jcanvas_cursors[style].hot_x, sg_jcanvas_cursors[style].hot_y);
 }
 
-void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
+void WindowAdapter::SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty)
 {
-	if ((void *)shape == nullptr) {
+	if (shape == nullptr) {
 		return;
 	}
 
   if (sg_cursor_params.cursor != nullptr) {
-    delete sg_cursor_params.cursor;
     sg_cursor_params.cursor = nullptr;
   }
 
-  sg_cursor_params.cursor = dynamic_cast<Image *>(shape->Clone());
+  sg_cursor_params.cursor = shape->Clone();
 
   sg_cursor_params.hot_x = hotx;
   sg_cursor_params.hot_y = hoty;
@@ -988,12 +986,12 @@ jwindow_rotation_t WindowAdapter::GetRotation()
 	return jwindow_rotation_t::None;
 }
 
-void WindowAdapter::SetIcon(Image *image)
+void WindowAdapter::SetIcon(std::shared_ptr<Image> image)
 {
   sg_jcanvas_icon = image;
 }
 
-Image * WindowAdapter::GetIcon()
+std::shared_ptr<Image> WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }

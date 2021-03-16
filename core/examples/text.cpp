@@ -51,7 +51,7 @@ class Text : public Window {
       }
 
       g->SetFont(Font::Size16);
-      g->SetColor(jcolorname::White);
+      g->SetColor(jcolor_name_t::White);
 
       g->DrawString(text, jrect_t<int>{0*dw, 0*dh, dw, dh}, jhorizontal_align_t::Left, jvertical_align_t::Top);
       g->DrawString(text, jrect_t<int>{1*dw, 0*dh, dw, dh}, jhorizontal_align_t::Center, jvertical_align_t::Top);

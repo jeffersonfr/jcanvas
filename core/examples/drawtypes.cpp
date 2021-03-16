@@ -94,9 +94,9 @@ class Main : public Window {
 				  y = count/items;
 
 				g->DrawImage(image, {x*(bs+gap)+gap, y*(bs+gap)+16, bs, bs});
-				g->SetColor(jcolorname::Black);
+				g->SetColor(jcolor_name_t::Black);
 				g->FillRectangle({x*(bs+gap)+gap, y*(bs+gap)+16, 48, 24});
-				g->SetColor(jcolorname::White);
+				g->SetColor(jcolor_name_t::White);
 				g->DrawString(i->first, jpoint_t<int>{x*(bs+gap)+gap, y*(bs+gap)+16});
 
 				count = count + 1;

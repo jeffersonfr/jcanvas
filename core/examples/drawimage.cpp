@@ -701,7 +701,7 @@ class Picture : public Component {
         height = font->GetSize();
 
 			if (font != nullptr) {
-				g->SetColor(jcolorname::White);
+				g->SetColor(jcolor_name_t::White);
 				g->SetFont(font);
 				g->DrawString(_title, jpoint_t<int>{0, 0});
       }
@@ -836,7 +836,7 @@ class RGBImageTest : public Picture {
 
 			_image = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, size);
 
-      _image->GetGraphics()->SetCompositeFlags(jcomposite_t::Src);
+      _image->GetGraphics()->SetCompositeFlags(jcomposite_flags_t::Src);
       _image->GetGraphics()->SetRGBArray(rgb, {0, 0, size.x, size.y});
 
 			_title = "RGB Image";

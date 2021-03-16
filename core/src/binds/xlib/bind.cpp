@@ -45,13 +45,13 @@ namespace jcanvas {
 
 /** \brief */
 struct cursor_params_t {
-  Image *cursor;
+  std::shared_ptr<Image> cursor;
   int hot_x;
   int hot_y;
 };
 
 /** \brief */
-Image *sg_back_buffer = nullptr;
+static std::shared_ptr<Image> sg_back_buffer = nullptr;
 /** \brief */
 static std::atomic<bool> sg_repaint;
 /** \brief */
@@ -65,7 +65,7 @@ static jrect_t<int> sg_visible_bounds;
 /** \brief */
 static bool sg_key_repeat = false;
 /** \brief */
-static Image *_icon = nullptr;
+static std::shared_ptr<Image> _icon = nullptr;
 /** \brief */
 static int sg_mouse_x = 0;
 /** \brief */
@@ -390,20 +390,19 @@ static void InternalPaint()
       size = sg_back_buffer->GetSize();
 
     if (size.x != bounds.size.x or size.y != bounds.size.y) {
-      delete sg_back_buffer;
       sg_back_buffer = nullptr;
     }
   }
 
   if (sg_back_buffer == nullptr) {
-    sg_back_buffer = new BufferedImage(jpixelformat_t::RGB32, bounds.size);
+    sg_back_buffer = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, bounds.size);
   }
 
   Graphics 
     *g = sg_back_buffer->GetGraphics();
 
   g->Reset();
-  g->SetCompositeFlags(jcomposite_t::Src);
+  g->SetCompositeFlags(jcomposite_flags_t::Src);
 
   sg_jcanvas_window->Paint(g);
 
@@ -669,7 +668,7 @@ WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 		throw std::runtime_error("Cannot create more than one window");
   }
 
-  // _icon = new BufferedImage(_DATA_PREFIX"/images/small-gnu.png");
+  // _icon = std::make_shared<BufferedImage>(_DATA_PREFIX"/images/small-gnu.png");
 
 	sg_window = 0;
 	sg_mouse_x = 0;
@@ -785,7 +784,6 @@ WindowAdapter::~WindowAdapter()
 
   sg_window = 0;
   
-  delete sg_back_buffer;
   sg_back_buffer = nullptr;
 }
 
@@ -1069,7 +1067,7 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
   sg_jcanvas_cursor = style;
 }
 
-void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
+void WindowAdapter::SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty)
 {
 	/*
 	if ((void *)shape == nullptr) {
@@ -1089,7 +1087,7 @@ void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
 	int screen = DefaultScreen(sg_display);
 	Visual *visual = DefaultVisual(sg_display, screen);
 	unsigned int depth = DefaultDepth(sg_display, screen);
-	XImage *image = XCreateImage(sg_display, visual, depth, ZPixmap, 0, (char *)data, t.x, t.y, 32, 0);
+	Xstd::shared_ptr<Image> image = XCreateImage(sg_display, visual, depth, ZPixmap, 0, (char *)data, t.x, t.y, 32, 0);
 	::Window rootsg_window = XRootWindow(sg_display, screen);
 
 	if (image == nullptr) {
@@ -1130,12 +1128,12 @@ jwindow_rotation_t WindowAdapter::GetRotation()
 	return jWindowRotationNone;
 }
 
-void WindowAdapter::SetIcon(Image *image)
+void WindowAdapter::SetIcon(std::shared_ptr<Image> image)
 {
   _icon = image;
 }
 
-Image * WindowAdapter::GetIcon()
+std::shared_ptr<Image> WindowAdapter::GetIcon()
 {
   return _icon;
 }

@@ -291,7 +291,7 @@ class Main : public Window {
 				size = GetSize();
 			char tmp[255];
 
-      g->SetCompositeFlags(jcomposite_t::SrcOver);
+      g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
 
 			if (foffscreen == nullptr) {
 				foffscreen = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, size);

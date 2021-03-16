@@ -711,7 +711,7 @@ std::shared_ptr<Image> BufferedImage::Rotate(double radians, bool resize)
     std::shared_ptr<Image> 
       image = std::make_shared<BufferedImage>(surface);
 
-    if (GetGraphics()->GetAntialias() == jantialias_mode_t::None) {
+    if (GetGraphics()->GetAntialias() == jantialias_t::None) {
       uint32_t *src = new uint32_t[_size.x*_size.y];
       uint32_t *dst = new uint32_t[iw*ih];
 
@@ -757,7 +757,7 @@ std::shared_ptr<Image> BufferedImage::Rotate(double radians, bool resize)
   std::shared_ptr<Image>
     image = std::make_shared<BufferedImage>(surface);
   
-  if (GetGraphics()->GetAntialias() == jantialias_mode_t::None) {
+  if (GetGraphics()->GetAntialias() == jantialias_t::None) {
     uint32_t *src = new uint32_t[_size.x*_size.y];
     uint32_t *dst = new uint32_t[iw*ih];
 
@@ -827,17 +827,17 @@ std::shared_ptr<Image> BufferedImage::Scale(jpoint_t<int> size)
   std::shared_ptr<Image>
     image = std::make_shared<BufferedImage>(surface);
 
-  if (GetGraphics()->GetAntialias() == jantialias_mode_t::None) {
-    jblitting_t method = GetBlittingFlags();
+  if (GetGraphics()->GetAntialias() == jantialias_t::None) {
+    jblitting_flags_t method = GetBlittingFlags();
 
     uint32_t *src = new uint32_t[_size.x*_size.y];
     uint32_t *dst = new uint32_t[size.x*size.y];
 
     GetRGBArray(src, {0, 0, _size.x, _size.y});
 
-    if (method == jblitting_t::Fast or method == jblitting_t::Nearest) {
+    if (method == jblitting_flags_t::Fast or method == jblitting_flags_t::Nearest) {
       NearestNeighborScale(src, dst, _size.x, _size.y, size.x, size.y); 
-    } else if (method == jblitting_t::Bilinear) {
+    } else if (method == jblitting_flags_t::Bilinear) {
       BilinearScale(src, dst, _size.x, _size.y, size.x, size.y); 
     } else {
       BicubicScale(src, dst, _size.x, _size.y, size.x, size.y); 
@@ -1081,12 +1081,12 @@ std::shared_ptr<Image> BufferedImage::Clone()
     clone = std::make_shared<BufferedImage>(surface);
   Graphics 
     *g = clone->GetGraphics();
-  jcomposite_t 
+  jcomposite_flags_t 
     flags = g->GetCompositeFlags();
 
   cairo_surface_destroy(surface);
 
-  g->SetCompositeFlags(jcomposite_t::Src);
+  g->SetCompositeFlags(jcomposite_flags_t::Src);
 
   if (g->DrawImage(shared_from_this(), jpoint_t<int>{0, 0}) == false) {
     return nullptr;

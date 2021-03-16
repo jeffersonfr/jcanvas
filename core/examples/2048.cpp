@@ -72,7 +72,7 @@ class Game2048 : public Window, public KeyListener {
       int right = 0;
       int bottom = 0;
 
-			g->SetColor(jcolorname::White);
+			g->SetColor(jcolor_name_t::White);
 			g->SetFont(Font::Size16);
 
 			jpoint_t<int>
@@ -98,7 +98,7 @@ class Game2048 : public Window, public KeyListener {
 			int bw = (size.x - left - right - 4*gap)/4;
 			int bh = (size.y - top - bottom - 4*gap - 16)/4;
 
-			g->SetColor(jcolorname::Gray);
+			g->SetColor(jcolor_name_t::Gray);
 
 			for (int i=0; i<4; i++) {
 				for (int j=0; j<4; j++) {

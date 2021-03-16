@@ -44,7 +44,7 @@ class Image : public std::enable_shared_from_this<Image> {
     /** \brief */
     struct jpoint_t<int> _size;
     /** \brief */
-    jblitting_t _blitting;
+    jblitting_flags_t _blitting;
     /** \brief */
     jpixelformat_t _pixelformat;
 
@@ -84,13 +84,13 @@ class Image : public std::enable_shared_from_this<Image> {
      * \brief
      *
      */
-    virtual void SetBlittingFlags(jblitting_t flags);
+    virtual void SetBlittingFlags(jblitting_flags_t flags);
     
     /**
      * \brief
      *
      */
-    virtual jblitting_t GetBlittingFlags();
+    virtual jblitting_flags_t GetBlittingFlags();
     
     /**
      * \brief

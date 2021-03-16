@@ -114,8 +114,8 @@ class Main : public Window, public KeyListener {
         _has_bullet = false;
       }
 
-      g->SetBlittingFlags(jblitting_t::Nearest);
-      g->SetCompositeFlags(jcomposite_t::SrcOver);
+      g->SetBlittingFlags(jblitting_flags_t::Nearest);
+      g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
 
 			for (int j=0; j<8; j++) {
 				for (int i=0; i<10; i++) {

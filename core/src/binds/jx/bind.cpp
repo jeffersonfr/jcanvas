@@ -33,7 +33,7 @@ namespace jcanvas {
 /** \brief */
 static jx::Client *sg_window = nullptr;
 /** \brief */
-static Image *sg_back_buffer = nullptr;
+static std::shared_ptr<Image> sg_back_buffer = nullptr;
 /** \brief */
 static std::atomic<bool> sg_repaint;
 /** \brief */
@@ -51,7 +51,7 @@ static jpoint_t<int> sg_screen = {0, 0};
 /** \brief */
 static std::mutex sg_loop_mutex;
 /** \brief */
-static Image *sg_jcanvas_icon = nullptr;
+static std::shared_ptr<Image> sg_jcanvas_icon = nullptr;
 /** \brief */
 static Window *sg_jcanvas_window = nullptr;
 
@@ -84,11 +84,11 @@ class App : public jx::Client {
       jkeyevent_modifiers_t mod = jkeyevent_modifiers_t::None;
 
       if (event.mod == jx::KeyModifiers::Shift) {
-        mod = (jkeyevent_modifiers_t)(mod | jkeyevent_modifiers_t::Shift);
+        mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Shift);
       } else if (event.mod == jx::KeyModifiers::Control) {
-        mod = (jkeyevent_modifiers_t)(mod | jkeyevent_modifiers_t::Control);
+        mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Control);
       } else if (event.mod == jx::KeyModifiers::Alt) {
-        mod = (jkeyevent_modifiers_t)(mod | jkeyevent_modifiers_t::Alt);
+        mod = jenum_t<jkeyevent_modifiers_t>{mod}.Or(jkeyevent_modifiers_t::Alt);
       }
 
       if (event.down == true) {
@@ -109,11 +109,9 @@ class App : public jx::Client {
     virtual void onPointer(const jx::PointerEvent &event) override
     {
       jmouseevent_button_t 
-        button {
-          JMB_NONE};
+        button =  jmouseevent_button_t::None;
       jmouseevent_type_t 
-        type {
-          JMT_UNKNOWN};
+        type = jmouseevent_type_t::Unknown;
       int 
         mouse_z = 0;
 
@@ -121,26 +119,26 @@ class App : public jx::Client {
       sg_mouse_y = CLAMP(event.pos.y, 0, sg_screen.y - 1);
 
       if (event.button == jx::PointerButton::Button1) {
-        button = JMB_BUTTON1;
+        button = jmouseevent_button_t::Button1;
       } else if (event.button == jx::PointerButton::Button2) {
-        button = JMB_BUTTON2;
+        button = jmouseevent_button_t::Button2;
       } else if (event.button == jx::PointerButton::Button3) {
-        button = JMB_BUTTON3;
+        button = jmouseevent_button_t::Button3;
       }
 
       if (event.button == jx::PointerButton::None) {
-        type = JMT_MOVED;
+        type = jmouseevent_type_t::Moved;
       } else {
         if (event.down == true) {
-          type = JMT_PRESSED;
+          type = jmouseevent_type_t::Pressed;
         } else {
-          type = JMT_RELEASED;
+          type = jmouseevent_type_t::Released;
         }
 
         sg_mouse_button_state[button] = event.down;
       }
 
-      sg_jcanvas_window->GetEventManager().PostEvent(new MouseEvent(sg_jcanvas_window, type, button, JMB_NONE, {sg_mouse_x, sg_mouse_y}, mouse_z));
+      sg_jcanvas_window->GetEventManager().PostEvent(new MouseEvent(sg_jcanvas_window, type, button, jmouseevent_button_t::None, {sg_mouse_x, sg_mouse_y}, mouse_z));
     }
 
     virtual void onPaint(cairo_t *cr) override
@@ -157,20 +155,19 @@ class App : public jx::Client {
           size = sg_back_buffer->GetSize();
 
         if (size.x != bounds.size.x or size.y != bounds.size.y) {
-          delete sg_back_buffer;
           sg_back_buffer = nullptr;
         }
       }
 
       if (sg_back_buffer == nullptr) {
-        sg_back_buffer = new BufferedImage(jpixelformat_t::RGB32, bounds.size);
+        sg_back_buffer = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, bounds.size);
       }
 
       Graphics 
         *g = sg_back_buffer->GetGraphics();
 
       g->Reset();
-      g->SetCompositeFlags(jcomposite_t::Src);
+      g->SetCompositeFlags(jcomposite_flags_t::Src);
 
       sg_jcanvas_window->Paint(g);
 
@@ -389,7 +386,7 @@ WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 		throw std::runtime_error("Cannot create more than one window");
   }
 
-  // sg_jcanvas_icon = new BufferedImage(_DATA_PREFIX"/images/small-gnu.png");
+  // sg_jcanvas_icon = std::make_shared<BufferedImage>(_DATA_PREFIX"/images/small-gnu.png");
 	
   sg_window = 0;
 	sg_mouse_x = 0;
@@ -407,7 +404,6 @@ WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 
 WindowAdapter::~WindowAdapter()
 {
-  delete sg_back_buffer;
   sg_back_buffer = nullptr;
 
   delete sg_window;
@@ -586,7 +582,7 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
   sg_window->changeCursor(type);
 }
 
-void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
+void WindowAdapter::SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty)
 {
   /*
 	if ((void *)shape == nullptr) {
@@ -645,12 +641,12 @@ jwindow_rotation_t WindowAdapter::GetRotation()
 	return jwindow_rotation_t::None;
 }
 
-void WindowAdapter::SetIcon(Image *image)
+void WindowAdapter::SetIcon(std::shared_ptr<Image> image)
 {
   sg_jcanvas_icon = image;
 }
 
-Image * WindowAdapter::GetIcon()
+std::shared_ptr<Image> WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }

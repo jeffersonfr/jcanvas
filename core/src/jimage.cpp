@@ -24,7 +24,7 @@ namespace jcanvas {
 Image::Image(jpixelformat_t pixelformat, jpoint_t<int> size)
 {
   _pixelformat = pixelformat;
-  _blitting = jblitting_t::Nearest;
+  _blitting = jblitting_flags_t::Nearest;
   _size = size;
 }
 
@@ -47,12 +47,12 @@ jpoint_t<int> Image::GetSize()
   return _size;
 }
 
-void Image::SetBlittingFlags(jblitting_t flags)
+void Image::SetBlittingFlags(jblitting_flags_t flags)
 {
   _blitting = flags;
 }
 
-jblitting_t Image::GetBlittingFlags()
+jblitting_flags_t Image::GetBlittingFlags()
 {
   return _blitting;
 }

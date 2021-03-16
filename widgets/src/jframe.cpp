@@ -154,7 +154,7 @@ void Frame::PaintGlassPane(Graphics *g)
     insets = GetInsets();
 
   g->SetFont(theme.font.primary);
-  g->SetColor(jcolorname::White);
+  g->SetColor(jcolor_name_t::White);
 }
 
 void Frame::Paint(Graphics *g)

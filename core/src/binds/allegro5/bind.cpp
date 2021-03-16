@@ -66,7 +66,7 @@ static jpoint_t<int> sg_screen = {0, 0};
 /** \brief */
 static jcursor_style_t sg_jcanvas_cursor = jcursor_style_t::Default;
 /** \brief */
-static Image *sg_jcanvas_icon = nullptr;
+static std::shared_ptr<Image> sg_jcanvas_icon;
 
 static jkeyevent_symbol_t TranslateToNativeKeySymbol(int symbol)
 {
@@ -349,13 +349,13 @@ static void InternalPaint()
     *surface = cairo_image_surface_create_for_data(
         (uint8_t *)lock->data, CAIRO_FORMAT_RGB24, bounds.size.x, bounds.size.y, cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, bounds.size.x));
 
-  BufferedImage
-    buffer(surface);
+  std::shared_ptr<Image>
+    buffer = std::make_shared<BufferedImage>(surface);
   Graphics 
-    *g = buffer.GetGraphics();
+    *g = buffer->GetGraphics();
 
   g->Reset();
-  g->SetCompositeFlags(jcomposite_t::Src);
+  g->SetCompositeFlags(jcomposite_flags_t::Src);
 
   sg_jcanvas_window->Paint(g);
 
@@ -369,6 +369,8 @@ static void InternalPaint()
 	al_draw_bitmap(sg_surface, 0, 0, 0);
 	al_flip_display();
   
+  cairo_surface_destroy(surface);
+
   if (g->IsVerticalSyncEnabled() == true) {
     al_wait_for_vsync();
   }
@@ -792,9 +794,9 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
   sg_jcanvas_cursor = style;
 }
 
-void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
+void WindowAdapter::SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty)
 {
-	if ((void *)shape == nullptr) {
+	if (shape == nullptr) {
 		return;
 	}
 
@@ -845,12 +847,12 @@ jwindow_rotation_t WindowAdapter::GetRotation()
 	return jwindow_rotation_t::None;
 }
 
-void WindowAdapter::SetIcon(Image *image)
+void WindowAdapter::SetIcon(std::shared_ptr<Image> image)
 {
   sg_jcanvas_icon = image;
 }
 
-Image * WindowAdapter::GetIcon()
+std::shared_ptr<Image> WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }

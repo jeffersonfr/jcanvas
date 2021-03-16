@@ -130,7 +130,7 @@ class Main : public Window {
 			static std::shared_ptr<Image> off;
 			static std::shared_ptr<Image> offsub;
 			
-      g->SetCompositeFlags(jcomposite_t::SrcOver);
+      g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
 
 			if (off == nullptr) {
         std::shared_ptr<Image> image = std::make_shared<BufferedImage>("images/square.png");

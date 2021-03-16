@@ -129,7 +129,7 @@ class ColorChooser {
 
       g->SetColor(_color);
       g->FillRectangle(jrect_t<int>{0, 0, size.x, size.y});
-      g->SetCompositeFlags(jcomposite_t::SrcOver);
+      g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
 			g->DrawImage(_image, jpoint_t<int>{0, 0});
 		}
 		

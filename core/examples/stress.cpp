@@ -49,7 +49,7 @@ class GraphicPanel : public Window {
     jpoint_t 
       t = _buffer->GetSize();
 
-		g->SetColor(jcolorname::Black);
+		g->SetColor(jcolor_name_t::Black);
 		g->FillRectangle({0, 0, t.x, t.y});
 	}
 

@@ -20,15 +20,9 @@ if (GRAPHIC_BIND STREQUAL allegro5)
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${ALLEGRO5_CFLAGS_OTHER}
-    ${ALLEGRO5VIDEO_CFLAGS_OTHER}
-    ${ALLEGRO5MAIN_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${ALLEGRO5_LDFLAGS_OTHER}
-    ${ALLEGRO5VIDEO_LDFLAGS_OTHER}
-    ${ALLEGRO5MAIN_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -51,22 +45,16 @@ if (GRAPHIC_BIND STREQUAL allegro5)
 endif()
 
 if (GRAPHIC_BIND STREQUAL caca)
-  pkg_check_modules(CACA caca)
-
-  if (NOT CACA_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
-  endif()
+  pkg_check_modules(CACA REQUIRED caca)
 
   set(GRAPHIC_BINDS_SRCS 
     src/binds/${GRAPHIC_BIND}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${CACA_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${CACA_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -83,22 +71,16 @@ if (GRAPHIC_BIND STREQUAL caca)
 endif()
 
 if (GRAPHIC_BIND STREQUAL directfb)
-  pkg_check_modules(DIRECTFB directfb)
-
-  if (NOT DIRECTFB_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
-  endif()
+  pkg_check_modules(DIRECTFB REQUIRED directfb)
 
   set(GRAPHIC_BINDS_SRCS 
     src/binds/${GRAPHIC_BIND}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${DIRECTFB_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${DIRECTFB_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -115,22 +97,16 @@ if (GRAPHIC_BIND STREQUAL directfb)
 endif()
 
 if (GRAPHIC_BIND STREQUAL drm)
-  pkg_check_modules(DRM libdrm)
-
-  if (NOT DRM_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
-  endif()
+  pkg_check_modules(DRM REQUIRED libdrm)
 
   set(GRAPHIC_BINDS_SRCS 
     src/binds/${GRAPHIC_BIND}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${DRM_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${DRM_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -147,22 +123,16 @@ if (GRAPHIC_BIND STREQUAL drm)
 endif()
 
 if (GRAPHIC_BIND STREQUAL efl)
-  pkg_check_modules(EFL elementary)
-
-  if (NOT EFL_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
-  endif()
+  pkg_check_modules(EFL REQUIRED elementary)
 
   set(GRAPHIC_BINDS_SRCS 
     src/binds/${GRAPHIC_BIND}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${EFL_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${EFL_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -196,11 +166,9 @@ if (GRAPHIC_BIND STREQUAL flaschen)
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${FLASCHEN_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${FLASCHEN_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -217,25 +185,17 @@ if (GRAPHIC_BIND STREQUAL flaschen)
 endif()
 
 if (GRAPHIC_BIND STREQUAL gl)
-  pkg_check_modules(GL gl)
-  pkg_check_modules(GLU glu)
-
-  if (NOT GL_FOUND OR NOT GLU_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
-  endif()
+  pkg_check_modules(GL REQUIRED gl)
+  pkg_check_modules(GLU REQUIRED glu)
 
   set(GRAPHIC_BINDS_SRCS 
     src/binds/${GRAPHIC_BIND}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${GL_CFLAGS_OTHER}
-    ${GLU_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${GL_LDFLAGS_OTHER}
-    ${GLU_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -267,11 +227,9 @@ if (GRAPHIC_BIND STREQUAL egl)
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${EGL_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${EGL_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -292,22 +250,16 @@ if (GRAPHIC_BIND STREQUAL egl)
 endif()
 
 if (GRAPHIC_BIND STREQUAL gtk3)
-  pkg_check_modules(GTK3 gtk+-3.0)
-
-  if (NOT GTK3_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
-  endif()
+  pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 
   set(GRAPHIC_BINDS_SRCS 
     src/binds/${GRAPHIC_BIND}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${GTK3_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${GTK3_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -335,11 +287,9 @@ if (GRAPHIC_BIND STREQUAL nanax)
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${NANAX_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${NANAX_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -380,22 +330,16 @@ if (GRAPHIC_BIND STREQUAL qt5)
 endif()
 
 if (GRAPHIC_BIND STREQUAL sdl2)
-  pkg_check_modules(SDL2 sdl2)
-
-  if (NOT SDL2_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
-  endif()
+  pkg_check_modules(SDL2 REQUIRED sdl2)
 
   set(GRAPHIC_BINDS_SRCS 
     src/binds/${GRAPHIC_BIND}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${SDL2_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${SDL2_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -412,22 +356,16 @@ if (GRAPHIC_BIND STREQUAL sdl2)
 endif()
 
 if (GRAPHIC_BIND STREQUAL sfml2)
-  pkg_check_modules(SFML2 sfml-graphics)
-
-  if (NOT SFML2_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
-  endif()
+  pkg_check_modules(SFML2 REQUIRED sfml-graphics)
 
   set(GRAPHIC_BINDS_SRCS 
     src/binds/${GRAPHIC_BIND}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${SFML2_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${SFML2_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -444,25 +382,17 @@ if (GRAPHIC_BIND STREQUAL sfml2)
 endif()
 
 if (GRAPHIC_BIND STREQUAL vdpau)
-  pkg_check_modules(X11 x11)
-  pkg_check_modules(VDPAU vdpau)
-
-  if (NOT X11_FOUND OR NOT VDPAU_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
-  endif()
+  pkg_check_modules(X11 REQUIRED x11)
+  pkg_check_modules(VDPAU REQUIRED vdpau)
 
   set(GRAPHIC_BINDS_SRCS 
     src/binds/${GRAPHIC_BIND}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${X11_CFLAGS_OTHER}
-    ${VDPAU_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${X11_LDFLAGS_OTHER}
-    ${VDPAU_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -482,22 +412,16 @@ if (GRAPHIC_BIND STREQUAL vdpau)
 endif()
 
 if (GRAPHIC_BIND STREQUAL vnc)
-  pkg_check_modules(VNC libvncserver)
-
-  if (NOT VNC_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
-  endif()
+  pkg_check_modules(VNC REQUIRED libvncserver)
 
   set(GRAPHIC_BINDS_SRCS 
     src/binds/${GRAPHIC_BIND}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${VNC_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${VNC_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -514,22 +438,16 @@ if (GRAPHIC_BIND STREQUAL vnc)
 endif()
 
 if (GRAPHIC_BIND STREQUAL wayland)
-  pkg_check_modules(WAYLAND wayland-client)
-
-  if (NOT WAYLAND_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
-  endif()
+  pkg_check_modules(WAYLAND REQUIRED wayland-client)
 
   set(GRAPHIC_BINDS_SRCS 
     src/binds/${GRAPHIC_BIND}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${WAYLAND_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${WAYLAND_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -547,22 +465,16 @@ if (GRAPHIC_BIND STREQUAL wayland)
 endif()
 
 if (GRAPHIC_BIND STREQUAL xcb)
-  pkg_check_modules(XCB xcb)
-
-  if (NOT XCB_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
-  endif()
+  pkg_check_modules(XCB REQUIRED xcb)
 
   set(GRAPHIC_BINDS_SRCS 
     src/binds/${GRAPHIC_BIND}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${XCB_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${XCB_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -579,22 +491,16 @@ if (GRAPHIC_BIND STREQUAL xcb)
 endif()
 
 if (GRAPHIC_BIND STREQUAL xlib)
-  pkg_check_modules(X11 x11)
-
-  if (NOT X11_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
-  endif()
+  pkg_check_modules(X11 REQUIRED x11)
 
   set(GRAPHIC_BINDS_SRCS 
     src/binds/${GRAPHIC_BIND}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${X11_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${X11_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -622,11 +528,9 @@ if (GRAPHIC_BIND STREQUAL jx)
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${JX_CFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${JX_LDFLAGS_OTHER}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -655,11 +559,11 @@ if (GRAPHIC_BIND STREQUAL dispmanx-pi)
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${DISPMANX_CFLAGS_OTHER}
+    ${DISPMANX_CFLAGS_OTHERS}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${DISPMANX_LDFLAGS_OTHER}
+    ${DISPMANX_LDFLAGS_OTHERS}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -687,11 +591,11 @@ if (GRAPHIC_BIND STREQUAL egl-pi)
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${EGL_CFLAGS_OTHER}
+    ${EGL_CFLAGS_OTHERS}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${EGL_LDFLAGS_OTHER}
+    ${EGL_LDFLAGS_OTHERS}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -723,11 +627,11 @@ if (GRAPHIC_BIND STREQUAL openvg-pi)
   )
 
   set(GRAPHIC_BINDS_CFLAGS
-    ${OPENVG_CFLAGS_OTHER}
+    ${OPENVG_CFLAGS_OTHERS}
   )
 
   set(GRAPHIC_BINDS_LDFLAGS
-    ${OPENVG_LDFLAGS_OTHER}
+    ${OPENVG_LDFLAGS_OTHERS}
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 

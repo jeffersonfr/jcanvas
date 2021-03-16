@@ -105,7 +105,7 @@ class GraphicsTeste : public Window, public MouseListener {
 			jpoint_t
 				size = GetSize();
 
-      g->SetColor(jcolorname::Blue);
+      g->SetColor(jcolor_name_t::Blue);
 
       for (int j=0; j<size.y; j+=blocks.y) {
         g->DrawLine({0, j}, {size.x, j});

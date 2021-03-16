@@ -196,7 +196,7 @@ class GraphicsTeste : public Window, public KeyListener {
 			}
 
       // draw map
-      g->SetColor(jcolorname::Blue);
+      g->SetColor(jcolor_name_t::Blue);
 
       for (int j=0; j<mapHeight; j++) {
         for (int i=0; i<mapWidth; i++) {
@@ -214,9 +214,9 @@ class GraphicsTeste : public Window, public KeyListener {
         }
       }
 
-      g->SetColor(jcolorname::Red);
+      g->SetColor(jcolor_name_t::Red);
       g->FillCircle({(int)(posX * block_size), (int)(posY * block_size)}, block_size/2);
-      g->SetColor(jcolorname::Yellow);
+      g->SetColor(jcolor_name_t::Yellow);
       g->FillCircle({(int)((posX + dirX) * block_size), (int)((posY + dirY) * block_size)}, 4);
 
       Repaint();

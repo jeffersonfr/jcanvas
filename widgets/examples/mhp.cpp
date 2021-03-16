@@ -34,7 +34,7 @@ class ScreenLayer : public jgui::Container {
 		ScreenLayer():
 			jgui::Container({0, 0, 1920, 1080})
 		{
-      _theme.SetIntegerParam("component.bg", uint32_t(jgui::jcolorname::Black));
+      _theme.SetIntegerParam("component.bg", uint32_t(jgui::jcolor_name_t::Black));
 
       SetTheme(_theme);
 			

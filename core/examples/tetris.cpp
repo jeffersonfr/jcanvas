@@ -135,7 +135,7 @@ class Tetris : public Window, public KeyListener {
         timer = timer + 4;
       }
 
-      g->SetCompositeFlags(jcomposite_t::SrcOver);
+      g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
 
       //// <- Move -> ///
       for (int i=0; i<4; i++)  { 

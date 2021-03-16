@@ -81,7 +81,7 @@ enum class jpixelformat_t {
  * \brief
  *
  */
-enum class jantialias_mode_t {
+enum class jantialias_t {
   None,
   Fast,
   Normal,
@@ -92,7 +92,7 @@ enum class jantialias_mode_t {
  * \brief
  *
  */
-enum class jcomposite_t {
+enum class jcomposite_flags_t {
   // INFO:: Composition Modes
   //
   // aA, aB, aR: src alpha, dst alpha, result alpha
@@ -134,7 +134,7 @@ enum class jcomposite_t {
  * \brief
  *
  */
-enum class jblitting_t {
+enum class jblitting_flags_t {
   Fast,
   Good,
   Best,
@@ -244,9 +244,9 @@ class Graphics {
     /** \brief */
     jrect_t<int> _internal_clip;
     /** \brief */
-    jcomposite_t _composite;
+    jcomposite_flags_t _composite;
     /** \brief */
-    jblitting_t _blitting;
+    jblitting_flags_t _blitting;
     /** \brief */
     jpixelformat_t _pixelformat;
     /** \brief */
@@ -363,37 +363,37 @@ class Graphics {
      * \brief
      *
      */
-    virtual void SetAntialias(jantialias_mode_t mode);
+    virtual void SetAntialias(jantialias_t mode);
 
     /**
      * \brief
      *
      */
-    virtual jantialias_mode_t GetAntialias();
+    virtual jantialias_t GetAntialias();
 
     /**
      * \brief
      *
      */
-    virtual jcomposite_t GetCompositeFlags();
+    virtual jcomposite_flags_t GetCompositeFlags();
     
     /**
      * \brief
      *
      */
-    virtual void SetCompositeFlags(jcomposite_t t);
+    virtual void SetCompositeFlags(jcomposite_flags_t t);
     
     /**
      * \brief
      *
      */
-    virtual jblitting_t GetBlittingFlags();
+    virtual jblitting_flags_t GetBlittingFlags();
     
     /**
      * \brief
      *
      */
-    virtual void SetBlittingFlags(jblitting_t t);
+    virtual void SetBlittingFlags(jblitting_flags_t t);
     
     /**
      * \brief

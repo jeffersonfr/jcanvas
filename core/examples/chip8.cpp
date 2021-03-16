@@ -586,7 +586,7 @@ class Emulator : public Window {
           }
         }
 
-        g->SetBlittingFlags(jblitting_t::Nearest);
+        g->SetBlittingFlags(jblitting_flags_t::Nearest);
         g->DrawImage(buffer, {0, 0, GetSize()});
         
         myChip8.drawFlag = false;

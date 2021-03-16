@@ -31,7 +31,7 @@
 
 namespace jcanvas {
 
-enum class jcolorname : uint32_t {
+enum class jcolor_name_t : uint32_t {
   AliceBlue = 0xfff0f8ff,
   AntiqueWhite = 0xfffaebd7,
   Aqua = 0xff00ffff,
@@ -207,312 +207,312 @@ struct jcolor_t {
 
   jcolor_t(std::string name)
   {
-    jcolorname color = jcolorname::Black;
+    jcolor_name_t color = jcolor_name_t::Black;
 
     name = ToLower(name);
 
     if (name == ToLower("AliceBlue")) {
-      color = jcolorname::AliceBlue;
+      color = jcolor_name_t::AliceBlue;
     } else if (name == ToLower("AntiqueWhite")) {
-      color = jcolorname::AntiqueWhite;
+      color = jcolor_name_t::AntiqueWhite;
     } else if (name == ToLower("Aqua")) {
-      color = jcolorname::Aqua;
+      color = jcolor_name_t::Aqua;
     } else if (name == ToLower("Aquamarine")) {
-      color = jcolorname::Aquamarine;
+      color = jcolor_name_t::Aquamarine;
     } else if (name == ToLower("Azure")) {
-      color = jcolorname::Azure;
+      color = jcolor_name_t::Azure;
     } else if (name == ToLower("Beige")) {
-      color = jcolorname::Beige;
+      color = jcolor_name_t::Beige;
     } else if (name == ToLower("Bisque")) {
-      color = jcolorname::Bisque;
+      color = jcolor_name_t::Bisque;
     } else if (name == ToLower("Black")) {
-      color = jcolorname::Black;
+      color = jcolor_name_t::Black;
     } else if (name == ToLower("BlanchedAlmond")) {
-      color = jcolorname::BlanchedAlmond;
+      color = jcolor_name_t::BlanchedAlmond;
     } else if (name == ToLower("Blue")) {
-      color = jcolorname::Blue;
+      color = jcolor_name_t::Blue;
     } else if (name == ToLower("BlueViolet")) {
-      color = jcolorname::BlueViolet;
+      color = jcolor_name_t::BlueViolet;
     } else if (name == ToLower("Brown")) {
-      color = jcolorname::Brown;
+      color = jcolor_name_t::Brown;
     } else if (name == ToLower("BurlyWood")) {
-      color = jcolorname::BurlyWood;
+      color = jcolor_name_t::BurlyWood;
     } else if (name == ToLower("CadetBlue")) {
-      color = jcolorname::CadetBlue;
+      color = jcolor_name_t::CadetBlue;
     } else if (name == ToLower("Chartreuse")) {
-      color = jcolorname::Chartreuse;
+      color = jcolor_name_t::Chartreuse;
     } else if (name == ToLower("Chocolate")) {
-      color = jcolorname::Chocolate;
+      color = jcolor_name_t::Chocolate;
     } else if (name == ToLower("Coral")) {
-      color = jcolorname::Coral;
+      color = jcolor_name_t::Coral;
     } else if (name == ToLower("CornflowerBlue")) {
-      color = jcolorname::CornflowerBlue;
+      color = jcolor_name_t::CornflowerBlue;
     } else if (name == ToLower("Cornsilk")) {
-      color = jcolorname::Cornsilk;
+      color = jcolor_name_t::Cornsilk;
     } else if (name == ToLower("Crimson")) {
-      color = jcolorname::Crimson;
+      color = jcolor_name_t::Crimson;
     } else if (name == ToLower("Cyan")) {
-      color = jcolorname::Cyan;
+      color = jcolor_name_t::Cyan;
     } else if (name == ToLower("DarkBlue")) {
-      color = jcolorname::DarkBlue;
+      color = jcolor_name_t::DarkBlue;
     } else if (name == ToLower("DarkCyan")) {
-      color = jcolorname::DarkCyan;
+      color = jcolor_name_t::DarkCyan;
     } else if (name == ToLower("DarkGoldenRod")) {
-      color = jcolorname::DarkGoldenRod;
+      color = jcolor_name_t::DarkGoldenRod;
     } else if (name == ToLower("DarkGray")) {
-      color = jcolorname::DarkGray;
+      color = jcolor_name_t::DarkGray;
     } else if (name == ToLower("DarkGrey")) {
-      color = jcolorname::DarkGrey;
+      color = jcolor_name_t::DarkGrey;
     } else if (name == ToLower("DarkGreen")) {
-      color = jcolorname::DarkGreen;
+      color = jcolor_name_t::DarkGreen;
     } else if (name == ToLower("DarkKhaki")) {
-      color = jcolorname::DarkKhaki;
+      color = jcolor_name_t::DarkKhaki;
     } else if (name == ToLower("DarkMagenta")) {
-      color = jcolorname::DarkMagenta;
+      color = jcolor_name_t::DarkMagenta;
     } else if (name == ToLower("DarkOliveGreen")) {
-      color = jcolorname::DarkOliveGreen;
+      color = jcolor_name_t::DarkOliveGreen;
     } else if (name == ToLower("DarkOrange")) {
-      color = jcolorname::DarkOrange;
+      color = jcolor_name_t::DarkOrange;
     } else if (name == ToLower("DarkOrchid")) {
-      color = jcolorname::DarkOrchid;
+      color = jcolor_name_t::DarkOrchid;
     } else if (name == ToLower("DarkRed")) {
-      color = jcolorname::DarkRed;
+      color = jcolor_name_t::DarkRed;
     } else if (name == ToLower("DarkSalmon")) {
-      color = jcolorname::DarkSalmon;
+      color = jcolor_name_t::DarkSalmon;
     } else if (name == ToLower("DarkSeaGreen")) {
-      color = jcolorname::DarkSeaGreen;
+      color = jcolor_name_t::DarkSeaGreen;
     } else if (name == ToLower("DarkSlateBlue")) {
-      color = jcolorname::DarkSlateBlue;
+      color = jcolor_name_t::DarkSlateBlue;
     } else if (name == ToLower("DarkSlateGray")) {
-      color = jcolorname::DarkSlateGray;
+      color = jcolor_name_t::DarkSlateGray;
     } else if (name == ToLower("DarkSlateGrey")) {
-      color = jcolorname::DarkSlateGrey;
+      color = jcolor_name_t::DarkSlateGrey;
     } else if (name == ToLower("DarkTurquoise")) {
-      color = jcolorname::DarkTurquoise;
+      color = jcolor_name_t::DarkTurquoise;
     } else if (name == ToLower("DarkViolet")) {
-      color = jcolorname::DarkViolet;
+      color = jcolor_name_t::DarkViolet;
     } else if (name == ToLower("DeepPink")) {
-      color = jcolorname::DeepPink;
+      color = jcolor_name_t::DeepPink;
     } else if (name == ToLower("Deepskyblue")) {
-      color = jcolorname::Deepskyblue;
+      color = jcolor_name_t::Deepskyblue;
     } else if (name == ToLower("DimGray")) {
-      color = jcolorname::DimGray;
+      color = jcolor_name_t::DimGray;
     } else if (name == ToLower("DimGrey")) {
-      color = jcolorname::DimGrey;
+      color = jcolor_name_t::DimGrey;
     } else if (name == ToLower("DodgerBlue")) {
-      color = jcolorname::DodgerBlue;
+      color = jcolor_name_t::DodgerBlue;
     } else if (name == ToLower("FireBrick")) {
-      color = jcolorname::FireBrick;
+      color = jcolor_name_t::FireBrick;
     } else if (name == ToLower("FloralWhite")) {
-      color = jcolorname::FloralWhite;
+      color = jcolor_name_t::FloralWhite;
     } else if (name == ToLower("ForestGreen")) {
-      color = jcolorname::ForestGreen;
+      color = jcolor_name_t::ForestGreen;
     } else if (name == ToLower("Fuchsia")) {
-      color = jcolorname::Fuchsia;
+      color = jcolor_name_t::Fuchsia;
     } else if (name == ToLower("Gainsboro")) {
-      color = jcolorname::Gainsboro;
+      color = jcolor_name_t::Gainsboro;
     } else if (name == ToLower("GhostWhite")) {
-      color = jcolorname::GhostWhite;
+      color = jcolor_name_t::GhostWhite;
     } else if (name == ToLower("Gold")) {
-      color = jcolorname::Gold;
+      color = jcolor_name_t::Gold;
     } else if (name == ToLower("GoldenRod")) {
-      color = jcolorname::GoldenRod;
+      color = jcolor_name_t::GoldenRod;
     } else if (name == ToLower("Gray")) {
-      color = jcolorname::Gray;
+      color = jcolor_name_t::Gray;
     } else if (name == ToLower("Grey")) {
-      color = jcolorname::Grey;
+      color = jcolor_name_t::Grey;
     } else if (name == ToLower("Green")) {
-      color = jcolorname::Green;
+      color = jcolor_name_t::Green;
     } else if (name == ToLower("GreenYellow")) {
-      color = jcolorname::GreenYellow;
+      color = jcolor_name_t::GreenYellow;
     } else if (name == ToLower("HoneyDew")) {
-      color = jcolorname::HoneyDew;
+      color = jcolor_name_t::HoneyDew;
     } else if (name == ToLower("HotPink")) {
-      color = jcolorname::HotPink;
+      color = jcolor_name_t::HotPink;
     } else if (name == ToLower("IndianRed")) {
-      color = jcolorname::IndianRed;
+      color = jcolor_name_t::IndianRed;
     } else if (name == ToLower("Indigo")) {
-      color = jcolorname::Indigo;
+      color = jcolor_name_t::Indigo;
     } else if (name == ToLower("Ivory")) {
-      color = jcolorname::Ivory;
+      color = jcolor_name_t::Ivory;
     } else if (name == ToLower("Khaki")) {
-      color = jcolorname::Khaki;
+      color = jcolor_name_t::Khaki;
     } else if (name == ToLower("Lavender")) {
-      color = jcolorname::Lavender;
+      color = jcolor_name_t::Lavender;
     } else if (name == ToLower("kavenderBlush")) {
-      color = jcolorname::kavenderBlush;
+      color = jcolor_name_t::kavenderBlush;
     } else if (name == ToLower("LawnGreen")) {
-      color = jcolorname::LawnGreen;
+      color = jcolor_name_t::LawnGreen;
     } else if (name == ToLower("LemonChiffon")) {
-      color = jcolorname::LemonChiffon;
+      color = jcolor_name_t::LemonChiffon;
     } else if (name == ToLower("LightBlue")) {
-      color = jcolorname::LightBlue;
+      color = jcolor_name_t::LightBlue;
     } else if (name == ToLower("LightCoral")) {
-      color = jcolorname::LightCoral;
+      color = jcolor_name_t::LightCoral;
     } else if (name == ToLower("LightCyan")) {
-      color = jcolorname::LightCyan;
+      color = jcolor_name_t::LightCyan;
     } else if (name == ToLower("LightGoldenRodYellow")) {
-      color = jcolorname::LightGoldenRodYellow;
+      color = jcolor_name_t::LightGoldenRodYellow;
     } else if (name == ToLower("LightGray")) {
-      color = jcolorname::LightGray;
+      color = jcolor_name_t::LightGray;
     } else if (name == ToLower("LightGrey")) {
-      color = jcolorname::LightGrey;
+      color = jcolor_name_t::LightGrey;
     } else if (name == ToLower("LightGreen")) {
-      color = jcolorname::LightGreen;
+      color = jcolor_name_t::LightGreen;
     } else if (name == ToLower("LightPink")) {
-      color = jcolorname::LightPink;
+      color = jcolor_name_t::LightPink;
     } else if (name == ToLower("LightSalmon")) {
-      color = jcolorname::LightSalmon;
+      color = jcolor_name_t::LightSalmon;
     } else if (name == ToLower("LightSeaGreen")) {
-      color = jcolorname::LightSeaGreen;
+      color = jcolor_name_t::LightSeaGreen;
     } else if (name == ToLower("LightSkyBlue")) {
-      color = jcolorname::LightSkyBlue;
+      color = jcolor_name_t::LightSkyBlue;
     } else if (name == ToLower("LightSlateGray")) {
-      color = jcolorname::LightSlateGray;
+      color = jcolor_name_t::LightSlateGray;
     } else if (name == ToLower("LightSlateGrey")) {
-      color = jcolorname::LightSlateGrey;
+      color = jcolor_name_t::LightSlateGrey;
     } else if (name == ToLower("LightSteelBlue")) {
-      color = jcolorname::LightSteelBlue;
+      color = jcolor_name_t::LightSteelBlue;
     } else if (name == ToLower("LightYellow")) {
-      color = jcolorname::LightYellow;
+      color = jcolor_name_t::LightYellow;
     } else if (name == ToLower("Lime")) {
-      color = jcolorname::Lime;
+      color = jcolor_name_t::Lime;
     } else if (name == ToLower("LimeGreen")) {
-      color = jcolorname::LimeGreen;
+      color = jcolor_name_t::LimeGreen;
     } else if (name == ToLower("Linen")) {
-      color = jcolorname::Linen;
+      color = jcolor_name_t::Linen;
     } else if (name == ToLower("Magenta")) {
-      color = jcolorname::Magenta;
+      color = jcolor_name_t::Magenta;
     } else if (name == ToLower("Maroon")) {
-      color = jcolorname::Maroon;
+      color = jcolor_name_t::Maroon;
     } else if (name == ToLower("MediumAquaMarine")) {
-      color = jcolorname::MediumAquaMarine;
+      color = jcolor_name_t::MediumAquaMarine;
     } else if (name == ToLower("MediumBlue")) {
-      color = jcolorname::MediumBlue;
+      color = jcolor_name_t::MediumBlue;
     } else if (name == ToLower("MediumOrchid")) {
-      color = jcolorname::MediumOrchid;
+      color = jcolor_name_t::MediumOrchid;
     } else if (name == ToLower("MediumPurple")) {
-      color = jcolorname::MediumPurple;
+      color = jcolor_name_t::MediumPurple;
     } else if (name == ToLower("MediumSeaGreen")) {
-      color = jcolorname::MediumSeaGreen;
+      color = jcolor_name_t::MediumSeaGreen;
     } else if (name == ToLower("MediumSlateBlue")) {
-      color = jcolorname::MediumSlateBlue;
+      color = jcolor_name_t::MediumSlateBlue;
     } else if (name == ToLower("MediumSpringGreen")) {
-      color = jcolorname::MediumSpringGreen;
+      color = jcolor_name_t::MediumSpringGreen;
     } else if (name == ToLower("MediumTurquoise")) {
-      color = jcolorname::MediumTurquoise;
+      color = jcolor_name_t::MediumTurquoise;
     } else if (name == ToLower("MediumVioletRed")) {
-      color = jcolorname::MediumVioletRed;
+      color = jcolor_name_t::MediumVioletRed;
     } else if (name == ToLower("MidnightBlue")) {
-      color = jcolorname::MidnightBlue;
+      color = jcolor_name_t::MidnightBlue;
     } else if (name == ToLower("MintCream")) {
-      color = jcolorname::MintCream;
+      color = jcolor_name_t::MintCream;
     } else if (name == ToLower("MistyRose")) {
-      color = jcolorname::MistyRose;
+      color = jcolor_name_t::MistyRose;
     } else if (name == ToLower("Moccasin")) {
-      color = jcolorname::Moccasin;
+      color = jcolor_name_t::Moccasin;
     } else if (name == ToLower("NavajoWhite")) {
-      color = jcolorname::NavajoWhite;
+      color = jcolor_name_t::NavajoWhite;
     } else if (name == ToLower("Navy")) {
-      color = jcolorname::Navy;
+      color = jcolor_name_t::Navy;
     } else if (name == ToLower("OldLace")) {
-      color = jcolorname::OldLace;
+      color = jcolor_name_t::OldLace;
     } else if (name == ToLower("Olive")) {
-      color = jcolorname::Olive;
+      color = jcolor_name_t::Olive;
     } else if (name == ToLower("OliveDrab")) {
-      color = jcolorname::OliveDrab;
+      color = jcolor_name_t::OliveDrab;
     } else if (name == ToLower("Orange")) {
-      color = jcolorname::Orange;
+      color = jcolor_name_t::Orange;
     } else if (name == ToLower("OrangeRed")) {
-      color = jcolorname::OrangeRed;
+      color = jcolor_name_t::OrangeRed;
     } else if (name == ToLower("Orchid")) {
-      color = jcolorname::Orchid;
+      color = jcolor_name_t::Orchid;
     } else if (name == ToLower("PaleGoldenRod")) {
-      color = jcolorname::PaleGoldenRod;
+      color = jcolor_name_t::PaleGoldenRod;
     } else if (name == ToLower("PaleGreen")) {
-      color = jcolorname::PaleGreen;
+      color = jcolor_name_t::PaleGreen;
     } else if (name == ToLower("PaleTurquoise")) {
-      color = jcolorname::PaleTurquoise;
+      color = jcolor_name_t::PaleTurquoise;
     } else if (name == ToLower("PaleVioletRed")) {
-      color = jcolorname::PaleVioletRed;
+      color = jcolor_name_t::PaleVioletRed;
     } else if (name == ToLower("PapayaWhip")) {
-      color = jcolorname::PapayaWhip;
+      color = jcolor_name_t::PapayaWhip;
     } else if (name == ToLower("PeachPuff")) {
-      color = jcolorname::PeachPuff;
+      color = jcolor_name_t::PeachPuff;
     } else if (name == ToLower("Peru")) {
-      color = jcolorname::Peru;
+      color = jcolor_name_t::Peru;
     } else if (name == ToLower("Pink")) {
-      color = jcolorname::Pink;
+      color = jcolor_name_t::Pink;
     } else if (name == ToLower("PowderBlue")) {
-      color = jcolorname::PowderBlue;
+      color = jcolor_name_t::PowderBlue;
     } else if (name == ToLower("Plum")) {
-      color = jcolorname::Plum;
+      color = jcolor_name_t::Plum;
     } else if (name == ToLower("Purple")) {
-      color = jcolorname::Purple;
+      color = jcolor_name_t::Purple;
     } else if (name == ToLower("Red")) {
-      color = jcolorname::Red;
+      color = jcolor_name_t::Red;
     } else if (name == ToLower("RosyBrown")) {
-      color = jcolorname::RosyBrown;
+      color = jcolor_name_t::RosyBrown;
     } else if (name == ToLower("RoyalBlue")) {
-      color = jcolorname::RoyalBlue;
+      color = jcolor_name_t::RoyalBlue;
     } else if (name == ToLower("SaddlebBown")) {
-      color = jcolorname::SaddlebBown;
+      color = jcolor_name_t::SaddlebBown;
     } else if (name == ToLower("Salmon")) {
-      color = jcolorname::Salmon;
+      color = jcolor_name_t::Salmon;
     } else if (name == ToLower("SandyBrown")) {
-      color = jcolorname::SandyBrown;
+      color = jcolor_name_t::SandyBrown;
     } else if (name == ToLower("SeaGreen")) {
-      color = jcolorname::SeaGreen;
+      color = jcolor_name_t::SeaGreen;
     } else if (name == ToLower("SeaShell")) {
-      color = jcolorname::SeaShell;
+      color = jcolor_name_t::SeaShell;
     } else if (name == ToLower("Sienna")) {
-      color = jcolorname::Sienna;
+      color = jcolor_name_t::Sienna;
     } else if (name == ToLower("Silver")) {
-      color = jcolorname::Silver;
+      color = jcolor_name_t::Silver;
     } else if (name == ToLower("Skyblue")) {
-      color = jcolorname::Skyblue;
+      color = jcolor_name_t::Skyblue;
     } else if (name == ToLower("StateBlue")) {
-      color = jcolorname::StateBlue;
+      color = jcolor_name_t::StateBlue;
     } else if (name == ToLower("StateGray")) {
-      color = jcolorname::StateGray;
+      color = jcolor_name_t::StateGray;
     } else if (name == ToLower("StateGrey")) {
-      color = jcolorname::StateGrey;
+      color = jcolor_name_t::StateGrey;
     } else if (name == ToLower("Snow")) {
-      color = jcolorname::Snow;
+      color = jcolor_name_t::Snow;
     } else if (name == ToLower("SpringGreen")) {
-      color = jcolorname::SpringGreen;
+      color = jcolor_name_t::SpringGreen;
     } else if (name == ToLower("SteelBlue")) {
-      color = jcolorname::SteelBlue;
+      color = jcolor_name_t::SteelBlue;
     } else if (name == ToLower("Tan")) {
-      color = jcolorname::Tan;
+      color = jcolor_name_t::Tan;
     } else if (name == ToLower("Teal")) {
-      color = jcolorname::Teal;
+      color = jcolor_name_t::Teal;
     } else if (name == ToLower("Thistle")) {
-      color = jcolorname::Thistle;
+      color = jcolor_name_t::Thistle;
     } else if (name == ToLower("Tomato")) {
-      color = jcolorname::Tomato;
+      color = jcolor_name_t::Tomato;
     } else if (name == ToLower("Turquoise")) {
-      color = jcolorname::Turquoise;
+      color = jcolor_name_t::Turquoise;
     } else if (name == ToLower("Violet")) {
-      color = jcolorname::Violet;
+      color = jcolor_name_t::Violet;
     } else if (name == ToLower("Wheat")) {
-      color = jcolorname::Wheat;
+      color = jcolor_name_t::Wheat;
     } else if (name == ToLower("White")) {
-      color = jcolorname::White;
+      color = jcolor_name_t::White;
     } else if (name == ToLower("WhiteSmoke")) {
-      color = jcolorname::WhiteSmoke;
+      color = jcolor_name_t::WhiteSmoke;
     } else if (name == ToLower("Yellow")) {
-      color = jcolorname::Yellow;
+      color = jcolor_name_t::Yellow;
     } else if (name == ToLower("Yellowgreen")) {
-      color = jcolorname::Yellowgreen;
+      color = jcolor_name_t::Yellowgreen;
     } else if (name == ToLower("Transparent")) {
-      color = jcolorname::Transparent;
+      color = jcolor_name_t::Transparent;
     }
 
     *this = jcolor_t<float>{color};
   }
 
-  jcolor_t(jcolorname color):
+  jcolor_t(jcolor_name_t color):
     jcolor_t((uint32_t)color)
   {
   }

@@ -83,8 +83,8 @@ class Doom : public Window {
       
       std::shared_ptr<Image> image = std::make_shared<IndexedImage>(palette, 37, (uint8_t *)buffer, jpoint_t<int>{SCREEN_WIDTH, SCREEN_HEIGHT});
 
-      g->SetCompositeFlags(jcomposite_t::Src);
-      g->SetBlittingFlags(jblitting_t::Nearest);
+      g->SetCompositeFlags(jcomposite_flags_t::Src);
+      g->SetBlittingFlags(jblitting_flags_t::Nearest);
 
 			g->DrawImage(image, {0, 0, size.x, size.y});
 

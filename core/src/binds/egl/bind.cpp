@@ -67,7 +67,7 @@ static xcb_window_t sg_xcb_window;
 static xcb_gcontext_t sg_xcb_context;
 
 /** \brief */
-Image *sg_back_buffer = nullptr;
+std::shared_ptr<Image> sg_back_buffer = nullptr;
 /** \brief */
 static std::atomic<bool> sg_repaint;
 /** \brief */
@@ -79,7 +79,7 @@ static EGLContext sg_egl_context;
 /** \brief */
 static EGLSurface sg_egl_surface;
 /** \brief */
-static Image *sg_jcanvas_icon = nullptr;
+static std::shared_ptr<Image> sg_jcanvas_icon = nullptr;
 /** \brief */
 static int sg_mouse_x = 0;
 /** \brief */
@@ -387,20 +387,19 @@ static void InternalPaint()
       size = sg_back_buffer->GetSize();
 
     if (size.x != bounds.size.x or size.y != bounds.size.y) {
-      delete sg_back_buffer;
       sg_back_buffer = nullptr;
     }
   }
 
   if (sg_back_buffer == nullptr) {
-    sg_back_buffer = new BufferedImage(jpixelformat_t::RGB32, bounds.size);
+    sg_back_buffer = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, bounds.size);
   }
 
   Graphics 
     *g = sg_back_buffer->GetGraphics();
 
   g->Reset();
-  g->SetCompositeFlags(jcomposite_t::Src);
+  g->SetCompositeFlags(jcomposite_flags_t::Src);
 
   sg_jcanvas_window->Paint(g);
 
@@ -605,7 +604,7 @@ void Application::Quit()
 
 WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 {
-  // sg_jcanvas_icon = new BufferedImage(JCANVAS_RESOURCES_DIR "/images/small-gnu.png");
+  // sg_jcanvas_icon = std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/small-gnu.png");
 
 	sg_mouse_x = 0;
 	sg_mouse_y = 0;
@@ -701,7 +700,6 @@ WindowAdapter::~WindowAdapter()
   xcb_destroy_window(sg_xcb_connection, sg_xcb_window);
   xcb_disconnect(sg_xcb_connection);
 
-  delete sg_back_buffer;
   sg_back_buffer = nullptr;
 }
 
@@ -914,9 +912,9 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
   xcb_free_cursor(sg_xcb_connection, cursor);
 }
 
-void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
+void WindowAdapter::SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty)
 {
-	if ((void *)shape == nullptr) {
+	if (shape == nullptr) {
 		return;
 	}
 
@@ -934,7 +932,7 @@ void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
 	int screen = DefaultScreen(_display);
 	Visual *visual = DefaultVisual(_display, screen);
 	unsigned int depth = DefaultDepth(_display, screen);
-	XImage *image = XCreateImage(_display, visual, depth, ZPixmap, 0, (char *)data, t.x, t.y, 32, 0);
+	Xstd::shared_ptr<Image> image = XCreateImage(_display, visual, depth, ZPixmap, 0, (char *)data, t.x, t.y, 32, 0);
 	::Window root_window = XRootWindow(_display, screen);
 
 	if (image == nullptr) {
@@ -973,12 +971,12 @@ jwindow_rotation_t WindowAdapter::GetRotation()
 	return jWindowRotationNone;
 }
 
-void WindowAdapter::SetIcon(Image *image)
+void WindowAdapter::SetIcon(std::shared_ptr<Image> image)
 {
   sg_jcanvas_icon = image;
 }
 
-Image * WindowAdapter::GetIcon()
+std::shared_ptr<Image> WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }

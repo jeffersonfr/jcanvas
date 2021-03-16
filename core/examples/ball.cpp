@@ -328,7 +328,7 @@ class BallDrop : public Window {
 			//  Draw density curve
 			scale = (double)size.x/numracks;
 
-			g->SetColor(jcolorname::White);
+			g->SetColor(jcolor_name_t::White);
 
 			oy = 0;
 

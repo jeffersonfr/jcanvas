@@ -85,7 +85,7 @@ struct Shape {
 	std::vector<sNode> vecNodes;
 	uint32_t nMaxNodes = 0;
 
-  jcolor_t<float> col {jcolorname::Green};
+  jcolor_t<float> col {jcolor_name_t::Green};
 
 	static float fWorldScale;
 	static jpoint3d_t<float> vWorldOffset;
@@ -130,7 +130,7 @@ struct Shape {
 		{
 			int sx, sy;
 			WorldToScreen(n.pos, sx, sy);
-      g->SetColor(jcolorname::Red);
+      g->SetColor(jcolor_name_t::Red);
 			g->FillCircle({sx, sy}, 2);
 		}
 	}
@@ -358,7 +358,7 @@ class CAD : public Window, public KeyListener, public MouseListener {
         selectedNode = tempShape->GetNextNode(vCursor);
 
         if (selectedNode == nullptr) {
-          tempShape->col = jcolorname::White;
+          tempShape->col = jcolor_name_t::White;
           listShapes.push_back(tempShape);
         }
       }
@@ -441,7 +441,7 @@ class CAD : public Window, public KeyListener, public MouseListener {
         }
       }
 
-      g->SetColor(jcolorname::Gray);
+      g->SetColor(jcolor_name_t::Gray);
 
       WorldToScreen({ 0,vWorldTopLeft.y }, sx, sy);
       WorldToScreen({ 0,vWorldBottomRight.y }, ex, ey);
@@ -464,7 +464,7 @@ class CAD : public Window, public KeyListener, public MouseListener {
       }
 
       WorldToScreen(vCursor, sx, sy);
-      g->SetColor(jcolorname::White);
+      g->SetColor(jcolor_name_t::White);
       g->DrawCircle({sx, sy}, 3);
 
       g->SetFont(Font::Size16);

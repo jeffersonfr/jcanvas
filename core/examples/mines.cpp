@@ -170,7 +170,7 @@ void Mines::Paint(Graphics *g)
 		}
 	}
 
-	g->SetColor(jcolorname::White);
+	g->SetColor(jcolor_name_t::White);
 
 	jpoint_t
 		size = GetSize();

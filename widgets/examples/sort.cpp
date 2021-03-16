@@ -1799,7 +1799,7 @@ class SortComponent : public Component, public Observer {
 				g->DrawRectangle({0, _algorithm->GetIndex1()*hsize, size.x, hsize});
 			}
 
-			g->SetColor(jcolorname::White);
+			g->SetColor(jcolor_name_t::White);
 			g->SetFont(theme.font.primary);
 			g->DrawString(_algorithm->GetName(), {0, 0, size.x, size.y});
       

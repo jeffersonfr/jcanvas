@@ -32,13 +32,13 @@
 namespace jcanvas {
 
 struct cursor_params_t {
-  Image *cursor;
+  std::shared_ptr<Image> cursor;
   int hot_x;
   int hot_y;
 };
 
 /** \brief */
-Image *sg_back_buffer = nullptr;
+static std::shared_ptr<Image> sg_back_buffer;
 /** \brief */
 static std::atomic<bool> sg_repaint;
 /** \brief */
@@ -52,7 +52,7 @@ static IDirectFBWindow *sg_window = nullptr;
 /** \brief */
 static IDirectFBSurface *sg_surface = nullptr;
 /** \brief */
-static Image *sg_jcanvas_icon = nullptr;
+static std::shared_ptr<Image> sg_jcanvas_icon;
 /** \brief */
 static int sg_mouse_x = 0;
 /** \brief */
@@ -346,7 +346,7 @@ void Application::Init(int argc, char **argv)
 	}
 
 #define CURSOR_INIT(type, ix, iy, hotx, hoty) \
-	t.cursor = new BufferedImage(jpixelformat_t::ARGB, {w, h}); \
+	t.cursor = std::make_shared<BufferedImage>(jpixelformat_t::ARGB, jpoint_t<int>{w, h}); \
 	t.hot_x = hotx; \
 	t.hot_y = hoty; \
 	t.cursor->GetGraphics()->DrawImage(cursors, {ix*w, iy*h, w, h}, jpoint_t<int>{0, 0}); \
@@ -356,7 +356,7 @@ void Application::Init(int argc, char **argv)
 	int w = 30,
 			h = 30;
 
-	Image *cursors = new BufferedImage(JCANVAS_RESOURCES_DIR "/images/cursors.png");
+  std::shared_ptr<Image> cursors = std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/cursors.png");
 
 	CURSOR_INIT(jcursor_style_t::Default, 0, 0, 8, 8);
 	CURSOR_INIT(jcursor_style_t::Crosshair, 4, 3, 15, 15);
@@ -375,8 +375,6 @@ void Application::Init(int argc, char **argv)
 	CURSOR_INIT(jcursor_style_t::Text, 7, 0, 15, 15);
 	CURSOR_INIT(jcursor_style_t::Wait, 8, 0, 15, 15);
 	
-	delete cursors;
-  
   sg_quitting = false;
 }
 
@@ -394,20 +392,19 @@ static void InternalPaint()
       size = sg_back_buffer->GetSize();
 
     if (size.x != bounds.size.x or size.y != bounds.size.y) {
-      delete sg_back_buffer;
       sg_back_buffer = nullptr;
     }
   }
 
   if (sg_back_buffer == nullptr) {
-    sg_back_buffer = new BufferedImage(jpixelformat_t::RGB32, bounds.size);
+    sg_back_buffer = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, bounds.size);
   }
 
   Graphics 
     *g = sg_back_buffer->GetGraphics();
 
   g->Reset();
-  g->SetCompositeFlags(jcomposite_t::Src);
+  g->SetCompositeFlags(jcomposite_flags_t::Src);
 
   sg_jcanvas_window->Paint(g);
 
@@ -586,7 +583,7 @@ WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 		throw std::runtime_error("Cannot create more than one window");
   }
 
-  // sg_jcanvas_icon = new BufferedImage(_DATA_PREFIX"/images/small-gnu.png");
+  // sg_jcanvas_icon = std::make_shared<BufferedImage>(_DATA_PREFIX"/images/small-gnu.png");
 
 	sg_window = nullptr;
 	sg_mouse_x = 0;
@@ -653,7 +650,6 @@ WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 
 WindowAdapter::~WindowAdapter()
 {
-  delete sg_jcanvas_icon;
   sg_jcanvas_icon = nullptr;
   
   sg_window->UngrabKeyboard(sg_window);
@@ -683,7 +679,6 @@ WindowAdapter::~WindowAdapter()
 		sg_directfb = nullptr;
 	}
   
-  delete sg_back_buffer;
   sg_back_buffer = nullptr;
 }
 
@@ -819,9 +814,9 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
 	SetCursor(sg_jcanvas_cursors[style].cursor, sg_jcanvas_cursors[style].hot_x, sg_jcanvas_cursors[style].hot_y);
 }
 
-void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
+void WindowAdapter::SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty)
 {
-	if ((void *)shape == nullptr) {
+	if (shape == nullptr) {
 		return;
 	}
 
@@ -866,12 +861,12 @@ jwindow_rotation_t WindowAdapter::GetRotation()
 	return jwindow_rotation_t::None;
 }
 
-void WindowAdapter::SetIcon(Image *image)
+void WindowAdapter::SetIcon(std::shared_ptr<Image> image)
 {
   sg_jcanvas_icon = image;
 }
 
-Image * WindowAdapter::GetIcon()
+std::shared_ptr<Image> WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }

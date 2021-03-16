@@ -119,25 +119,25 @@ class Menu {
         .y = 8
       };
 
-      g->SetColor(jcolorname::Orange);
+      g->SetColor(jcolor_name_t::Orange);
       g->FillRectangle({0, 0, 100, 100});
-      g->SetColor(jcolorname::White);
+      g->SetColor(jcolor_name_t::White);
       g->DrawRectangle({0, 0, 100, 100});
 
       int index = 0;
 
       for (auto &item : _items) {
         if (index++ == _index) {
-          g->SetColor(jcolorname::White);
+          g->SetColor(jcolor_name_t::White);
           
           if (item.second.Enabled() == false) {
-            g->SetColor(jcolorname::LightGrey);
+            g->SetColor(jcolor_name_t::LightGrey);
           }
         } else {
-          g->SetColor(jcolorname::Blue);
+          g->SetColor(jcolor_name_t::Blue);
           
           if (item.second.Enabled() == false) {
-            g->SetColor(jcolorname::Grey);
+            g->SetColor(jcolor_name_t::Grey);
           }
         }
 
@@ -147,7 +147,7 @@ class Menu {
         if (item.second.HasChilds() == true) {
           jpoint_t p = offset + jpoint_t<int>{100 - 16 - 8, 0};
 
-          g->SetColor(jcolorname::Black);
+          g->SetColor(jcolor_name_t::Black);
           g->FillTriangle({p.x, p.y}, {p.x + 8, p.y + 8}, {p.x, p.y + 16});
         }
 

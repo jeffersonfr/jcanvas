@@ -103,7 +103,7 @@ class WatchTeste : public Window {
 				// g->DrawLine({(int)(xc+(vs+10)*cos(teta)), (int)(yc+(vs+10)*sin(teta))}, {(int)(xc+(vs+10+10)*cos(teta)), (int)(yc+(vs+10+10)*sin(teta))});
 			}
 
-			g->SetColor(jcolorname::White);
+			g->SetColor(jcolor_name_t::White);
 			g->SetFont(Font::Size16);
 			g->DrawString(tmp, jpoint_t<int>{left, top});
 	
@@ -154,7 +154,7 @@ class WatchTeste : public Window {
       o << std::setw(2) << std::setfill('0') << lt->tm_mday;
 
       g->SetFont(Font::Size16);
-      g->SetColor(jcolorname::White);
+      g->SetColor(jcolor_name_t::White);
       g->DrawRectangle({92, 92, 34, 34});
       g->DrawString(o.str(), jrect_t<int>{92, 92, 34, 34});
 

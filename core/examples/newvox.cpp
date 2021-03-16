@@ -279,7 +279,7 @@ class NewVox : public Window, public KeyListener {
 				dst += MAXW;
 			}
 			
-			g->SetCompositeFlags(jcomposite_t::Src);
+			g->SetCompositeFlags(jcomposite_flags_t::Src);
 			g->SetRGBArray(buffer, {0, 0, MAXW, MAXH});
 		}
 

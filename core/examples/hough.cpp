@@ -273,7 +273,7 @@ class Test : public Window, public KeyListener {
 				gray32[i] = 0xff000000 | (edges[i] << 0x10) | (edges[i] << 0x08) | (edges[i] << 0x00);
 			}
 
-      _hough->GetGraphics()->SetCompositeFlags(jcomposite_t::Src);
+      _hough->GetGraphics()->SetCompositeFlags(jcomposite_flags_t::Src);
       _hough->GetGraphics()->SetRGBArray(gray32, {0, 0, size.x, size.y});
 
 			delete [] gray;
@@ -296,7 +296,7 @@ class Test : public Window, public KeyListener {
 			g->DrawImage(_image, {0, 0, size.x, size.y});
 			g->DrawImage(_hough, {size.x, 0, size.x, size.y});
 
-			g->SetColor(jcolorname::Red);
+			g->SetColor(jcolor_name_t::Red);
 			g->SetClip({0, 0, size.x, size.y});
 
 			for (std::vector<jline_t<int>>::iterator i=lines.begin(); i!=lines.end(); i++) {

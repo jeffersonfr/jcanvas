@@ -761,7 +761,7 @@ class TextComponent : public Component {
       Component(),
       _font(font),
       text(text),
-      color(jcolorname::White)
+      color(jcolor_name_t::White)
     {
       jfont_extends_t 
         extends = _font->GetStringExtends(text);
@@ -1226,9 +1226,9 @@ class RadarComponent : public Component {
       jpoint_t<int>
         size = _image->GetSize();
 
-      ig->SetCompositeFlags(jcomposite_t::Src);
+      ig->SetCompositeFlags(jcomposite_flags_t::Src);
 
-      ig->SetColor(jcolorname::Green);
+      ig->SetColor(jcolor_name_t::Green);
       ig->FillArc({size.x/2, size.y/2}, size/2, _angle, _angle + 0.05f);
 
       for (int i=0; i<size.x*size.y; i++) {
@@ -1262,7 +1262,7 @@ class RadarComponent : public Component {
         direction = direction/limit;
 
         if (direction.EuclidianNorm() < limit) {
-          g->SetColor(jcolorname::White);
+          g->SetColor(jcolor_name_t::White);
           g->FillCircle(center + direction, 1);
         }
       }
@@ -1472,8 +1472,8 @@ class Game : public Window, public KeyListener {
 
       Window::Paint(g);
 
-      g->SetBlittingFlags(jblitting_t::Nearest);
-      g->SetCompositeFlags(jcomposite_t::SrcOver);
+      g->SetBlittingFlags(jblitting_flags_t::Nearest);
+      g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
 
       sgMutex.lock();
 

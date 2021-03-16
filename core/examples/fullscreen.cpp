@@ -65,10 +65,10 @@ class Fullscreen : public Window, public KeyListener {
 
 			g->DrawImage(_bg, {left, top, size.x-left-right, size.y-top-bottom});
 
-			g->SetColor(jcolorname::Red);
+			g->SetColor(jcolor_name_t::Red);
 			g->FillRectangle({100, 100, 100, 100});
 			
-			g->SetColor(jcolorname::White);
+			g->SetColor(jcolor_name_t::White);
       g->SetFont(Font::Size16);
 			g->DrawString("Press F to use enable/disable fullscreen mode", jpoint_t<int>{100, 100});
 		}

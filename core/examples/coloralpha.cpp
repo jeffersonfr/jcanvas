@@ -149,13 +149,13 @@ class ColorAlphaTeste : public Window, public MouseListener {
       int right = 0;
       int bottom = 0;
 
-      g->SetCompositeFlags(jcomposite_t::SrcOver);
+      g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
 
 			g->DrawImage(_bg, {left, top, size.x-left-right, size.y-top-bottom});
 
       std::shared_ptr<Image> image = std::make_shared<BufferedImage>(jpixelformat_t::ARGB, size);
 
-      image->GetGraphics()->SetCompositeFlags(jcomposite_t::Src);
+      image->GetGraphics()->SetCompositeFlags(jcomposite_flags_t::Src);
       image->GetGraphics()->SetRGBArray(buffer, {0, 0, size.x, size.y});
 
 			g->DrawImage(image, {left, top, size.x-left-right, size.y-top-bottom});

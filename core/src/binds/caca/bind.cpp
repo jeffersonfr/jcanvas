@@ -36,7 +36,7 @@
 namespace jcanvas {
 
 /** \brief */
-Image *sg_back_buffer = nullptr;
+static std::shared_ptr<Image> sg_back_buffer;
 /** \brief */
 static std::atomic<bool> sg_repaint;
 /** \brief */
@@ -304,20 +304,19 @@ static void InternalPaint()
       size = sg_back_buffer->GetSize();
 
     if (size.x != bounds.size.x or size.y != bounds.size.y) {
-      delete sg_back_buffer;
       sg_back_buffer = nullptr;
     }
   }
 
   if (sg_back_buffer == nullptr) {
-    sg_back_buffer = new BufferedImage(jpixelformat_t::RGB32, bounds.size);
+    sg_back_buffer = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, bounds.size);
   }
 
   Graphics 
     *g = sg_back_buffer->GetGraphics();
 
   g->Reset();
-  g->SetCompositeFlags(jcomposite_t::Src);
+  g->SetCompositeFlags(jcomposite_flags_t::Src);
 
   sg_jcanvas_window->Paint(g);
   
@@ -328,7 +327,7 @@ static void InternalPaint()
 	int iw = cucul_get_canvas_width(cv);
 	int ih = cucul_get_canvas_height(cv);
 
-  Image *scale = sg_back_buffer->Scale({iw, ih});
+  std::shared_ptr<Image> scale = sg_back_buffer->Scale({iw, ih});
 
   uint32_t *data = (uint32_t *)scale->LockData();
 
@@ -357,8 +356,6 @@ static void InternalPaint()
 
   scale->UnlockData();
   
-  delete scale;
-
   sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Painted));
 }
 
@@ -540,7 +537,6 @@ WindowAdapter::~WindowAdapter()
     cucul_free_canvas(cv);
   }
   
-  delete sg_back_buffer;
   sg_back_buffer = nullptr;
 }
 
@@ -650,7 +646,7 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
 	sg_jcanvas_cursor = style;
 }
 
-void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
+void WindowAdapter::SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty)
 {
 }
 
@@ -663,11 +659,11 @@ jwindow_rotation_t WindowAdapter::GetRotation()
 	return jwindow_rotation_t::None;
 }
 
-void WindowAdapter::SetIcon(Image *image)
+void WindowAdapter::SetIcon(std::shared_ptr<Image> image)
 {
 }
 
-Image * WindowAdapter::GetIcon()
+std::shared_ptr<Image> WindowAdapter::GetIcon()
 {
   return nullptr;
 }

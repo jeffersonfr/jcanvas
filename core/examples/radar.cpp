@@ -45,7 +45,7 @@ class Dummy : public Window {
 
       static float angle = 0.0f;
 
-      buffer->GetGraphics()->SetColor(jcolorname::Green);
+      buffer->GetGraphics()->SetColor(jcolor_name_t::Green);
       buffer->GetGraphics()->FillArc({128, 128}, {128, 128}, angle, angle + 0.2f);
 
       for (int i=0; i<256*256; i++) {
@@ -59,7 +59,7 @@ class Dummy : public Window {
         buffer->GetGraphics()->SetRGB(color, point);
       }
 
-      buffer->GetGraphics()->SetColor(jcolorname::Green);
+      buffer->GetGraphics()->SetColor(jcolor_name_t::Green);
       buffer->GetGraphics()->DrawCircle({128, 128}, 128);
 
       g->DrawImage(buffer, jpoint_t<int>{0, 0});

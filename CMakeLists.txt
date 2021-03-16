@@ -64,6 +64,10 @@ foreach(X IN LISTS CAIRO_LIBRARIES FREETYPE_LIBRARIES JMIXIN_LIBRARIES)
   set (JCANVAS_LIBRARIES "${JCANVAS_LIBRARIES} -l${X}")
 endforeach()
   
+if (WIDGETS)
+  set (JCANVAS_LIBRARIES "${JCANVAS_LIBRARIES} -ljcanvas-widgets")
+endif()
+
 configure_file(
   ${PROJECT_SOURCE_DIR}/jcanvas.pc.in
   ${PROJECT_BINARY_DIR}/jcanvas.pc

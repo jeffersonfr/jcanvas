@@ -523,9 +523,9 @@ class Test : public UserWindow, public UserEventListener {
 			Window::Paint(g);
 
 			if (_color == 0) {
-				g->SetColor(jcolorname::Red);
+				g->SetColor(jcolor_name_t::Red);
 			} else if (_color == 1) {
-				g->SetColor(jcolorname::Blue);
+				g->SetColor(jcolor_name_t::Blue);
 			}
 
 			g->FillCircle(_ball, _raio);

@@ -95,7 +95,7 @@ class Primitives : public Window {
         }
       }
 
-      g->SetAntialias(jantialias_mode_t::None);
+      g->SetAntialias(jantialias_t::None);
 
       for (int i=0; i<num_colors; i++) {
         red = array[(i+4*sixth)%num_colors];
@@ -114,7 +114,7 @@ class Primitives : public Window {
         g->DrawLine({i+10, 1*(100+10)+20}, {i+10, 1*(100+10)+100+20});
       }
 
-      g->SetAntialias(jantialias_mode_t::Normal);
+      g->SetAntialias(jantialias_t::Normal);
 
       // draw image
       std::shared_ptr<Image> path = std::make_shared<BufferedImage>("images/blue_icon.png");
@@ -574,7 +574,7 @@ class Primitives : public Window {
       Window::Paint(g);
 
       // draw lines
-      g->SetColor(jcolorname::Green);
+      g->SetColor(jcolor_name_t::Green);
       g->MoveTo({0*(150+32)+32, 0*(150+32)+64});
       g->LineTo({0*(150+32)+32+150, 0*(150+32)+64+150});
       g->LineTo({0*(150+32)+32, 0*(150+32)+64+150});
@@ -586,14 +586,14 @@ class Primitives : public Window {
       g->Close();
       g->Stroke();
 
-      g->SetColor(jcolorname::Gray);
+      g->SetColor(jcolor_name_t::Gray);
       g->MoveTo({2*(150+32)+32, 0*(150+32)+64});
       g->LineTo({2*(150+32)+32+150, 0*(150+32)+64+150});
       g->LineTo({2*(150+32)+32, 0*(150+32)+64+150});
       g->Close();
       g->Fill();
 
-      g->SetColor(jcolorname::Gray);
+      g->SetColor(jcolor_name_t::Gray);
       g->MoveTo({3*(150+32)+32, 0*(150+32)+64});
       g->LineTo({3*(150+32)+32+150, 0*(150+32)+64+150});
       g->LineTo({3*(150+32)+32, 0*(150+32)+64+150});
@@ -605,7 +605,7 @@ class Primitives : public Window {
       pen.width = 16;
       g->SetPen(pen);
 
-      g->SetColor(jcolorname::Green);
+      g->SetColor(jcolor_name_t::Green);
 
       jcolor_t<float> color = g->GetColor();
 
@@ -624,7 +624,7 @@ class Primitives : public Window {
       g->SetPen(pen);
 
       // draw arcs
-      g->SetColor(jcolorname::Green);
+      g->SetColor(jcolor_name_t::Green);
       g->ArcTo({0*(150+32)+32+150/2, 1*(150+32)+64+150/2}, 150/2.0, M_PI/6.0, 3.0*M_PI/2.0);
       g->Stroke();
 
@@ -632,12 +632,12 @@ class Primitives : public Window {
       g->Close();
       g->Stroke();
 
-      g->SetColor(jcolorname::Gray);
+      g->SetColor(jcolor_name_t::Gray);
       g->ArcTo({2*(150+32)+32+150/2, 1*(150+32)+64+150/2}, 150/2.0, M_PI/6.0, 3.0*M_PI/2.0);
       g->Close();
       g->Fill();
 
-      g->SetColor(jcolorname::Gray);
+      g->SetColor(jcolor_name_t::Gray);
       g->ArcTo({3*(150+32)+32+150/2, 1*(150+32)+64+150/2}, 150/2.0, M_PI/6.0, 3.0*M_PI/2.0);
       g->Close();
       g->Fill();
@@ -647,7 +647,7 @@ class Primitives : public Window {
       pen.width = 16;
       g->SetPen(pen);
 
-      g->SetColor(jcolorname::Green);
+      g->SetColor(jcolor_name_t::Green);
 
       color = g->GetColor();
 
@@ -663,7 +663,7 @@ class Primitives : public Window {
       g->SetPen(pen);
 
       // draw curves
-      g->SetColor(jcolorname::Green);
+      g->SetColor(jcolor_name_t::Green);
       g->CurveTo({0*(150+32)+32, 2*(150+32)+64}, {0*(150+32)+32+150, 2*(150+32)+64+0}, {0*(150+32)+32+150, 2*(150+32)+64+150});
       g->Stroke();
 
@@ -671,12 +671,12 @@ class Primitives : public Window {
       g->Close();
       g->Stroke();
 
-      g->SetColor(jcolorname::Gray);
+      g->SetColor(jcolor_name_t::Gray);
       g->CurveTo({2*(150+32)+32, 2*(150+32)+64}, {2*(150+32)+32+150, 2*(150+32)+64+0}, {2*(150+32)+32+150, 2*(150+32)+64+150});
       g->Close();
       g->Fill();
 
-      g->SetColor(jcolorname::Gray);
+      g->SetColor(jcolor_name_t::Gray);
       g->CurveTo({3*(150+32)+32, 2*(150+32)+64}, {3*(150+32)+32+150, 2*(150+32)+64+0}, {3*(150+32)+32+150, 2*(150+32)+64+150});
       g->Close();
       g->Fill();
@@ -686,7 +686,7 @@ class Primitives : public Window {
       pen.width = 16;
       g->SetPen(pen);
 
-      g->SetColor(jcolorname::Green);
+      g->SetColor(jcolor_name_t::Green);
 
       color = g->GetColor();
 
@@ -709,7 +709,7 @@ class Primitives : public Window {
 
       std::string text = "Hello!";
 
-      g->SetColor(jcolorname::Green);
+      g->SetColor(jcolor_name_t::Green);
       g->TextTo(text, {0*(150+32)+32, 3*(150+32)+64});
       g->Stroke();
 
@@ -717,12 +717,12 @@ class Primitives : public Window {
       g->Close();
       g->Stroke();
 
-      g->SetColor(jcolorname::Gray);
+      g->SetColor(jcolor_name_t::Gray);
       g->TextTo(text, {2*(150+32)+32, 3*(150+32)+64});
       g->Close();
       g->Fill();
 
-      g->SetColor(jcolorname::Gray);
+      g->SetColor(jcolor_name_t::Gray);
       g->TextTo(text, {3*(150+32)+32, 3*(150+32)+64});
       g->Close();
       g->Fill();
@@ -732,7 +732,7 @@ class Primitives : public Window {
       pen.width = 16;
       g->SetPen(pen);
 
-      g->SetColor(jcolorname::Green);
+      g->SetColor(jcolor_name_t::Green);
 
       color = g->GetColor();
 
@@ -753,7 +753,7 @@ class Primitives : public Window {
       pen.width = 10;
       g->SetPen(pen);
 
-      g->SetColor(jcolorname::Gray);
+      g->SetColor(jcolor_name_t::Gray);
       g->MoveTo({0*(150+32)+32, 3*(150+32)+72+96});
       g->LineTo({1*(150+32)+32, 4*(150+32)+72+32});
       g->LineTo({2*(150+32)+32, 4*(150+32)+72+32});
@@ -765,7 +765,7 @@ class Primitives : public Window {
       pen.width = 1;
       g->SetPen(pen);
 
-      g->SetColor(jcolorname::Black);
+      g->SetColor(jcolor_name_t::Black);
       g->MoveTo({0*(150+32)+32, 3*(150+32)+72+96});
       g->LineTo({1*(150+32)+32, 4*(150+32)+72+32});
       g->LineTo({2*(150+32)+32, 4*(150+32)+72+32});

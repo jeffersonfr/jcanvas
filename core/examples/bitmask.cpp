@@ -575,7 +575,7 @@ class BitMask {
 		{
       Image *image = new BufferedImage(jpixelformat_t::RGB32, _size);
 
-      image->GetGraphics()->SetCompositeFlags(jcomposite_t::Src);
+      image->GetGraphics()->SetCompositeFlags(jcomposite_flags_t::Src);
       image->GetGraphics()->SetRGBArray(_data, {0, 0, _size.x, _size.y});
 
 			return image;
@@ -583,9 +583,9 @@ class BitMask {
 
 		virtual void DrawTo(Graphics *g, int x, int y)
 		{
-			jcomposite_t t = g->GetCompositeFlags();
+			jcomposite_flags_t t = g->GetCompositeFlags();
 			
-			g->SetCompositeFlags(jcomposite_t::Src);
+			g->SetCompositeFlags(jcomposite_flags_t::Src);
 			g->SetRGBArray(_data, {x, y, _size.x, _size.y});
 			g->SetCompositeFlags(t);
 		}

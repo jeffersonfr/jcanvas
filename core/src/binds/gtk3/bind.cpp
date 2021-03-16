@@ -33,7 +33,7 @@
 namespace jcanvas {
 
 /** \brief */
-Image *sg_back_buffer = nullptr;
+static std::shared_ptr<Image> sg_back_buffer = nullptr;
 /** \brief */
 static std::atomic<bool> sg_repaint;
 /** \brief */
@@ -61,7 +61,7 @@ static jpoint_t<int> sg_screen = {0, 0};
 /** \brief */
 static std::mutex sg_loop_mutex;
 /** \brief */
-static Image *sg_jcanvas_icon = nullptr;
+static std::shared_ptr<Image> sg_jcanvas_icon = nullptr;
 /** \brief */
 static Window *sg_jcanvas_window = nullptr;
 /** \brief */
@@ -365,13 +365,12 @@ static gboolean OnDraw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
       size = sg_back_buffer->GetSize();
 
     if (size.x != bounds.size.x or size.y != bounds.size.y) {
-      delete sg_back_buffer;
       sg_back_buffer = nullptr;
     }
   }
 
   if (sg_back_buffer == nullptr) {
-    sg_back_buffer = new BufferedImage(jpixelformat_t::RGB32, bounds.size);
+    sg_back_buffer = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, bounds.size);
   }
 
   Graphics 
@@ -380,7 +379,7 @@ static gboolean OnDraw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
   Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
 
   g->Reset();
-  g->SetCompositeFlags(jcomposite_t::Src);
+  g->SetCompositeFlags(jcomposite_flags_t::Src);
 
   sg_jcanvas_window->Paint(g);
 
@@ -604,7 +603,7 @@ WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
   sg_jcanvas_window = parent;
   sg_visible_bounds = bounds;
 
-  // sg_jcanvas_icon = new BufferedImage(_DATA_PREFIX"/images/small-gnu.png");
+  // sg_jcanvas_icon = std::make_shared<BufferedImage>(_DATA_PREFIX"/images/small-gnu.png");
 
   sg_handler = gtk_application_new("jlibcpp.gtk", G_APPLICATION_FLAGS_NONE);
 
@@ -632,7 +631,6 @@ WindowAdapter::~WindowAdapter()
   gtk_window_close((GtkWindow *)sg_window);
   // gtk_main_quit();
   
-  delete sg_back_buffer;
   sg_back_buffer = nullptr;
 }
 
@@ -787,7 +785,7 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
   sg_jcanvas_cursor = style;
 }
 
-void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
+void WindowAdapter::SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty)
 {
   /*
 	if ((void *)shape == nullptr) {
@@ -815,12 +813,12 @@ jwindow_rotation_t WindowAdapter::GetRotation()
 	return jwindow_rotation_t::None;
 }
 
-void WindowAdapter::SetIcon(Image *image)
+void WindowAdapter::SetIcon(std::shared_ptr<Image> image)
 {
   sg_jcanvas_icon = image;
 }
 
-Image * WindowAdapter::GetIcon()
+std::shared_ptr<Image> WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }

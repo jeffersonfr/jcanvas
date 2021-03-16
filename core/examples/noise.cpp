@@ -423,7 +423,7 @@ class Noise : public Window {
         dy = 240;
 
       g->SetFont(Font::Size16);
-      g->SetColor(jcolorname::White);
+      g->SetColor(jcolor_name_t::White);
 
       g->DrawString("Sinal Original", jpoint_t<int>{dx+40, dy-200});
       g->DrawString("Sinal Ruidoso", jpoint_t<int>{dx+40, dy-150});

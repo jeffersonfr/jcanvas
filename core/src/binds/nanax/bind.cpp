@@ -34,7 +34,7 @@
 namespace jcanvas {
 
 /** \brief */
-Image *sg_back_buffer = nullptr;
+static std::shared_ptr<Image> sg_back_buffer = nullptr;
 /** \brief */
 static std::atomic<bool> sg_repaint;
 /** \brief */
@@ -60,7 +60,7 @@ static jrect_t<int> sg_last_bounds = {0, 0, 0, 0};
 /** \brief */
 static std::mutex sg_loop_mutex;
 /** \brief */
-static Image *sg_jcanvas_icon = nullptr;
+static std::shared_ptr<Image> sg_jcanvas_icon = nullptr;
 /** \brief */
 static Window *sg_jcanvas_window = nullptr;
 /** \brief */
@@ -445,20 +445,19 @@ static void paint_callback(const nana::paint::graphics& graph)
       size = sg_back_buffer->GetSize();
 
     if (size.x != bounds.size.x or size.y != bounds.size.y) {
-      delete sg_back_buffer;
       sg_back_buffer = nullptr;
     }
   }
 
   if (sg_back_buffer == nullptr) {
-    sg_back_buffer = new BufferedImage(jpixelformat_t::RGB32, bounds.size);
+    sg_back_buffer = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, bounds.size);
   }
 
   Graphics 
     *g = sg_back_buffer->GetGraphics();
 
   g->Reset();
-  g->SetCompositeFlags(jcomposite_t::Src);
+  g->SetCompositeFlags(jcomposite_flags_t::Src);
 
   sg_jcanvas_window->Paint(g);
 
@@ -493,7 +492,7 @@ WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
     throw std::runtime_error("Cannot create more than one window");
   }
 
-  // sg_jcanvas_icon = new BufferedImage(_DATA_PREFIX"/images/small-gnu.png");
+  // sg_jcanvas_icon = std::make_shared<BufferedImage>(_DATA_PREFIX"/images/small-gnu.png");
 
   sg_mouse_x = 0;
   sg_mouse_y = 0;
@@ -534,7 +533,6 @@ WindowAdapter::~WindowAdapter()
   delete fm;
   delete dw;
   
-  delete sg_back_buffer;
   sg_back_buffer = nullptr;
 }
 
@@ -695,7 +693,7 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
   sg_jcanvas_cursor = style;
 }
 
-void WindowAdapter::SetCursor(Image *shape, int hotx, int hoty)
+void WindowAdapter::SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty)
 {
 }
 
@@ -709,11 +707,11 @@ jwindow_rotation_t WindowAdapter::GetRotation()
   return jwindow_rotation_t::None;
 }
 
-void WindowAdapter::SetIcon(Image *image)
+void WindowAdapter::SetIcon(std::shared_ptr<Image> image)
 {
 }
 
-Image * WindowAdapter::GetIcon()
+std::shared_ptr<Image> WindowAdapter::GetIcon()
 {
   return sg_jcanvas_icon;
 }
