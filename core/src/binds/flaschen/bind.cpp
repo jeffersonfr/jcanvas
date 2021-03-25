@@ -302,8 +302,6 @@ static void InternalPaint()
 
   g->Flush();
 
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
   std::shared_ptr<Image> scale = sg_back_buffer->Scale({FLASCHEN_DISPLAY_WIDTH, FLASCHEN_DISPLAY_HEIGHT});
 
   uint8_t *data = (uint8_t *)scale->LockData();
@@ -367,6 +365,8 @@ void Application::Loop()
     if (sg_repaint.exchange(false) == true) {
       InternalPaint();
     }
+
+    Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
 
     if (read(fdk, &ev, sizeof ev) == sizeof(ev)) {
       if (ev.type == EV_KEY) {

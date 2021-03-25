@@ -25,7 +25,15 @@ using namespace jcanvas;
 
 class App : public Frame {
 
-	private:
+  private:
+    Container container1 {jrect_t<int>{100, 100, 960, 540}};
+    Container container2 {jrect_t<int>{-200, 200, 960, 540}};
+    Button button1 {"Button 1"};
+    Button button2 {"Button 2"};
+    Button button3 {"Button 3"};
+    Button button4 {"Button 4"};
+    Button button5 {"Button 5"};
+
 	public:
 		App(std::string title, int width, int height):
 			Frame({width, height})
@@ -43,30 +51,21 @@ class App : public Frame {
         ws = 128,
 				hs = 48;
 
-      auto button1 = std::make_shared<Button>("Button 1");
-      auto button2 = std::make_shared<Button>("Button 2");
-      auto button3 = std::make_shared<Button>("Button 3");
-      auto button4 = std::make_shared<Button>("Button 4");
-      auto button5 = std::make_shared<Button>("Button 5");
+      button1.SetBounds({50, 100, ws, hs});
+      button2.SetBounds({100, 100, ws, hs});
+      button3.SetBounds({400, 100, ws, hs});
+      button4.SetBounds({800, 100, ws, hs});
+      button5.SetBounds({100, 800, ws, hs});
 
-      button1->SetBounds({50, 100, ws, hs});
-      button2->SetBounds({100, 100, ws, hs});
-      button3->SetBounds({400, 100, ws, hs});
-      button4->SetBounds({800, 100, ws, hs});
-      button5->SetBounds({100, 800, ws, hs});
+      container1.Add(&button1);
+      container1.Add(&button5);
+      container1.Add(&container2);
 
-      auto container1 = std::make_shared<Container>(jrect_t<int>{100, 100, 960, 540});
-      auto container2 = std::make_shared<Container>(jrect_t<int>{-200, 200, 960, 540});
+      container2.Add(&button2);
+      container2.Add(&button3);
+      container2.Add(&button4);
 
-      container1->Add(button1);
-      container1->Add(button5);
-      container1->Add(container2);
-
-      container2->Add(button2);
-      container2->Add(button3);
-      container2->Add(button4);
-
-      Add(container1);
+      Add(&container1);
     }
 
 };

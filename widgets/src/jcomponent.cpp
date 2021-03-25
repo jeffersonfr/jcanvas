@@ -94,9 +94,16 @@ Component::Component(jrect_t<int> bounds):
 
 Component::~Component()
 {
+  auto parent = GetParent();
+
+  if (parent != nullptr) {
+    parent->Remove(this);
+  }
+
+  SetParent(nullptr);
 }
 
-void Component::ScrollToVisibleArea(jrect_t<int> rect, std::shared_ptr<Component> coordinateSpace) 
+void Component::ScrollToVisibleArea(jrect_t<int> rect, Component *coordinateSpace) 
 {
   if (IsScrollable()) {
     jpoint_t<int> 
@@ -117,18 +124,18 @@ void Component::ScrollToVisibleArea(jrect_t<int> rect, std::shared_ptr<Component
     int relativeY = rect.point.y;
     
     // component needs to be in absolute coordinates ...
-    std::shared_ptr<Container> parent = nullptr;
+    Container *parent = nullptr;
 
     if (coordinateSpace != nullptr) {
       parent = coordinateSpace->GetParent();
     }
 
-    if (parent == GetSharedPointer<Container>()) {
+    if (parent == this) {
       if (view.Contains(rect) == true) {
         return;
       }
     } else {
-      while (parent != GetSharedPointer<Container>()) {
+      while (parent != this) {
         // mostly a special case for list
         if (parent == nullptr) {
           relativeX = rect.point.x;
@@ -198,7 +205,7 @@ void Component::ScrollToVisibleArea(jrect_t<int> rect, std::shared_ptr<Component
     SetScrollLocation(nslocation);
   } else {
     // try to move parent scroll if you are not scrollable
-    std::shared_ptr<Container> parent = GetParent();
+    Container *parent = GetParent();
 
     if (parent != nullptr) {
       parent->ScrollToVisibleArea(
@@ -686,15 +693,15 @@ void Component::Paint(Graphics *g)
 {
 }
 
-std::shared_ptr<Container> Component::GetParent()
+Container * Component::GetParent()
 {
   return _parent;
 }
 
-std::shared_ptr<Container> Component::GetTopLevelAncestor()
+Container * Component::GetTopLevelAncestor()
 {
-  for (std::shared_ptr<Component> cmp = GetSharedPointer(); cmp != nullptr; cmp = cmp->GetParent()) {
-    std::shared_ptr<Container> container = std::dynamic_pointer_cast<Frame>(cmp);
+  for (Component *cmp = this; cmp != nullptr; cmp = cmp->GetParent()) {
+    Container *container = dynamic_cast<Frame *>(cmp);
     
     if (container != nullptr) {
       return container;
@@ -728,7 +735,7 @@ bool Component::IsNavigationEnabled()
   return _is_navigation_enabled;
 }
 
-void Component::SetNextComponentFocus(std::shared_ptr<Component> left, std::shared_ptr<Component> right, std::shared_ptr<Component> up, std::shared_ptr<Component> down)
+void Component::SetNextComponentFocus(Component *left, Component *right, Component *up, Component *down)
 {
   _left = left;
   _right = right;
@@ -736,47 +743,47 @@ void Component::SetNextComponentFocus(std::shared_ptr<Component> left, std::shar
   _down = down;
 }
 
-std::shared_ptr<Component> Component::GetNextFocusLeft()
+Component * Component::GetNextFocusLeft()
 {
   return _left;
 }
 
-std::shared_ptr<Component> Component::GetNextFocusRight()
+Component * Component::GetNextFocusRight()
 {
   return _right;
 }
 
-std::shared_ptr<Component> Component::GetNextFocusUp()
+Component * Component::GetNextFocusUp()
 {
   return _up;
 }
 
-std::shared_ptr<Component> Component::GetNextFocusDown()
+Component * Component::GetNextFocusDown()
 {
   return _down;
 }
 
-void Component::SetNextFocusLeft(std::shared_ptr<Component> cmp)
+void Component::SetNextFocusLeft(Component *cmp)
 {
   _left = cmp;
 }
 
-void Component::SetNextFocusRight(std::shared_ptr<Component> cmp)
+void Component::SetNextFocusRight(Component *cmp)
 {
   _right = cmp;
 }
 
-void Component::SetNextFocusUp(std::shared_ptr<Component> cmp)
+void Component::SetNextFocusUp(Component *cmp)
 {
   _up = cmp;
 }
 
-void Component::SetNextFocusDown(std::shared_ptr<Component> cmp)
+void Component::SetNextFocusDown(Component *cmp)
 {
   _down = cmp;
 }
 
-void Component::SetParent(std::shared_ptr<Container> parent)
+void Component::SetParent(Container *parent)
 {
   _parent = parent;
 }
@@ -805,13 +812,13 @@ bool Component::IsIgnoreRepaint()
   return _is_ignore_repaint;
 }
 
-void Component::Repaint(std::shared_ptr<Component> cmp)
+void Component::Repaint(Component *cmp)
 {
   if (_is_ignore_repaint == true) {
     return;
   }
 
-  std::shared_ptr<Container> parent = GetParent();
+  Container *parent = GetParent();
 
   if (parent != nullptr) {
     parent->Repaint(cmp);
@@ -1035,8 +1042,8 @@ void Component::SetSize(jpoint_t<int> size)
 
 jpoint_t<int> Component::GetAbsoluteLocation()
 {
-  std::shared_ptr<Container>
-    parent = GetParent();
+  Container
+    *parent = GetParent();
   jpoint_t<int>
     location = {
       .x = 0, 
@@ -1081,45 +1088,45 @@ jpoint_t<int> Component::GetSize()
 
 void Component::RaiseToTop()
 {
-  std::shared_ptr<Container> parent = GetParent();
+  Container *parent = GetParent();
 
   if (parent != nullptr) {
-    parent->RaiseComponentToTop(GetSharedPointer());
+    parent->RaiseComponentToTop(this);
   }
 }
 
 void Component::LowerToBottom()
 {
-  std::shared_ptr<Container> parent = GetParent();
+  Container *parent = GetParent();
 
   if (parent != nullptr) {
-    parent->LowerComponentToBottom(GetSharedPointer());
+    parent->LowerComponentToBottom(this);
   }
 }
 
-void Component::PutAtop(std::shared_ptr<Component> c)
+void Component::PutAtop(Component *c)
 {
   if (c == nullptr) {
     return;
   }
 
-  std::shared_ptr<Container> parent = GetParent();
+  Container *parent = GetParent();
 
   if (parent != nullptr) {
-    parent->PutComponentATop(GetSharedPointer(), c);
+    parent->PutComponentATop(this, c);
   }
 }
 
-void Component::PutBelow(std::shared_ptr<Component> c)
+void Component::PutBelow(Component *c)
 {
   if (c == nullptr) {
     return;
   }
 
-  std::shared_ptr<Container> parent = GetParent();
+  Container *parent = GetParent();
 
   if (parent != nullptr) {
-    parent->PutComponentBelow(GetSharedPointer(), c);
+    parent->PutComponentBelow(this, c);
   }
 }
 
@@ -1288,28 +1295,28 @@ bool Component::MouseWheel(MouseEvent *event)
   return false;
 }
 
-void Component::GetInternalComponents(std::shared_ptr<Container> current, std::vector<std::shared_ptr<Component>> *components)
+void Component::GetInternalComponents(Container *current, std::vector<Component *> &components)
 {
   if (current == nullptr) {
     return;
   }
 
-  std::vector<std::shared_ptr<Component>> v = current->GetComponents();
+  std::vector<Component *> v = current->GetComponents();
 
-  for (std::vector<std::shared_ptr<Component>>::iterator i=v.begin(); i!=v.end(); i++) {
-    std::shared_ptr<Container> container = std::dynamic_pointer_cast<Container>(*i);
+  for (std::vector<Component *>::iterator i=v.begin(); i!=v.end(); i++) {
+    Container *container = dynamic_cast<Container *>(*i);
 
     if (container != nullptr) {
       GetInternalComponents(container, components);
     }
 
-    components->push_back(*i);
+    components.push_back(*i);
   }
 }
 
-std::shared_ptr<Container> Component::GetFocusCycleRootAncestor()
+Container * Component::GetFocusCycleRootAncestor()
 {
-  std::shared_ptr<Container> parent = GetParent();
+  Container *parent = GetParent();
 
   if (parent != nullptr) {
     return parent->GetFocusCycleRootAncestor();
@@ -1343,7 +1350,7 @@ bool Component::ProcessNavigation(KeyEvent *event)
       size
     };
 
-  std::shared_ptr<Component> next = GetSharedPointer();
+  Component *next = this;
 
   if (action == jkeyevent_symbol_t::CursorLeft && GetNextFocusLeft() != nullptr) {
     next = GetNextFocusLeft();
@@ -1354,11 +1361,11 @@ bool Component::ProcessNavigation(KeyEvent *event)
   } else if (action == jkeyevent_symbol_t::CursorDown && GetNextFocusDown() != nullptr) {
     next = GetNextFocusDown();
   } else {
-    std::shared_ptr<Component>
-      left = GetSharedPointer(),
-      right = GetSharedPointer(),
-      up = GetSharedPointer(),
-      down = GetSharedPointer();
+    Component
+      *left = this,
+      *right = this,
+      *up = this,
+      *down = this;
 
     FindNextComponentFocus(rect, left, right, up, down);
   
@@ -1372,18 +1379,18 @@ bool Component::ProcessNavigation(KeyEvent *event)
       next = down;
     }
 
-    if (_is_cyclic_focus == true && next == GetSharedPointer()) {
-      std::vector<std::shared_ptr<Component>> components;
+    if (_is_cyclic_focus == true && next == this) {
+      std::vector<Component *> components;
       int 
         x1 = 0,
         y1 = 0,
         x2 = 0,
         y2 = 0;
 
-      GetInternalComponents(GetFocusCycleRootAncestor(), &components);
+      GetInternalComponents(GetFocusCycleRootAncestor(), components);
 
-      for (std::vector<std::shared_ptr<Component>>::iterator i=components.begin(); i!=components.end(); i++) {
-        std::shared_ptr<Component> cmp = (*i);
+      for (std::vector<Component *>::iterator i=components.begin(); i!=components.end(); i++) {
+        Component *cmp = (*i);
 
         if (cmp->IsFocusable() == false || cmp->IsEnabled() == false || cmp->IsVisible() == false) {
           continue;
@@ -1444,13 +1451,13 @@ bool Component::ProcessNavigation(KeyEvent *event)
   return false;
 }
 
-void Component::FindNextComponentFocus(jrect_t<int> rect, std::shared_ptr<Component> &left, std::shared_ptr<Component> &right, std::shared_ptr<Component> &up, std::shared_ptr<Component> &down)
+void Component::FindNextComponentFocus(jrect_t<int> rect, Component *&left, Component *&right, Component *&up, Component *&down)
 {
-  std::vector<std::shared_ptr<Component>> components;
+  std::vector<Component *> components;
 
-  GetInternalComponents(GetFocusCycleRootAncestor(), &components);
+  GetInternalComponents(GetFocusCycleRootAncestor(), components);
 
-  if (components.size() == 0 || (components.size() == 1 && components[0] == GetSharedPointer())) {
+  if (components.size() == 0 || (components.size() == 1 && components[0] == this)) {
     return;
   }
 
@@ -1460,17 +1467,15 @@ void Component::FindNextComponentFocus(jrect_t<int> rect, std::shared_ptr<Compon
     d_up = INT_MAX,
     d_down = INT_MAX;
 
-  for (std::vector<std::shared_ptr<Component>>::iterator i=components.begin(); i!=components.end(); i++) {
-    std::shared_ptr<Component> cmp = (*i);
+  for (std::vector<Component *>::iterator i=components.begin(); i!=components.end(); i++) {
+    Component *cmp = (*i);
 
-    if (cmp == GetSharedPointer() || cmp->IsFocusable() == false || cmp->IsEnabled() == false || cmp->IsVisible() == false) {
+    if (cmp == this || cmp->IsFocusable() == false || cmp->IsEnabled() == false || cmp->IsVisible() == false) {
       continue;
     }
 
-    jpoint_t<int> 
-      cmp_size = cmp->GetSize();
-    jpoint_t<int> 
-      cmp_location = cmp->GetAbsoluteLocation();
+    jpoint_t<int> cmp_location = cmp->GetAbsoluteLocation();
+    jpoint_t<int> cmp_size = cmp->GetSize();
     int 
       c1x = rect.point.x + rect.size.x/2,
       c1y = rect.point.y + rect.size.y/2,
@@ -1517,28 +1522,28 @@ void Component::FindNextComponentFocus(jrect_t<int> rect, std::shared_ptr<Compon
 
 void Component::RequestFocus()
 {
-  std::shared_ptr<Container> parent = GetParent();
+  Container *parent = GetParent();
 
   if (parent != nullptr) {
-    parent->RequestComponentFocus(GetSharedPointer());
+    parent->RequestComponentFocus(this);
   }
 }
 
 void Component::ReleaseFocus()
 {
-  std::shared_ptr<Container> parent = GetParent();
+  Container *parent = GetParent();
 
   if (parent != nullptr) {
-    parent->ReleaseComponentFocus(GetSharedPointer());
+    parent->ReleaseComponentFocus(this);
   }
 }
 
 bool Component::HasFocus()
 {
-  std::shared_ptr<Container> parent = GetParent();
+  Container *parent = GetParent();
 
   if (parent != nullptr) {
-    return parent->GetFocusOwner() == GetSharedPointer();
+    return parent->GetFocusOwner() == this;
   }
 
   return false;
@@ -1565,7 +1570,7 @@ bool Component::IsHidden()
     return true;
   }
 
-  std::shared_ptr<Container> cmp = GetParent();
+  Container *cmp = GetParent();
   
   while (cmp != nullptr) {
     if (cmp->IsVisible() == false) {

@@ -481,8 +481,6 @@ static void InternalPaint()
 
   g->Flush();
 
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
   uint32_t *data = (uint32_t *)sg_back_buffer->LockData();
 
   // TODO:: nao alocar isso:: layer.image.buffer;
@@ -554,6 +552,8 @@ void Application::Loop()
     if (sg_repaint.exchange(false) == true) {
       InternalPaint();
     }
+
+    Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
 
     if (read(fdk, &ev, sizeof ev) == sizeof(ev)) {
       if (ev.type == EV_KEY) {

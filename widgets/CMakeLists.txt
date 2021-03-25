@@ -49,11 +49,8 @@ set(SRCS
   src/jtabbedpane.cpp
   #src/jtable.cpp
   src/jtext.cpp
-  src/jtextarea.cpp
-  src/jtextcomponent.cpp
   src/jtextevent.cpp
   src/jtextlistener.cpp
-  src/jtextfield.cpp
   src/jtheme.cpp
   src/jtoastdialog.cpp
   src/jtoggleevent.cpp

@@ -54,7 +54,7 @@ void CardLayout::SetVGap(int vgap)
   _vgap = vgap;
 }
 
-void CardLayout::AddLayoutComponent(std::string name, std::shared_ptr<Component> comp) 
+void CardLayout::AddLayoutComponent(std::string name, Component *comp) 
 {
   // WARN:: sync
   if (!vector.empty()) {
@@ -76,7 +76,7 @@ void CardLayout::AddLayoutComponent(std::string name, std::shared_ptr<Component>
   vector.push_back(t);
 }
 
-void CardLayout::RemoveLayoutComponent(std::shared_ptr<Component> comp) 
+void CardLayout::RemoveLayoutComponent(Component *comp) 
 {
   // WARN:: sync
   for (int i = 0; i < (int)vector.size(); i++) {
@@ -98,7 +98,7 @@ void CardLayout::RemoveLayoutComponent(std::shared_ptr<Component> comp)
   }
 }
 
-void CardLayout::CheckLayout(std::shared_ptr<Container> parent) 
+void CardLayout::CheckLayout(Container *parent) 
 {
   if (parent == nullptr) {
     throw std::invalid_argument("Parent container must be a valid address");
@@ -109,7 +109,7 @@ void CardLayout::CheckLayout(std::shared_ptr<Container> parent)
   }
 }
 
-void CardLayout::First(std::shared_ptr<Container> parent) 
+void CardLayout::First(Container *parent) 
 {
   // WARN:: sync
     CheckLayout(parent);
@@ -118,7 +118,7 @@ void CardLayout::First(std::shared_ptr<Container> parent)
 
     // CHANGE:: for (int i = 0 ; i < ncomponents ; i++) {
     for (int i = 1 ; i < ncomponents ; i++) {
-      std::shared_ptr<Component> comp = parent->GetComponents()[i];
+      Component *comp = parent->GetComponents()[i];
 
       if (comp->IsVisible()) {
         comp->SetVisible(false);
@@ -135,7 +135,7 @@ void CardLayout::First(std::shared_ptr<Container> parent)
     }
 }
 
-void CardLayout::Next(std::shared_ptr<Container> parent) 
+void CardLayout::Next(Container *parent) 
 {
   // WARN:: sync
   CheckLayout(parent);
@@ -143,7 +143,7 @@ void CardLayout::Next(std::shared_ptr<Container> parent)
   int ncomponents = parent->GetComponentCount();
   
   for (int i = 0 ; i < ncomponents ; i++) {
-    std::shared_ptr<Component> comp = parent->GetComponents()[i];
+    Component *comp = parent->GetComponents()[i];
 
     if (comp->IsVisible()) {
       comp->SetVisible(false);
@@ -158,7 +158,7 @@ void CardLayout::Next(std::shared_ptr<Container> parent)
   ShowDefaultComponent(parent);
 }
 
-void CardLayout::Previous(std::shared_ptr<Container> parent) 
+void CardLayout::Previous(Container *parent) 
 {
   // WARN:: sync
     CheckLayout(parent);
@@ -166,7 +166,8 @@ void CardLayout::Previous(std::shared_ptr<Container> parent)
     int ncomponents = parent->GetComponentCount();
     
     for (int i = 0 ; i < ncomponents ; i++) {
-      std::shared_ptr<Component> comp = parent->GetComponents()[i];
+      Component *comp = parent->GetComponents()[i];
+
       if (comp->IsVisible()) {
         comp->SetVisible(false);
         _current_card = ((i > 0) ? i-1 : ncomponents-1);
@@ -180,7 +181,7 @@ void CardLayout::Previous(std::shared_ptr<Container> parent)
     ShowDefaultComponent(parent);
 }
 
-void CardLayout::ShowDefaultComponent(std::shared_ptr<Container> parent) 
+void CardLayout::ShowDefaultComponent(Container *parent) 
 {
   if (parent->GetComponentCount() > 0) {
     _current_card = 0;
@@ -189,7 +190,7 @@ void CardLayout::ShowDefaultComponent(std::shared_ptr<Container> parent)
   }
 }
 
-void CardLayout::Last(std::shared_ptr<Container> parent) 
+void CardLayout::Last(Container *parent) 
 {
   // WARN:: sync
     CheckLayout(parent);
@@ -198,10 +199,11 @@ void CardLayout::Last(std::shared_ptr<Container> parent)
     
     // CHANGE:: for (int i = 0 ; i < ncomponents ; i++) {
     for (int i = 0 ; i < ncomponents-1 ; i++) {
-      std::shared_ptr<Component> comp = parent->GetComponents()[i];
+      Component *comp = parent->GetComponents()[i];
 
       if (comp->IsVisible()) {
         comp->SetVisible(false);
+
         break;
       }
     }
@@ -213,7 +215,7 @@ void CardLayout::Last(std::shared_ptr<Container> parent)
     }
 }
 
-jpoint_t<int> CardLayout::GetMinimumLayoutSize(std::shared_ptr<Container> parent)
+jpoint_t<int> CardLayout::GetMinimumLayoutSize(Container *parent)
 {
   // WARN:: sync parent
   jinsets_t insets = parent->GetInsets();
@@ -222,7 +224,7 @@ jpoint_t<int> CardLayout::GetMinimumLayoutSize(std::shared_ptr<Container> parent
       h = 0;
 
   for (int i = 0 ; i < ncomponents ; i++) {
-    std::shared_ptr<Component> comp = parent->GetComponents()[i];
+    Component *comp = parent->GetComponents()[i];
 
     jpoint_t<int> d = comp->GetMinimumSize();
 
@@ -239,14 +241,14 @@ jpoint_t<int> CardLayout::GetMinimumLayoutSize(std::shared_ptr<Container> parent
   return t;
 }
 
-jpoint_t<int> CardLayout::GetMaximumLayoutSize(std::shared_ptr<Container> parent)
+jpoint_t<int> CardLayout::GetMaximumLayoutSize(Container *parent)
 {
   jpoint_t<int> t = {INT_MAX, INT_MAX};
 
   return t;
 }
 
-jpoint_t<int> CardLayout::GetPreferredLayoutSize(std::shared_ptr<Container> parent)
+jpoint_t<int> CardLayout::GetPreferredLayoutSize(Container *parent)
 {
   // WARN:: sync parent
   jinsets_t insets = parent->GetInsets();
@@ -255,7 +257,7 @@ jpoint_t<int> CardLayout::GetPreferredLayoutSize(std::shared_ptr<Container> pare
       h = 0;
 
   for (int i = 0 ; i < ncomponents ; i++) {
-    std::shared_ptr<Component> comp = parent->GetComponents()[i];
+    Component *comp = parent->GetComponents()[i];
 
     jpoint_t<int> d = comp->GetPreferredSize();
 
@@ -272,11 +274,11 @@ jpoint_t<int> CardLayout::GetPreferredLayoutSize(std::shared_ptr<Container> pare
   return t;
 }
 
-void CardLayout::DoLayout(std::shared_ptr<Container> parent)
+void CardLayout::DoLayout(Container *parent)
 {
   // WARN:: sync
   jinsets_t insets = parent->GetInsets();
-  std::shared_ptr<Component> comp = nullptr;
+  Component *comp = nullptr;
   int ncomponents = parent->GetComponentCount();
   bool currentFound = false;
 

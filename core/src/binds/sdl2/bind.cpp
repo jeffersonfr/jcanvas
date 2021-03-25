@@ -401,8 +401,6 @@ static void InternalPaint()
 
   g->Flush();
   
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
   uint32_t *data = (uint32_t *)sg_back_buffer->LockData();
     
   SDL_Surface *surface = SDL_CreateRGBSurfaceFrom(data, bounds.size.x, bounds.size.y, 32, bounds.size.x*4, 0, 0, 0, 0);
@@ -435,7 +433,10 @@ void Application::Loop()
       InternalPaint();
     }
 
+    Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
+
     while (SDL_PollEvent(&event)) {
+    // while (SDL_WaitEventTimeout(&event, 100)) {
       if (event.type == SDL_WINDOWEVENT) {
         if (event.window.event == SDL_WINDOWEVENT_ENTER) {
           // SDL_CaptureMouse(true);

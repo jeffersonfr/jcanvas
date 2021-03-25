@@ -65,13 +65,7 @@ class Button : public Component {
      * \brief
      *
      */
-    Button(std::string label);
-    
-    /**
-     * \brief
-     *
-     */
-    Button(std::string label, std::shared_ptr<Image> image);
+    Button(std::string label = {}, std::shared_ptr<Image> image = {});
     
     /**
      * \brief

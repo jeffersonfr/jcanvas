@@ -32,71 +32,69 @@ using namespace jcanvas;
 
 class App : public Frame{
 
+  private:
+    std::vector<Button *> buttons {
+      new Button{"Empty"},
+      new Button{"Line"},
+      new Button{"Bevel"},
+      new Button{"Round"},
+      new Button{"Raised Gradient"},
+
+      new Button{"Lowered Gradient"},
+      new Button{"Raised Bevel"},
+      new Button{"Lowered Bevel"},
+      new Button{"Raised Etched"},
+      new Button{"Lowered Etched"}
+    };
+    Container top {};
+    Container bottom {};
+
 	public:
 		App():
 			Frame({960, 540})
 		{
-    }
-
-    void Init()
-    {
-       auto top = std::make_shared<Container>();
-       auto bottom = std::make_shared<Container>();
-
-       top->SetLayout<FlowLayout>();
-       bottom->SetLayout<FlowLayout>();
-
-       std::vector<std::shared_ptr<Component>> buttons {
-         std::make_shared<Button>("Empty"),
-         std::make_shared<Button>("Line"),
-         std::make_shared<Button>("Bevel"),
-         std::make_shared<Button>("Round"),
-         std::make_shared<Button>("Raised Gradient"),
-
-         std::make_shared<Button>("Lowered Gradient"),
-         std::make_shared<Button>("Raised Bevel"),
-         std::make_shared<Button>("Lowered Bevel"),
-         std::make_shared<Button>("Raised Etched"),
-         std::make_shared<Button>("Lowered Etched")
-       };
+       top.SetLayout<FlowLayout>();
+       bottom.SetLayout<FlowLayout>();
 
        for (int i=0; i<(int)buttons.size(); i++) {
-         std::shared_ptr<Component> cmp = buttons[i];
-         jtheme_t &theme = cmp->GetTheme();
+         Button *button = buttons[i];
+         jtheme_t &theme = button->GetTheme();
 
          theme.padding = {16, 16, 16, 16};
          theme.border.size = {8, 8};
          theme.border.type = static_cast<jtheme_border_t::style>(i);
 
          if (i < (int)buttons.size()/2) {
-           top->Add(cmp);
+           top.Add(button);
          } else {
-           bottom->Add(cmp);
+           bottom.Add(button);
          }
        }
 
-       top->SetPreferredSize(top->GetLayout()->GetPreferredLayoutSize(top));
-       bottom->SetPreferredSize(bottom->GetLayout()->GetPreferredLayoutSize(bottom));
+       top.SetPreferredSize(top.GetLayout()->GetPreferredLayoutSize(&top));
+       bottom.SetPreferredSize(bottom.GetLayout()->GetPreferredLayoutSize(&bottom));
 
-       Add(top, jborderlayout_align_t::North);
-       Add(bottom, jborderlayout_align_t::South);
+       Add(&top, jborderlayout_align_t::North);
+       Add(&bottom, jborderlayout_align_t::South);
     }
 
     virtual ~App()
     {
-      RemoveAll();
-    }
+      for (auto cmp : buttons) {
+        delete cmp;
+      }
 
+      buttons.clear();
+    }
 };
 
 int main(int argc, char **argv)
 {
 	Application::Init(argc, argv);
 
-	auto app = std::make_shared<App>();
+	App app;
 
-  app->Init();
-	app->SetTitle("Border");
+	app.SetTitle("Border");
 	
 	Application::Loop();
 

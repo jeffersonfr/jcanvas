@@ -43,18 +43,18 @@ class MessageDialog : public Dialog, public ActionListener {
 
   private:
     /** \brief */
-    std::shared_ptr<Text> _label;
+    Container _container;
     /** \brief */
-    std::shared_ptr<Button> _ok;
+    Text _label;
     /** \brief */
-    std::shared_ptr<Container> _buttons_container;
+    Button _ok {"Ok"};
 
   public:
     /**
      * \brief
      *
      */
-    MessageDialog(std::shared_ptr<Container> parent, std::string title, std::string msg);
+    MessageDialog(Container *parent, std::string title, std::string msg);
     
     /**
      * \brief
@@ -62,12 +62,6 @@ class MessageDialog : public Dialog, public ActionListener {
      */
     virtual ~MessageDialog();
     
-    /**
-     * \brief
-     *
-     */
-    virtual void Init();
-
     /**
      * \brief
      *

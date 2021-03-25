@@ -23,8 +23,6 @@
 #include "jcanvas/widgets/jframe.h"
 #include "jcanvas/widgets/janimation.h"
 #include "jcanvas/widgets/jmarquee.h"
-#include "jcanvas/widgets/jtextfield.h"
-#include "jcanvas/widgets/jtextarea.h"
 #include "jcanvas/widgets/jbutton.h"
 #include "jcanvas/widgets/jprogressbar.h"
 #include "jcanvas/widgets/jspin.h"
@@ -99,49 +97,49 @@ class App : public Frame, public ActionListener, public SelectListener, public T
 	private:
     std::mutex
       _mutex;
-    std::shared_ptr<ImageAnimation>
-			_animation;
-		std::shared_ptr<Marquee>
-			_marquee;
-		std::shared_ptr<TextField>
-			_textfield;
-		std::shared_ptr<TextArea>
-			_textarea;
-		std::shared_ptr<ProgressBar>
-			_progress;
-		std::shared_ptr<Button>
-			_button1,
-			_button2,
-			_button3;
-		std::shared_ptr<Spin>
-			_spin;
-		std::shared_ptr<CheckButton>
-			_check1,
-			_check2,
-			_check3;
-		std::shared_ptr<CheckButton>
-			_radio1,
-			_radio2,
-			_radio3;
+    ImageAnimation
+			*_animation;
+		Marquee
+			*_marquee;
+		Text
+			*_textfield;
+		Text
+			*_textarea;
+		ProgressBar
+			*_progress;
+		Button
+			*_button1,
+			*_button2,
+			*_button3;
+		Spin
+			*_spin;
+		CheckButton
+			*_check1,
+			*_check2,
+			*_check3;
+		CheckButton
+			*_radio1,
+			*_radio2,
+			*_radio3;
 		CheckButtonGroup
 			_group;
-		std::shared_ptr<Text>
-			_label1,
-			_label2;
-		std::shared_ptr<ListBox>
-			_list;
-		std::shared_ptr<FlatImage>
-			_staticimage;
-		std::shared_ptr<Slider>
-			_slider;
-		std::shared_ptr<ScrollBar>
-			_scroll;
-		std::shared_ptr<Button>
-			_imagebutton1,
-			_imagebutton2,
-			_imagebutton3;
-		std::shared_ptr<Button>
-			_toggle;
+		Text
+			*_label1,
+			*_label2;
+		ListBox
+			*_list;
+		FlatImage
+			*_staticimage;
+		Slider
+			*_slider;
+		ScrollBar
+			*_scroll;
+		Button
+			*_imagebutton1,
+			*_imagebutton2,
+			*_imagebutton3;
+		Button
+			*_toggle;
 		jtheme_t
 			_theme1,
 			_theme2,
@@ -161,6 +159,32 @@ class App : public Frame, public ActionListener, public SelectListener, public T
       _group.Remove(_radio3);
 
       RemoveAll();
+      
+      delete _marquee;
+      delete _progress;
+      delete _slider;
+      delete _scroll;
+      delete _textfield;
+      delete _textarea;
+      delete _button1;
+      delete _button2;
+      delete _button3;
+      delete _imagebutton1;
+      delete _imagebutton2;
+      delete _imagebutton3;
+      delete _label1;
+      delete _label2;
+      delete _check1;
+      delete _check2;
+      delete _check3;
+      delete _radio1;
+      delete _radio2;
+      delete _radio3;
+      delete _toggle;
+      delete _spin;
+      delete _staticimage;
+      delete _animation;
+      delete _list;
     }
 
     void Init()
@@ -181,7 +205,7 @@ class App : public Frame, public ActionListener, public SelectListener, public T
       _theme4.bg.normal = 0xe0f08035;
 
       {
-        _animation = std::make_shared<ImageAnimation>(jrect_t<int>{insets.left, insets.top, 96, 96});
+        _animation = new ImageAnimation(jrect_t<int>{insets.left, insets.top, 96, 96});
 
         _animation->Start();
       }
@@ -190,9 +214,9 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         size = GetSize();
 
       {
-        _button1 = std::make_shared<Button>("Increase");
-        _button2 = std::make_shared<Button>("Decrease");
-        _button3 = std::make_shared<Button>("Testing a long text in a buttom component");
+        _button1 = new Button("Increase");
+        _button2 = new Button("Decrease");
+        _button3 = new Button("Testing a long text in a buttom component");
         
         _button1->SetBounds({insets.left, insets.top + 1*(96 + 16), 196, 96});
         _button2->SetBounds({insets.left, insets.top + 2*(96 + 16), 196, 96});
@@ -210,7 +234,7 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         jrect_t
           region = _button3->GetVisibleBounds();
 
-        _toggle = std::make_shared<Button>("Toggle Button", nullptr);
+        _toggle = new Button("Toggle Button", nullptr);
         
         _toggle->SetBounds({insets.left, region.point.y + region.size.y + 8, 196, 48});
       }
@@ -219,9 +243,9 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         jrect_t
           region = _toggle->GetVisibleBounds();
 
-        _imagebutton1 = std::make_shared<Button>("", std::make_shared<BufferedImage>("images/alert_icon.png"));
-        _imagebutton2 = std::make_shared<Button>("", std::make_shared<BufferedImage>("images/info_icon.png"));
-        _imagebutton3 = std::make_shared<Button>("", std::make_shared<BufferedImage>("images/error_icon.png"));
+        _imagebutton1 = new Button("", std::make_shared<BufferedImage>("images/alert_icon.png"));
+        _imagebutton2 = new Button("", std::make_shared<BufferedImage>("images/info_icon.png"));
+        _imagebutton3 = new Button("", std::make_shared<BufferedImage>("images/error_icon.png"));
         
         _imagebutton1->SetBounds({insets.left + 0*(48 + 18), region.point.y + 1*(region.size.y + 8), 64, 64});
         _imagebutton2->SetBounds({insets.left + 1*(48 + 18), region.point.y + 1*(region.size.y + 8), 64, 64});
@@ -232,7 +256,7 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         jrect_t
           region = _imagebutton1->GetVisibleBounds();
 
-        _spin = std::make_shared<Spin>();
+        _spin = new Spin();
         
         _spin->SetBounds({insets.left+0*(32+16), region.point.y + region.size.y + 8, 196, 48});
 
@@ -243,7 +267,7 @@ class App : public Frame, public ActionListener, public SelectListener, public T
       }
 
       {
-        _marquee = std::make_shared<Marquee>("Marquee Test", std::chrono::milliseconds(100));
+        _marquee = new Marquee("Marquee Test", std::chrono::milliseconds(100));
         
         _marquee->SetBounds({insets.left + 196 + 16, insets.top, size.x - 2*(196 + 16) - insets.left - insets.right, 48});
 
@@ -254,9 +278,9 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         jrect_t
           region = _marquee->GetVisibleBounds();
 
-        _progress = std::make_shared<ProgressBar>();
-        _slider = std::make_shared<Slider>();
-        _scroll = std::make_shared<ScrollBar>();
+        _progress = new ProgressBar();
+        _slider = new Slider();
+        _scroll = new ScrollBar();
         
         _progress->SetBounds({insets.left + 196 + 16, region.point.y + 1*(region.size.y + 8), size.x - 2*(196 + 16) - insets.left - insets.right, 48});
         _slider->SetBounds({insets.left + 196 + 16, region.point.y + 2*(region.size.y + 8), size.x - 2*(196 + 16) - insets.left - insets.right, 48});
@@ -271,36 +295,37 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         jrect_t
           region = _marquee->GetVisibleBounds();
 
-        _textfield = std::make_shared<TextField>();
+        _textfield = new Text("Text Field");
         
+        _textfield->SetWrap(false);
         _textfield->SetBounds({insets.left + 196 + 16, region.point.y + 4*(region.size.y + 8), size.x - 2*(196 + 16) - insets.left - insets.right, 48});
-
-        _textfield->Insert("Text Field");
       }
 
       {
         jrect_t
           region = _marquee->GetVisibleBounds();
 
-        _textarea = std::make_shared<TextArea>();
+        _textarea = new Text("Text Area\nwriting some text ...\nbye bye");
         
         _textarea->SetBounds({insets.left + 196 + 16, region.point.y + 5*(region.size.y + 8), size.x - 2*(196 + 16) - insets.left - insets.right, 96});
-
-        _textarea->Insert("Text Area\nwriting some text ...\nbye bye");
       }
 
       {
         jrect_t
           region = _textarea->GetVisibleBounds();
 
-        _label1 = std::make_shared<Text>("Text Test 1");
+        _label1 = new Text("Text Test 1");
         
+        _label1->SetEditable(false);
+        _label1->SetFocusable(false);
         _label1->SetBounds({insets.left + 196 + 16, region.point.y + region.size.y + 8, (region.size.x - 16)/2, 48});
         
         region = _label1->GetVisibleBounds();
 
-        _label2 = std::make_shared<Text>("Text Test 2");
+        _label2 = new Text("Text Test 2");
         
+        _label2->SetEditable(false);
+        _label2->SetFocusable(false);
         _label2->SetBounds({region.point.x + region.size.x + 16, region.point.y, region.size.x, 48});
       }
 
@@ -308,9 +333,9 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         jrect_t
           region = _label1->GetVisibleBounds();
 
-        _check1 = std::make_shared<CheckButton>(jcheckbox_type_t::Check, "Wrap Text");
-        _check2 = std::make_shared<CheckButton>(jcheckbox_type_t::Check, "Password");
-        _check3 = std::make_shared<CheckButton>(jcheckbox_type_t::Check, "Hide");
+        _check1 = new CheckButton(jcheckbox_type_t::Check, "Wrap Text");
+        _check2 = new CheckButton(jcheckbox_type_t::Check, "Password");
+        _check3 = new CheckButton(jcheckbox_type_t::Check, "Hide");
         
         _check1->SetBounds({region.point.x, region.point.y + 1*(region.size.y + 8), region.size.x, 48});
         _check2->SetBounds({region.point.x, region.point.y + 2*(region.size.y + 8), region.size.x, 48});
@@ -327,9 +352,9 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         jrect_t
           region = _label2->GetVisibleBounds();
 
-        _radio1 = std::make_shared<CheckButton>(jcheckbox_type_t::Radio, "Left");
-        _radio2 = std::make_shared<CheckButton>(jcheckbox_type_t::Radio, "Center");
-        _radio3 = std::make_shared<CheckButton>(jcheckbox_type_t::Radio, "Right");
+        _radio1 = new CheckButton(jcheckbox_type_t::Radio, "Left");
+        _radio2 = new CheckButton(jcheckbox_type_t::Radio, "Center");
+        _radio3 = new CheckButton(jcheckbox_type_t::Radio, "Right");
         
         _radio1->SetBounds({region.point.x, region.point.y + 1*(region.size.y + 8), region.size.x, 48});
         _radio2->SetBounds({region.point.x, region.point.y + 2*(region.size.y + 8), region.size.x, 48});
@@ -350,7 +375,7 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         jrect_t
           region = _marquee->GetVisibleBounds();
 
-        _staticimage = std::make_shared<FlatImage>(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/green_icon.png"));
+        _staticimage = new FlatImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/green_icon.png"));
         
         _staticimage->SetBounds({region.point.x + region.size.x + 16, region.point.y, 196, 196});
       }
@@ -359,7 +384,7 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         jrect_t
           region = _staticimage->GetVisibleBounds();
 
-        _list = std::make_shared<ListBox>();
+        _list = new ListBox();
         
         _list->SetBounds({region.point.x, region.point.y + region.size.y + 8, 196, 196});
 
@@ -440,9 +465,9 @@ class App : public Frame, public ActionListener, public SelectListener, public T
     {
       _mutex.lock();
 
-      if (event->GetSource() == _check1.get() ||
-          event->GetSource() == _check2.get() ||
-          event->GetSource() == _check3.get()) {
+      if (event->GetSource() == _check1 ||
+          event->GetSource() == _check2 ||
+          event->GetSource() == _check3) {
         if (_check1->IsSelected() == true) {
           _textarea->SetWrap(true);
         } else {
@@ -460,13 +485,13 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         } else {
           _textarea->SetVisible(true);
         }
-      } else if (event->GetSource() == _radio1.get()) {
+      } else if (event->GetSource() == _radio1) {
         _label1->SetHorizontalAlign(jhorizontal_align_t::Left);
         _label2->SetHorizontalAlign(jhorizontal_align_t::Left);
-      } else if (event->GetSource() == _radio2.get()) {
+      } else if (event->GetSource() == _radio2) {
         _label1->SetHorizontalAlign(jhorizontal_align_t::Center);
         _label2->SetHorizontalAlign(jhorizontal_align_t::Center);
-      } else if (event->GetSource() == _radio3.get()) {
+      } else if (event->GetSource() == _radio3) {
         _label1->SetHorizontalAlign(jhorizontal_align_t::Right);
         _label2->SetHorizontalAlign(jhorizontal_align_t::Right);
       }
@@ -491,13 +516,13 @@ class App : public Frame, public ActionListener, public SelectListener, public T
     {
       _mutex.lock();
 
-      if (event->GetSource() == _button1.get()) {
+      if (event->GetSource() == _button1) {
         _progress->SetValue(_progress->GetValue() + 10);
         _slider->SetValue(_slider->GetValue() + 10);
-      } else if (event->GetSource() == _button2.get()) {
+      } else if (event->GetSource() == _button2) {
         _progress->SetValue(_progress->GetValue() - 10);
         _slider->SetValue(_slider->GetValue() - 10);
-      } else if (event->GetSource() == _button3.get()) {
+      } else if (event->GetSource() == _button3) {
       }
       
       _mutex.unlock();

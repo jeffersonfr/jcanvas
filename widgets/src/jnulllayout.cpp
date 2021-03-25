@@ -32,28 +32,28 @@ NullLayout::~NullLayout()
 {
 }
 
-jpoint_t<int> NullLayout::GetMinimumLayoutSize(std::shared_ptr<Container> parent)
+jpoint_t<int> NullLayout::GetMinimumLayoutSize(Container *parent)
 {
   jpoint_t<int> t = {0, 0};
 
   return t;
 }
 
-jpoint_t<int> NullLayout::GetMaximumLayoutSize(std::shared_ptr<Container> parent)
+jpoint_t<int> NullLayout::GetMaximumLayoutSize(Container *parent)
 {
   jpoint_t<int> t = {INT_MAX, INT_MAX};
 
   return t;
 }
 
-jpoint_t<int> NullLayout::GetPreferredLayoutSize(std::shared_ptr<Container> parent)
+jpoint_t<int> NullLayout::GetPreferredLayoutSize(Container *parent)
 {
   jpoint_t<int> t = {0, 0};
 
   return t;
 }
 
-void NullLayout::DoLayout(std::shared_ptr<Container> target)
+void NullLayout::DoLayout(Container *target)
 {
 }
 

@@ -21,6 +21,8 @@
 #include "jcanvas/core/jwindow.h"
 #include "jcanvas/core/jbufferedimage.h"
 
+#include <chrono>
+
 using namespace jcanvas;
 
 class Dummy : public Window {
@@ -38,8 +40,38 @@ class Dummy : public Window {
     virtual void Paint(Graphics *g) 
     {
       Window::Paint(g);
-			
-      auto *i = new BufferedImage("images/image.bmp");
+
+      jpoint_t<int> size = GetSize();
+
+      static std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+      
+      static jpoint_t<float> pos = jpoint_t<long int>{random()%size.x, random()%size.y};
+      static jpoint_t<float> dir {1, 1};
+
+      static int block = 128;
+
+      block = block + random()%9 - 4;
+
+      g->SetColor(jcolor_name_t::Blue);
+      g->FillRectangle({int(pos.x - block/2), int(pos.y - block/2), block, block});
+
+      std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+      std::chrono::duration<float> offset = end - now;
+
+      now = end;
+
+      pos.x = pos.x + 256*dir.x*offset.count();
+      pos.y = pos.y + 256*dir.y*offset.count();
+
+      if (pos.x < 0 or pos.x > size.x) {
+        dir.x = -dir.x;
+      }
+
+      if (pos.y < 0 or pos.y > size.y) {
+        dir.y = -dir.y;
+      }
+
+      Repaint();
     }
 
   private:

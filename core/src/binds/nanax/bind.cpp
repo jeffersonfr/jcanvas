@@ -272,7 +272,7 @@ static void InternalPaint()
     
     dw->update();
 
-    sg_paint_condition.wait_for(lock, std::chrono::milliseconds(1));
+    Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
   }
 }
 
@@ -463,8 +463,6 @@ static void paint_callback(const nana::paint::graphics& graph)
 
   g->Flush();
 
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
   uint8_t *data = sg_back_buffer->LockData();
 
   nana::paint::pixel_buffer pixbuf{ graph.handle(), nana::rectangle{ graph.size() } };
@@ -482,8 +480,6 @@ static void paint_callback(const nana::paint::graphics& graph)
   sg_back_buffer->UnlockData();
 
   sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Painted));
-  
-  std::this_thread::yield();
 }
 
 WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)

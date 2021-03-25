@@ -22,7 +22,6 @@
 
 #include "jcanvas/widgets/jbutton.h"
 #include "jcanvas/widgets/jtext.h"
-#include "jcanvas/widgets/jtextfield.h"
 #include "jcanvas/widgets/jdialog.h"
 #include "jcanvas/widgets/jflowlayout.h"
 #include "jcanvas/widgets/jactionlistener.h"
@@ -44,34 +43,28 @@ class InputDialog : public Dialog, public ActionListener {
 
   private:
     /** \brief */
-    std::shared_ptr<Text> _label;
+    Container _container;
     /** \brief */
-    std::shared_ptr<TextField> _field;
+    Text _label;
     /** \brief */
-    std::shared_ptr<Button> _ok;
+    Text _field;
     /** \brief */
-    std::shared_ptr<Button> _cancel;
+    Button _ok {"Ok"};
     /** \brief */
-    std::shared_ptr<Container> _buttons_container;
+    Button _cancel {"Cancel"};
 
   public:
     /**
      * \brief
      *
      */
-    InputDialog(std::shared_ptr<Container> parent, std::string title, std::string warn);
+    InputDialog(Container *parent, std::string title, std::string warn);
     
     /**
      * \brief
      *
      */
     virtual ~InputDialog();
-
-    /**
-     * \brief
-     *
-     */
-    virtual void Init();
 
     /**
      * \brief

@@ -114,15 +114,15 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
     /** \brief */
     std::mutex _data_listener_mutex;
     /** \brief */
-    std::shared_ptr<Container> _parent;
+    Container *_parent;
     /** \brief */
-    std::shared_ptr<Component> _left;
+    Component *_left;
     /** \brief */
-    std::shared_ptr<Component> _right;
+    Component *_right;
     /** \brief */
-    std::shared_ptr<Component> _up;
+    Component *_up;
     /** \brief */
-    std::shared_ptr<Component> _down;
+    Component *_down;
     /** \brief */
     KeyMap *_keymap;
     /** \brief */
@@ -187,7 +187,7 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      * \brief
      *
      */
-    virtual void GetInternalComponents(std::shared_ptr<Container> current, std::vector<std::shared_ptr<Component>> *components);
+    virtual void GetInternalComponents(Container *current, std::vector<Component *> &components);
 
     /**
      * \brief
@@ -199,7 +199,7 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      * \brief
      *
      */
-    virtual void FindNextComponentFocus(jrect_t<int> rect, std::shared_ptr<Component> &left, std::shared_ptr<Component> &right, std::shared_ptr<Component> &up, std::shared_ptr<Component> &down);
+    virtual void FindNextComponentFocus(jrect_t<int> rect, Component *&left, Component *&right, Component *&up, Component *&down);
 
     /**
      * \brief Makes sure the component is visible in the scroll if this container is scrollable.
@@ -212,7 +212,7 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      *     x/y are relative to that component (they are not absolute).
      *
      */
-    virtual void ScrollToVisibleArea(jrect_t<int> rect, std::shared_ptr<Component> coordinateSpace);
+    virtual void ScrollToVisibleArea(jrect_t<int> rect, Component *coordinateSpace);
 
   public:
     /**
@@ -231,16 +231,6 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      * \brief
      *
      */
-    template <typename T = Component>
-    std::shared_ptr<T> GetSharedPointer()
-    {
-      return std::dynamic_pointer_cast<T>(shared_from_this());
-    }
-
-    /**
-     * \brief
-     *
-     */
     virtual void SetName(std::string name);
     
     /**
@@ -253,13 +243,13 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      * \brief
      *
      */
-    virtual std::shared_ptr<Container> GetParent();
+    virtual Container * GetParent();
     
     /**
      * \brief
      *
      */
-    virtual std::shared_ptr<Container> GetTopLevelAncestor();
+    virtual Container * GetTopLevelAncestor();
 
     /**
      * \brief
@@ -487,7 +477,7 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      * \brief
      *
      */
-    virtual void SetParent(std::shared_ptr<Container> parent);
+    virtual void SetParent(Container *parent);
     
     /**
      * \brief
@@ -529,55 +519,55 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      * \brief
      *
      */
-    virtual std::shared_ptr<Component> GetNextFocusLeft();
+    virtual Component * GetNextFocusLeft();
     
     /**
      * \brief
      *
      */
-    virtual std::shared_ptr<Component> GetNextFocusRight();
+    virtual Component * GetNextFocusRight();
     
     /**
      * \brief
      *
      */
-    virtual std::shared_ptr<Component> GetNextFocusUp();
+    virtual Component * GetNextFocusUp();
     
     /**
      * \brief
      *
      */
-    virtual std::shared_ptr<Component> GetNextFocusDown();
+    virtual Component * GetNextFocusDown();
     
     /**
      * \brief
      *
      */
-    virtual void SetNextFocusLeft(std::shared_ptr<Component> cmp);
+    virtual void SetNextFocusLeft(Component *cmp);
     
     /**
      * \brief
      *
      */
-    virtual void SetNextFocusRight(std::shared_ptr<Component> cmp);
+    virtual void SetNextFocusRight(Component *cmp);
     
     /**
      * \brief
      *
      */
-    virtual void SetNextFocusUp(std::shared_ptr<Component> cmp);
+    virtual void SetNextFocusUp(Component *cmp);
     
     /**
      * \brief
      *
      */
-    virtual void SetNextFocusDown(std::shared_ptr<Component> cmp);
+    virtual void SetNextFocusDown(Component *cmp);
     
     /**
      * \brief
      *
      */
-    virtual void SetNextComponentFocus(std::shared_ptr<Component> left, std::shared_ptr<Component> right, std::shared_ptr<Component> up, std::shared_ptr<Component> down);
+    virtual void SetNextComponentFocus(Component *left, Component *right, Component *up, Component *down);
 
     /**
      * \brief
@@ -787,13 +777,13 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      * \brief
      *
      */
-    virtual void PutAtop(std::shared_ptr<Component> c);
+    virtual void PutAtop(Component *c);
     
     /**
      * \brief
      *
      */
-    virtual void PutBelow(std::shared_ptr<Component> c);
+    virtual void PutBelow(Component *c);
 
     /**
      * \brief
@@ -811,7 +801,7 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      * \brief
      *
      */
-    virtual std::shared_ptr<Container> GetFocusCycleRootAncestor();
+    virtual Container * GetFocusCycleRootAncestor();
 
     /**
      * \brief
@@ -841,7 +831,7 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      * \brief
      *
      */
-    virtual void Repaint(std::shared_ptr<Component> cmp = nullptr);
+    virtual void Repaint(Component *cmp = nullptr);
 
     /**
      * \brief

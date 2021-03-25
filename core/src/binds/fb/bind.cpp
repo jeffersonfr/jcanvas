@@ -377,8 +377,6 @@ static void InternalPaint()
 
   g->Flush();
 
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
 	uint8_t *src = sg_back_buffer->LockData();
 	uint8_t *dst = (uint8_t *)sg_surface;
 	int size = bounds.size.x*bounds.size.y;
@@ -462,6 +460,8 @@ void Application::Loop()
     if (sg_repaint.exchange(false) == true) {
       InternalPaint();
     }
+  
+    Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
 
     if (read(fdk, &ev, sizeof ev) == sizeof(ev)) {
       if (ev.type == EV_KEY) {

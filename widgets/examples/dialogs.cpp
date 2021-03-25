@@ -34,15 +34,16 @@ using namespace jcanvas;
 class App : public Frame, public ActionListener {
 
   private:
-    std::vector<std::shared_ptr<Button>> buttons {
-      std::make_shared<Button>("Calendar"),
-      std::make_shared<Button>("FileChooser"),
-      std::make_shared<Button>("Input"),
-      std::make_shared<Button>("Keyboard"),
-      std::make_shared<Button>("Messsage"),
-      std::make_shared<Button>("Toast"),
-      std::make_shared<Button>("Yes/No")
+    std::vector<Button *> buttons {
+      new Button("Calendar"),
+      new Button("FileChooser"),
+      new Button("Input"),
+      new Button("Keyboard"),
+      new Button("Messsage"),
+      new Button("Toast"),
+      new Button("Yes/No")
     };
+    Dialog *dialog {nullptr};
 
 	public:
 		App():
@@ -52,6 +53,11 @@ class App : public Frame, public ActionListener {
 
     virtual ~App()
     {
+      for (auto cmp : buttons) {
+        delete cmp;
+      }
+
+      delete dialog;
     }
 
     void Init()
@@ -69,37 +75,35 @@ class App : public Frame, public ActionListener {
 
     virtual void ActionPerformed(ActionEvent *event)
     {
-      static std::shared_ptr<Dialog> dialog;
+      static Dialog *dialog;
 
       if (dialog != nullptr) {
-        dialog.reset();
+        delete dialog;
+        dialog = nullptr;
       }
 
-      auto parent = GetSharedPointer<Container>();
-
-      if (event->GetSource() == buttons[0].get()) {
-        dialog = std::make_shared<CalendarDialog>(parent);
-      } else if (event->GetSource() == buttons[1].get()) {
-        dialog = std::make_shared<FileChooserDialog>(parent, "File Chooser", "/tmp", jfilechooser_type_t::SaveFile);
-      } else if (event->GetSource() == buttons[2].get()) {
-        dialog = std::make_shared<InputDialog>(parent, "Input", "Warning");
-      } else if (event->GetSource() == buttons[3].get()) {
-        dialog = std::make_shared<KeyboardDialog>(parent, jkeyboard_type_t::Qwerty);
-      } else if (event->GetSource() == buttons[4].get()) {
-        dialog = std::make_shared<MessageDialog>(parent, "Message", "Some message ...");
-      } else if (event->GetSource() == buttons[5].get()) {
-        std::shared_ptr<ToastDialog> toast = std::make_shared<ToastDialog>(parent, "Toast");
+      if (event->GetSource() == buttons[0]) {
+        dialog = new CalendarDialog(this);
+      } else if (event->GetSource() == buttons[1]) {
+        dialog = new FileChooserDialog(this, "File Chooser", "/tmp", jfilechooser_type_t::SaveFile);
+      } else if (event->GetSource() == buttons[2]) {
+        dialog = new InputDialog(this, "Input", "Warning");
+      } else if (event->GetSource() == buttons[3]) {
+        dialog = new KeyboardDialog(this, jkeyboard_type_t::Qwerty);
+      } else if (event->GetSource() == buttons[4]) {
+        dialog = new MessageDialog(this, "Message", "Some message ...");
+      } else if (event->GetSource() == buttons[5]) {
+        ToastDialog *toast = new ToastDialog(this, "Toast");
 
         toast->SetTimeout(2000);
 
         dialog = toast;
-      } else if (event->GetSource() == buttons[6].get()) {
-        dialog = std::make_shared<YesNoDialog>(parent, "Yes/No", "Si or no ?");
+      } else if (event->GetSource() == buttons[6]) {
+        dialog = new YesNoDialog(this, "Yes/No", "Si or no ?");
       }
 
       if (dialog != nullptr) {
         dialog->SetLocation(100, 100);
-        dialog->Init();
         dialog->Exec();
       }
     }

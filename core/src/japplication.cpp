@@ -20,6 +20,7 @@
 #include "jcanvas/core/japplication.h"
 
 #include <iostream>
+#include <thread>
 
 namespace jcanvas {
 

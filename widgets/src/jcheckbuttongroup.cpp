@@ -34,7 +34,7 @@ CheckButtonGroup::~CheckButtonGroup()
   // INFO:: the user must remove listeners manually
 }
 
-void CheckButtonGroup::Add(std::shared_ptr<CheckButton> button)
+void CheckButtonGroup::Add(CheckButton *button)
 {
    std::lock_guard<std::recursive_mutex> guard(_group_mutex);
 
@@ -47,11 +47,11 @@ void CheckButtonGroup::Add(std::shared_ptr<CheckButton> button)
   _buttons.push_back(button);
 }
 
-void CheckButtonGroup::Remove(std::shared_ptr<CheckButton> button)
+void CheckButtonGroup::Remove(CheckButton *button)
 {
    std::lock_guard<std::recursive_mutex> guard(_group_mutex);
 
-  for (std::vector<std::shared_ptr<CheckButton>>::iterator i=_buttons.begin(); i!=_buttons.end(); i++) {
+  for (std::vector<CheckButton *>::iterator i=_buttons.begin(); i!=_buttons.end(); i++) {
     if (button == (*i)) {
       (*i)->RemoveToggleListener(this);
 
@@ -70,20 +70,20 @@ void CheckButtonGroup::StateChanged(ToggleEvent *event)
     return;
   }
 
-  std::shared_ptr<CheckButton> cb = reinterpret_cast<CheckButton *>(event->GetSource())->GetSharedPointer<CheckButton>();
+  CheckButton *cb = reinterpret_cast<CheckButton *>(event->GetSource());
 
-  for (std::vector<std::shared_ptr<CheckButton>>::iterator i=_buttons.begin(); i!=_buttons.end(); i++) {
+  for (std::vector<CheckButton *>::iterator i=_buttons.begin(); i!=_buttons.end(); i++) {
     if (cb != (*i)) {
       (*i)->SetSelected(false);
     }
   }
 }
 
-std::shared_ptr<CheckButton> CheckButtonGroup::GetSelected()
+CheckButton * CheckButtonGroup::GetSelected()
 {
    std::lock_guard<std::recursive_mutex> guard(_group_mutex);
 
-  for (std::vector<std::shared_ptr<CheckButton>>::iterator i=_buttons.begin(); i!=_buttons.end(); i++) {
+  for (std::vector<CheckButton *>::iterator i=_buttons.begin(); i!=_buttons.end(); i++) {
     if ((*i)->IsSelected() == true) {
       return (*i);
     }

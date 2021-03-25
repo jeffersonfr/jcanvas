@@ -65,10 +65,10 @@ void BorderLayout::SetVgap(int vgap)
   _vgap = vgap;
 }
 
-jpoint_t<int> BorderLayout::GetMinimumLayoutSize(std::shared_ptr<Container> parent)
+jpoint_t<int> BorderLayout::GetMinimumLayoutSize(Container *parent)
 {
   // WARN:: sync parent
-  std::shared_ptr<Component> cmp = nullptr;
+  Component *cmp = nullptr;
   jpoint_t<int> t = {0, 0};
   bool ltr = (parent->GetComponentOrientation() == jcomponent_orientation_t::LeftToRight);
       
@@ -110,17 +110,17 @@ jpoint_t<int> BorderLayout::GetMinimumLayoutSize(std::shared_ptr<Container> pare
   return t;
 }
 
-jpoint_t<int> BorderLayout::GetMaximumLayoutSize(std::shared_ptr<Container> parent)
+jpoint_t<int> BorderLayout::GetMaximumLayoutSize(Container *parent)
 {
   jpoint_t<int> t = {INT_MAX, INT_MAX};
 
   return t;
 }
 
-jpoint_t<int> BorderLayout::GetPreferredLayoutSize(std::shared_ptr<Container> parent)
+jpoint_t<int> BorderLayout::GetPreferredLayoutSize(Container *parent)
 {
   // WARN:: sync parent
-  std::shared_ptr<Component> cmp = nullptr;
+  Component *cmp = nullptr;
   jpoint_t<int> t = {0, 0};
   bool ltr = (parent->GetComponentOrientation() == jcomponent_orientation_t::LeftToRight);
       
@@ -162,11 +162,11 @@ jpoint_t<int> BorderLayout::GetPreferredLayoutSize(std::shared_ptr<Container> pa
   return t;
 }
 
-void BorderLayout::DoLayout(std::shared_ptr<Container> target)
+void BorderLayout::DoLayout(Container *target)
 {
   // WARN:: sync with jframe
-  std::shared_ptr<Component>
-    c;
+  Component
+    *c = nullptr;
   jinsets_t 
     insets = target->GetInsets();
   jpoint_t<int> 
@@ -220,7 +220,7 @@ void BorderLayout::DoLayout(std::shared_ptr<Container> target)
   }
 }
 
-void BorderLayout::AddLayoutComponent(std::shared_ptr<Component> c, jborderlayout_align_t align) 
+void BorderLayout::AddLayoutComponent(Component *c, jborderlayout_align_t align) 
 {
   // WARN:: sync with jframe
   if (align == jborderlayout_align_t::Center) {
@@ -244,7 +244,7 @@ void BorderLayout::AddLayoutComponent(std::shared_ptr<Component> c, jborderlayou
   }
 }
 
-void BorderLayout::RemoveLayoutComponent(std::shared_ptr<Component> c) 
+void BorderLayout::RemoveLayoutComponent(Component *c) 
 {
   // WARN:: sync with jframe
   if (c == center) {
@@ -284,7 +284,7 @@ void BorderLayout::RemoveLayoutComponents()
   lastItem = nullptr;
 }
 
-std::shared_ptr<Component> BorderLayout::GetLayoutComponent(jborderlayout_align_t align) 
+Component * BorderLayout::GetLayoutComponent(jborderlayout_align_t align) 
 {
   if (align == jborderlayout_align_t::Center) {
     return center;
@@ -309,10 +309,12 @@ std::shared_ptr<Component> BorderLayout::GetLayoutComponent(jborderlayout_align_
   return nullptr;
 }
 
-std::shared_ptr<Component> BorderLayout::GetLayoutComponent(std::shared_ptr<Container> target, jborderlayout_align_t align) 
+Component * BorderLayout::GetLayoutComponent(Container *target, jborderlayout_align_t align) 
 {
-  std::shared_ptr<Component> result;
-  bool ltr = (target->GetComponentOrientation() == jcomponent_orientation_t::LeftToRight || target->GetComponentOrientation() == jcomponent_orientation_t::RightToLeft);
+  Component 
+    *result = nullptr;
+  bool 
+    ltr = (target->GetComponentOrientation() == jcomponent_orientation_t::LeftToRight || target->GetComponentOrientation() == jcomponent_orientation_t::RightToLeft);
 
   if (align == jborderlayout_align_t::North) {
     result = (firstLine != nullptr) ? firstLine : north;
@@ -337,7 +339,7 @@ std::shared_ptr<Component> BorderLayout::GetLayoutComponent(std::shared_ptr<Cont
   return result;
 }
 
-jborderlayout_align_t BorderLayout::GetConstraints(std::shared_ptr<Component> c) 
+jborderlayout_align_t BorderLayout::GetConstraints(Component *c) 
 {
   if (c == nullptr){
     return jborderlayout_align_t::Unknown;
@@ -366,9 +368,9 @@ jborderlayout_align_t BorderLayout::GetConstraints(std::shared_ptr<Component> c)
   return jborderlayout_align_t::Unknown;
 }
 
-std::shared_ptr<Component> BorderLayout::GetChild(jborderlayout_align_t key, bool ltr) 
+Component * BorderLayout::GetChild(jborderlayout_align_t key, bool ltr) 
 {
-  std::shared_ptr<Component> result;
+  Component *result = nullptr;
 
   if (key == jborderlayout_align_t::North) {
     result = (firstLine != nullptr) ? firstLine : north;

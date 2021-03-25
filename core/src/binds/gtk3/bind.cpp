@@ -376,8 +376,6 @@ static gboolean OnDraw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
   Graphics 
     *g = sg_back_buffer->GetGraphics();
 
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
   g->Reset();
   g->SetCompositeFlags(jcomposite_flags_t::Src);
 
@@ -555,6 +553,8 @@ static void InternalPaint()
     if (sg_repaint.exchange(false) == true) {
       gtk_widget_queue_draw(GTK_WIDGET(sg_widget));
     }
+
+    Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
   }
 }
 

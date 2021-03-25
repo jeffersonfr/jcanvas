@@ -60,27 +60,18 @@ class RectangleContainer : public Container {
 class Layouts : public Frame, public ActionListener {
 
 	private:
-    std::shared_ptr<Container>
-      _cardcontainer;
-    std::shared_ptr<Button>
-      _first,
-			_last,
-			_previous,
-			_next;
+    Container
+      *_cardcontainer;
+    Button
+      *_first,
+			*_last,
+			*_previous,
+			*_next;
 
 	public:
 		Layouts():
 			Frame({1280, 720})
 		{
-    }
-
-		virtual ~Layouts()
-		{
-			RemoveAll();
-		}
-
-    void Init()
-    {
 			SetLayout<GridLayout>(2, 3);
 
       jtheme_t theme = GetTheme();
@@ -89,9 +80,9 @@ class Layouts : public Frame, public ActionListener {
 			theme.fg.normal = 0xff000000;
 			
 #define LAYOUT(id) \
-        auto b = std::make_shared<RectangleContainer>(); \
-        auto c = std::make_shared<Container>(); \
-        auto l = std::make_shared<Text>(#id); \
+        auto b = new RectangleContainer(); \
+        auto c = new Container(); \
+        auto l = new Text(#id); \
         l->SetTheme(theme); \
         b->SetLayout<BorderLayout>(); \
         c->SetLayout<id>(); \
@@ -102,49 +93,49 @@ class Layouts : public Frame, public ActionListener {
       {
         LAYOUT(FlowLayout);
 
-        c->Add(std::make_shared<Button>("Button 1"));
-        c->Add(std::make_shared<Button>("Button 2"));
-        c->Add(std::make_shared<Button>("Button 3"));
-        c->Add(std::make_shared<Button>("Button 4"));
-        c->Add(std::make_shared<Button>("Button 5"));
+        c->Add(new Button("Button 1"));
+        c->Add(new Button("Button 2"));
+        c->Add(new Button("Button 3"));
+        c->Add(new Button("Button 4"));
+        c->Add(new Button("Button 5"));
       }
 			
       {
         LAYOUT(GridLayout);
 
         c->SetLayout<GridLayout>(3, 3);
-        c->Add(std::make_shared<Button>("Button 1"));
-        c->Add(std::make_shared<Button>("Button 2"));
-        c->Add(std::make_shared<Button>("Button 3"));
-        c->Add(std::make_shared<Button>("Button 4"));
-        c->Add(std::make_shared<Button>("Button 5"));
+        c->Add(new Button("Button 1"));
+        c->Add(new Button("Button 2"));
+        c->Add(new Button("Button 3"));
+        c->Add(new Button("Button 4"));
+        c->Add(new Button("Button 5"));
       }
 
       {
         LAYOUT(BorderLayout);
 
-        c->Add(std::make_shared<Button>("Button 1"), jborderlayout_align_t::North);
-        c->Add(std::make_shared<Button>("Button 2"), jborderlayout_align_t::South);
-        c->Add(std::make_shared<Button>("Button 3"), jborderlayout_align_t::West);
-        c->Add(std::make_shared<Button>("Button 4"), jborderlayout_align_t::East);
-        c->Add(std::make_shared<Button>("Button 5"), jborderlayout_align_t::Center);
+        c->Add(new Button("Button 1"), jborderlayout_align_t::North);
+        c->Add(new Button("Button 2"), jborderlayout_align_t::South);
+        c->Add(new Button("Button 3"), jborderlayout_align_t::West);
+        c->Add(new Button("Button 4"), jborderlayout_align_t::East);
+        c->Add(new Button("Button 5"), jborderlayout_align_t::Center);
       }
 
 			// cardlayout
       {
         LAYOUT(CardLayout);
 			
-        auto buttons = std::make_shared<Container>();
-        auto cards = std::make_shared<Container>();
+        auto buttons = new Container();
+        auto cards = new Container();
 
         _cardcontainer = cards;
 
         buttons->SetLayout<FlowLayout>();
 
-        _first = std::make_shared<Button>("First");
-        _next = std::make_shared<Button>("Next");
-        _previous = std::make_shared<Button>("Previous");
-        _last = std::make_shared<Button>("Last");
+        _first = new Button("First");
+        _next = new Button("Next");
+        _previous = new Button("Previous");
+        _last = new Button("Last");
 
         _first->RegisterActionListener(this);
         _previous->RegisterActionListener(this);
@@ -157,10 +148,10 @@ class Layouts : public Frame, public ActionListener {
         buttons->Add(_last);
 
         cards->SetLayout<CardLayout>();
-        cards->Add(std::make_shared<Button>("First Screen"), "01");
-        cards->Add(std::make_shared<Button>("Second Screen"), "02");
-        cards->Add(std::make_shared<Button>("Third Screen"), "03");
-        cards->Add(std::make_shared<Button>("Last Screen"), "04");
+        cards->Add(new Button("First Screen"), "01");
+        cards->Add(new Button("Second Screen"), "02");
+        cards->Add(new Button("Third Screen"), "03");
+        cards->Add(new Button("Last Screen"), "04");
 
         buttons->SetPreferredSize(buttons->GetComponents()[0]->GetPreferredSize());
 
@@ -176,66 +167,66 @@ class Layouts : public Frame, public ActionListener {
           shouldFill = true,
           shouldWeightX = true;
 
-        GridBagConstraints *ct = new GridBagConstraints();
+        GridBagConstraints ct;
 
         if (shouldFill) {
-          ct->fill = static_cast<int>(jgridbaglayout_constraints_t::Horizontal);
+          ct.fill = static_cast<int>(jgridbaglayout_constraints_t::Horizontal);
         }
 
         if (shouldWeightX) {
-          ct->weightx = 0.5;
+          ct.weightx = 0.5;
         }
 
-        ct->fill = static_cast<int>(jgridbaglayout_constraints_t::Horizontal);
-        ct->gridx = 0;
-        ct->gridy = 0;
-        c->Add(std::make_shared<Button>("Button 1"), ct);
+        ct.fill = static_cast<int>(jgridbaglayout_constraints_t::Horizontal);
+        ct.gridx = 0;
+        ct.gridy = 0;
+        c->Add(new Button("Button 1"), &ct);
 
-        ct->fill = static_cast<int>(jgridbaglayout_constraints_t::Horizontal);
-        ct->weightx = 0.5;
-        ct->gridx = 1;
-        ct->gridy = 0;
-        c->Add(std::make_shared<Button>("Button 2"), ct);
+        ct.fill = static_cast<int>(jgridbaglayout_constraints_t::Horizontal);
+        ct.weightx = 0.5;
+        ct.gridx = 1;
+        ct.gridy = 0;
+        c->Add(new Button("Button 2"), &ct);
 
-        ct->fill = static_cast<int>(jgridbaglayout_constraints_t::Horizontal);
-        ct->weightx = 0.5;
-        ct->gridx = 2;
-        ct->gridy = 0;
-        c->Add(std::make_shared<Button>("Button 3"), ct);
+        ct.fill = static_cast<int>(jgridbaglayout_constraints_t::Horizontal);
+        ct.weightx = 0.5;
+        ct.gridx = 2;
+        ct.gridy = 0;
+        c->Add(new Button("Button 3"), &ct);
 
-        ct->fill = static_cast<int>(jgridbaglayout_constraints_t::Horizontal);
-        ct->ipady = 40;      // make this component tall
-        ct->weightx = 0.0;
-        ct->gridwidth = 3;
-        ct->gridx = 0;
-        ct->gridy = 1;
-        c->Add(std::make_shared<Button>("Button 4"), ct);
+        ct.fill = static_cast<int>(jgridbaglayout_constraints_t::Horizontal);
+        ct.ipady = 40;      // make this component tall
+        ct.weightx = 0.0;
+        ct.gridwidth = 3;
+        ct.gridx = 0;
+        ct.gridy = 1;
+        c->Add(new Button("Button 4"), &ct);
 
-        ct->fill = static_cast<int>(jgridbaglayout_constraints_t::Horizontal);
-        ct->ipady = 0;       // reset to default
-        ct->weighty = 1.0;   // request any extra vertical space
-        ct->weightx = 0.0;   // request any extra vertical space
-        ct->anchor = static_cast<int>(jgridbaglayout_constraints_t::LastLineStart); // PAGE_END; //bottom of space
-        ct->insets.left = 0;
-        ct->insets.right = 0;
-        ct->insets.top = 0;
-        ct->insets.bottom = 0;
-        ct->gridx = 1;       // aligned with button 2
-        ct->gridwidth = 2;   // 2 columns wide
-        ct->gridy = 2;       // third row
-        c->Add(std::make_shared<Button>("Button 5"), ct);
+        ct.fill = static_cast<int>(jgridbaglayout_constraints_t::Horizontal);
+        ct.ipady = 0;       // reset to default
+        ct.weighty = 1.0;   // request any extra vertical space
+        ct.weightx = 0.0;   // request any extra vertical space
+        ct.anchor = static_cast<int>(jgridbaglayout_constraints_t::LastLineStart); // PAGE_END; //bottom of space
+        ct.insets.left = 0;
+        ct.insets.right = 0;
+        ct.insets.top = 0;
+        ct.insets.bottom = 0;
+        ct.gridx = 1;       // aligned with button 2
+        ct.gridwidth = 2;   // 2 columns wide
+        ct.gridy = 2;       // third row
+        c->Add(new Button("Button 5"), &ct);
       }
 
 			// nulllayout
       {
         LAYOUT(NullLayout);
 
-        std::vector<std::shared_ptr<Button>> buttons {
-          std::make_shared<Button>("Button 1"),
-          std::make_shared<Button>("Button 2"),
-          std::make_shared<Button>("Button 3"),
-          std::make_shared<Button>("Button 4"),
-          std::make_shared<Button>("Button 5")
+        std::vector<Button *> buttons {
+          new Button("Button 1"),
+          new Button("Button 2"),
+          new Button("Button 3"),
+          new Button("Button 4"),
+          new Button("Button 5")
         };
 
         for (int i=0; i<(int)buttons.size(); i++) {
@@ -244,19 +235,49 @@ class Layouts : public Frame, public ActionListener {
           c->Add(buttons[i]);
         }
       }
+    }
+
+		virtual ~Layouts()
+		{
+      auto cmps = GetComponents();
+
+			RemoveAll();
+
+      for (auto cmp : cmps) {
+        RecursiveDelete(cmp);
+
+        delete cmp;
+      }
 		}
+
+    void RecursiveDelete(Component *cmp)
+    {
+      Container *container = dynamic_cast<Container *>(cmp);
+
+      if (container != nullptr) {
+        auto cmps = container->GetComponents();
+
+        container->RemoveAll();
+
+        for (auto cmp : cmps) {
+          RecursiveDelete(cmp);
+
+          delete cmp;
+        }
+      }
+    }
 
 		virtual void ActionPerformed(ActionEvent *event)
 		{
       std::shared_ptr<CardLayout> card = std::dynamic_pointer_cast<CardLayout>(_cardcontainer->GetLayout());
 
-			if (event->GetSource() == _first.get()) {
+			if (event->GetSource() == _first) {
 				card->First(_cardcontainer);
-			} else if (event->GetSource() == _last.get()) {
+			} else if (event->GetSource() == _last) {
 				card->Last(_cardcontainer);
-			} else if (event->GetSource() == _previous.get()) {
+			} else if (event->GetSource() == _previous) {
 				card->Previous(_cardcontainer);
-			} else if (event->GetSource() == _next.get()) {
+			} else if (event->GetSource() == _next) {
 				card->Next(_cardcontainer);
 			}
 		}
@@ -269,7 +290,6 @@ int main(int argc, char **argv)
 
 	auto app = std::make_shared<Layouts>();
 
-  app->Init();
 	app->SetTitle("Layouts");
 
 	Application::Loop();

@@ -29,7 +29,7 @@ namespace jcanvas {
 
 struct jcardlayout_map_t {
   std::string name;
-  std::shared_ptr<Component> component;
+  Component *component;
 };
 
 class Container;
@@ -92,73 +92,73 @@ class CardLayout : public Layout {
      * \brief
      *
      */
-    virtual void AddLayoutComponent(std::string name, std::shared_ptr<Component> comp);
+    virtual void AddLayoutComponent(std::string name, Component *comp);
     
     /**
      * \brief
      *
      */
-    virtual void RemoveLayoutComponent(std::shared_ptr<Component> comp);
+    virtual void RemoveLayoutComponent(Component *comp);
 
     /**
      * \brief
      *
      */
-    virtual void CheckLayout(std::shared_ptr<Container> parent);
+    virtual void CheckLayout(Container *parent);
   
     /**
      * \brief
      *
      */
-    virtual void First(std::shared_ptr<Container> parent);
+    virtual void First(Container *parent);
     
     /**
      * \brief
      *
      */
-    virtual void Next(std::shared_ptr<Container> parent);
+    virtual void Next(Container *parent);
     
     /**
      * \brief
      *
      */
-    virtual void Previous(std::shared_ptr<Container> parent);
+    virtual void Previous(Container *parent);
     
     /**
      * \brief
      *
      */
-    virtual void Last(std::shared_ptr<Container> parent);
+    virtual void Last(Container *parent);
 
     /**
      * \brief
      *
      */
-    virtual void ShowDefaultComponent(std::shared_ptr<Container> parent);
+    virtual void ShowDefaultComponent(Container *parent);
 
     /**
      * \brief
      *
      */
-    virtual jpoint_t<int> GetMinimumLayoutSize(std::shared_ptr<Container> parent);
+    virtual jpoint_t<int> GetMinimumLayoutSize(Container *parent);
     
     /**
      * \brief
      *
      */
-    virtual jpoint_t<int> GetMaximumLayoutSize(std::shared_ptr<Container> parent);
+    virtual jpoint_t<int> GetMaximumLayoutSize(Container *parent);
     
     /**
      * \brief
      *
      */
-    virtual jpoint_t<int> GetPreferredLayoutSize(std::shared_ptr<Container> parent);
+    virtual jpoint_t<int> GetPreferredLayoutSize(Container *parent);
 
     /**
      * \brief
      *
      */
-    virtual void DoLayout(std::shared_ptr<Container> parent);
+    virtual void DoLayout(Container *parent);
 
 };
 

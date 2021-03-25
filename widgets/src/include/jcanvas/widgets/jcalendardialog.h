@@ -51,29 +51,29 @@ class CalendarDialog : public Dialog, public ActionListener, public SelectListen
     /** \brief */
     std::vector<jcalendar_warnning_t> _warnning_days;
     /** \brief */
-    std::vector<std::shared_ptr<Button>> _buttons;
+    std::vector<Button *> _buttons;
     /** \brief */
     jtheme_t _week_day_theme;
     /** \brief */
     jtheme_t _selected_theme;
     /** \brief */
-    std::shared_ptr<Text> _ldom;
+    Text *_ldom;
     /** \brief */
-    std::shared_ptr<Text> _lseg;
+    Text *_lseg;
     /** \brief */
-    std::shared_ptr<Text> _lter;
+    Text *_lter;
     /** \brief */
-    std::shared_ptr<Text> _lqua;
+    Text *_lqua;
     /** \brief */
-    std::shared_ptr<Text> _lqui;
+    Text *_lqui;
     /** \brief */
-    std::shared_ptr<Text> _lsex;
+    Text *_lsex;
     /** \brief */
-    std::shared_ptr<Text> _lsab;
+    Text *_lsab;
     /** \brief */
-    std::shared_ptr<Spin> _syear;
+    Spin *_syear;
     /** \brief */
-    std::shared_ptr<Spin> _smonth;
+    Spin *_smonth;
     /** \brief */
     std::string _text;
     /** \brief */
@@ -103,7 +103,7 @@ class CalendarDialog : public Dialog, public ActionListener, public SelectListen
      * \brief
      *
      */
-    CalendarDialog(std::shared_ptr<Container> parent);
+    CalendarDialog(Container *parent);
     
     /**
      * \brief
@@ -111,12 +111,6 @@ class CalendarDialog : public Dialog, public ActionListener, public SelectListen
      */
     virtual ~CalendarDialog();
 
-    /**
-     * \brief
-     *
-     */
-    virtual void Init();
-    
     /**
      * \brief
      *

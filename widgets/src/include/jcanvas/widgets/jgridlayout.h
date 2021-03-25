@@ -106,25 +106,25 @@ class GridLayout : public Layout {
      * \brief
      *
      */
-    virtual jpoint_t<int> GetMinimumLayoutSize(std::shared_ptr<Container> parent);
+    virtual jpoint_t<int> GetMinimumLayoutSize(Container *parent);
     
     /**
      * \brief
      *
      */
-    virtual jpoint_t<int> GetMaximumLayoutSize(std::shared_ptr<Container> parent);
+    virtual jpoint_t<int> GetMaximumLayoutSize(Container *parent);
     
     /**
      * \brief
      *
      */
-    virtual jpoint_t<int> GetPreferredLayoutSize(std::shared_ptr<Container> parent);
+    virtual jpoint_t<int> GetPreferredLayoutSize(Container *parent);
 
     /**
      * \brief
      *
      */
-    virtual void DoLayout(std::shared_ptr<Container> parent);
+    virtual void DoLayout(Container *parent);
 
 };
 

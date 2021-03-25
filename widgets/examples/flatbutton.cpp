@@ -32,8 +32,7 @@ using namespace jcanvas;
 class App : public Frame {
 
 	private:
-    std::shared_ptr<Image>
-      _image;
+    std::shared_ptr<Image> image {std::make_shared<BufferedImage>("images/image.png")};
 
 	public:
 		App():
@@ -44,9 +43,6 @@ class App : public Frame {
     void Init()
     {
       SetLayout<GridLayout>(4, 3);
-
-      _image = std::make_shared<BufferedImage>("images/image.png");
-      // _image = new BufferedImage("images/red_icon.png");
 
       for (int i=0; i<11; i++) {
         jrect_align_t align;
@@ -87,17 +83,16 @@ class App : public Frame {
           id = "cover";
         }
 
-        auto title = std::make_shared<Text>(id);
-        auto flatimage = std::make_shared<FlatImage>(_image);
+        auto container = new Container();
+        auto title = new Text(id);
+        auto flatimage = new FlatImage(image);
         
-        flatimage->SetAlign(static_cast<jrect_align_t>(i));
-
-        auto container = std::make_shared<Container>();
-
         container->SetLayout<BorderLayout>();
 
         container->Add(title, jborderlayout_align_t::North);
         container->Add(flatimage, jborderlayout_align_t::Center);
+
+        flatimage->SetAlign(static_cast<jrect_align_t>(i));
 
         Add(container);
       }
@@ -105,6 +100,19 @@ class App : public Frame {
 
     virtual ~App()
     {
+      std::vector<Component *> cmps = GetComponents();
+
+      RemoveAll();
+
+      for (auto cmp : cmps) {
+        Container *container = dynamic_cast<Container *>(cmp);
+
+        for (auto cmp2 : container->GetComponents()) {
+          delete cmp2;
+        }
+
+        delete container;
+      }
     }
 
 };

@@ -56,21 +56,21 @@ jcoordinatelayout_orientation_t CoordinateLayout::GetType()
   return _type;
 }
 
-jpoint_t<int> CoordinateLayout::GetMinimumLayoutSize(std::shared_ptr<Container> parent)
+jpoint_t<int> CoordinateLayout::GetMinimumLayoutSize(Container *parent)
 {
   jpoint_t<int> t = {0, 0};
 
   return t;
 }
 
-jpoint_t<int> CoordinateLayout::GetMaximumLayoutSize(std::shared_ptr<Container> parent)
+jpoint_t<int> CoordinateLayout::GetMaximumLayoutSize(Container *parent)
 {
   jpoint_t<int> t = {INT_MAX, INT_MAX};
 
   return t;
 }
 
-jpoint_t<int> CoordinateLayout::GetPreferredLayoutSize(std::shared_ptr<Container> target) 
+jpoint_t<int> CoordinateLayout::GetPreferredLayoutSize(Container *target) 
 {
   if (target == nullptr) {
     jpoint_t<int> t = {0, 0};
@@ -84,7 +84,7 @@ jpoint_t<int> CoordinateLayout::GetPreferredLayoutSize(std::shared_ptr<Container
   int members = target->GetComponentCount();
 
   for (int i=0; i<members; i++) {
-    std::shared_ptr<Component> cmp = target->GetComponents()[i];
+    Component *cmp = target->GetComponents()[i];
 
     jpoint_t point = cmp->GetLocation();
     jpoint_t<int> size = cmp->GetSize();
@@ -96,7 +96,7 @@ jpoint_t<int> CoordinateLayout::GetPreferredLayoutSize(std::shared_ptr<Container
   return t;
 }
 
-void CoordinateLayout::DoLayout(std::shared_ptr<Container> target)
+void CoordinateLayout::DoLayout(Container *target)
 {
   if (target == nullptr) {
     return;
@@ -132,7 +132,7 @@ void CoordinateLayout::DoLayout(std::shared_ptr<Container> target)
   }
 
   for (int i=0; i<nmembers; i++) {
-    std::shared_ptr<Component> c = target->GetComponents()[i];
+    Component *c = target->GetComponents()[i];
 
     jpoint_t point = c->GetLocation();
     jpoint_t<int> size = c->GetPreferredSize();

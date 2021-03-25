@@ -23,16 +23,8 @@
 
 namespace jcanvas {
 
-CalendarDialog::CalendarDialog(std::shared_ptr<Container> parent):
+CalendarDialog::CalendarDialog(Container *parent):
   Dialog("Calendar", parent)
-{
-}
-
-CalendarDialog::~CalendarDialog() 
-{
-}
-
-void CalendarDialog::Init()
 {
   std::time_t 
     t1 = std::time(0);
@@ -52,7 +44,7 @@ void CalendarDialog::Init()
     dx = ds + 2,
     dy = ds + 2;
 
-  _syear = std::make_shared<Spin>();
+  _syear = new Spin();
   
   _syear->SetBounds({insets.left, insets.top + 0*dy, 7*dx - 2, ds});
 
@@ -65,7 +57,7 @@ void CalendarDialog::Init()
   _syear->SetLoop(true);
   _syear->RegisterSelectListener(this);
 
-  _smonth = std::make_shared<Spin>();
+  _smonth = new Spin();
   
   _smonth->SetBounds({insets.left, insets.top + 1*dy, 7*dx - 2, ds});
 
@@ -85,13 +77,13 @@ void CalendarDialog::Init()
   _smonth->SetLoop(true);
   _smonth->RegisterSelectListener(this);
 
-  _ldom = std::make_shared<Text>("D");
-  _lseg = std::make_shared<Text>("S");
-  _lter = std::make_shared<Text>("T");
-  _lqua = std::make_shared<Text>("Q");
-  _lqui = std::make_shared<Text>("Q");
-  _lsex = std::make_shared<Text>("S");
-  _lsab = std::make_shared<Text>("S");
+  _ldom = new Text("D");
+  _lseg = new Text("S");
+  _lter = new Text("T");
+  _lqua = new Text("Q");
+  _lqui = new Text("Q");
+  _lsex = new Text("S");
+  _lsab = new Text("S");
 
   _ldom->SetBounds({insets.left + 0*dx, insets.top + 2*dy, ds, ds});
   _lseg->SetBounds({insets.left + 1*dx, insets.top + 2*dy, ds, ds});
@@ -126,6 +118,10 @@ void CalendarDialog::Init()
   _syear->SetCurrentIndex(_select_year);
 
   BuildCalendar();
+}
+
+CalendarDialog::~CalendarDialog() 
+{
 }
 
 void CalendarDialog::SetDay(int d)
@@ -285,8 +281,8 @@ void CalendarDialog::BuildCalendar()
 
     sprintf(tmp, "%d", (i+1));
 
-    std::shared_ptr<Button> 
-      button = std::make_shared<Button>(tmp);
+    Button
+      *button = new Button(tmp);
     
     button->SetBounds({insets.left + dx*first_day, insets.top + dy*k + 16, ds, ds});
 
@@ -331,8 +327,8 @@ void CalendarDialog::ActionPerformed(ActionEvent *event)
 
 void CalendarDialog::ItemChanged(SelectEvent *event)
 {
-  std::shared_ptr<Spin>
-    spin = reinterpret_cast<Spin *>(event->GetSource())->GetSharedPointer<Spin>();
+  Spin
+    *spin = reinterpret_cast<Spin *>(event->GetSource());
 
   if (event->GetType() == jselectevent_type_t::Left) {
     if (spin == _smonth and _smonth->GetCurrentIndex() == (12 - 1)) {

@@ -363,8 +363,6 @@ static void InternalPaint()
 
 	al_unlock_bitmap(sg_surface);
 
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
   al_clear_to_color(al_map_rgb(0, 0, 0));
 	al_draw_bitmap(sg_surface, 0, 0, 0);
 	al_flip_display();
@@ -402,6 +400,8 @@ void Application::Loop()
     if (sg_repaint.exchange(false) == true) {
       InternalPaint();
     }
+
+    Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
 
     if (al_get_next_event(queue, &event) == true) {
       al_drop_next_event(queue);

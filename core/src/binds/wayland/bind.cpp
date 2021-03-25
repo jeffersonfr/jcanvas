@@ -1289,8 +1289,6 @@ static void InternalPaint()
 
   g->Flush();
   
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
   uint32_t *src = (uint32_t *)sg_back_buffer->LockData();
   uint32_t *dst = (uint32_t *)sg_surface->content;
 
@@ -1314,11 +1312,11 @@ void Application::Loop()
     return;
   }
 
-  Event *event;
-
   if (!is_input_inited()) {
     return;
   }
+
+  Event *event;
 
   std::thread
     redraw([]() {
@@ -1326,6 +1324,8 @@ void Application::Loop()
           if (sg_repaint.exchange(false) == true) {
             InternalPaint();
           }
+  
+          Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
         }
     });
 

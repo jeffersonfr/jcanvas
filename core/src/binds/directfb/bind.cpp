@@ -410,8 +410,6 @@ static void InternalPaint()
 
   g->Flush();
 
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
   uint32_t *data = (uint32_t *)sg_back_buffer->LockData();
 
 	DFBRectangle rect;
@@ -456,7 +454,9 @@ void Application::Loop()
       InternalPaint();
     }
 
-    event_buffer->WaitForEventWithTimeout(event_buffer, 0, 1);
+    Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
+
+    event_buffer->WaitForEventWithTimeout(event_buffer, 0, 0);
 
     while (event_buffer->GetEvent(event_buffer, DFB_EVENT(&event)) == DFB_OK) {
       event_buffer->Reset(event_buffer);
@@ -555,8 +555,6 @@ void Application::Loop()
     }
   }
 
-  sg_quitting = true;
-  
 	if (event_buffer != nullptr) {
 		event_buffer->Release(event_buffer);
 	}

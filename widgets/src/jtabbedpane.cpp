@@ -36,7 +36,7 @@ int TabbedPane::GetCurrentTab()
   return 0;
 }
 
-void TabbedPane::AddTab(std::string title, Image *image, std::shared_ptr<Component> component, int index)
+void TabbedPane::AddTab(std::string title, Image *image, Component *component, int index)
 {
 }
 
@@ -44,7 +44,7 @@ void TabbedPane::RemoveTab(int index)
 {
 }
 
-std::shared_ptr<Component> TabbedPane::GetTabComponentAt(int index)
+Component * TabbedPane::GetTabComponentAt(int index)
 {
   return nullptr;
 }
@@ -67,7 +67,7 @@ void TabbedPane::SetPaddind(int left, int top, int right, int bottom)
 {
 }
 
-int TabbedPane::IndexOfComponent(std::shared_ptr<Component> cmp)
+int TabbedPane::IndexOfComponent(Component *cmp)
 {
   return 0;
 }

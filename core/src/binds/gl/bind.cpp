@@ -590,42 +590,9 @@ void OnTimer(int value)
     glutPostRedisplay();
   }
 
-  /*
-  while (SDL_PollEvent(&event)) {
-    if (event.type == SDL_WINDOWEVENT) {
-      } else if (event.window.event == SDL_WINDOWEVENT_SHOWN) {
-        sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Opened));
-      } else if (event.window.event == SDL_WINDOWEVENT_HIDDEN) {
-        sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Closed));
-      } else if (event.window.event == SDL_WINDOWEVENT_EXPOSED) {
-        InternalPaint();
-      } else if (event.window.event == SDL_WINDOWEVENT_MOVED) {
-        sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Moved));
-      } else if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-        InternalPaint();
-
-        sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Resized));
-      } else if (event.window.event == SDL_WINDOWEVENT_MINIMIZED) {
-      } else if (event.window.event == SDL_WINDOWEVENT_MAXIMIZED) {
-      } else if (event.window.event == SDL_WINDOWEVENT_RESTORED) {
-      } else if (event.window.event == SDL_WINDOWEVENT_FOCUS_GAINED) {
-      } else if (event.window.event == SDL_WINDOWEVENT_FOCUS_LOST) {
-      }
-    } else if(event.type == SDL_QUIT) {
-      SDL_HideWindow(sg_window);
-
-      sg_quitting = true;
-
-      sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Closed));
-    }
-  }
-  */
-
   if (sg_quitting == false) {
     glutTimerFunc(1, OnTimer, value);
   }
-
-  std::this_thread::yield();
 }
 
 void OnVisibility(int state)

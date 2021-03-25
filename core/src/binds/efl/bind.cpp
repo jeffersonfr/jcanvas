@@ -27,6 +27,7 @@
 #include <thread>
 #include <mutex>
 #include <stdexcept>
+#include <atomic>
 
 #include <Ecore_Getopt.h>
 #include <Elementary.h>
@@ -65,7 +66,7 @@ static std::shared_ptr<Image> sg_back_buffer = nullptr;
 /** \brief */
 static jmouseevent_button_t sg_button_state = jmouseevent_button_t::None;
 /** \brief */
-static bool sg_repaint = false;
+static std::atomic<bool> sg_repaint;
 /** \brief */
 static bool sg_quitting = false;
 /** \brief */
@@ -417,8 +418,6 @@ static void InternalPaint(Evas_Object *content)
 
   g->Flush();
   
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
   uint32_t *src = (uint32_t *)sg_back_buffer->LockData();
 
   /*
@@ -468,11 +467,11 @@ static Eina_Bool InternalPaintTick(void *data)
 
    Evas_Object *window = (Evas_Object*)data;
 
-   if (sg_repaint == true) {
-     sg_repaint = false;
-
+   if (sg_repaint.exchange(false) == true) {
      InternalPaint(window);
    }
+
+   Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
 
    return ECORE_CALLBACK_RENEW;
 }

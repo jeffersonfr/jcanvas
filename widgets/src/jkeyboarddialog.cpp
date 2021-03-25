@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "jcanvas/widgets/jkeyboarddialog.h"
-#include "jcanvas/widgets/jtextarea.h"
 #include "jcanvas/widgets/jgridlayout.h"
 #include "jcanvas/widgets/jflowlayout.h"
 
@@ -29,36 +28,35 @@
 #define KEY_SIZE_3 (6 * (KEY_SIZE_1))
 
 #define KEYBOARD_LAYOUT                                     \
-  _display = std::make_shared<TextArea>();                  \
+  _display = new Text(_text);                               \
                                                             \
   if (_is_password == true) {                               \
     _display->SetEchoChar('*');                             \
   }                                                         \
                                                             \
   _display->SetFocusable(false);                            \
-  _display->Insert(_text);                                  \
                                                             \
   Add(_display, jborderlayout_align_t::Center);             \
                                                             \
-  std::shared_ptr<Container>                                \
-    container = std::make_shared<Container>();              \
-  std::shared_ptr<Container>                                \
-    lines[5];                                               \
+  Container                                                 \
+    *container = new Container();                           \
+  Container                                                 \
+    *lines[5];                                              \
                                                             \
   container->SetLayout<GridLayout>(5, 1, 4, 0);             \
                                                             \
   container->SetScrollableX(false);                         \
   container->SetScrollableY(false);                         \
-  container->SetSize({720, 5*(KEY_SIZE_1 + 4)});           \
+  container->SetSize({720, 5*(KEY_SIZE_1 + 4)});            \
                                                             \
   for (int i=0; i<5; i++) {                                 \
-    lines[i] = std::make_shared<Container>();               \
+    lines[i] = new Container();                             \
                                                             \
     lines[i]->SetLayout<FlowLayout>(jflowlayout_align_t::Center, 4, 0); \
                                                             \
     lines[i]->SetScrollableX(false);                        \
     lines[i]->SetScrollableY(false);                        \
-    lines[i]->SetSize(0, KEY_SIZE_1);                      \
+    lines[i]->SetSize(0, KEY_SIZE_1);                       \
                                                             \
     container->Add(lines[i]);                               \
   }                                                         \
@@ -86,7 +84,7 @@ class KeyButton : public Button {
 
 };
 
-KeyboardDialog::KeyboardDialog(std::shared_ptr<Container> parent, jkeyboard_type_t type, bool text_visible, bool is_password):
+KeyboardDialog::KeyboardDialog(Container *parent, jkeyboard_type_t type, bool text_visible, bool is_password):
    Dialog("Keyboard", parent)
 {
   _display = NULL;
@@ -95,15 +93,7 @@ KeyboardDialog::KeyboardDialog(std::shared_ptr<Container> parent, jkeyboard_type
   _is_password = is_password;
 
   SetLayout<BorderLayout>();
-}
-
-KeyboardDialog::~KeyboardDialog() 
-{
-  RemoveAll();
-}
-
-void KeyboardDialog::Init()
-{
+  
   if (_type == jkeyboard_type_t::Qwerty) {
     BuildQWERTYKeyboard();
   } else if (_type == jkeyboard_type_t::AlphaNumeric) {
@@ -120,9 +110,14 @@ void KeyboardDialog::Init()
   Pack(false);
 }
 
+KeyboardDialog::~KeyboardDialog() 
+{
+  RemoveAll();
+}
+
 void KeyboardDialog::ActionPerformed(ActionEvent *event)
 {
-  std::shared_ptr<Button> button = reinterpret_cast<Button *>(event->GetSource())->GetSharedPointer<Button>();
+  Button *button = reinterpret_cast<Button *>(event->GetSource());
   std::string label = button->GetText();
   jkeyevent_modifiers_t modifiers = jkeyevent_modifiers_t::None;
   jkeyevent_symbol_t symbol = jkeyevent_symbol_t::Unknown;
@@ -531,7 +526,7 @@ void KeyboardDialog::ActionPerformed(ActionEvent *event)
   DispatchKeyEvent(kevent2);
 }
 
-std::shared_ptr<TextComponent> KeyboardDialog::GetTextComponent()
+TextComponent * KeyboardDialog::GetTextComponent()
 {
   return _display;
 }
@@ -540,63 +535,63 @@ void KeyboardDialog::BuildInternetKeyboard()
 {
   KEYBOARD_LAYOUT
 
-  lines[0]->Add(std::make_shared<KeyButton>("@", "#", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("1", "1", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("2", "2", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("3", "3", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("4", "4", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("5", "5", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("6", "6", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("7", "7", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("8", "8", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("9", "9", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("0", "0", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("+", "=", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("@", "#", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("1", "1", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("2", "2", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("3", "3", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("4", "4", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("5", "5", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("6", "6", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("7", "7", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("8", "8", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("9", "9", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("0", "0", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("+", "=", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[1]->Add(std::make_shared<KeyButton>("q", "Q", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("w", "W", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("e", "E", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("r", "R", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("t", "T", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("y", "Y", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("u", "U", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("i", "I", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("o", "O", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("p", "P", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("(", "[", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>(")", "]", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("q", "Q", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("w", "W", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("e", "E", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("r", "R", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("t", "T", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("y", "Y", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("u", "U", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("i", "I", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("o", "O", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("p", "P", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("(", "[", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton(")", "]", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[2]->Add(std::make_shared<KeyButton>("a", "A", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("s", "S", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("d", "D", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("f", "F", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("g", "G", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("h", "H", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("j", "J", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("k", "K", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("l", "L", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("~", "^", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("-", "_", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("a", "A", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("s", "S", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("d", "D", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("f", "F", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("g", "G", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("h", "H", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("j", "J", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("k", "K", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("l", "L", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("~", "^", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("-", "_", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[3]->Add(std::make_shared<KeyButton>("caps", "caps", this, KEY_SIZE_2, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("/", "|", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("z", "Z", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("x", "X", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("c", "C", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("v", "V", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("b", "B", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("n", "N", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("m", "M", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>(".", ":", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("&", "%", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("?", "!", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("caps", "caps", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("/", "|", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("z", "Z", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("x", "X", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("c", "C", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("v", "V", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("b", "B", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("n", "N", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("m", "M", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton(".", ":", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("&", "%", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("?", "!", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[4]->Add(std::make_shared<KeyButton>("shift", "shift", this, KEY_SIZE_2, KEY_SIZE_1));
-  lines[4]->Add(std::make_shared<KeyButton>("back", "back", this, KEY_SIZE_2, KEY_SIZE_1));
-  lines[4]->Add(std::make_shared<KeyButton>("http://", "http://", this, KEY_SIZE_2, KEY_SIZE_1));
-  lines[4]->Add(std::make_shared<KeyButton>("www.", "www.", this, KEY_SIZE_2, KEY_SIZE_1));
-  lines[4]->Add(std::make_shared<KeyButton>(".com", ".com", this, KEY_SIZE_2, KEY_SIZE_1));
-  lines[4]->Add(std::make_shared<KeyButton>("enter", "enter", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton("shift", "shift", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton("back", "back", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton("http://", "http://", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton("www.", "www.", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton(".com", ".com", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton("enter", "enter", this, KEY_SIZE_2, KEY_SIZE_1));
 
   lines[0]->GetComponents()[0]->RequestFocus();
 }
@@ -605,46 +600,46 @@ void KeyboardDialog::BuildAlphaNumericKeyboard()
 {
   KEYBOARD_LAYOUT
 
-  lines[0]->Add(std::make_shared<KeyButton>("a", "A", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("b", "B", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("c", "C", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("d", "D", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("e", "E", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("f", "F", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("g", "G", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("h", "H", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("a", "A", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("b", "B", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("c", "C", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("d", "D", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("e", "E", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("f", "F", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("g", "G", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("h", "H", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[1]->Add(std::make_shared<KeyButton>("i", "I", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("j", "J", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("k", "K", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("l", "L", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("m", "M", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("n", "N", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("o", "O", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("p", "P", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("i", "I", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("j", "J", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("k", "K", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("l", "L", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("m", "M", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("n", "N", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("o", "O", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("p", "P", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[2]->Add(std::make_shared<KeyButton>("q", "Q", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("r", "R", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("s", "S", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("t", "T", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("u", "U", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("v", "V", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("x", "X", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("w", "W", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("q", "Q", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("r", "R", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("s", "S", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("t", "T", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("u", "U", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("v", "V", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("x", "X", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("w", "W", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[3]->Add(std::make_shared<KeyButton>("y", "Y", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("z", "Z", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("@", "#", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("(", "*", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>(")", "-", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>(".", ",", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>(";", ":", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("/", "?", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("y", "Y", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("z", "Z", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("@", "#", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("(", "*", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton(")", "-", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton(".", ",", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton(";", ":", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("/", "?", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[4]->Add(std::make_shared<KeyButton>("caps", "caps", this, KEY_SIZE_2, KEY_SIZE_1));
-  lines[4]->Add(std::make_shared<KeyButton>("space", "space", this, KEY_SIZE_2, KEY_SIZE_1));
-  lines[4]->Add(std::make_shared<KeyButton>("back", "back", this, KEY_SIZE_2, KEY_SIZE_1));
-  lines[4]->Add(std::make_shared<KeyButton>("enter", "enter", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton("caps", "caps", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton("space", "space", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton("back", "back", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton("enter", "enter", this, KEY_SIZE_2, KEY_SIZE_1));
 
   lines[0]->GetComponents()[0]->RequestFocus();
 }
@@ -653,65 +648,65 @@ void KeyboardDialog::BuildQWERTYKeyboard()
 {
   KEYBOARD_LAYOUT
 
-  lines[0]->Add(std::make_shared<KeyButton>("'", "\"", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("1", "1", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("2", "2", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("3", "3", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("4", "4", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("5", "5", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("6", "6", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("7", "7", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("8", "8", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("9", "9", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("0", "0", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("-", "_", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("=", "+", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("'", "\"", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("1", "1", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("2", "2", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("3", "3", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("4", "4", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("5", "5", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("6", "6", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("7", "7", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("8", "8", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("9", "9", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("0", "0", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("-", "_", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("=", "+", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[1]->Add(std::make_shared<KeyButton>("tab", "tab", this, KEY_SIZE_2, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("q", "Q", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("w", "W", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("e", "E", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("r", "R", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("t", "T", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("y", "Y", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("u", "U", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("i", "I", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("o", "O", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("p", "P", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("'", "`", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("[", "{", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("tab", "tab", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("q", "Q", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("w", "W", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("e", "E", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("r", "R", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("t", "T", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("y", "Y", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("u", "U", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("i", "I", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("o", "O", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("p", "P", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("'", "`", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("[", "{", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[2]->Add(std::make_shared<KeyButton>("caps", "caps", this, KEY_SIZE_2, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("a", "A", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("s", "S", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("d", "D", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("f", "F", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("g", "G", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("h", "H", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("j", "J", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("k", "K", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("l", "L", this, KEY_SIZE_1, KEY_SIZE_1));
-  // lines[2]->Add(std::make_shared<KeyButton>("ç", "Ç", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("~", "^", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("]", "}", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("caps", "caps", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("a", "A", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("s", "S", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("d", "D", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("f", "F", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("g", "G", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("h", "H", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("j", "J", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("k", "K", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("l", "L", this, KEY_SIZE_1, KEY_SIZE_1));
+  // lines[2]->Add(new KeyButton("ç", "Ç", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("~", "^", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("]", "}", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[3]->Add(std::make_shared<KeyButton>("shift", "shift", this, KEY_SIZE_2, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("\\", "|", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("z", "Z", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("x", "X", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("c", "C", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("v", "V", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("b", "B", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("n", "N", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("m", "M", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>(",", "<", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>(".", ">", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>(";", ":", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("/", "?", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("shift", "shift", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("\\", "|", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("z", "Z", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("x", "X", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("c", "C", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("v", "V", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("b", "B", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("n", "N", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("m", "M", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton(",", "<", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton(".", ">", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton(";", ":", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("/", "?", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[4]->Add(std::make_shared<KeyButton>("back", "back", this, KEY_SIZE_2, KEY_SIZE_1));
-  lines[4]->Add(std::make_shared<KeyButton>("space", "space", this, KEY_SIZE_3, KEY_SIZE_1));
-  lines[4]->Add(std::make_shared<KeyButton>("enter", "enter", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton("back", "back", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton("space", "space", this, KEY_SIZE_3, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton("enter", "enter", this, KEY_SIZE_2, KEY_SIZE_1));
 
   lines[0]->GetComponents()[0]->RequestFocus();
 }
@@ -720,31 +715,31 @@ void KeyboardDialog::BuildNumericKeyboard()
 {
   KEYBOARD_LAYOUT
 
-  lines[0]->Add(std::make_shared<KeyButton>("(", "(", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("7", "7", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("8", "8", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("9", "9", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("+", "+", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("(", "(", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("7", "7", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("8", "8", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("9", "9", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("+", "+", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[1]->Add(std::make_shared<KeyButton>(")", ")", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("4", "4", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("5", "5", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("6", "6", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("-", "-", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton(")", ")", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("4", "4", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("5", "5", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("6", "6", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("-", "-", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[2]->Add(std::make_shared<KeyButton>("%", "%", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("1", "1", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("2", "2", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("3", "3", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("*", "*", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("%", "%", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("1", "1", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("2", "2", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("3", "3", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("*", "*", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[3]->Add(std::make_shared<KeyButton>("back", "back", this, KEY_SIZE_2, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>(".", ".", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("=", "=", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("/", "/", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("back", "back", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton(".", ".", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("=", "=", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("/", "/", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[4]->Add(std::make_shared<KeyButton>("space", "space", this, KEY_SIZE_2, KEY_SIZE_1));
-  lines[4]->Add(std::make_shared<KeyButton>("enter", "enter", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton("space", "space", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton("enter", "enter", this, KEY_SIZE_2, KEY_SIZE_1));
 
   lines[0]->GetComponents()[0]->RequestFocus();
 }
@@ -753,42 +748,42 @@ void KeyboardDialog::BuildPhoneKeyboard()
 {
   KEYBOARD_LAYOUT
 
-  lines[0]->Add(std::make_shared<KeyButton>("7", "7", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("8", "8", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("9", "9", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[0]->Add(std::make_shared<KeyButton>("(", "(", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("7", "7", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("8", "8", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("9", "9", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[0]->Add(new KeyButton("(", "(", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[1]->Add(std::make_shared<KeyButton>("4", "4", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("5", "5", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>("6", "6", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[1]->Add(std::make_shared<KeyButton>(")", ")", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("4", "4", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("5", "5", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton("6", "6", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[1]->Add(new KeyButton(")", ")", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[2]->Add(std::make_shared<KeyButton>("1", "1", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("2", "2", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("3", "3", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[2]->Add(std::make_shared<KeyButton>("-", "-", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("1", "1", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("2", "2", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("3", "3", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[2]->Add(new KeyButton("-", "-", this, KEY_SIZE_1, KEY_SIZE_1));
   
-  lines[3]->Add(std::make_shared<KeyButton>("*", "*", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("0", "0", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("+", "+", this, KEY_SIZE_1, KEY_SIZE_1));
-  lines[3]->Add(std::make_shared<KeyButton>("#", "#", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("*", "*", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("0", "0", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("+", "+", this, KEY_SIZE_1, KEY_SIZE_1));
+  lines[3]->Add(new KeyButton("#", "#", this, KEY_SIZE_1, KEY_SIZE_1));
 
-  lines[4]->Add(std::make_shared<KeyButton>("space", "space", this, KEY_SIZE_2, KEY_SIZE_1));
-  lines[4]->Add(std::make_shared<KeyButton>("back", "back", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton("space", "space", this, KEY_SIZE_2, KEY_SIZE_1));
+  lines[4]->Add(new KeyButton("back", "back", this, KEY_SIZE_2, KEY_SIZE_1));
 
   lines[0]->GetComponents()[0]->RequestFocus();
 }
 
-void KeyboardDialog::ProcessCaps(std::shared_ptr<Button> button)
+void KeyboardDialog::ProcessCaps(Button *button)
 {
   SetIgnoreRepaint(true);
 
-  std::vector<std::shared_ptr<Component>> components;
+  std::vector<Component *> components;
 
-  GetInternalComponents(GetSharedPointer<Container>(), &components);
+  GetInternalComponents(this, components);
 
-  for (std::vector<std::shared_ptr<Component>>::iterator i=components.begin(); i!=components.end(); i++) {
-    std::shared_ptr<KeyButton> btn = std::dynamic_pointer_cast<KeyButton>(*i);
+  for (std::vector<Component *>::iterator i=components.begin(); i!=components.end(); i++) {
+    KeyButton *btn = dynamic_cast<KeyButton *>(*i);
 
     if (btn != nullptr) {
       std::string name = btn->GetName();

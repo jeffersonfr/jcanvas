@@ -367,8 +367,6 @@ static void InternalPaint()
 
   g->Flush();
 
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
   cairo_surface_t 
     *cairo_surface = g->GetCairoSurface();
 
@@ -436,6 +434,8 @@ void Application::Loop()
     if (sg_repaint.exchange(false) == true) {
       InternalPaint();
     }
+
+    Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
 
     while ((event = xcb_poll_for_event(sg_xcb_connection))) {
     // while (e = xcb_wait_for_event(sg_xcb_connection)) {
@@ -533,8 +533,6 @@ void Application::Loop()
 
       xcb_flush(sg_xcb_connection);
     }
-
-    std::this_thread::yield();
   }
 
   sg_jcanvas_window->SetVisible(false);

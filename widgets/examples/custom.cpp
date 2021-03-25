@@ -89,6 +89,11 @@ class CustomContainer : public Container {
 
 class App : public Frame {
 
+  private:
+      CustomContainer container1 {100, 100, 400, 400};
+			CustomContainer container2 {100, 100, 400, 400};
+      Button button1 {"Testing Clipping"};
+
 	public:
 		App(std::string title, int w, int h):
 			Frame(/*title, */ {w, h})
@@ -101,17 +106,12 @@ class App : public Frame {
 
     void Init()
     {
-      auto button1 = std::make_shared<Button>("Testing Clipping");
+			button1.SetBounds({200, 100, 300, 100});
 
-			button1->SetBounds({200, 100, 300, 100});
+			container2.Add(&button1);
+			container1.Add(&container2);
 
-      auto container1 = std::make_shared<CustomContainer>(100, 100, 400, 400);
-			auto container2 = std::make_shared<CustomContainer>(100, 100, 400, 400);
-
-			container2->Add(button1);
-			container1->Add(container2);
-
-			Add(container1);
+			Add(&container1);
 		}
 
 };

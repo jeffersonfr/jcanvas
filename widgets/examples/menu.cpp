@@ -245,7 +245,7 @@ class MenuManager : public Component {
 class App : public Frame {
 
   private:
-    std::shared_ptr<MenuManager> _manager = std::make_shared<MenuManager>();
+    MenuManager *_manager = new MenuManager();
     Menu _menu;
 
   public:
@@ -256,6 +256,7 @@ class App : public Frame {
 
     virtual ~App()
     {
+      delete _manager;
     }
 
     void Init()

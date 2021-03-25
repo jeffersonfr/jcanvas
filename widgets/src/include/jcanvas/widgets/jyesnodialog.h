@@ -43,32 +43,26 @@ class YesNoDialog : public Dialog, public ActionListener {
 
   private:
     /** \brief */
-    std::shared_ptr<Text> _label;
+    Container _container;
     /** \brief */
-    std::shared_ptr<Button> _yes;
+    Text _label;
     /** \brief */
-    std::shared_ptr<Button> _no;
+    Button _yes {"Yes"};
     /** \brief */
-    std::shared_ptr<Container> _buttons_container;
+    Button _no {"No"};
 
   public:
     /**
      * \brief
      *
      */
-    YesNoDialog(std::shared_ptr<Container> parent, std::string title, std::string msg);
+    YesNoDialog(Container *parent, std::string title, std::string msg);
     
     /**
      * \brief
      *
      */
     virtual ~YesNoDialog();
-
-    /**
-     * \brief
-     *
-     */
-    virtual void Init();
 
     /**
      * \brief

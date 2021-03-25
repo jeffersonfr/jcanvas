@@ -36,7 +36,7 @@ class Display : public Component {
           _draw;
 
 		public:
-				Display(int x, int y, int width, int height);
+				Display();
 				virtual ~Display();
 
 				void SetText(std::string text);
@@ -47,8 +47,7 @@ class Display : public Component {
 
 };
 
-Display::Display(int x, int y, int width, int height):
- 	Component({x, y, width, height})
+Display::Display()
 {
   SetPreferredSize({0, 64});
 
@@ -110,9 +109,30 @@ void Display::Clear()
 class App : public Frame, public ActionListener {
 
 		private:
-			std::list<std::shared_ptr<Button>> _buttons;
-      std::shared_ptr<Container> _container;
-      std::shared_ptr<Display> _display;
+			std::list<Button *> _buttons {
+        new Button("7"),
+        new Button("8"),
+        new Button("9"),
+        new Button("/"),
+        new Button("C"),
+        new Button("4"),
+        new Button("5"),
+        new Button("6"),
+        new Button("x"),
+        new Button("raiz"),
+        new Button("1"),
+        new Button("2"),
+        new Button("3"),
+        new Button("-"),
+        new Button("del"),
+        new Button("0"),
+        new Button("."),
+        new Button("%"),
+        new Button("+"),
+        new Button("=")
+      };
+      Container _container;
+      Display _display;
 			std::string _number0;
 			std::string _number1;
 			std::string _operation;
@@ -138,7 +158,9 @@ App::App():
 
 App::~App() 
 {
-  RemoveAll();
+	for (auto cmp : _buttons) {
+    delete cmp;
+  }
 }
 
 void App::Init()
@@ -148,57 +170,28 @@ void App::Init()
 	_operation = -1;
 	_state = 1;
 
-	_display = std::make_shared<Display>(0, 0, 0, 0);
-
-	_display->Clear();
-
-  std::shared_ptr<Button> b[] = { 
-		std::make_shared<Button>("7"),
-		std::make_shared<Button>("8"),
-		std::make_shared<Button>("9"),
-		std::make_shared<Button>("/"),
-		std::make_shared<Button>("C"),
-		std::make_shared<Button>("4"),
-		std::make_shared<Button>("5"),
-		std::make_shared<Button>("6"),
-		std::make_shared<Button>("x"),
-		std::make_shared<Button>("raiz"),
-		std::make_shared<Button>("1"),
-		std::make_shared<Button>("2"),
-		std::make_shared<Button>("3"),
-		std::make_shared<Button>("-"),
-		std::make_shared<Button>("del"),
-		std::make_shared<Button>("0"),
-		std::make_shared<Button>("."),
-		std::make_shared<Button>("%"),
-		std::make_shared<Button>("+"),
-		std::make_shared<Button>("=")
-	};
-
 	SetLayout<BorderLayout>();
 
-	Add(_display, jborderlayout_align_t::North);
+	_display.Clear();
 
-	_container = std::make_shared<Container>();
+	Add(&_display, jborderlayout_align_t::North);
 
-	_container->SetLayout<GridLayout>(4, 5, 2, 2);
+	_container.SetLayout<GridLayout>(4, 5, 2, 2);
 
-	for (int i=0; i<20; i++) {
-		_buttons.push_back(b[i]);
+	for (auto cmp : _buttons) {
+		cmp->RegisterActionListener(this);
 
-		b[i]->RegisterActionListener(this);
-
-		_container->Add(b[i]);
+		_container.Add(cmp);
 	}
 
-	Add(_container, jborderlayout_align_t::Center);
+	Add(&_container, jborderlayout_align_t::Center);
 
-	b[10]->RequestFocus();
+  _buttons.front()->RequestFocus();
 }
 
 void App::Process(std::string type)
 {
-  std::shared_ptr<Button> button = GetFocusOwner()->GetSharedPointer<Button>();
+  Button *button = dynamic_cast<Button *>(GetFocusOwner());
 
   std::string text = button->GetText();
 
@@ -287,7 +280,7 @@ void App::Process(std::string type)
 		}
 
 		if (_state == 3 || _state == 6) {
-			_display->SetOperation(text);
+			_display.SetOperation(text);
 		}
 	} else if (type == "raiz") {
 		if (_state == 2 || _state == 3 || _state == 4 || _state == 5 || _state == 6 || _state == 7) {
@@ -303,7 +296,7 @@ void App::Process(std::string type)
 
 			if (a1 < 0) {
 				_state = 255;
-				_display->SetText("Erro");
+				_display.SetText("Erro");
 
 				return;
 			}
@@ -342,7 +335,7 @@ void App::Process(std::string type)
 			_number0 = zeros;
 		}
 	} else if (type == "=") {
-		_display->SetOperation("");
+		_display.SetOperation("");
 
 		if (_state == 4) {
 			_state = 5;
@@ -356,7 +349,7 @@ void App::Process(std::string type)
 				if (a2 == 0) {
 					_state = 255;
 
-					_display->SetText("Erro");
+					_display.SetText("Erro");
 				} else {
 					a1 /= a2;
 				}
@@ -414,7 +407,7 @@ void App::Process(std::string type)
 				if (a2 == 0) {
 					_state = 255;
 
-					_display->SetText("Erro");
+					_display.SetText("Erro");
 				} else {
 					a1 /= a2;
 				}
@@ -541,7 +534,7 @@ bool App::KeyPressed(KeyEvent *event)
 	}
 
 	if (_state == 1) {
-		_display->Clear();
+		_display.Clear();
 	} else if (_state == 2 || _state == 3 || _state == 5 || _state == 7) {
 		char 
       *tmp = strdup(_number0.c_str()),
@@ -557,28 +550,28 @@ bool App::KeyPressed(KeyEvent *event)
 					tmp[9] = '\0';
 
 					_number0 = tmp;
-					_display->SetText(_number0);
+					_display.SetText(_number0);
 				} else {
 					_state = 255;
-					_display->SetText("Erro");
+					_display.SetText("Erro");
 				}
 			} else {
 				_state = 255;
-				_display->SetText("Erro");
+				_display.SetText("Erro");
 			}
 		} else {
-			_display->SetText(_number0);
+			_display.SetText(_number0);
 		}
 
 		if (_state == 3) {
 			if (_operation == "+") {
-				_display->SetOperation("+");
+				_display.SetOperation("+");
 			} else if (_operation == "-") {
-				_display->SetOperation("-");
+				_display.SetOperation("-");
 			} else if (_operation == "x") {
-				_display->SetOperation("x");
+				_display.SetOperation("x");
 			} else if (_operation == "/") {
-				_display->SetOperation("/");
+				_display.SetOperation("/");
 			}
 		}
 
@@ -596,17 +589,17 @@ bool App::KeyPressed(KeyEvent *event)
 					tmp[9] = '\0';
 
 					_number1 = tmp;
-					_display->SetText(_number1);
+					_display.SetText(_number1);
 				} else {
 					_state = 255;
-					_display->SetText("Erro");
+					_display.SetText("Erro");
 				}
 			} else {
 				_state = 255;
-				_display->SetText("Erro");
+				_display.SetText("Erro");
 			}
 		} else {
-			_display->SetText(_number1);
+			_display.SetText(_number1);
 		}
 
 		free(tmp);
@@ -622,7 +615,7 @@ void App::ActionPerformed(ActionEvent *event)
 	Process(button->GetText());
 
 	if (_state == 1) {
-		_display->Clear();
+		_display.Clear();
 	} else if (_state == 2 || _state == 3 || _state == 5 || _state == 7) {
 		char 
       *tmp = strdup(_number0.c_str()),
@@ -638,28 +631,28 @@ void App::ActionPerformed(ActionEvent *event)
 					tmp[9] = '\0';
 
 					_number0 = tmp;
-					_display->SetText(_number0);
+					_display.SetText(_number0);
 				} else {
 					_state = 255;
-					_display->SetText("Erro");
+					_display.SetText("Erro");
 				}
 			} else {
 				_state = 255;
-				_display->SetText("Erro");
+				_display.SetText("Erro");
 			}
 		} else {
-			_display->SetText(_number0);
+			_display.SetText(_number0);
 		}
 
 		if (_state == 3) {
 			if (_operation == "+") {
-				_display->SetOperation("+");
+				_display.SetOperation("+");
 			} else if (_operation == "-") {
-				_display->SetOperation("-");
+				_display.SetOperation("-");
 			} else if (_operation == "x") {
-				_display->SetOperation("x");
+				_display.SetOperation("x");
 			} else if (_operation == "/") {
-				_display->SetOperation("/");
+				_display.SetOperation("/");
 			}
 		}
 
@@ -677,17 +670,17 @@ void App::ActionPerformed(ActionEvent *event)
 					tmp[9] = '\0';
 
 					_number1 = tmp;
-					_display->SetText(_number1);
+					_display.SetText(_number1);
 				} else {
 					_state = 255;
-					_display->SetText("Erro");
+					_display.SetText("Erro");
 				}
 			} else {
 				_state = 255;
-				_display->SetText("Erro");
+				_display.SetText("Erro");
 			}
 		} else {
-			_display->SetText(_number1);
+			_display.SetText(_number1);
 		}
 
 		free(tmp);

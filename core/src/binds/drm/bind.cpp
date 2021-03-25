@@ -663,8 +663,6 @@ static void InternalPaint()
   
   g->Flush();
   
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
   dev->front_buf ^= 1;
 
   sg_pending = true;
@@ -715,6 +713,8 @@ void Application::Loop()
     if (sg_repaint.exchange(false) == true) {
       InternalPaint();
     }
+  
+    Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
     
     if (read(fdk, &ev, sizeof ev) == sizeof(ev)) {
       if (ev.type == EV_KEY) {

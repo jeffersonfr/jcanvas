@@ -372,8 +372,6 @@ static void InternalPaint()
 
   g->Flush();
 
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
   uint8_t *data = sg_back_buffer->LockData();
 
 	sf::Texture texture;
@@ -422,14 +420,16 @@ void Application::Loop()
   std::lock_guard<std::mutex> lock(sg_loop_mutex);
 
 	sf::Event event;
-  
+
 	while (sg_quitting == false && sg_window->isOpen() == true) {
     if (sg_repaint.exchange(false) == true) {
       InternalPaint();
     }
 
-		// while (window->waitEvent(event)) {
-		while (sg_window->pollEvent(event)) {
+    Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
+
+		// while (sg_window->waitEvent(event)) {
+	  while (sg_window->pollEvent(event)) {
       if (event.type == sf::Event::MouseEntered) {
         // SetCursor(GetCursor());
 
@@ -550,8 +550,6 @@ void Application::Loop()
         sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Closed));
       }
 		}
-
-    std::this_thread::yield();
   }
   
   sg_jcanvas_window->SetVisible(false);

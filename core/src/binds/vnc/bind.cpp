@@ -355,8 +355,6 @@ static void InternalPaint()
 
   g->Flush();
 
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
 	int size = bounds.size.x*bounds.size.y;
 	uint8_t *src = sg_back_buffer->LockData();
 	uint8_t *dst = (uint8_t *)sg_server->frameBuffer;
@@ -391,9 +389,9 @@ void Application::Loop()
       InternalPaint();
     }
 
-    rfbProcessEvents(sg_server, 1000000/100);
+    Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
 
-    std::this_thread::yield();
+    rfbProcessEvents(sg_server, 1000000/100);
   }
 
   /*

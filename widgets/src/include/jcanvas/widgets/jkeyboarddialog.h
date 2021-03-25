@@ -22,7 +22,7 @@
 
 #include "jcanvas/widgets/jdialog.h"
 #include "jcanvas/widgets/jbutton.h"
-#include "jcanvas/widgets/jtextcomponent.h"
+#include "jcanvas/widgets/jtext.h"
 #include "jcanvas/widgets/jactionlistener.h"
 #include "jcanvas/widgets/jtextlistener.h"
 #include "jcanvas/core/jkeylistener.h"
@@ -48,8 +48,6 @@ enum class jkeyboard_type_t {
   Internet
 };
 
-class TextArea;
-
 /**
  * \brief
  *
@@ -63,7 +61,7 @@ class KeyboardDialog : public Dialog, public ActionListener {
     /** \brief */
     std::mutex _key_listeners_mutex;
     /** \brief */
-    std::shared_ptr<TextArea> _display;
+    Text *_display;
     /** \brief */
     std::string _text;
     /** \brief */
@@ -112,7 +110,7 @@ class KeyboardDialog : public Dialog, public ActionListener {
      * \brief
      *
      */
-    virtual void ProcessCaps(std::shared_ptr<Button> button);
+    virtual void ProcessCaps(Button *button);
     
     /**
      * \brief
@@ -125,7 +123,7 @@ class KeyboardDialog : public Dialog, public ActionListener {
      * \brief
      *
      */
-    KeyboardDialog(std::shared_ptr<Container> parent, jkeyboard_type_t type, bool text_visible = true, bool is_password = false);
+    KeyboardDialog(Container *parent, jkeyboard_type_t type, bool text_visible = true, bool is_password = false);
     
     /**
      * \brief
@@ -137,13 +135,7 @@ class KeyboardDialog : public Dialog, public ActionListener {
      * \brief
      *
      */
-    virtual void Init();
-    
-    /**
-     * \brief
-     *
-     */
-    virtual std::shared_ptr<TextComponent> GetTextComponent();
+    virtual TextComponent * GetTextComponent();
     
     /**
      * \brief

@@ -405,8 +405,6 @@ static void InternalPaint()
 
   g->Flush();
 
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
   uint32_t *data = (uint32_t *)sg_back_buffer->LockData();
 
   GLuint texture;
@@ -481,6 +479,8 @@ void Application::Loop()
     if (sg_repaint.exchange(false) == true) {
       InternalPaint();
     }
+  
+    Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
 
     while ((event = xcb_poll_for_event(sg_xcb_connection))) {
     // while (e = xcb_wait_for_event(sg_xcb_connection)) {

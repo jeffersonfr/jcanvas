@@ -24,11 +24,6 @@
 
 namespace jcanvas {
 
-Button::Button(std::string text):
-  Button(text, nullptr)
-{
-}
-
 Button::Button(std::string text, std::shared_ptr<Image> image):
   Component()
 {

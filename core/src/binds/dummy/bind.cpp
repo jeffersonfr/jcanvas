@@ -82,8 +82,6 @@ static void InternalPaint()
 
   g->Flush();
 
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
   sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Painted));
 }
 
@@ -100,7 +98,7 @@ void Application::Loop()
       InternalPaint();
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
   }
 
   sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Closed));

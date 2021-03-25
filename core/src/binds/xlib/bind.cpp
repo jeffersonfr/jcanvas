@@ -408,8 +408,6 @@ static void InternalPaint()
 
   g->Flush();
 
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
-
   uint32_t *data = (uint32_t *)sg_back_buffer->LockData();
 
 	int 
@@ -482,6 +480,8 @@ void Application::Loop()
       InternalPaint();
     }
 
+    Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
+
     while (XCheckIfEvent(sg_display, &event, &check_x11_event, reinterpret_cast<XPointer>(sg_window))) {
       if (event.type == DestroyNotify) {
         sg_quitting = true;
@@ -534,8 +534,6 @@ void Application::Loop()
             // KeyRelease event + key down = repeated event --> discard
             if (event.type == KeyRelease) {
               sg_lastsg_key_release_event = event;
-
-              std::this_thread::yield();
             }
 
             // KeyPress event + key repeat disabled + matching KeyRelease event = repeated event --> discard
@@ -642,8 +640,6 @@ void Application::Loop()
         sg_jcanvas_window->GetEventManager().PostEvent(new MouseEvent(sg_jcanvas_window, type, button, buttons, {sg_mouse_x, sg_mouse_y}, mouse_z));
       }
     }
-
-    std::this_thread::yield();
   }
 
   sg_jcanvas_window->SetVisible(false);

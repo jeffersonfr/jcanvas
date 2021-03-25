@@ -27,7 +27,7 @@
 
 namespace jcanvas {
 
-FileChooserDialog::FileChooserDialog(std::shared_ptr<Container> parent, std::string title, std::string directory, jfilechooser_type_t type, jfilechooser_filter_t filter):
+FileChooserDialog::FileChooserDialog(Container *parent, std::string title, std::string directory, jfilechooser_type_t type, jfilechooser_filter_t filter):
   Dialog(title, parent, {0, 0, 720, 480})
 {
   _file = NULL;
@@ -38,24 +38,15 @@ FileChooserDialog::FileChooserDialog(std::shared_ptr<Container> parent, std::str
 
   _image_file = std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/file.png");
   _image_folder = std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/folder.png");
-
-}
-
-FileChooserDialog::~FileChooserDialog()
-{
-  _list->RemoveSelectListener(this);
-}
-
-void FileChooserDialog::Init()
-{
+  
   if (_type == jfilechooser_type_t::SaveFile) {
-    _list = std::make_shared<ListBox>();
-    _file = std::make_shared<TextField>();
+    _list = new ListBox();
+    _file = new Text();
 
     Add(_file, jborderlayout_align_t::North);
     Add(_list, jborderlayout_align_t::Center);
   } else {
-    _list = std::make_shared<ListBox>();
+    _list = new ListBox();
   
     Add(_list, jborderlayout_align_t::Center);
   }
@@ -64,6 +55,12 @@ void FileChooserDialog::Init()
   _list->RequestFocus();
 
   ShowFiles(_directory);
+}
+
+FileChooserDialog::~FileChooserDialog()
+{
+  delete _list;
+  delete _file;
 }
 
 std::string FileChooserDialog::GetPath()

@@ -23,46 +23,40 @@
 
 namespace jcanvas {
 
-ToastDialog::ToastDialog(std::shared_ptr<Container> parent, std::string msg, bool wrap):
+ToastDialog::ToastDialog(Container *parent, std::string msg, bool wrap):
   Dialog(parent, {0, 0, 560, 280})
 {
-  _label = std::make_shared<Text>();
+  _label.SetText(msg);
+  _label.SetEditable(false);
+  _label.SetHorizontalAlign(jhorizontal_align_t::Left);
+  
+  _timeout = 0;
 
-  _label->SetText(msg);
-
-  _label->SetWrap(true);
-  _label->SetHorizontalAlign(jhorizontal_align_t::Left);
+  Add(&_label, jborderlayout_align_t::Center);
 }
 
 ToastDialog::~ToastDialog() 
 {
 }
 
-void ToastDialog::Init()
-{
-  Add(_label, jborderlayout_align_t::Center);
-
-  _timeout = 0;
-}
-
 void ToastDialog::SetHorizontalAlign(jhorizontal_align_t align)
 {
-  _label->SetHorizontalAlign(align);
+  _label.SetHorizontalAlign(align);
 }
 
 jhorizontal_align_t ToastDialog::GetHorizontalAlign()
 {
-  return _label->GetHorizontalAlign();
+  return _label.GetHorizontalAlign();
 }
 
 void ToastDialog::SetVerticalAlign(jvertical_align_t align)
 {
-  _label->SetVerticalAlign(align);
+  _label.SetVerticalAlign(align);
 }
 
 jvertical_align_t ToastDialog::GetVerticalAlign()
 {
-  return _label->GetVerticalAlign();
+  return _label.GetVerticalAlign();
 }
 
 void ToastDialog::Exec(bool modal)

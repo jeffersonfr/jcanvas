@@ -570,8 +570,6 @@ void Application::Loop()
     }
 
     sg_application->processEvents();
-
-    std::this_thread::yield();
   } while (sg_quitting == false);
 
   sg_jcanvas_window->SetVisible(false);

@@ -21,57 +21,49 @@
 
 namespace jcanvas {
 
-MessageDialog::MessageDialog(std::shared_ptr<Container> parent, std::string title, std::string msg):
+MessageDialog::MessageDialog(Container *parent, std::string title, std::string msg):
   Dialog(title, parent, {0, 0, 560, 280})
 {
-  _label = std::make_shared<Text>("Message");
-  _ok = std::make_shared<Button>("Ok");
+  _label.SetText(msg);
+  _label.SetEditable(false);
+  _label.SetHorizontalAlign(jhorizontal_align_t::Left);
 
-  _label->SetText(msg);
-  _label->SetWrap(true);
-  _label->SetHorizontalAlign(jhorizontal_align_t::Left);
-
-  _ok->RegisterActionListener(this);
+  _ok.RegisterActionListener(this);
   
-  _buttons_container = std::make_shared<Container>();
+  auto layout = _container.SetLayout<FlowLayout>();
 
-  std::shared_ptr<FlowLayout> layout = _buttons_container->SetLayout<FlowLayout>();
+  _container.Add(&_ok);
 
-  _buttons_container->Add(_ok);
+  _container.SetPreferredSize(layout->GetPreferredLayoutSize(&_container));
+  
+  Add(&_label, jborderlayout_align_t::Center);
+  Add(&_container, jborderlayout_align_t::South);
 
-  _buttons_container->SetPreferredSize(layout->GetPreferredLayoutSize(_buttons_container));
+  _ok.RequestFocus();
 }
 
 MessageDialog::~MessageDialog() 
 {
 }
 
-void MessageDialog::Init()
-{
-  Add(_label, jborderlayout_align_t::Center);
-  Add(_buttons_container, jborderlayout_align_t::South);
-
-  _ok->RequestFocus();
-}
-
 void MessageDialog::SetHorizontalAlign(jhorizontal_align_t align)
 {
-  _label->SetHorizontalAlign(align);
+  _label.SetHorizontalAlign(align);
 }
 
 jhorizontal_align_t MessageDialog::GetHorizontalAlign()
 {
-  return _label->GetHorizontalAlign();
+  return _label.GetHorizontalAlign();
 }
 
 void MessageDialog::SetVerticalAlign(jvertical_align_t align)
 {
-  _label->SetVerticalAlign(align);
+  _label.SetVerticalAlign(align);
 }
 
 jvertical_align_t MessageDialog::GetVerticalAlign()
 {
-  return _label->GetVerticalAlign();
+  return _label.GetVerticalAlign();
 }
 
 void MessageDialog::ActionPerformed(ActionEvent *event)

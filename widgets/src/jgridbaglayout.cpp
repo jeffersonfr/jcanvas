@@ -42,11 +42,6 @@ GridBagLayout::GridBagLayout():
 GridBagLayout::~GridBagLayout()
 {
   if (layoutInfo != nullptr) {
-    delete [] layoutInfo->weightX;
-    delete [] layoutInfo->weightY;
-    delete [] layoutInfo->minWidth;
-    delete [] layoutInfo->minHeight;
-    
     delete layoutInfo;
   }
 
@@ -57,35 +52,45 @@ GridBagLayout::~GridBagLayout()
 
     comptable.erase(comptable.begin());
   }
+
+  delete defaultConstraints;
 }
 
-jpoint_t<int> GridBagLayout::GetMinimumLayoutSize(std::shared_ptr<Container> parent)
+jpoint_t<int> GridBagLayout::GetMinimumLayoutSize(Container *parent)
 {
   GridBagLayoutInfo *info = GetLayoutInfo(parent, jgridbaglayout_style_t::MinSize);
 
-  return GetMinSize(parent, info);
+  jpoint_t<int> result = GetMinSize(parent, info);
+
+  delete info;
+
+  return result;
 }
 
-jpoint_t<int> GridBagLayout::GetMaximumLayoutSize(std::shared_ptr<Container> parent)
+jpoint_t<int> GridBagLayout::GetMaximumLayoutSize(Container *parent)
 {
   jpoint_t<int> t = {INT_MAX, INT_MAX};
 
   return t;
 }
 
-jpoint_t<int> GridBagLayout::GetPreferredLayoutSize(std::shared_ptr<Container> parent)
+jpoint_t<int> GridBagLayout::GetPreferredLayoutSize(Container *parent)
 {
   GridBagLayoutInfo *info = GetLayoutInfo(parent, jgridbaglayout_style_t::PreferredSize);
 
-  return GetMinSize(parent, info);
+  jpoint_t<int> result = GetMinSize(parent, info);
+
+  delete info;
+
+  return result;
 }
 
-void GridBagLayout::DoLayout(std::shared_ptr<Container> parent)
+void GridBagLayout::DoLayout(Container *parent)
 {
   ArrangeGrid(parent);
 }
 
-void GridBagLayout::SetConstraints(std::shared_ptr<Component> comp, GridBagConstraints *constraints) 
+void GridBagLayout::SetConstraints(Component *comp, GridBagConstraints *constraints) 
 {
   GridBagConstraints *c = new GridBagConstraints();
 
@@ -94,9 +99,9 @@ void GridBagLayout::SetConstraints(std::shared_ptr<Component> comp, GridBagConst
   comptable[comp] = c;
 }
 
-GridBagConstraints * GridBagLayout::GetConstraints(std::shared_ptr<Component> comp) 
+GridBagConstraints * GridBagLayout::GetConstraints(Component *comp) 
 {
-  std::map<std::shared_ptr<Component>, GridBagConstraints *>::iterator i=comptable.find(comp);
+  std::map<Component *, GridBagConstraints *>::iterator i=comptable.find(comp);
 
   if (i == comptable.end()) {
     SetConstraints(comp, defaultConstraints);
@@ -111,9 +116,9 @@ GridBagConstraints * GridBagLayout::GetConstraints(std::shared_ptr<Component> co
   return c;
 }
 
-GridBagConstraints * GridBagLayout::LookupConstraints(std::shared_ptr<Component> comp) 
+GridBagConstraints * GridBagLayout::LookupConstraints(Component *comp) 
 {
-  std::map<std::shared_ptr<Component>, GridBagConstraints *>::iterator i=comptable.find(comp);
+  std::map<Component *, GridBagConstraints *>::iterator i=comptable.find(comp);
 
   if (i == comptable.end()) {
     SetConstraints(comp, defaultConstraints);
@@ -124,7 +129,7 @@ GridBagConstraints * GridBagLayout::LookupConstraints(std::shared_ptr<Component>
   return i->second;
 }
 
-void GridBagLayout::RemoveConstraints(std::shared_ptr<Component> comp) 
+void GridBagLayout::RemoveConstraints(Component *comp) 
 {
   comptable.erase(comp);
 }
@@ -139,22 +144,22 @@ jpoint_t<int> GridBagLayout::GetLayoutOrigin ()
   return origin;
 }
 
-void GridBagLayout::AddLayoutComponent(std::shared_ptr<Component> comp, GridBagConstraints *constraints)
+void GridBagLayout::AddLayoutComponent(Component *comp, GridBagConstraints *constraints)
 {
   SetConstraints(comp, constraints);
 }
 
-void GridBagLayout::RemoveLayoutComponent(std::shared_ptr<Component> comp) 
+void GridBagLayout::RemoveLayoutComponent(Component *comp) 
 {
   RemoveConstraints(comp);
 }
 
-jpoint_t<int> GridBagLayout::PreInitMaximumArraySizes(std::shared_ptr<Container> parent)
+jpoint_t<int> GridBagLayout::PreInitMaximumArraySizes(Container *parent)
 {
-  const std::vector<std::shared_ptr<Component>> 
+  const std::vector<Component *> 
     &components = parent->GetComponents();
-  std::shared_ptr<Component>
-    comp;
+  Component
+    *comp = nullptr;
   GridBagConstraints 
     *constraints = nullptr;
   jpoint_t<int>
@@ -215,13 +220,13 @@ jpoint_t<int> GridBagLayout::PreInitMaximumArraySizes(std::shared_ptr<Container>
   return returnPoint;
 } 
 
-GridBagLayoutInfo * GridBagLayout::GetLayoutInfo(std::shared_ptr<Container> parent, jgridbaglayout_style_t sizeflag) 
+GridBagLayoutInfo * GridBagLayout::GetLayoutInfo(Container *parent, jgridbaglayout_style_t sizeflag) 
 {
-  const std::vector<std::shared_ptr<Component>> &components = parent->GetComponents();
+  const std::vector<Component *> &components = parent->GetComponents();
 
   // WARN:: sync parent
   GridBagLayoutInfo *r;
-  std::shared_ptr<Component> comp;
+  Component *comp = nullptr;
   GridBagConstraints *constraints;
   jpoint_t<int> d;
   // Code below will address index curX+curWidth in the case of yMaxArray, weightY
@@ -371,8 +376,9 @@ GridBagLayoutInfo * GridBagLayout::GetLayoutInfo(std::shared_ptr<Container> pare
 
   curRow = curCol = -1;
 
-  int *maxAscent = nullptr,
-      *maxDescent = nullptr;
+  int 
+    *maxAscent = nullptr,
+    *maxDescent = nullptr;
   short *baselineType = nullptr;
 
   if (hasBaseline) {
@@ -522,19 +528,23 @@ GridBagLayoutInfo * GridBagLayout::GetLayoutInfo(std::shared_ptr<Container> pare
   }
 
   if (r->weightX != nullptr) {
-    delete r->weightX;
+    delete [] r->weightX;
+    r->weightX = nullptr;
   }
 
   if (r->weightY != nullptr) {
-    delete r->weightY;
+    delete [] r->weightY;
+    r->weightY = nullptr;
   }
 
   if (r->minWidth != nullptr) {
-    delete r->minWidth;
+    delete [] r->minWidth;
+    r->minWidth = nullptr;
   }
 
   if (r->minHeight != nullptr) {
-    delete r->minHeight;
+    delete [] r->minHeight;
+    r->minHeight = nullptr;
   }
 
   r->weightX = new double[maximumArrayYIndex];
@@ -743,7 +753,7 @@ GridBagLayoutInfo * GridBagLayout::GetLayoutInfo(std::shared_ptr<Container> pare
   return r;
 } 
 
-bool GridBagLayout::CalculateBaseline(std::shared_ptr<Component> c, GridBagConstraints *constraints, jpoint_t<int> size) 
+bool GridBagLayout::CalculateBaseline(Component *c, GridBagConstraints *constraints, jpoint_t<int> size) 
 {
   int anchor = constraints->anchor;
 
@@ -1122,7 +1132,7 @@ void GridBagLayout::CenterVertically(GridBagConstraints *cons, jrect_t<int> *r, 
   }
 }
 
-jpoint_t<int> GridBagLayout::GetMinSize(std::shared_ptr<Container> parent, GridBagLayoutInfo *info) 
+jpoint_t<int> GridBagLayout::GetMinSize(Container *parent, GridBagLayoutInfo *info) 
 {
   jpoint_t<int> d = {0, 0};
   int i, t;
@@ -1143,13 +1153,13 @@ jpoint_t<int> GridBagLayout::GetMinSize(std::shared_ptr<Container> parent, GridB
   return d;
 }
 
-void GridBagLayout::ArrangeGrid(std::shared_ptr<Container> parent) 
+void GridBagLayout::ArrangeGrid(Container *parent) 
 {
-  const std::vector<std::shared_ptr<Component>> &components = parent->GetComponents();
+  const std::vector<Component *> &components = parent->GetComponents();
 
-  std::shared_ptr<Component> comp;
-  GridBagConstraints *constraints;
-  GridBagLayoutInfo *info;
+  Component *comp = nullptr;
+  GridBagConstraints *constraints = nullptr;
+  GridBagLayoutInfo *info = nullptr;
   jinsets_t insets = parent->GetInsets();
   jrect_t<int> r = {0, 0};
   jpoint_t<int> d;
@@ -1171,11 +1181,6 @@ void GridBagLayout::ArrangeGrid(std::shared_ptr<Container> parent)
   d = GetMinSize(parent, info);
 
   if (size.x < d.x || size.y < d.y) {
-    delete [] info->weightX;
-    delete [] info->weightY;
-    delete [] info->minWidth;
-    delete [] info->minHeight;
-    
     delete info;
 
     info = GetLayoutInfo(parent, jgridbaglayout_style_t::MinSize);

@@ -261,7 +261,8 @@ void Application::Init(int argc, char **argv)
     exit(-1);
   }
 
-  dp = caca_create_display_with_driver(cv, nullptr); //"ncurses");
+  dp = caca_create_display_with_driver(cv, nullptr); // x11
+  // dp = caca_create_display_with_driver(cv, "ncurses"); // console
 
   if (dp == nullptr) {
     cucul_free_canvas(cv);
@@ -321,8 +322,6 @@ static void InternalPaint()
   sg_jcanvas_window->Paint(g);
   
   g->Flush();
-
-  Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
 
 	int iw = cucul_get_canvas_width(cv);
 	int ih = cucul_get_canvas_height(cv);
@@ -384,6 +383,8 @@ void Application::Loop()
     if (sg_repaint.exchange(false) == true) {
       InternalPaint();
     }
+
+    Application::FrameRate(sg_jcanvas_window->GetFramesPerSecond());
 
     while (caca_get_event(dp, CACA_EVENT_ANY, &cev, 0) > 0) {
       caca_event_type mtype = caca_get_event_type(&cev);

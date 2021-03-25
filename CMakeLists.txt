@@ -10,9 +10,9 @@ option(EXAMPLES "Enable examples" OFF)
 option(SANITIZE "Enable sanitize" OFF)
 option(COVERAGE "Enable coverage" OFF)
 option(PROFILE "Enable profile" OFF)
+option(DEBUG "Enable debug" OFF)
 
 set(CMAKE_CXX_STANDARD 17)
-#set(CMAKE_CXX_FLAGS "-std=c++20 -g -ggdb")
 
 set(GRAPHIC_BIND "sdl2" CACHE STRING "Default graphic bind")
 set_property(CACHE GRAPHIC_BIND PROPERTY STRINGS 
@@ -39,6 +39,10 @@ if (PROFILE)
   set(CMAKE_EXE_LINKER_FLAGS 
     "${CMAKE_EXE_LINKER_FLAGS} -pg"
   )
+endif()
+
+if (DEBUG)
+  set(CMAKE_CXX_FLAGS "-g -ggdb")
 endif()
 
 add_definitions (-DJCANVAS_RESOURCES_DIR=\"${CMAKE_INSTALL_PREFIX}/share/jcanvas\")
