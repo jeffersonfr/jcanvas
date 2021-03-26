@@ -76,8 +76,8 @@ class Layouts : public Frame, public ActionListener {
 
       jtheme_t theme = GetTheme();
 
-			theme.bg.normal = 0xff404090;
-			theme.fg.normal = 0xff000000;
+			theme.bg.normal = jcolor_t {0xff404090};
+			theme.fg.normal = jcolor_t {0xff000000};
 			
 #define LAYOUT(id) \
         auto b = new RectangleContainer(); \

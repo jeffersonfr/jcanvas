@@ -20,9 +20,7 @@
 #ifndef J_TEXT_H
 #define J_TEXT_H
 
-#include "jcanvas/core/japplication.h"
-#include "jcanvas/widgets/jframe.h"
-#include "jcanvas/widgets/jbutton.h"
+#include "jcanvas/widgets/jcontainer.h"
 #include "jcanvas/widgets/jflowlayout.h"
 #include "jcanvas/widgets/jtextlistener.h"
 #include "jcanvas/widgets/jnulllayout.h"

@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "jcanvas/widgets/jtext.h"
+#include "jcanvas/widgets/jgridlayout.h"
 
 namespace jcanvas {
 
@@ -84,23 +85,19 @@ void GenericChar::Paint(jcanvas::Graphics *g)
     g->SetColor(theme.bg.select);
   }
 
-  if (IsEnabled() == false) {
-    g->SetColor(theme.bg.disable);
-  }
-
   g->FillRectangle({0, 0, GetSize()});
-
-  g->SetColor(theme.fg.normal);
-
-  if (IsEnabled() == false) {
-    g->SetColor(theme.fg.disable);
-  }
 
   if (mChar >= 0x20) { // greater than space
     char ch = mChar;
 
     if (mParent->GetEchoChar() > 0) {
       ch = mParent->GetEchoChar();
+    }
+
+    g->SetColor(theme.fg.normal);
+
+    if (IsSelected() == true) {
+      g->SetColor(theme.fg.select);
     }
 
     g->DrawString(std::string(1, ch), jpoint_t<int>{static_cast<int>(GetSize().x - mExtends.size.x)/2, 0});
@@ -119,7 +116,7 @@ SpaceChar::~SpaceChar()
 }
 
 EmptyChar::EmptyChar(TextComponent *parent):
-  GenericChar(parent, ' ')
+  GenericChar(parent, '\0')
 {
   SetBackgroundVisible(false);
 
@@ -589,7 +586,7 @@ Paragraph::Paragraph(TextComponent *parent, std::string text)
 {
   mText = text;
 
-  SetBackgroundVisible(true);
+  SetBackgroundVisible(false);
   SetScrollable(false);
   SetLayout<NullLayout>() = nullptr;
 
@@ -647,7 +644,7 @@ Text::Text(std::string text)
   SetInsets({4, 4, 4, 4});
   SetLayout<BorderLayout>();
   SetText(text);
-  SetBackgroundVisible(true);
+  SetBackgroundVisible(false);
   SetFocusable(true);
 }
 
@@ -975,31 +972,7 @@ Component * Text::GetCharByIndex(std::size_t index)
 
 Component * Text::GetCurrentChar()
 {
-  std::size_t index = GetCaretPosition();
-
-  for (auto cmp : mParagraph->GetComponents()) {
-    auto word = dynamic_cast<Word *>(cmp);
-
-    if (index == 0) {
-      if (word != nullptr) {
-        return word->GetComponents()[index];
-      } 
-
-      return cmp;
-    }
-
-    if (word != nullptr) {
-      if (index >= word->GetComponentCount()) {
-        index = index - word->GetComponentCount();
-      } else {
-        return word->GetComponents()[index];
-      }
-    } else {
-      index = index - 1;
-    }
-  }
-
-  return nullptr;
+  return GetCharByIndex(GetCaretPosition());
 }
 
 void Text::RegisterTextListener(TextListener *listener)

@@ -118,7 +118,7 @@ KeyboardDialog::~KeyboardDialog()
 void KeyboardDialog::ActionPerformed(ActionEvent *event)
 {
   Button *button = reinterpret_cast<Button *>(event->GetSource());
-  std::string label = button->GetText();
+  std::string label = button->GetTextComponent()->GetText();
   jkeyevent_modifiers_t modifiers = jkeyevent_modifiers_t::None;
   jkeyevent_symbol_t symbol = jkeyevent_symbol_t::Unknown;
   int code = -1;
@@ -788,7 +788,7 @@ void KeyboardDialog::ProcessCaps(Button *button)
     if (btn != nullptr) {
       std::string name = btn->GetName();
 
-      btn->SetName(btn->GetText());
+      btn->SetName(btn->GetTextComponent()->GetText());
       btn->SetText(name);
     }
   }

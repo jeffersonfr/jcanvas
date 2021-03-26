@@ -85,10 +85,10 @@ Component::Component(jrect_t<int> bounds):
     &theme = GetTheme();
 
   theme.padding = {
-    .left = 2,
-    .top = 2,
-    .right = 2,
-    .bottom = 2
+    .left = 0,
+    .top = 0,
+    .right = 0,
+    .bottom = 0
   };
 }
 
@@ -259,7 +259,7 @@ bool Component::IsOpaque()
   jtheme_t
     theme = GetTheme();
 
-  return (IsBackgroundVisible() == true) && ((theme.bg.normal & 0xff000000) == 0xff000000);
+  return (IsBackgroundVisible() == true) && ((static_cast<uint32_t>(theme.bg.normal) & 0xff000000) == 0xff000000);
 }
 
 int Component::GetBaseline(int width, int height)
@@ -526,11 +526,7 @@ void Component::PaintBackground(Graphics *g)
     theme = GetTheme();
 
   if (IsEnabled() == true) {
-    if (HasFocus() == true) {
-      g->SetColor(theme.bg.focus);
-    } else {
-      g->SetColor(theme.bg.normal);
-    }
+    g->SetColor(theme.bg.normal);
   } else {
     g->SetColor(theme.bg.disable);
   }
@@ -556,7 +552,6 @@ void Component::PaintBorders(Graphics *g)
   jcolor_t<float>
     color,
     bordercolor = border.color.normal,
-    borderfocus = border.color.focus,
     borderdisable = border.color.disable;
   jpoint_t<int>
     size = GetSize();
@@ -569,11 +564,7 @@ void Component::PaintBorders(Graphics *g)
     step = 0x20;
 
   if (IsEnabled() == true) {
-    if (HasFocus() == true) {
-      color = borderfocus;
-    } else {
-      color = bordercolor;
-    }
+    color = bordercolor;
   } else {
     color = borderdisable;
   }
@@ -604,6 +595,9 @@ void Component::PaintBorders(Graphics *g)
     g->SetPen(pen);
     g->DrawRoundRectangle({xp, yp, wp, hp});
   } else if (border.type == jtheme_border_t::style::RaisedGradient) {
+    g->SetColor({dr, dg, db, da});
+    pen.width = 1;
+
     for (int i=0; i<border.size.x && i<wp && i<hp; i++) {
       g->SetColor({dr+step*(border.size.x-i), dg+step*(border.size.x-i), db+step*(border.size.x-i)});
       g->DrawLine({xp+i, yp+i}, {xp+wp-i, yp+i}); //cima
@@ -618,6 +612,9 @@ void Component::PaintBorders(Graphics *g)
       g->DrawLine({xp+wp-i, yp+i}, {xp+wp-i, yp+hp-i}); //direita
     }
   } else if (border.type == jtheme_border_t::style::LoweredGradient) {
+    g->SetColor({dr, dg, db, da});
+    pen.width = 1;
+
     for (int i=0; i<border.size.x && i<wp && i<hp; i++) {
       g->SetColor({dr-step*(border.size.x-i), dg-step*(border.size.x-i), db-step*(border.size.x-i)});
       g->DrawLine({xp+i, yp+i}, {xp+wp-i, yp+i}); //cima
@@ -632,6 +629,9 @@ void Component::PaintBorders(Graphics *g)
       g->DrawLine({xp+wp-i, yp+i}, {xp+wp-i, yp+hp-i}); //direita
     }
   } else if (border.type == jtheme_border_t::style::RaisedBevel) {
+    g->SetColor({dr, dg, db, da});
+    pen.width = 1;
+
     for (int i=0; i<border.size.x && i<wp && i<hp; i++) {
       g->SetColor({dr+step, dg+step, db+step});
       g->DrawLine({xp+i, yp+i}, {xp+wp-i, yp+i}); //cima
@@ -646,6 +646,9 @@ void Component::PaintBorders(Graphics *g)
       g->DrawLine({xp+wp-i, yp+i}, {xp+wp-i, yp+hp-i}); //direita
     }
   } else if (border.type == jtheme_border_t::style::LoweredBevel) {
+    g->SetColor({dr, dg, db, da});
+    pen.width = 1;
+
     for (int i=0; i<border.size.x && i<wp && i<hp; i++) {
       g->SetColor({dr-step, dg-step, db-step});
       g->DrawLine({xp+i, yp+i}, {xp+wp-i, yp+i}); //cima
@@ -682,11 +685,6 @@ void Component::PaintBorders(Graphics *g)
 
   pen.width = width;
   g->SetPen(pen);
-
-  if (_is_enabled == false) {
-    g->SetColor({0x00, 0x00, 0x00, 0x80});
-    g->FillRectangle({0, 0, size.x, size.y});
-  }
 }
 
 void Component::Paint(Graphics *g)
@@ -1522,7 +1520,7 @@ void Component::FindNextComponentFocus(jrect_t<int> rect, Component *&left, Comp
 
 void Component::RequestFocus()
 {
-  Container *parent = GetParent();
+  Container *parent = GetTopLevelAncestor();
 
   if (parent != nullptr) {
     parent->RequestComponentFocus(this);
@@ -1531,7 +1529,7 @@ void Component::RequestFocus()
 
 void Component::ReleaseFocus()
 {
-  Container *parent = GetParent();
+  Container *parent = GetTopLevelAncestor();
 
   if (parent != nullptr) {
     parent->ReleaseComponentFocus(this);
@@ -1540,7 +1538,7 @@ void Component::ReleaseFocus()
 
 bool Component::HasFocus()
 {
-  Container *parent = GetParent();
+  Container *parent = GetTopLevelAncestor();
 
   if (parent != nullptr) {
     return parent->GetFocusOwner() == this;

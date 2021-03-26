@@ -38,8 +38,6 @@ class Dialog : public Container {
     /** \brief */
     Component *_focus_owner;
     /** \brief */
-    jtheme_t _dialog_theme;
-    /** \brief */
     std::mutex _modal_mutex;
     /** \brief */
     std::condition_variable _modal_condition;

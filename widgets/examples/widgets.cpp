@@ -140,11 +140,6 @@ class App : public Frame, public ActionListener, public SelectListener, public T
 			*_imagebutton3;
 		Button
 			*_toggle;
-		jtheme_t
-			_theme1,
-			_theme2,
-			_theme3,
-			_theme4;
 
 	public:
 		App():
@@ -192,18 +187,6 @@ class App : public Frame, public ActionListener, public SelectListener, public T
       jinsets_t
         insets = GetInsets();
 
-      _theme1 = GetTheme();
-      _theme1.bg.focus = 0xff40f040;
-      
-      _theme2 = GetTheme();
-      _theme2.bg.focus = 0xfff02020;
-      
-      _theme3 = GetTheme();
-      _theme3.bg.focus = 0xfff0f040;
-
-      _theme4 = GetTheme();
-      _theme4.bg.normal = 0xe0f08035;
-
       {
         _animation = new ImageAnimation(jrect_t<int>{insets.left, insets.top, 96, 96});
 
@@ -214,17 +197,17 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         size = GetSize();
 
       {
-        _button1 = new Button("Increase");
+        _button1 = new Button("Increase", std::make_shared<BufferedImage>("images/alert_icon.png"));
         _button2 = new Button("Decrease");
-        _button3 = new Button("Testing a long text in a buttom component");
+        _button3 = new Button("Testing a long text in a button component");
         
         _button1->SetBounds({insets.left, insets.top + 1*(96 + 16), 196, 96});
         _button2->SetBounds({insets.left, insets.top + 2*(96 + 16), 196, 96});
         _button3->SetBounds({insets.left, insets.top + 3*(96 + 16), 196, 96});
 
-        _button1->SetTheme(_theme1);
-        _button2->SetTheme(_theme2);
-        _button3->SetTheme(_theme3);
+        _button1->GetTheme().fg.focus = jcolor_t {0xffff0000};
+        _button2->GetTheme().fg.focus = jcolor_t {0xff00ff00};
+        _button3->GetTheme().fg.focus = jcolor_t {0xff0000ff};
 
         _button1->RegisterActionListener(this);
         _button2->RegisterActionListener(this);

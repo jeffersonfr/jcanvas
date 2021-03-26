@@ -28,6 +28,11 @@ namespace jcanvas {
 Container::Container(jrect_t<int> bounds):
   Component(bounds)
 {
+  jtheme_t &theme = GetTheme();
+
+  theme.border.type = jtheme_border_t::style::Empty;
+  theme.border.size = jpoint_t<int>{0, 0};
+
   _layout = std::make_shared<BorderLayout>();
 
   _is_focus_cycle_root = false;
@@ -42,12 +47,6 @@ Container::Container(jrect_t<int> bounds):
     .right = 0,
     .bottom = 0
   };
-
-  jtheme_t &theme = GetTheme();
-
-  theme.border.type = jtheme_border_t::style::Empty;
-  theme.border.size = jpoint_t<int>{0, 0};
-  theme.padding = {0, 0, 0, 0};
 
   SetBackgroundVisible(false);
 }

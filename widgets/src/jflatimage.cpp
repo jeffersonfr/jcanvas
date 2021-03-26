@@ -26,6 +26,10 @@ FlatImage::FlatImage(std::shared_ptr<Image> image):
 {
   _align = jrect_align_t::Center;
   _image = image;
+
+  if (_image != nullptr) {
+    SetPreferredSize(_image->GetSize());
+  }
 }
 
 FlatImage::~FlatImage()
@@ -35,6 +39,10 @@ FlatImage::~FlatImage()
 void FlatImage::SetImage(std::shared_ptr<Image> image)
 {
   _image = image;
+  
+  if (_image != nullptr) {
+    SetPreferredSize(_image->GetSize());
+  }
 }
 
 std::shared_ptr<Image> FlatImage::GetImage()
@@ -63,8 +71,9 @@ void FlatImage::Paint(Graphics *g)
     jrect_t<int> bounds = theme.padding.bounds(jrect_t<int>{{0, 0}, GetBounds().size});
 
     g->ClipRect(bounds);
-
+    g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
     g->DrawImage(_image, bounds.align(_align, jrect_t<int>{{0, 0}, _image->GetSize()}));
+    g->SetCompositeFlags(jcomposite_flags_t::Src);
   }
 }
 

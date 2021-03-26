@@ -20,7 +20,9 @@
 #ifndef J_BUTTON_H
 #define J_BUTTON_H
 
-#include "jcanvas/widgets/jcomponent.h"
+#include "jcanvas/widgets/jcontainer.h"
+#include "jcanvas/widgets/jflatimage.h"
+#include "jcanvas/widgets/jtext.h"
 #include "jcanvas/widgets/jactionlistener.h"
 
 #include <mutex>
@@ -35,37 +37,53 @@ class ActionEvent;
  *
  * \author Jeff Ferr
  */
-class Button : public Component {
+class Button : public Container {
 
-  protected:
+  private:
     /** \brief */
     std::vector<ActionListener *> _action_listeners;
     /** \brief */
     std::mutex _action_listener_mutex;
     /** \brief */
-    std::shared_ptr<Image> _image;
+    FlatImage *_image {nullptr};
     /** \brief */
-    jhorizontal_align_t _halign;
+    Text *_text {nullptr};
     /** \brief */
-    jvertical_align_t _valign;
-    /** \brief */
-    std::string _text;
-    /** \brief */
-    bool _is_pressed;
+    bool _is_down {false};
 
-  private:
+    void Build(std::string text, std::shared_ptr<Image> image);
+
+  protected:
     /**
      * \brief
      *
      */
-    void UpdatePreferredSize();
+    virtual bool KeyPressed(KeyEvent *event);
 
+    /**
+     * \brief
+     *
+     */
+    virtual bool KeyReleased(KeyEvent *event);
+
+    /**
+     * \brief
+     *
+     */
+    virtual bool MousePressed(MouseEvent *event);
+    
+    /**
+     * \brief
+     *
+     */
+    virtual bool MouseReleased(MouseEvent *event);
+ 
   public:
     /**
      * \brief
      *
      */
-    Button(std::string label = {}, std::shared_ptr<Image> image = {});
+    Button(std::string text = {}, std::shared_ptr<Image> image = {});
     
     /**
      * \brief
@@ -83,80 +101,20 @@ class Button : public Component {
      * \brief
      *
      */
+    virtual Text * GetTextComponent();
+
+    /**
+     * \brief
+     *
+     */
     virtual void SetImage(std::shared_ptr<Image> image);
     
     /**
      * \brief
      *
      */
-    virtual std::shared_ptr<Image> GetImage();
+    virtual FlatImage * GetImageComponent();
     
-    /**
-     * \brief
-     *
-     */
-    virtual std::string GetText();
-
-    /**
-     * \brief
-     *
-     */
-    virtual void SetHorizontalAlign(jhorizontal_align_t align);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual jhorizontal_align_t GetHorizontalAlign();
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void SetVerticalAlign(jvertical_align_t align);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual jvertical_align_t GetVerticalAlign();
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void Paint(Graphics *g);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual bool KeyPressed(KeyEvent *event);
-
-    /**
-     * \brief
-     *
-     */
-    virtual bool MousePressed(MouseEvent *event);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual bool MouseReleased(MouseEvent *event);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual bool MouseMoved(MouseEvent *event);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual bool MouseWheel(MouseEvent *event);
-
     /**
      * \brief
      *

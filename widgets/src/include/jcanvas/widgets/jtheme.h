@@ -82,7 +82,7 @@ struct jtheme_t {
   
   jtheme_color_t fg {
     0xfff0f0f0,
-    0xffffffff,
+    0xfff0f0f0,
     0xff808080,
     0xfff0f0f0,
     0x80f0f0f0

@@ -193,7 +193,7 @@ void App::Process(std::string type)
 {
   Button *button = dynamic_cast<Button *>(GetFocusOwner());
 
-  std::string text = button->GetText();
+  std::string text = button->GetTextComponent()->GetText();
 
 	if (type == ".") {
 		if (_state == 2 || _state == 5) {
@@ -612,7 +612,7 @@ void App::ActionPerformed(ActionEvent *event)
 {
 	Button *button = (Button *)event->GetSource();
 
-	Process(button->GetText());
+	Process(button->GetTextComponent()->GetText());
 
 	if (_state == 1) {
 		_display.Clear();

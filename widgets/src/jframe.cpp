@@ -164,6 +164,14 @@ void Frame::Paint(Graphics *g)
 	g->Clear();
 
   Container::Paint(g);
+
+  if (_focus_owner != nullptr) {
+    jrect_t<int> rect = jrect_t<int>{_focus_owner->GetAbsoluteLocation(), _focus_owner->GetSize()};
+    jtheme_t theme = _focus_owner->GetTheme();
+
+    g->SetColor(theme.fg.focus);
+    g->DrawRectangle(rect);
+  }
 }
 
 bool Frame::KeyPressed(jcanvas::KeyEvent *event)

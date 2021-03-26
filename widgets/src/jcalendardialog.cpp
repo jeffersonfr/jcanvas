@@ -93,8 +93,8 @@ CalendarDialog::CalendarDialog(Container *parent):
   _lsex->SetBounds({insets.left + 5*dx, insets.top + 2*dy, ds, ds});
   _lsab->SetBounds({insets.left + 6*dx, insets.top + 2*dy, ds, ds});
 
-  _week_day_theme.bg.normal = 0xff808080;
-  _selected_theme.bg.normal = 0xff408040;
+  _week_day_theme.bg.normal = jcolor_t {0xff808080};
+  _selected_theme.bg.normal = jcolor_t {0xff408040};
 
   _ldom->SetTheme(_week_day_theme);
   _lseg->SetTheme(_week_day_theme);

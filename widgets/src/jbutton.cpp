@@ -24,105 +24,100 @@
 
 namespace jcanvas {
 
-Button::Button(std::string text, std::shared_ptr<Image> image):
-  Component()
+Button::Button(std::string text, std::shared_ptr<Image> image)
 {
-  _halign = jhorizontal_align_t::Center;
-  _valign = jvertical_align_t::Center;
+  jtheme_t &theme = GetTheme();
 
-  _text = text;
-  _image = image;
+  theme.border.type = jtheme_border_t::style::Line;
+  theme.border.size = jpoint_t<int>{1, 1};
 
+  SetLayout<BorderLayout>();
+  SetInsets({2, 2, 2, 2});
+  Build(text, image);
+  SetScrollable(false);
+  SetBackgroundVisible(true);
   SetFocusable(true);
 }
 
 Button::~Button()
 {
+  RemoveAll();
+
+  delete _text;
+  delete _image;
 }
 
-void Button::UpdatePreferredSize()
+void Button::Build(std::string text, std::shared_ptr<Image> image)
 {
-  jpoint_t<int> 
-    t = {
-      0, 0
-    };
+  RemoveAll();
 
-  jtheme_t
-    theme = GetTheme();
+  if (_text != nullptr) {
+    delete _text;
+    _text = nullptr;
+  }
 
   if (_image != nullptr) {
-    jpoint_t<int>
-      size = _image->GetSize();
+    delete _image;
+    _image = nullptr;
+  }
 
-    t.x = t.x + size.x;
-    t.y = t.y + size.y;
+  if (text.empty() == false) {
+    _text = new Text(text);
 
-    if (theme.font.primary != nullptr and GetText().empty() == false) {
-      t.x = t.x + 4;
+    jtheme_t &theme = _text->GetTheme();
+  
+    theme.border.type = jtheme_border_t::style::Empty;
+    theme.border.size = jpoint_t<int>{0, 0};
+
+    _text->SetBackgroundVisible(false);
+    _text->SetEditable(false);
+    _text->SetFocusable(false);
+    _text->SetScrollable(false);
+    _text->SetHorizontalAlign(jhorizontal_align_t::Center);
+    _text->SetVerticalAlign(jvertical_align_t::Center);
+    
+    Add(_text, jborderlayout_align_t::Center);
+  }
+
+  if (image != nullptr) {
+    _image = new FlatImage(image);
+
+    jtheme_t &theme = _image->GetTheme();
+  
+    theme.border.type = jtheme_border_t::style::Empty;
+    theme.border.size = jpoint_t<int>{0, 0};
+
+    _image->SetBackgroundVisible(false);
+    _image->SetFocusable(false);
+    _image->SetScrollable(false);
+    _image->SetAlign(jrect_align_t::Contains);
+   
+    if (_text == nullptr) {
+      Add(_image, jborderlayout_align_t::Center);
+    } else {
+      Add(_image, jborderlayout_align_t::West);
     }
   }
-
-  if (theme.font.primary != nullptr) {
-    jfont_extends_t 
-      extends = theme.font.primary->GetStringExtends(GetText());
-
-    t.x = t.x + int(extends.size.x - extends.bearing.x);
-    t.y = t.y + int(extends.size.y - extends.bearing.y);
-  }
-
-  SetPreferredSize(t + jpoint_t<int>{2*theme.border.size.x, 2*theme.border.size.y});
 }
 
 void Button::SetText(std::string text)
 {
-  if (_text != text) {
-    _text = text;
-
-    UpdatePreferredSize();
-  }
+  Build(text, _image->GetImage());
 }
 
-std::string Button::GetText()
+Text * Button::GetTextComponent()
 {
   return _text;
 }
 
 void Button::SetImage(std::shared_ptr<Image> image)
 {
-  if (_image != image) {
-    _image = image;
-
-    UpdatePreferredSize();
-  }
+  Build(_text->GetText(), _image->GetImage());
 }
 
-std::shared_ptr<Image> Button::GetImage()
+FlatImage * Button::GetImageComponent()
 {
   return _image;
-}
-
-void Button::SetHorizontalAlign(jhorizontal_align_t align)
-{
-  if (_halign != align) {
-    _halign = align;
-  }
-}
-
-jhorizontal_align_t Button::GetHorizontalAlign()
-{
-  return _halign;
-}
-
-void Button::SetVerticalAlign(jvertical_align_t align)
-{
-  if (_valign != align) {
-    _valign = align;
-  }
-}
-
-jvertical_align_t Button::GetVerticalAlign()
-{
-  return _valign;
 }
 
 bool Button::KeyPressed(KeyEvent *event)
@@ -131,15 +126,30 @@ bool Button::KeyPressed(KeyEvent *event)
     return true;
   }
 
-  bool catched = false;
-
   if (event->GetSymbol() == jkeyevent_symbol_t::Enter) {
-    DispatchActionEvent(new ActionEvent(this));
+    _is_down = true;
 
-    catched = true;
+    return true;
   }
 
-  return catched;
+  return false;
+}
+
+bool Button::KeyReleased(KeyEvent *event)
+{
+  if (Component::KeyReleased(event) == true) {
+    return true;
+  }
+
+  if (event->GetSymbol() == jkeyevent_symbol_t::Enter) {
+    _is_down = false;
+
+    DispatchActionEvent(new ActionEvent(this));
+
+    return true;
+  }
+
+  return false;
 }
 
 bool Button::MousePressed(MouseEvent *event)
@@ -149,7 +159,7 @@ bool Button::MousePressed(MouseEvent *event)
   }
 
   if (event->GetButton() == jmouseevent_button_t::Button1) {
-    DispatchActionEvent(new ActionEvent(this));
+    _is_down = true;
 
     return true;
   }
@@ -163,62 +173,13 @@ bool Button::MouseReleased(MouseEvent *event)
     return true;
   }
 
-  return false;
-}
+  if (event->GetButton() == jmouseevent_button_t::Button1) {
+    _is_down = false;
 
-bool Button::MouseMoved(MouseEvent *event)
-{
-  if (Component::MouseMoved(event) == true) {
     return true;
   }
 
   return false;
-}
-
-bool Button::MouseWheel(MouseEvent *event)
-{
-  if (Component::MouseWheel(event) == true) {
-    return true;
-  }
-
-  return false;
-}
-
-void Button::Paint(Graphics *g)
-{
-  Component::Paint(g);
-
-  jtheme_t
-    theme = GetTheme();
-  jrect_t<int>
-    bounds = GetBounds();
-
-  if (_image != nullptr) {
-    jpoint_t<int>
-      size = _image->GetSize();
-
-    g->DrawImage(_image, jpoint_t<int>{theme.padding.left, theme.padding.top});
-
-    theme.padding.left = theme.padding.left + size.x + 4;
-  }
-
-  if (theme.font.primary != nullptr) {
-    g->SetFont(theme.font.primary);
-
-    if (IsEnabled() == true) {
-      if (HasFocus() == true) {
-        g->SetColor(theme.fg.focus);
-      } else {
-        g->SetColor(theme.fg.normal);
-      }
-    } else {
-      g->SetColor(theme.fg.disable);
-    }
-
-    std::string text = theme.font.primary->TruncateString(GetText(), "...", bounds.size.x);
-
-    g->DrawString(text, theme.padding.bounds(jrect_t<int>{{0, 0}, bounds.size}), _halign, _valign);
-  }
 }
 
 void Button::RegisterActionListener(ActionListener *listener)
