@@ -84,6 +84,8 @@ class Layouts : public Frame, public ActionListener {
         auto c = new Container(); \
         auto l = new Text(#id); \
         l->SetTheme(theme); \
+        l->SetEditable(false); \
+        l->SetFocusable(false); \
         b->SetLayout<BorderLayout>(); \
         c->SetLayout<id>(); \
         b->Add(l, jborderlayout_align_t::North); \

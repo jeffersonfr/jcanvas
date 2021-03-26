@@ -678,7 +678,7 @@ void Text::Build()
 
   SetCaretPosition(0);
 
-  SetPreferredSize(GetLayout()->GetPreferredLayoutSize(this));
+  SetPreferredSize({32, 32});
 }
 
 void Text::SetWrap(bool param)

@@ -7,28 +7,39 @@
 #
 #   TIFF_FOUND, If false, do not try to use TIFF.
 
-find_path (TIFF_INCLUDE_DIR tiffio.h tiffio.hxx
+set (TIFF_INCLUDE_DIRS
   /usr/include
   /usr/local/include
 )
 
-find_library (TIFF_LIBRARY tiffxx
+set (TIFF_LIBRARY_DIRS
   /usr/lib 
   /usr/local/lib 
 )
 
-find_path (TIFF_LIBRARY libtiffxx.so
-  /usr/lib 
-  /usr/local/lib 
+find_path (TIFF_INCLUDE_DIR
+  NAMES tiffio.h tiffio.hxx
+  PATHS ${TIFF_INCLUDE_DIRS}
+)
+
+find_library (TIFF_LIBRARY
+  NAMES tiffxx
+  PATHS ${TIFF_LIBRARY_DIRS}
+)
+
+find_path (TIFF_LIBRARY
+  NAMES libtiffxx.so
+  PATHS ${TIFF_LIBRARY_DIRS}
 )
 
 if (TIFF_LIBRARY)
   if (TIFF_INCLUDE_DIR)
     set (TIFF_INCLUDE_DIRS ${TIFF_INCLUDE_DIR})
+    set (TIFF_LIBRARY_DIRS ${TIFF_INCLUDE_DIR})
+
     set (TIFF_CFLAGS_OTHER)
     set (TIFF_CFLAGS)
 
-    set (TIFF_LIBRARY_DIRS ${TIFF_LIBRARY_DIR})
     set (TIFF_LDFLAGS_OTHER)
     set (TIFF_LDFLAGS)
 

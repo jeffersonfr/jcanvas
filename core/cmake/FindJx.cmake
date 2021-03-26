@@ -7,31 +7,41 @@
 #
 #   JX_FOUND, If false, do not try to use JX.
 
-find_path (JX_INCLUDE_DIR jxclient.h
+set (JX_INCLUDE_DIRS
   /usr/include
   /usr/local/include
   /home/jeff/projects/jx/jxclient/src/include
 )
 
-find_library (JX_LIBRARY jxclient
+set (JX_LIBRARY_DIRS
   /usr/lib 
   /usr/local/lib 
   /home/jeff/projects/jx/build/jxclient
 )
 
-find_path (JX_LIBRARY_DIR libjxclient.so
-  /usr/lib 
-  /usr/local/lib 
-  /home/jeff/projects/jx/build/jxclient
+find_path (JX_INCLUDE_DIR
+  NAMES jxclient.h
+  PATHS ${JX_INCLUDE_DIRS}
+)
+
+find_library (JX_LIBRARY
+  NAMES jxclient
+  PATHS ${JX_LIBRARY_DIRS}
+)
+
+find_path (JX_LIBRARY_DIR
+  NAMES libjxclient.so
+  PATHS ${JX_LIBRARY_DIRS}
 )
 
 if (JX_LIBRARY)
   if (JX_INCLUDE_DIR)
     set (JX_INCLUDE_DIRS ${JX_INCLUDE_DIR})
+    set (JX_LIBRARY_DIRS ${JX_INCLUDE_DIR})
+
     set (JX_CFLAGS_OTHER)
     set (JX_CFLAGS)
 
-    set (JX_LIBRARY_DIRS ${JX_LIBRARY_DIR})
     set (JX_LDFLAGS_OTHER)
     set (JX_LDFLAGS)
 

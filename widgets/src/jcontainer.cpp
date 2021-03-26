@@ -33,21 +33,14 @@ Container::Container(jrect_t<int> bounds):
   theme.border.type = jtheme_border_t::style::Empty;
   theme.border.size = jpoint_t<int>{0, 0};
 
-  _layout = std::make_shared<BorderLayout>();
-
   _is_focus_cycle_root = false;
-  _orientation = jcomponent_orientation_t::LeftToRight;
-  _is_enabled = true;
-  _is_visible = true;
-  _optimized_paint = false;
 
-  _insets = {
-    .left = 0,
-    .top = 0,
-    .right = 0,
-    .bottom = 0
-  };
-
+  SetEnabled(true);
+  SetVisible(true);
+  SetLayout<BorderLayout>();
+  SetInsets({0, 0, 0, 0});
+  SetComponentOrientation(jcomponent_orientation_t::LeftToRight);
+  SetOptimizedPaint(false);
   SetBackgroundVisible(false);
 }
 
@@ -391,8 +384,6 @@ jinsets_t<int> Container::GetInsets()
 void Container::SetInsets(jinsets_t<int> insets)
 {
   _insets = insets;
-  
-  SetPreferredSize(GetSize());
 }
 
 void Container::PaintGlassPane(Graphics *g)
@@ -546,8 +537,6 @@ void Container::Add(Component *c, int index)
     DispatchContainerEvent(new ContainerEvent(c, jcontainerevent_type_t::Add));
   }
 
-  SetPreferredSize(GetSize());
-  
   _container_mutex.unlock();
 
   DoLayout();
@@ -660,8 +649,6 @@ void Container::Remove(Component *c)
     }
   }
   
-  SetPreferredSize(GetSize());
-
   _container_mutex.unlock();
 
   DoLayout();
@@ -700,8 +687,6 @@ void Container::RemoveAll()
   }
 
   _components.clear();
-
-  SetPreferredSize(GetSize());
 
   _container_mutex.unlock();
 

@@ -525,11 +525,7 @@ void Component::PaintBackground(Graphics *g)
   jtheme_t
     theme = GetTheme();
 
-  if (IsEnabled() == true) {
-    g->SetColor(theme.bg.normal);
-  } else {
-    g->SetColor(theme.bg.disable);
-  }
+  g->SetColor(theme.bg.normal);
 
   if (theme.border.type == jtheme_border_t::style::Round) {
     g->FillRoundRectangle({0, 0, GetSize()});
@@ -550,9 +546,7 @@ void Component::PaintBorders(Graphics *g)
   }
 
   jcolor_t<float>
-    color,
-    bordercolor = border.color.normal,
-    borderdisable = border.color.disable;
+    color = border.color.normal;
   jpoint_t<int>
     size = GetSize();
   int 
@@ -562,12 +556,6 @@ void Component::PaintBorders(Graphics *g)
     hp = size.y;
   int 
     step = 0x20;
-
-  if (IsEnabled() == true) {
-    color = bordercolor;
-  } else {
-    color = borderdisable;
-  }
 
   int 
     dr = color[2],
@@ -685,6 +673,13 @@ void Component::PaintBorders(Graphics *g)
 
   pen.width = width;
   g->SetPen(pen);
+
+  if (IsEnabled() == false) {
+    g->SetColor(0x80000000);
+    g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
+    g->FillRectangle({0, 0, GetSize()});
+    g->SetCompositeFlags(jcomposite_flags_t::Src);
+  }
 }
 
 void Component::Paint(Graphics *g)
@@ -1152,6 +1147,10 @@ bool Component::KeyPressed(KeyEvent *event)
     return false;
   }
 
+  if (IsEnabled() == false) {
+    return true;
+  }
+
   return false;
 }
 
@@ -1159,6 +1158,10 @@ bool Component::KeyReleased(KeyEvent *event)
 {
   if (IsVisible() == false) {
     return false;
+  }
+
+  if (IsEnabled() == false) {
+    return true;
   }
 
   return false;
@@ -1170,6 +1173,10 @@ bool Component::KeyTyped(KeyEvent *event)
     return false;
   }
 
+  if (IsEnabled() == false) {
+    return true;
+  }
+
   return false;
 }
 
@@ -1179,6 +1186,10 @@ bool Component::MousePressed(MouseEvent *event)
     return false;
   }
  
+  if (IsEnabled() == false) {
+    return true;
+  }
+
   jtheme_t
     theme = GetTheme();
   jpoint_t<int> 
@@ -1242,6 +1253,10 @@ bool Component::MouseReleased(MouseEvent *event)
     return false;
   }
 
+  if (IsEnabled() == false) {
+    return true;
+  }
+
   // int mousex = event->GetX(),
   //     mousey = event->GetY();
 
@@ -1260,6 +1275,10 @@ bool Component::MouseMoved(MouseEvent *event)
     return false;
   }
   
+  if (IsEnabled() == false) {
+    return true;
+  }
+
   jpoint_t<int> 
     slocation = GetScrollLocation(),
     elocation = event->GetLocation();
@@ -1288,6 +1307,10 @@ bool Component::MouseWheel(MouseEvent *event)
 {
   if (IsVisible() == false) {
     return false;
+  }
+
+  if (IsEnabled() == false) {
+    return true;
   }
 
   return false;

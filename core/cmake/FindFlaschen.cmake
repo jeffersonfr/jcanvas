@@ -7,31 +7,41 @@
 #
 #   FLASCHEN_FOUND, If false, do not try to use FLASCHEN.
 
-find_path (FLASCHEN_INCLUDE_DIR udp-flaschen-taschen.h
+set (FLASCHEN_INCLUDE_DIRS 
   /usr/include
   /usr/local/include
   /opt/flaschen-taschen/api/include
 )
 
-find_library (FLASCHEN_LIBRARY ftclient
+set (FLASCHEN_LIBRARY_DIRS
   /usr/lib 
   /usr/local/lib 
   /opt/flaschen-taschen/api/lib
 )
 
-find_path (FLASCHEN_LIBRARY_DIR libftclient.so
-  /usr/lib 
-  /usr/local/lib 
-  /opt/flaschen-taschen/api/lib
+find_path (FLASCHEN_INCLUDE_DIR
+  NAMES udp-flaschen-taschen.h
+  PATHS ${FLASCHEN_INCLUDE_DIRS}
+)
+
+find_library (FLASCHEN_LIBRARY
+  NAMES ftclient
+  PATHS ${FLASCHEN_LIBRARY_DIRS}
+)
+
+find_path (FLASCHEN_LIBRARY_DIR
+  NAMES libftclient.so
+  PATHS ${FLASCHEN_LIBRARY_DIRS}
 )
 
 if (FLASCHEN_LIBRARY)
   if (FLASCHEN_INCLUDE_DIR)
     set (FLASCHEN_INCLUDE_DIRS ${FLASCHEN_INCLUDE_DIR})
+    set (FLASCHEN_LIBRARY_DIRS ${FLASCHEN_INCLUDE_DIR})
+
     set (FLASCHEN_CFLAGS_OTHER)
     set (FLASCHEN_CFLAGS)
 
-    set (FLASCHEN_LIBRARY_DIRS ${FLASCHEN_LIBRARY_DIR})
     set (FLASCHEN_LDFLAGS_OTHER)
     set (FLASCHEN_LDFLAGS)
 

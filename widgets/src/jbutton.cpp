@@ -33,10 +33,12 @@ Button::Button(std::string text, std::shared_ptr<Image> image)
 
   SetLayout<BorderLayout>();
   SetInsets({2, 2, 2, 2});
-  Build(text, image);
   SetScrollable(false);
   SetBackgroundVisible(true);
   SetFocusable(true);
+  SetPreferredSize({120, 36});
+  
+  Build(text, image);
 }
 
 Button::~Button()
