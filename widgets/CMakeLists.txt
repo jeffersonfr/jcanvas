@@ -8,6 +8,9 @@ set(SRCS
   src/jadjustmentevent.cpp
   src/jadjustmentlistener.cpp
   src/janimation.cpp
+  src/jbackground.cpp
+  src/jbeveledrectangleborder.cpp
+  src/jborder.cpp
   src/jborderlayout.cpp
   src/jbutton.cpp
   src/jcalendardialog.cpp
@@ -30,23 +33,33 @@ set(SRCS
   src/jframe.cpp
   src/jgridbaglayout.cpp
   src/jgridlayout.cpp
+  src/jimagebackground.cpp
   src/jinputdialog.cpp
   src/jitemcomponent.cpp
   src/jkeyboarddialog.cpp
   src/jlayout.cpp
   src/jlistbox.cpp
+  src/jloweredbeveledrectangleborder.cpp
+  src/jloweredetchedrectangleborder.cpp
+  src/jloweredgradientrectangleborder.cpp
   src/jmarquee.cpp
   src/jmessagedialog.cpp
   src/jnulllayout.cpp
   src/jpanel.cpp
   src/jprogressbar.cpp
+  src/jraisedbeveledrectangleborder.cpp
+  src/jraisedetchedrectangleborder.cpp
+  src/jraisedgradientrectangleborder.cpp
+  src/jrectangleborder.cpp
+  src/jroundedrectangleborder.cpp
   src/jscrollbar.cpp
   src/jselectevent.cpp
   src/jselectlistener.cpp
   src/jslider.cpp
   src/jslidercomponent.cpp
+  src/jsolidbackground.cpp
   src/jspin.cpp
-  src/jtabbedpane.cpp
+  #src/jtabbedpane.cpp
   #src/jtable.cpp
   src/jtext.cpp
   src/jtextevent.cpp

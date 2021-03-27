@@ -45,8 +45,8 @@ void ListBox::UpdatePreferredSize()
 
   // TODO:: list all items to see the largest width [+ image.x + gap] 
 
-  bounds.size.x = bounds.size.x + theme.padding.left + theme.padding.right + 2*theme.border.size.x;
-  bounds.size.y = _items.size()*(GetItemSize() + GetItemGap()) - GetItemGap() + theme.padding.top + theme.padding.bottom + 2*theme.border.size.y;
+  bounds.size.x = bounds.size.x + theme.padding.left + theme.padding.right;
+  bounds.size.y = _items.size()*(GetItemSize() + GetItemGap()) - GetItemGap() + theme.padding.top + theme.padding.bottom;
 
   SetPreferredSize(bounds.size);
 }
@@ -509,8 +509,6 @@ jpoint_t<int> ListBox::GetScrollDimension()
     theme = GetTheme();
   jrect_t<int> 
     bounds = GetBounds();
-  jtheme_border_t
-    border = theme.border;
 
   bounds.size.y = _items.size()*(GetItemSize() + GetItemGap()) + theme.padding.top + theme.padding.bottom;
 

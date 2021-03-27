@@ -88,12 +88,6 @@ class GenericChar : public Component {
      * \brief
      *
      */
-    void PaintBackground(Graphics *g);
-
-    /**
-     * \brief
-     *
-     */
     void Paint(jcanvas::Graphics *g);
 
   private:

@@ -21,6 +21,15 @@
 #include "jcanvas/widgets/jframe.h"
 #include "jcanvas/widgets/jbutton.h"
 #include "jcanvas/widgets/jflowlayout.h"
+#include "jcanvas/widgets/jrectangleborder.h"
+#include "jcanvas/widgets/jbeveledrectangleborder.h"
+#include "jcanvas/widgets/jroundedrectangleborder.h"
+#include "jcanvas/widgets/jraisedgradientrectangleborder.h"
+#include "jcanvas/widgets/jloweredgradientrectangleborder.h"
+#include "jcanvas/widgets/jraisedbeveledrectangleborder.h"
+#include "jcanvas/widgets/jloweredbeveledrectangleborder.h"
+#include "jcanvas/widgets/jraisedetchedrectangleborder.h"
+#include "jcanvas/widgets/jloweredetchedrectangleborder.h"
 
 #include <memory>
 
@@ -58,11 +67,32 @@ class App : public Frame{
 
        for (int i=0; i<(int)buttons.size(); i++) {
          Button *button = buttons[i];
+
+         if (i == 0) {
+           button->SetBorder(nullptr);
+         } else if (i == 1) {
+           button->SetBorder(std::make_shared<RectangleBorder>(8));
+         } else if (i == 2) {
+           button->SetBorder(std::make_shared<BeveledRectangleBorder>(8));
+         } else if (i == 3) {
+           button->SetBorder(std::make_shared<RoundedRectangleBorder>(8));
+         } else if (i == 4) {
+           button->SetBorder(std::make_shared<RaisedGradientRectangleBorder>(8));
+         } else if (i == 5) {
+           button->SetBorder(std::make_shared<LoweredGradientRectangleBorder>(8));
+         } else if (i == 6) {
+           button->SetBorder(std::make_shared<RaisedBeveledRectangleBorder>(8));
+         } else if (i == 7) {
+           button->SetBorder(std::make_shared<LoweredBeveledRectangleBorder>(8));
+         } else if (i == 8) {
+           button->SetBorder(std::make_shared<RaisedEtchedRectangleBorder>(8));
+         } else if (i == 9) {
+           button->SetBorder(std::make_shared<LoweredEtchedRectangleBorder>(8));
+         }
+
          jtheme_t &theme = button->GetTheme();
 
          theme.padding = {16, 16, 16, 16};
-         theme.border.size = {8, 8};
-         theme.border.type = static_cast<jtheme_border_t::style>(i);
 
          if (i < (int)buttons.size()/2) {
            top.Add(button);

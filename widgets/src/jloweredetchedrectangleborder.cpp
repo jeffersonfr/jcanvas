@@ -17,65 +17,55 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "jcanvas/widgets/jflatimage.h"
+#include "jcanvas/widgets/jloweredetchedrectangleborder.h"
+#include "jcanvas/widgets/jcomponent.h"
 
 namespace jcanvas {
 
-FlatImage::FlatImage(std::shared_ptr<Image> image):
-  Component()
+LoweredEtchedRectangleBorder::LoweredEtchedRectangleBorder(std::size_t size, jcolor_t<float> color):
+  RectangleBorder(size, color)
 {
-  _align = jrect_align_t::Center;
-  _image = image;
+}
 
-  if (_image != nullptr) {
-    SetPreferredSize(_image->GetSize());
+LoweredEtchedRectangleBorder::~LoweredEtchedRectangleBorder()
+{
+}
+
+void LoweredEtchedRectangleBorder::Paint(Component *cmp, Graphics *g)
+{
+  if (cmp == nullptr) {
+    return;
   }
-}
 
-FlatImage::~FlatImage()
-{
-  _image = nullptr;
-}
+  const jpen_t oldPen = g->GetPen();
+  jpen_t pen = g->GetPen();
+  jpoint_t<int> size = cmp->GetSize();
+  jcolor_t<float> color = GetColor();
+  std::size_t width = GetSize();
+  int 
+    step = 0x20,
+    dr = color[2],
+    dg = color[1],
+    db = color[0];
 
-void FlatImage::SetImage(std::shared_ptr<Image> image)
-{
-  _image = image;
+  g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
   
-  if (_image != nullptr) {
-    SetPreferredSize(_image->GetSize());
-  }
-}
+  pen.width = -GetSize();
 
-std::shared_ptr<Image> FlatImage::GetImage()
-{
-  return _image;
-}
+  g->SetPen(pen);
 
-void FlatImage::SetAlign(jrect_align_t align)
-{
-  _align = align;
-}
+  g->SetColor({dr - step, dg - step, db - step});
+  g->DrawRectangle({0, 0, size});
+    
+  pen.width = -GetSize()/2;
 
-jrect_align_t FlatImage::GetAlign()
-{
-  return _align;
-}
+  g->SetPen(pen);
 
-void FlatImage::Paint(Graphics *g)
-{
-  Component::Paint(g);
+  g->SetColor({dr + step, dg + step, db + step});
+  g->DrawRectangle({0, 0, size - jpoint_t<std::size_t>{width, width}/2});
 
-  jtheme_t
-    theme = GetTheme();
-
-  if (_image != nullptr) {
-    jrect_t<int> bounds = theme.padding.bounds(jrect_t<int>{{0, 0}, GetBounds().size});
-
-    g->ClipRect(bounds);
-    g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
-    g->DrawImage(_image, bounds.align(_align, jrect_t<int>{{0, 0}, _image->GetSize()}));
-    g->SetCompositeFlags(jcomposite_flags_t::Src);
-  }
+  g->SetCompositeFlags(jcomposite_flags_t::Src);
+  g->SetPen(oldPen);
 }
 
 }

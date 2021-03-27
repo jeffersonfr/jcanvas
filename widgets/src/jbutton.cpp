@@ -18,6 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "jcanvas/widgets/jbutton.h"
+#include "jcanvas/widgets/jsolidbackground.h"
+#include "jcanvas/widgets/jrectangleborder.h"
 #include "jcanvas/core/jimage.h"
 
 #include <algorithm>
@@ -26,17 +28,13 @@ namespace jcanvas {
 
 Button::Button(std::string text, std::shared_ptr<Image> image)
 {
-  jtheme_t &theme = GetTheme();
-
-  theme.border.type = jtheme_border_t::style::Line;
-  theme.border.size = jpoint_t<int>{1, 1};
-
   SetLayout<BorderLayout>();
   SetInsets({2, 2, 2, 2});
   SetScrollable(false);
-  SetBackgroundVisible(true);
   SetFocusable(true);
-  SetPreferredSize({120, 36});
+  SetPreferredSize({128, 32});
+  SetBackground(std::make_shared<SolidBackground>());
+  SetBorder(std::make_shared<RectangleBorder>());
   
   Build(text, image);
 }
@@ -66,12 +64,8 @@ void Button::Build(std::string text, std::shared_ptr<Image> image)
   if (text.empty() == false) {
     _text = new Text(text);
 
-    jtheme_t &theme = _text->GetTheme();
-  
-    theme.border.type = jtheme_border_t::style::Empty;
-    theme.border.size = jpoint_t<int>{0, 0};
-
-    _text->SetBackgroundVisible(false);
+    _text->SetBackground(nullptr);
+    _text->SetBorder(nullptr);
     _text->SetEditable(false);
     _text->SetFocusable(false);
     _text->SetScrollable(false);
@@ -84,12 +78,8 @@ void Button::Build(std::string text, std::shared_ptr<Image> image)
   if (image != nullptr) {
     _image = new FlatImage(image);
 
-    jtheme_t &theme = _image->GetTheme();
-  
-    theme.border.type = jtheme_border_t::style::Empty;
-    theme.border.size = jpoint_t<int>{0, 0};
-
-    _image->SetBackgroundVisible(false);
+    _image->SetBackground(nullptr);
+    _image->SetBorder(nullptr);
     _image->SetFocusable(false);
     _image->SetScrollable(false);
     _image->SetAlign(jrect_align_t::Contains);

@@ -18,7 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "jcanvas/widgets/jframe.h"
+#include "jcanvas/widgets/jsolidbackground.h"
 #include "jcanvas/widgets/jnulllayout.h"
+#include "jcanvas/widgets/jraisedgradientrectangleborder.h"
 #include "jcanvas/core/japplication.h"
 
 namespace jcanvas {
@@ -26,19 +28,18 @@ namespace jcanvas {
 Frame::Frame(jpoint_t<int> size, jpoint_t<int> point):
   Window(size, point)
 {
+  jtheme_t &theme = GetTheme();
+
+  theme.font.primary = Font::Big;
+
   _focus_owner = nullptr;
   _icon = nullptr;
-
-  jtheme_t
-    &theme = GetTheme();
-
-  theme.border.type = jtheme_border_t::style::RaisedGradient;
-  theme.font.primary = Font::Big;
 
   SetInsets({8, 8, 8, 8});
   SetTitle("Main");
   SetLayout<BorderLayout>();
-  SetBackgroundVisible(true);
+  SetBackground(std::make_shared<SolidBackground>());
+  SetBorder(std::make_shared<RaisedGradientRectangleBorder>(4));
   SetUndecorated(false);
 }
 
@@ -135,11 +136,6 @@ Container * Frame::GetFocusCycleRootAncestor()
 void Frame::Repaint(Component *cmp)
 {
   Window::Repaint();
-}
-
-void Frame::PaintBackground(Graphics *g)
-{
-  Container::PaintBackground(g);
 }
 
 void Frame::PaintGlassPane(Graphics *g)

@@ -17,65 +17,72 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "jcanvas/widgets/jflatimage.h"
+#ifndef J_RECTANGLEBORDER_H
+#define J_RECTANGLEBORDER_H
+
+#include "jcanvas/widgets/jborder.h"
 
 namespace jcanvas {
 
-FlatImage::FlatImage(std::shared_ptr<Image> image):
-  Component()
-{
-  _align = jrect_align_t::Center;
-  _image = image;
+/**
+ * \brief
+ *
+ * \author Jeff Ferr
+ */
+class RectangleBorder : public Border {
 
-  if (_image != nullptr) {
-    SetPreferredSize(_image->GetSize());
-  }
+  private:
+    /** \brief */
+    jcolor_t<float> _color;
+    /** \brief */
+    std::size_t _size;
+
+  public:
+    /**
+     * \brief
+     *
+     */
+    RectangleBorder(std::size_t size = {1}, jcolor_t<float> color = jcolor_t {0xff808080});
+
+    /**
+     * \brief
+     *
+     */
+    virtual ~RectangleBorder();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void SetSize(std::size_t size);
+
+    /**
+     * \brief
+     *
+     */
+    virtual std::size_t GetSize();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void SetColor(jcolor_t<float> color);
+
+    /**
+     * \brief
+     *
+     */
+    virtual jcolor_t<float> GetColor();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void Paint(Component *cmp, Graphics *g);
+    
+};
+
 }
 
-FlatImage::~FlatImage()
-{
-  _image = nullptr;
-}
+#endif
 
-void FlatImage::SetImage(std::shared_ptr<Image> image)
-{
-  _image = image;
-  
-  if (_image != nullptr) {
-    SetPreferredSize(_image->GetSize());
-  }
-}
-
-std::shared_ptr<Image> FlatImage::GetImage()
-{
-  return _image;
-}
-
-void FlatImage::SetAlign(jrect_align_t align)
-{
-  _align = align;
-}
-
-jrect_align_t FlatImage::GetAlign()
-{
-  return _align;
-}
-
-void FlatImage::Paint(Graphics *g)
-{
-  Component::Paint(g);
-
-  jtheme_t
-    theme = GetTheme();
-
-  if (_image != nullptr) {
-    jrect_t<int> bounds = theme.padding.bounds(jrect_t<int>{{0, 0}, GetBounds().size});
-
-    g->ClipRect(bounds);
-    g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
-    g->DrawImage(_image, bounds.align(_align, jrect_t<int>{{0, 0}, _image->GetSize()}));
-    g->SetCompositeFlags(jcomposite_flags_t::Src);
-  }
-}
-
-}

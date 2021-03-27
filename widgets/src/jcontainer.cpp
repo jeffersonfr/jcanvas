@@ -28,11 +28,6 @@ namespace jcanvas {
 Container::Container(jrect_t<int> bounds):
   Component(bounds)
 {
-  jtheme_t &theme = GetTheme();
-
-  theme.border.type = jtheme_border_t::style::Empty;
-  theme.border.size = jpoint_t<int>{0, 0};
-
   _is_focus_cycle_root = false;
 
   SetEnabled(true);
@@ -41,7 +36,8 @@ Container::Container(jrect_t<int> bounds):
   SetInsets({0, 0, 0, 0});
   SetComponentOrientation(jcomponent_orientation_t::LeftToRight);
   SetOptimizedPaint(false);
-  SetBackgroundVisible(false);
+  SetBackground(nullptr);
+  SetBorder(nullptr);
 }
 
 Container::~Container()
@@ -403,8 +399,8 @@ void Container::Paint(Graphics *g)
 
   Component::Paint(g);
 
-  if (IsBackgroundVisible() == true) {
-    PaintBackground(g);
+  if (GetBackground() != nullptr) {
+    GetBackground()->Paint(this, g);
   }
 
   for (std::vector<Component *>::iterator i=_components.begin(); i!=_components.end(); i++) {
@@ -421,8 +417,8 @@ void Container::Paint(Graphics *g)
         g->Translate(bounds.point);
         g->ClipRect({0, 0, bounds.size});
   
-        if (c->IsBackgroundVisible() == true) {
-          c->PaintBackground(g);
+        if (c->GetBackground() != nullptr) {
+          c->GetBackground()->Paint(c, g);
         }
 
         c->Paint(g);
@@ -431,7 +427,9 @@ void Container::Paint(Graphics *g)
           c->PaintScrollbars(g);
         }
 
-        c->PaintBorders(g);
+        if (c->GetBorder() != nullptr) {
+          c->GetBorder()->Paint(c, g);
+        }
         
         g->Translate(-bounds.point);
         g->SetClip(clip);
@@ -442,8 +440,10 @@ void Container::Paint(Graphics *g)
   if (IsScrollVisible() == true) {
     PaintScrollbars(g);
   }
-    
-  PaintBorders(g);
+  
+  if (GetBorder() != nullptr) {
+    GetBorder()->Paint(this, g);
+  }
 
   // INFO:: paint dialogs
   _dialogs_mutex.lock();
@@ -466,10 +466,16 @@ void Container::Paint(Graphics *g)
         g->Translate({cx, cy});
         g->ClipRect({0, 0, cw, ch});
   
-        c->PaintBackground(g);
+        if (c->GetBackground() != nullptr) {
+          c->GetBackground()->Paint(c, g);
+        }
+
         c->Paint(g);
         c->PaintScrollbars(g);
-        c->PaintBorders(g);
+
+        if (c->GetBorder() != nullptr) {
+          c->GetBorder()->Paint(c, g);
+        }
         
         g->Translate({-cx, -cy});
         g->SetClip(clip);

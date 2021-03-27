@@ -46,25 +46,6 @@ struct jtheme_font_t {
   std::shared_ptr<Font> secondary;
 };
 
-struct jtheme_border_t {
-  enum class style {
-    Empty,
-    Line,
-    Bevel,
-    Round,
-    RaisedGradient,
-    LoweredGradient,
-    RaisedBevel,
-    LoweredBevel,
-    RaisedEtched,
-    LoweredEtched
-  };
-
-  jtheme_color_t color;
-  jpoint_t<int> size;
-  jtheme_border_t::style type;
-};
-
 struct jtheme_scroll_t {
   jtheme_color_t color;
   jpoint_t<int> size;
@@ -86,20 +67,6 @@ struct jtheme_t {
     0xff808080,
     0xfff0f0f0,
     0x80f0f0f0
-  };
-
-  jtheme_border_t border {
-    .color {
-      0xff808080,
-      0xfff0f0f0,
-      0xff808080,
-      0xfff0f0f0,
-      0xff808080
-    },
-    .size {
-      2, 2
-    },
-    .type = jtheme_border_t::style::Line
   };
 
   jtheme_scroll_t scroll {

@@ -17,65 +17,61 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "jcanvas/widgets/jflatimage.h"
+#include "jcanvas/widgets/jloweredbeveledrectangleborder.h"
+#include "jcanvas/widgets/jcomponent.h"
 
 namespace jcanvas {
 
-FlatImage::FlatImage(std::shared_ptr<Image> image):
-  Component()
+LoweredBeveledRectangleBorder::LoweredBeveledRectangleBorder(std::size_t size, jcolor_t<float> color):
+  RectangleBorder(size, color)
 {
-  _align = jrect_align_t::Center;
-  _image = image;
+}
 
-  if (_image != nullptr) {
-    SetPreferredSize(_image->GetSize());
+LoweredBeveledRectangleBorder::~LoweredBeveledRectangleBorder()
+{
+}
+
+void LoweredBeveledRectangleBorder::Paint(Component *cmp, Graphics *g)
+{
+  if (cmp == nullptr) {
+    return;
   }
-}
 
-FlatImage::~FlatImage()
-{
-  _image = nullptr;
-}
+  const jpen_t oldPen = g->GetPen();
+  jpen_t pen = g->GetPen();
 
-void FlatImage::SetImage(std::shared_ptr<Image> image)
-{
-  _image = image;
-  
-  if (_image != nullptr) {
-    SetPreferredSize(_image->GetSize());
+  pen.width = 1;
+
+  g->SetPen(pen);
+
+  g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
+
+  jpoint_t<int> size = cmp->GetSize();
+  jcolor_t<float> color = GetColor();
+  std::size_t width = GetSize();
+  int 
+    step = 0x20,
+    dr = color[2],
+    dg = color[1],
+    db = color[0],
+    da = color[3];
+
+  for (int i=0; i<width && i<size.x && i<size.y; i++) {
+    g->SetColor({dr - step, dg - step, db - step});
+    g->DrawLine({i, i}, {size.x - i, i}); //cima
+    g->SetColor({dr + step, dg + step, db + step});
+    g->DrawLine({i, size.y - i}, {size.x - i, size.y - i}); //baixo
   }
-}
 
-std::shared_ptr<Image> FlatImage::GetImage()
-{
-  return _image;
-}
-
-void FlatImage::SetAlign(jrect_align_t align)
-{
-  _align = align;
-}
-
-jrect_align_t FlatImage::GetAlign()
-{
-  return _align;
-}
-
-void FlatImage::Paint(Graphics *g)
-{
-  Component::Paint(g);
-
-  jtheme_t
-    theme = GetTheme();
-
-  if (_image != nullptr) {
-    jrect_t<int> bounds = theme.padding.bounds(jrect_t<int>{{0, 0}, GetBounds().size});
-
-    g->ClipRect(bounds);
-    g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
-    g->DrawImage(_image, bounds.align(_align, jrect_t<int>{{0, 0}, _image->GetSize()}));
-    g->SetCompositeFlags(jcomposite_flags_t::Src);
+  for (int i=0; i<width && i<size.x && i<size.y; i++) {
+    g->SetColor({dr - step, dg - step, db - step});
+    g->DrawLine({i, i}, {i, size.y - i}); //esquerda
+    g->SetColor({dr + step, dg + step, db + step});
+    g->DrawLine({size.x - i, i}, {size.x - i, size.y - i}); //direita
   }
+
+  g->SetCompositeFlags(jcomposite_flags_t::Src);
+  g->SetPen(oldPen);
 }
 
 }

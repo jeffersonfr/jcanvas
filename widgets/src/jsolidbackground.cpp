@@ -17,65 +17,49 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "jcanvas/widgets/jflatimage.h"
+#include "jcanvas/widgets/jsolidbackground.h"
+#include "jcanvas/widgets/jrectangleborder.h"
+#include "jcanvas/widgets/jroundedrectangleborder.h"
+#include "jcanvas/widgets/jbeveledrectangleborder.h"
+#include "jcanvas/widgets/jcomponent.h"
 
 namespace jcanvas {
 
-FlatImage::FlatImage(std::shared_ptr<Image> image):
-  Component()
+SolidBackground::SolidBackground()
 {
-  _align = jrect_align_t::Center;
-  _image = image;
+}
 
-  if (_image != nullptr) {
-    SetPreferredSize(_image->GetSize());
+SolidBackground::~SolidBackground()
+{
+}
+
+void SolidBackground::Paint(Component *cmp, Graphics *g)
+{
+  if (cmp == nullptr) {
+    return;
   }
-}
 
-FlatImage::~FlatImage()
-{
-  _image = nullptr;
-}
+  jpoint_t<int> size = cmp->GetSize();
+  jtheme_t theme = cmp->GetTheme();
 
-void FlatImage::SetImage(std::shared_ptr<Image> image)
-{
-  _image = image;
-  
-  if (_image != nullptr) {
-    SetPreferredSize(_image->GetSize());
+  g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
+
+  if (static_cast<uint32_t>(theme.bg.normal) & 0xff000000) {
+    g->SetColor(theme.bg.normal);
+    g->FillRectangle({0, 0, size});
+
+    std::shared_ptr<Border> border = cmp->GetBorder();
+
+    if (std::dynamic_pointer_cast<RectangleBorder>(border) != nullptr) {
+      g->FillRectangle({0, 0, size});
+    } else if (std::dynamic_pointer_cast<RoundedRectangleBorder>(border) != nullptr) {
+      g->FillRoundRectangle({0, 0, size});
+    } else if (std::dynamic_pointer_cast<BeveledRectangleBorder>(border) != nullptr) {
+      g->FillBevelRectangle({0, 0, size});
+    }
   }
-}
 
-std::shared_ptr<Image> FlatImage::GetImage()
-{
-  return _image;
-}
-
-void FlatImage::SetAlign(jrect_align_t align)
-{
-  _align = align;
-}
-
-jrect_align_t FlatImage::GetAlign()
-{
-  return _align;
-}
-
-void FlatImage::Paint(Graphics *g)
-{
-  Component::Paint(g);
-
-  jtheme_t
-    theme = GetTheme();
-
-  if (_image != nullptr) {
-    jrect_t<int> bounds = theme.padding.bounds(jrect_t<int>{{0, 0}, GetBounds().size});
-
-    g->ClipRect(bounds);
-    g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
-    g->DrawImage(_image, bounds.align(_align, jrect_t<int>{{0, 0}, _image->GetSize()}));
-    g->SetCompositeFlags(jcomposite_flags_t::Src);
-  }
+  g->SetCompositeFlags(jcomposite_flags_t::Src);
 }
 
 }

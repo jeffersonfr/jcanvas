@@ -19,6 +19,7 @@
  ***************************************************************************/
 #include "jcanvas/widgets/jdialog.h"
 #include "jcanvas/widgets/jframe.h"
+#include "jcanvas/widgets/jsolidbackground.h"
 
 namespace jcanvas {
 
@@ -48,7 +49,7 @@ Dialog::Dialog(std::string title, Container *parent, jrect_t<int> bounds):
 
   SetInsets(insets);
   SetTitle(title);
-  SetBackgroundVisible(true);
+  SetBackground(std::make_shared<SolidBackground>());
   SetParent(parent);
 
   _focus_owner = nullptr;

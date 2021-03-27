@@ -225,7 +225,7 @@ void CheckButton::Paint(Graphics *g)
     minor = 4,
     cs = (std::min(bounds.size.x, bounds.size.y) - major)/2;
 
-  g->SetColor(theme.border.color.select);
+  g->SetColor(theme.fg.select);
 
   if (_type == jcheckbox_type_t::Check) {
     g->FillRectangle({theme.padding.left, theme.padding.top + (bounds.size.y - cs)/2, major, major});
@@ -234,7 +234,7 @@ void CheckButton::Paint(Graphics *g)
   }
 
   if (IsSelected() == true) {
-    g->SetColor(theme.border.color.normal);
+    g->SetColor(theme.fg.normal);
 
     if (_type == jcheckbox_type_t::Check) {
       g->FillRectangle({theme.padding.left + minor, theme.padding.top + (bounds.size.y - cs)/2 + minor, 2*minor, 2*minor});

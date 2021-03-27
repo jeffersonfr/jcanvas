@@ -19,6 +19,7 @@
  ***************************************************************************/
 #include "jcanvas/widgets/jtext.h"
 #include "jcanvas/widgets/jgridlayout.h"
+#include "jcanvas/widgets/jrectangleborder.h"
 
 namespace jcanvas {
 
@@ -54,10 +55,6 @@ void GenericChar::Update()
   // theme.bg.select = jcolor_name_t::Transparent;
   theme.bg.highlight = jcolor_name_t::Transparent;
 
-  theme.border.type = jtheme_border_t::style::Empty;
-  theme.border.size = jpoint_t<int>{0, 0};
-  theme.padding = jinsets_t<int>{0, 0, 0, 0};
-
   mExtends = theme.font.primary->GetStringExtends(std::string(1, mChar));
 
   jpoint_t<int> size = {(int)(mExtends.advance.x + 2), theme.font.primary->GetSize()};
@@ -66,10 +63,8 @@ void GenericChar::Update()
   SetMaximumSize(size);
   SetPreferredSize(size);
   SetSize(size);
-}
-
-void GenericChar::PaintBackground(Graphics *g)
-{
+  
+  SetBorder(nullptr);
 }
 
 void GenericChar::Paint(jcanvas::Graphics *g)
@@ -118,7 +113,7 @@ SpaceChar::~SpaceChar()
 EmptyChar::EmptyChar(TextComponent *parent):
   GenericChar(parent, '\0')
 {
-  SetBackgroundVisible(false);
+  SetBackground(nullptr);
 
 }
 
@@ -586,7 +581,7 @@ Paragraph::Paragraph(TextComponent *parent, std::string text)
 {
   mText = text;
 
-  SetBackgroundVisible(false);
+  SetBackground(nullptr);
   SetScrollable(false);
   SetLayout<NullLayout>() = nullptr;
 
@@ -636,15 +631,11 @@ Paragraph::~Paragraph()
 
 Text::Text(std::string text)
 {
-  jtheme_t &theme = GetTheme();
-
-  theme.border.type = jtheme_border_t::style::Line;
-  theme.border.size = jpoint_t<int>{1, 1};
-
   SetInsets({4, 4, 4, 4});
   SetLayout<BorderLayout>();
   SetText(text);
-  SetBackgroundVisible(false);
+  SetBackground(nullptr);
+  SetBorder(std::make_shared<RectangleBorder>());
   SetFocusable(true);
 }
 

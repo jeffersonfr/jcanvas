@@ -21,10 +21,12 @@
 #define J_COMPONENT_H
 
 #include "jcanvas/widgets/jtheme.h"
+#include "jcanvas/widgets/jbackground.h"
+#include "jcanvas/widgets/jborder.h"
 #include "jcanvas/widgets/jcomponentlistener.h"
 #include "jcanvas/widgets/jfocuslistener.h"
-#include "jcanvas/core/jgraphics.h"
 #include "jcanvas/core/jkeymap.h"
+#include "jcanvas/core/jgraphics.h"
 #include "jcanvas/core/jkeylistener.h"
 #include "jcanvas/core/jmouselistener.h"
 #include "jcanvas/algebra/jinsets.h"
@@ -114,6 +116,10 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
     /** \brief */
     std::mutex _data_listener_mutex;
     /** \brief */
+    std::shared_ptr<Background> _background;
+    /** \brief */
+    std::shared_ptr<Border> _border;
+    /** \brief */
     Container *_parent;
     /** \brief */
     Component *_left;
@@ -181,6 +187,8 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
     bool _is_scroll_visible;
     /** \brief */
     bool _is_smooth_scroll;
+    /** \brief */
+    bool _is_opaque;
 
   protected:
     /**
@@ -226,6 +234,30 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      *
      */
     virtual ~Component();
+
+    /**
+     * \brief
+     *
+     */
+    void SetBackground(std::shared_ptr<Background> background);
+
+    /**
+     * \brief
+     *
+     */
+    std::shared_ptr<Background> GetBackground();
+
+    /**
+     * \brief
+     *
+     */
+    void SetBorder(std::shared_ptr<Border> border);
+
+    /**
+     * \brief
+     *
+     */
+    std::shared_ptr<Border> GetBorder();
 
     /**
      * \brief
@@ -471,6 +503,12 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      * \brief
      *
      */
+    virtual void SetOpaque(bool opaque);
+    
+    /**
+     * \brief
+     *
+     */
     virtual bool IsOpaque();
     
     /**
@@ -478,18 +516,6 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      *
      */
     virtual void SetParent(Container *parent);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual bool IsBackgroundVisible();
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void SetBackgroundVisible(bool b);
     
     /**
      * \brief
@@ -808,18 +834,6 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      *
      */
     virtual void Paint(Graphics *g);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void PaintBackground(Graphics *g);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void PaintBorders(Graphics *g);
     
     /**
      * \brief

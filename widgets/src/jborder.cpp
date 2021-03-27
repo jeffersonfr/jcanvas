@@ -17,65 +17,12 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "jcanvas/widgets/jflatimage.h"
+#include "jcanvas/widgets/jborder.h"
 
 namespace jcanvas {
 
-FlatImage::FlatImage(std::shared_ptr<Image> image):
-  Component()
+Border::~Border()
 {
-  _align = jrect_align_t::Center;
-  _image = image;
-
-  if (_image != nullptr) {
-    SetPreferredSize(_image->GetSize());
-  }
-}
-
-FlatImage::~FlatImage()
-{
-  _image = nullptr;
-}
-
-void FlatImage::SetImage(std::shared_ptr<Image> image)
-{
-  _image = image;
-  
-  if (_image != nullptr) {
-    SetPreferredSize(_image->GetSize());
-  }
-}
-
-std::shared_ptr<Image> FlatImage::GetImage()
-{
-  return _image;
-}
-
-void FlatImage::SetAlign(jrect_align_t align)
-{
-  _align = align;
-}
-
-jrect_align_t FlatImage::GetAlign()
-{
-  return _align;
-}
-
-void FlatImage::Paint(Graphics *g)
-{
-  Component::Paint(g);
-
-  jtheme_t
-    theme = GetTheme();
-
-  if (_image != nullptr) {
-    jrect_t<int> bounds = theme.padding.bounds(jrect_t<int>{{0, 0}, GetBounds().size});
-
-    g->ClipRect(bounds);
-    g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
-    g->DrawImage(_image, bounds.align(_align, jrect_t<int>{{0, 0}, _image->GetSize()}));
-    g->SetCompositeFlags(jcomposite_flags_t::Src);
-  }
 }
 
 }

@@ -18,23 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "jcanvas/widgets/jpanel.h"
+#include "jcanvas/widgets/jsolidbackground.h"
 
 namespace jcanvas {
 
 Panel::Panel(jrect_t<int> bounds):
-  Container(bounds)
+  Panel("", bounds)
 {
-  jinsets_t<int>
-    insets;
-
-  insets.left = 8;
-  insets.right = 8;
-  insets.top = 64;
-  insets.bottom = 8;
-
-  SetInsets(insets);
-  SetFocusable(true);
-  SetBackgroundVisible(true);
 }
 
 Panel::Panel(std::string title, jrect_t<int> bounds):
@@ -52,7 +42,7 @@ Panel::Panel(std::string title, jrect_t<int> bounds):
 
   SetInsets(insets);
   SetFocusable(true);
-  SetBackgroundVisible(true);
+  SetBackground(std::make_shared<SolidBackground>());
 }
 
 Panel::~Panel()

@@ -143,12 +143,6 @@ class Frame : public Window, public Container {
      * \brief
      *
      */
-    virtual void PaintBackground(Graphics *g);
-
-    /**
-     * \brief
-     *
-     */
     virtual void PaintGlassPane(Graphics *g);
 
     /**

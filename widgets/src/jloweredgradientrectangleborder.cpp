@@ -17,61 +17,61 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "jcanvas/widgets/jimagebackground.h"
-#include "jcanvas/widgets/jrectangleborder.h"
-#include "jcanvas/widgets/jroundedrectangleborder.h"
-#include "jcanvas/widgets/jbeveledrectangleborder.h"
+#include "jcanvas/widgets/jloweredgradientrectangleborder.h"
 #include "jcanvas/widgets/jcomponent.h"
 
 namespace jcanvas {
 
-ImageBackground::ImageBackground(std::shared_ptr<Image> image)
-{
-  _image = image;
-}
-
-ImageBackground::~ImageBackground()
+LoweredGradientRectangleBorder::LoweredGradientRectangleBorder(std::size_t size, jcolor_t<float> color):
+  RectangleBorder(size, color)
 {
 }
 
-void ImageBackground::SetImage(std::shared_ptr<Image> image)
+LoweredGradientRectangleBorder::~LoweredGradientRectangleBorder()
 {
-  _image = image;
 }
 
-std::shared_ptr<Image> ImageBackground::GetImage()
-{
-  return _image;
-}
-
-void ImageBackground::SetAlign(jrect_align_t align)
-{
-  _align = align;
-}
-
-jrect_align_t ImageBackground::GetAlign()
-{
-  return _align;
-}
-
-void ImageBackground::Paint(Component *cmp, Graphics *g)
+void LoweredGradientRectangleBorder::Paint(Component *cmp, Graphics *g)
 {
   if (cmp == nullptr) {
     return;
   }
 
-  SolidBackground::Paint(cmp, g);
+  const jpen_t oldPen = g->GetPen();
+  jpen_t pen = g->GetPen();
 
-  if (_image == nullptr) {
-    return;
-  }
+  pen.width = 1;
 
-  jpoint_t<int> size = cmp->GetSize();
-  jtheme_t theme = cmp->GetTheme();
+  g->SetPen(pen);
 
   g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
-  g->DrawImage(_image, jrect_t<int>{0, 0, size}.align(_align, jrect_t<int>{{0, 0}, _image->GetSize()}));
+
+  jpoint_t<int> size = cmp->GetSize();
+  jcolor_t<float> color = GetColor();
+  std::size_t width = GetSize();
+  int 
+    dr = color[2],
+    dg = color[1],
+    db = color[0],
+    da = color[3];
+  float step = (0xff - std::max(std::max(dr, dg), db))/width;
+
+  for (int i=0; i<width && i<size.x && i<size.y; i++) {
+    g->SetColor({dr - step*(width - i), dg - step*(width - i), db - step*(width - i)});
+    g->DrawLine({i, i}, {size.x - i, i}); //cima
+    g->SetColor({dr + step*(width - i), dg + step*(width - i), db + step*(width - i)});
+    g->DrawLine({i, size.y - i}, {size.x - i, size.y - i}); //baixo
+  }
+
+  for (int i=0; i<width && i<size.x && i<size.y; i++) {
+    g->SetColor({dr - step*(width - i), dg - step*(width - i), db - step*(width - i)});
+    g->DrawLine({i, i}, {i, size.y - i}); //esquerda
+    g->SetColor({dr + step*(width - i), dg + step*(width - i), db + step*(width - i)});
+    g->DrawLine({size.x - i, i}, {size.x - i, size.y - i}); //direita
+  }
+
   g->SetCompositeFlags(jcomposite_flags_t::Src);
+  g->SetPen(oldPen);
 }
 
 }

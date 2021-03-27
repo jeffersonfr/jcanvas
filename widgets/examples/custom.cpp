@@ -68,8 +68,8 @@ class CustomContainer : public Container {
           offset = (int)(size.x*offset_ratio),
 					block_size = (int)(size.x*block_size_ratio);
 
-				g->DrawRectangle({theme.border.size.x, size.y - theme.scroll.size.y - theme.border.size.y, size.x - 2*theme.border.size.x, theme.scroll.size.y});
-				g->DrawImage(_image, {offset, size.y - theme.scroll.size.y - theme.border.size.y, block_size, theme.scroll.size.y});
+				g->DrawRectangle({0, size.y - theme.scroll.size.y, size.x, theme.scroll.size.y});
+				g->DrawImage(_image, {offset, size.y - theme.scroll.size.y, block_size, theme.scroll.size.y});
 			}
 
 			if (IsScrollableY() == true) {
@@ -80,8 +80,8 @@ class CustomContainer : public Container {
           offset = (int)(size.y*offset_ratio),
 					block_size = (int)(size.y*block_size_ratio);
 
-				g->DrawRectangle({size.x - theme.scroll.size.x - theme.border.size.x, theme.border.size.y, theme.scroll.size.x, size.y});
-				g->DrawImage(_image, {size.x - theme.scroll.size.x - theme.border.size.x, offset, theme.scroll.size.x, block_size});
+				g->DrawRectangle({size.x - theme.scroll.size.x, 0, theme.scroll.size.x, size.y});
+				g->DrawImage(_image, {size.x - theme.scroll.size.x, offset, theme.scroll.size.x, block_size});
 			}
 		}
 

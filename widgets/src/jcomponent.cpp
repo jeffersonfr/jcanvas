@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "jcanvas/widgets/jcomponent.h"
 #include "jcanvas/widgets/jcontainer.h"
+#include "jcanvas/widgets/jsolidbackground.h"
+#include "jcanvas/widgets/jrectangleborder.h"
 #include "jcanvas/widgets/jframe.h"
 
 #include <algorithm>
@@ -58,6 +60,7 @@ Component::Component(jrect_t<int> bounds):
   _right = nullptr;
   _up = nullptr;
   _down = nullptr;
+
   _gradient_level = 0x40;
   _alignment_x = jcomponent_alignment_t::Center;
   _alignment_y = jcomponent_alignment_t::Center;
@@ -81,8 +84,7 @@ Component::Component(jrect_t<int> bounds):
     .y = 0
   };
 
-  jtheme_t
-    &theme = GetTheme();
+  jtheme_t &theme = GetTheme();
 
   theme.padding = {
     .left = 0,
@@ -90,6 +92,10 @@ Component::Component(jrect_t<int> bounds):
     .right = 0,
     .bottom = 0
   };
+
+  SetOpaque(false);
+  SetBackground(std::make_shared<SolidBackground>());
+  SetBorder(std::make_shared<RectangleBorder>());
 }
 
 Component::~Component()
@@ -98,9 +104,12 @@ Component::~Component()
 
   if (parent != nullptr) {
     parent->Remove(this);
+  
+    SetParent(nullptr);
   }
-
-  SetParent(nullptr);
+  
+  _background = nullptr;
+  _border = nullptr;
 }
 
 void Component::ScrollToVisibleArea(jrect_t<int> rect, Component *coordinateSpace) 
@@ -214,6 +223,26 @@ void Component::ScrollToVisibleArea(jrect_t<int> rect, Component *coordinateSpac
   }
 }
 
+void Component::SetBackground(std::shared_ptr<Background> background)
+{
+  _background = background;
+}
+
+std::shared_ptr<Background> Component::GetBackground()
+{
+  return _background;
+}
+
+void Component::SetBorder(std::shared_ptr<Border> border)
+{
+  _border = border;
+}
+
+std::shared_ptr<Border> Component::GetBorder()
+{
+  return _border;
+}
+
 void Component::SetName(std::string name)
 {
   _name = name;
@@ -254,12 +283,14 @@ bool Component::IsCyclicFocus()
   return _is_cyclic_focus;
 }
 
+void Component::SetOpaque(bool opaque)
+{
+  _is_opaque = opaque;
+}
+
 bool Component::IsOpaque()
 {
-  jtheme_t
-    theme = GetTheme();
-
-  return (IsBackgroundVisible() == true) && ((static_cast<uint32_t>(theme.bg.normal) & 0xff000000) == 0xff000000);
+  return _is_opaque;
 }
 
 int Component::GetBaseline(int width, int height)
@@ -516,172 +547,6 @@ void Component::PaintScrollbars(Graphics *g)
   */
 }
 
-void Component::PaintBackground(Graphics *g)
-{
-  if (IsBackgroundVisible() == false) {
-    return;
-  }
-  
-  jtheme_t
-    theme = GetTheme();
-
-  g->SetColor(theme.bg.normal);
-
-  if (theme.border.type == jtheme_border_t::style::Round) {
-    g->FillRoundRectangle({0, 0, GetSize()});
-  } else if (theme.border.type == jtheme_border_t::style::Bevel) {
-    g->FillBevelRectangle({0, 0, GetSize()});
-  } else {
-    g->FillRectangle({0, 0, GetSize()});
-  }
-}
-
-void Component::PaintBorders(Graphics *g)
-{
-  jtheme_border_t
-    border = GetTheme().border;
-
-  if (border.type == jtheme_border_t::style::Empty) {
-    return;
-  }
-
-  jcolor_t<float>
-    color = border.color.normal;
-  jpoint_t<int>
-    size = GetSize();
-  int 
-    xp = 0, 
-    yp = 0,
-    wp = size.x,
-    hp = size.y;
-  int 
-    step = 0x20;
-
-  int 
-    dr = color[2],
-    dg = color[1],
-    db = color[0],
-    da = color[3];
-  jpen_t 
-    pen = g->GetPen();
-  int 
-    width = pen.width;
-
-  if (border.type == jtheme_border_t::style::Line) {
-    g->SetColor({dr, dg, db, da});
-    pen.width = -border.size.x;
-    g->SetPen(pen);
-    g->DrawRectangle({xp, yp, wp, hp});
-  } else if (border.type == jtheme_border_t::style::Bevel) {
-    g->SetColor({dr, dg, db, da});
-    pen.width = -border.size.x;
-    g->SetPen(pen);
-    g->DrawBevelRectangle({xp, yp, wp, hp});
-  } else if (border.type == jtheme_border_t::style::Round) {
-    g->SetColor({dr, dg, db, da});
-    pen.width = -border.size.x;
-    g->SetPen(pen);
-    g->DrawRoundRectangle({xp, yp, wp, hp});
-  } else if (border.type == jtheme_border_t::style::RaisedGradient) {
-    g->SetColor({dr, dg, db, da});
-    pen.width = 1;
-
-    for (int i=0; i<border.size.x && i<wp && i<hp; i++) {
-      g->SetColor({dr+step*(border.size.x-i), dg+step*(border.size.x-i), db+step*(border.size.x-i)});
-      g->DrawLine({xp+i, yp+i}, {xp+wp-i, yp+i}); //cima
-      g->SetColor({dr-step*(border.size.x-i), dg-step*(border.size.x-i), db-step*(border.size.x-i)});
-      g->DrawLine({xp+i, yp+hp-i}, {xp+wp-i, yp+hp-i}); //baixo
-    }
-
-    for (int i=0; i<border.size.x && i<wp && i<hp; i++) {
-      g->SetColor({dr+step*(border.size.x-i), dg+step*(border.size.x-i), db+step*(border.size.x-i)});
-      g->DrawLine({xp+i, yp+i}, {xp+i, yp+hp-i}); //esquerda
-      g->SetColor({dr-step*(border.size.x-i), dg-step*(border.size.x-i), db-step*(border.size.x-i)});
-      g->DrawLine({xp+wp-i, yp+i}, {xp+wp-i, yp+hp-i}); //direita
-    }
-  } else if (border.type == jtheme_border_t::style::LoweredGradient) {
-    g->SetColor({dr, dg, db, da});
-    pen.width = 1;
-
-    for (int i=0; i<border.size.x && i<wp && i<hp; i++) {
-      g->SetColor({dr-step*(border.size.x-i), dg-step*(border.size.x-i), db-step*(border.size.x-i)});
-      g->DrawLine({xp+i, yp+i}, {xp+wp-i, yp+i}); //cima
-      g->SetColor({dr+step*(border.size.x-i), dg+step*(border.size.x-i), db+step*(border.size.x-i)});
-      g->DrawLine({xp+i, yp+hp-i}, {xp+wp-i, yp+hp-i}); //baixo
-    }
-
-    for (int i=0; i<border.size.x && i<wp && i<hp; i++) {
-      g->SetColor({dr-step*(border.size.x-i), dg-step*(border.size.x-i), db-step*(border.size.x-i)});
-      g->DrawLine({xp+i, yp+i}, {xp+i, yp+hp-i}); //esquerda
-      g->SetColor({dr+step*(border.size.x-i), dg+step*(border.size.x-i), db+step*(border.size.x-i)});
-      g->DrawLine({xp+wp-i, yp+i}, {xp+wp-i, yp+hp-i}); //direita
-    }
-  } else if (border.type == jtheme_border_t::style::RaisedBevel) {
-    g->SetColor({dr, dg, db, da});
-    pen.width = 1;
-
-    for (int i=0; i<border.size.x && i<wp && i<hp; i++) {
-      g->SetColor({dr+step, dg+step, db+step});
-      g->DrawLine({xp+i, yp+i}, {xp+wp-i, yp+i}); //cima
-      g->SetColor({dr-step, dg-step, db-step});
-      g->DrawLine({xp+i, yp+hp-i}, {xp+wp-i, yp+hp-i}); //baixo
-    }
-
-    for (int i=0; i<border.size.x && i<wp && i<hp; i++) {
-      g->SetColor({dr+step, dg+step, db+step});
-      g->DrawLine({xp+i, yp+i}, {xp+i, yp+hp-i}); //esquerda
-      g->SetColor({dr-step, dg-step, db-step});
-      g->DrawLine({xp+wp-i, yp+i}, {xp+wp-i, yp+hp-i}); //direita
-    }
-  } else if (border.type == jtheme_border_t::style::LoweredBevel) {
-    g->SetColor({dr, dg, db, da});
-    pen.width = 1;
-
-    for (int i=0; i<border.size.x && i<wp && i<hp; i++) {
-      g->SetColor({dr-step, dg-step, db-step});
-      g->DrawLine({xp+i, yp+i}, {xp+wp-i, yp+i}); //cima
-      g->SetColor({dr+step, dg+step, db+step});
-      g->DrawLine({xp+i, yp+hp-i}, {xp+wp-i, yp+hp-i}); //baixo
-    }
-
-    for (int i=0; i<border.size.x && i<wp && i<hp; i++) {
-      g->SetColor({dr-step, dg-step, db-step});
-      g->DrawLine({xp+i, yp+i}, {xp+i, yp+hp-i}); //esquerda
-      g->SetColor({dr+step, dg+step, db+step});
-      g->DrawLine({xp+wp-i, yp+i}, {xp+wp-i, yp+hp-i}); //direita
-    }
-  } else if (border.type == jtheme_border_t::style::RaisedEtched) {
-    g->SetColor({dr+step, dg+step, db+step, da});
-    pen.width = -border.size.x;
-    g->SetPen(pen);
-    g->DrawRectangle({xp, yp, wp, hp});
-    
-    g->SetColor({dr-step, dg-step, db-step, da});
-    pen.width = -border.size.x/2;
-    g->SetPen(pen);
-    g->DrawRectangle({xp, yp, wp-border.size.x/2, hp-border.size.x/2});
-  } else if (border.type == jtheme_border_t::style::LoweredEtched) {
-    g->SetColor({dr-step, dg-step, db-step, da});
-    pen.width = -border.size.x;
-    g->SetPen(pen);
-    g->DrawRectangle({xp, yp, wp, hp});
-    
-    g->SetColor({dr+step, dg+step, db+step, da});
-    pen.width = -border.size.x/2;
-    g->DrawRectangle({xp, yp, wp-border.size.x/2, hp-border.size.x/2});
-  }
-
-  pen.width = width;
-  g->SetPen(pen);
-
-  if (IsEnabled() == false) {
-    g->SetColor(0x80000000);
-    g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
-    g->FillRectangle({0, 0, GetSize()});
-    g->SetCompositeFlags(jcomposite_flags_t::Src);
-  }
-}
-
 void Component::Paint(Graphics *g)
 {
 }
@@ -779,20 +644,6 @@ void Component::SetNextFocusDown(Component *cmp)
 void Component::SetParent(Container *parent)
 {
   _parent = parent;
-}
-
-bool Component::IsBackgroundVisible()
-{
-  return _is_background_visible;
-}
-
-void Component::SetBackgroundVisible(bool b)
-{
-  if (_is_background_visible == b) {
-    return;
-  }
-
-  _is_background_visible = b;
 }
 
 void Component::SetIgnoreRepaint(bool b)

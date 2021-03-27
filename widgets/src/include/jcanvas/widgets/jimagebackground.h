@@ -20,7 +20,7 @@
 #ifndef J_IMAGEBACKGROUND_H
 #define J_IMAGEBACKGROUND_H
 
-#include "jcanvas/widgets/jbackground.h"
+#include "jcanvas/widgets/jsolidbackground.h"
 #include "jcanvas/core/jimage.h"
 
 namespace jcanvas {
@@ -30,7 +30,7 @@ namespace jcanvas {
  *
  * \author Jeff Ferr
  */
-class ImageBackground : public Background {
+class ImageBackground : public SolidBackground {
 
   private:
     /** \bried */
