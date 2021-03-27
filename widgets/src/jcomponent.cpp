@@ -1543,7 +1543,7 @@ void Component::FindNextComponentFocus(jrect_t<int> rect, Component *&left, Comp
 
 void Component::RequestFocus()
 {
-  Container *parent = GetTopLevelAncestor();
+  Container *parent = GetParent();
 
   if (parent != nullptr) {
     parent->RequestComponentFocus(this);
@@ -1552,7 +1552,7 @@ void Component::RequestFocus()
 
 void Component::ReleaseFocus()
 {
-  Container *parent = GetTopLevelAncestor();
+  Container *parent = GetParent();
 
   if (parent != nullptr) {
     parent->ReleaseComponentFocus(this);
@@ -1561,7 +1561,7 @@ void Component::ReleaseFocus()
 
 bool Component::HasFocus()
 {
-  Container *parent = GetTopLevelAncestor();
+  Container *parent = GetParent();
 
   if (parent != nullptr) {
     return parent->GetFocusOwner() == this;

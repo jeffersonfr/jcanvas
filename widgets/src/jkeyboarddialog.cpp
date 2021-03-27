@@ -48,6 +48,7 @@
   container->SetScrollableX(false);                         \
   container->SetScrollableY(false);                         \
   container->SetSize({720, 5*(KEY_SIZE_1 + 4)});            \
+  container->SetPreferredSize({720, 5*(KEY_SIZE_1 + 4)});            \
                                                             \
   for (int i=0; i<5; i++) {                                 \
     lines[i] = new Container();                             \

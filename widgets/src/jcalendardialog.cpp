@@ -85,6 +85,9 @@ CalendarDialog::CalendarDialog(Container *parent):
   _lsex = new Text("S");
   _lsab = new Text("S");
 
+  _week_day_theme.bg.normal = jcolor_t {0xff808080};
+  _selected_theme.bg.normal = jcolor_t {0xff408040};
+
   _ldom->SetBounds({insets.left + 0*dx, insets.top + 2*dy, ds, ds});
   _lseg->SetBounds({insets.left + 1*dx, insets.top + 2*dy, ds, ds});
   _lter->SetBounds({insets.left + 2*dx, insets.top + 2*dy, ds, ds});
@@ -93,9 +96,6 @@ CalendarDialog::CalendarDialog(Container *parent):
   _lsex->SetBounds({insets.left + 5*dx, insets.top + 2*dy, ds, ds});
   _lsab->SetBounds({insets.left + 6*dx, insets.top + 2*dy, ds, ds});
 
-  _week_day_theme.bg.normal = jcolor_t {0xff808080};
-  _selected_theme.bg.normal = jcolor_t {0xff408040};
-
   _ldom->SetTheme(_week_day_theme);
   _lseg->SetTheme(_week_day_theme);
   _lter->SetTheme(_week_day_theme);
@@ -103,6 +103,22 @@ CalendarDialog::CalendarDialog(Container *parent):
   _lqui->SetTheme(_week_day_theme);
   _lsex->SetTheme(_week_day_theme);
   _lsab->SetTheme(_week_day_theme);
+
+  _ldom->SetEditable(false);
+  _lseg->SetEditable(false);
+  _lter->SetEditable(false);
+  _lqua->SetEditable(false);
+  _lqui->SetEditable(false);
+  _lsex->SetEditable(false);
+  _lsab->SetEditable(false);
+
+  _ldom->SetFocusable(false);
+  _lseg->SetFocusable(false);
+  _lter->SetFocusable(false);
+  _lqua->SetFocusable(false);
+  _lqui->SetFocusable(false);
+  _lsex->SetFocusable(false);
+  _lsab->SetFocusable(false);
 
   Add(_smonth);
   Add(_syear);

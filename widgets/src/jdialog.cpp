@@ -105,6 +105,16 @@ void Dialog::Paint(Graphics *g)
       g->DrawString(_title, {0, 8, size.x, theme.font.primary->GetSize()}, jhorizontal_align_t::Center, jvertical_align_t::Center);
     }
   }
+  
+  Component *owner = GetFocusOwner();
+
+  if (owner != nullptr) {
+    jrect_t<int> rect = jrect_t<int>{owner->GetAbsoluteLocation() - GetLocation(), owner->GetSize()};
+    jtheme_t theme = owner->GetTheme();
+
+    g->SetColor(theme.fg.focus);
+    g->DrawRectangle(rect);
+  }
 }
 
 bool Dialog::IsModal()
