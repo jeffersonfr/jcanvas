@@ -66,8 +66,6 @@ set(SRCS
   src/jtextlistener.cpp
   src/jtheme.cpp
   src/jtoastdialog.cpp
-  src/jtoggleevent.cpp
-  src/jtogglelistener.cpp
   #src/jtreelistview.cpp
   src/jyesnodialog.cpp
 )

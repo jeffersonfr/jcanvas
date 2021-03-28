@@ -18,304 +18,63 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "jcanvas/widgets/jcheckbutton.h"
+#include "jcanvas/core/jbufferedimage.h"
 
 #include <algorithm>
 
 namespace jcanvas {
 
-CheckButton::CheckButton(jcheckbox_type_t type, std::string text):
-  Component()
+CheckButton::CheckButton(jcheckbutton_type_t type, std::string text):
+  Button(text, std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/check-image.png"))
 {
-  _halign = jhorizontal_align_t::Center;
-  _valign = jvertical_align_t::Center;
+  _check_image = std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/check-image.png")->Scale({64, 32});
+  _radio_image = std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/radio-image.png")->Scale({64, 32});
 
-  _type = type;
-  _text = text;
-  _checked = false;
-  _is_wrap = false;
+  SetPressed(false);
+  SetType(type);
+  SetImage(_unchecked_image);
+  SetInsets({4, 0, 0, 0});
 
-  jtheme_t
-    &theme = GetTheme();
+  OnClick(
+    [this](Button *thiz, bool down) {
+      if (down == true) {
+        thiz->SetPressed(!thiz->IsPressed());
+      }
 
-  theme.padding = {8, 0, 0, 0};
-
-  SetFocusable(true);
+      if (thiz->IsPressed() == false) {
+        thiz->SetImage(_unchecked_image);
+      } else {
+        thiz->SetImage(_checked_image);
+      }
+    });
 }
 
 CheckButton::~CheckButton()
 {
 }
 
-void CheckButton::SetWrap(bool b)
-{
-  if (_is_wrap == b) {
-    return;
-  }
-
-  _is_wrap = b;
-}
-
-bool CheckButton::IsWrap()
-{
-  return _is_wrap;
-}
-
-void CheckButton::SetText(std::string text)
-{
-  _text = text;
-}
-
-std::string CheckButton::GetText()
-{
-  return _text;
-}
-
-void CheckButton::SetType(jcheckbox_type_t type)
+void CheckButton::SetType(jcheckbutton_type_t type)
 {
   _type = type;
-}
+  
+  if (_type == jcheckbutton_type_t::Check) {
+    jpoint_t<int> size = _check_image->GetSize()/jpoint_t<int>{2, 1};
 
-bool CheckButton::IsSelected()
-{
-  return _checked;
-}
+    _unchecked_image = _check_image->Crop({size*jpoint_t<int>{0, 0}, size});
+    _checked_image = _check_image->Crop({size*jpoint_t<int>{1, 0}, size});
+  } else if (_type == jcheckbutton_type_t::Radio) {
+    jpoint_t<int> size = _radio_image->GetSize()/jpoint_t<int>{2, 1};
 
-void CheckButton::SetSelected(bool b)
-{
-  if (_checked != b) {
-    _checked = b;
-
-    DispatchToggleEvent(new ToggleEvent(this, _checked));
-  }
-}
-
-void CheckButton::SetHorizontalAlign(jhorizontal_align_t align)
-{
-  if (_halign != align) {
-    _halign = align;
-  }
-}
-
-jhorizontal_align_t CheckButton::GetHorizontalAlign()
-{
-  return _halign;
-}
-
-void CheckButton::SetVerticalAlign(jvertical_align_t align)
-{
-  if (_valign != align) {
-    _valign = align;
-  }
-}
-
-jvertical_align_t CheckButton::GetVerticalAlign()
-{
-  return _valign;
-}
-    
-bool CheckButton::KeyPressed(KeyEvent *event)
-{
-  if (Component::KeyPressed(event) == true) {
-    return true;
+    _unchecked_image = _radio_image->Crop({size*jpoint_t<int>{0, 0}, size});
+    _checked_image = _radio_image->Crop({size*jpoint_t<int>{1, 0}, size});
   }
 
-  bool catched = false;
-
-  jkeyevent_symbol_t action = event->GetSymbol();
-
-  if (action == jkeyevent_symbol_t::Enter) {
-    if (_type == jcheckbox_type_t::Check) {
-      if (_checked == true) {
-        SetSelected(false);
-      } else {
-        SetSelected(true);
-      }
-    } else {
-      SetSelected(true);
-    }
-
-    catched = true;
-  }
-
-  return catched;
+  SetImage(_checked_image);
 }
 
-bool CheckButton::MousePressed(MouseEvent *event)
-{
-  if (Component::MousePressed(event) == true) {
-    return true;
-  }
-
-  jpoint_t<int>
-    size = GetSize();
-
-  if (event->GetButton() == jmouseevent_button_t::Button1) {
-    jpoint_t
-      elocation = event->GetLocation();
-    int
-      ms = size.y;
-
-    if (size.y > size.x) {
-      ms = size.x;
-    }
-
-    if ((elocation.x > 0 && elocation.x < ms) && (elocation.y > 0 && elocation.y < ms)) {
-      if (_type == jcheckbox_type_t::Check) {
-        if (_checked == true) {
-          SetSelected(false);
-        } else {
-          SetSelected(true);
-        }
-      } else {
-        SetSelected(true);
-      }
-    }
-
-    return true;
-  }
-
-  return false;
-}
-
-bool CheckButton::MouseReleased(MouseEvent *event)
-{
-  if (Component::MouseReleased(event) == true) {
-    return true;
-  }
-
-  return false;
-}
-
-bool CheckButton::MouseMoved(MouseEvent *event)
-{
-  if (Component::MouseMoved(event) == true) {
-    return true;
-  }
-
-  return false;
-}
-
-bool CheckButton::MouseWheel(MouseEvent *event)
-{
-  if (Component::MouseWheel(event) == true) {
-    return true;
-  }
-
-  return false;
-}
-
-jcheckbox_type_t CheckButton::GetType()
+jcheckbutton_type_t CheckButton::GetType()
 {
   return _type;
-}
-
-void CheckButton::Paint(Graphics *g)
-{
-  Component::Paint(g);
-
-  jtheme_t
-    theme = GetTheme();
-  jrect_t<int>
-    bounds = GetBounds();
-
-  bounds = theme.padding.bounds(jrect_t<int>{{0, 0}, bounds.size});
-
-  int
-    major = 16,
-    minor = 4,
-    cs = (std::min(bounds.size.x, bounds.size.y) - major)/2;
-
-  g->SetColor(theme.fg.select);
-
-  if (_type == jcheckbox_type_t::Check) {
-    g->FillRectangle({theme.padding.left, theme.padding.top + (bounds.size.y - cs)/2, major, major});
-  } else if (_type == jcheckbox_type_t::Radio) {
-    g->FillCircle({theme.padding.left + major/2, bounds.size.y/2}, major/2);
-  }
-
-  if (IsSelected() == true) {
-    g->SetColor(theme.fg.normal);
-
-    if (_type == jcheckbox_type_t::Check) {
-      g->FillRectangle({theme.padding.left + minor, theme.padding.top + (bounds.size.y - cs)/2 + minor, 2*minor, 2*minor});
-    } else {
-      g->FillCircle({theme.padding.left + major/2, bounds.size.y/2}, minor);
-    }
-  }
-
-  theme.padding.left = theme.padding.left + major + theme.padding.left;
-
-  if (theme.font.primary != nullptr) {
-    g->SetFont(theme.font.primary);
-
-    if (IsEnabled() == true) {
-      if (HasFocus() == true) {
-        g->SetColor(theme.fg.focus);
-      } else {
-        g->SetColor(theme.fg.normal);
-      }
-    } else {
-      g->SetColor(theme.fg.disable);
-    }
-
-    std::string text = GetText();
-
-    if (_is_wrap == false) {
-      text = theme.font.primary->TruncateString(text, "...", bounds.size.x);
-    }
-
-    g->DrawString(text, theme.padding.bounds(bounds), _halign, _valign);
-  }
-}
-
-void CheckButton::RegisterToggleListener(ToggleListener *listener)
-{
-  if (listener == nullptr) {
-    return;
-  }
-
-   std::lock_guard<std::mutex> guard(_check_listener_mutex);
-
-  if (std::find(_check_listeners.begin(), _check_listeners.end(), listener) == _check_listeners.end()) {
-    _check_listeners.push_back(listener);
-  }
-}
-
-void CheckButton::RemoveToggleListener(ToggleListener *listener)
-{
-  if (listener == nullptr) {
-    return;
-  }
-
-   std::lock_guard<std::mutex> guard(_check_listener_mutex);
-
-  _check_listeners.erase(std::remove(_check_listeners.begin(), _check_listeners.end(), listener), _check_listeners.end());
-}
-
-void CheckButton::DispatchToggleEvent(ToggleEvent *event)
-{
-  if (event == nullptr) {
-    return;
-  }
-
-  _check_listener_mutex.lock();
-
-  std::vector<ToggleListener *> listeners = _check_listeners;
-
-  _check_listener_mutex.unlock();
-
-  for (std::vector<ToggleListener *>::iterator i=listeners.begin(); i!=listeners.end() && event->IsConsumed() == false; i++) {
-    ToggleListener *listener = (*i);
-
-    listener->StateChanged(event);
-  }
-
-  delete event;
-}
-
-const std::vector<ToggleListener *> & CheckButton::GetToggleListeners()
-{
-  return _check_listeners;
 }
 
 }

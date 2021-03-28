@@ -28,6 +28,11 @@ namespace jcanvas {
 
 Button::Button(std::string text, std::shared_ptr<Image> image)
 {
+  OnClick(
+    [](Button *thiz, bool down) {
+      thiz->SetPressed(down);
+    });
+
   SetLayout<BorderLayout>();
   SetInsets({2, 2, 2, 2});
   SetScrollable(false);
@@ -49,17 +54,10 @@ Button::~Button()
 
 void Button::Build(std::string text, std::shared_ptr<Image> image)
 {
-  RemoveAll();
+  Component *textComponent = _text;
+  Component *imageComponent = _image;
 
-  if (_text != nullptr) {
-    delete _text;
-    _text = nullptr;
-  }
-
-  if (_image != nullptr) {
-    delete _image;
-    _image = nullptr;
-  }
+  _text = nullptr;
 
   if (text.empty() == false) {
     _text = new Text(text);
@@ -71,9 +69,11 @@ void Button::Build(std::string text, std::shared_ptr<Image> image)
     _text->SetScrollable(false);
     _text->SetHorizontalAlign(jhorizontal_align_t::Center);
     _text->SetVerticalAlign(jvertical_align_t::Center);
-    
+
     Add(_text, jborderlayout_align_t::Center);
   }
+
+  _image = nullptr;
 
   if (image != nullptr) {
     _image = new FlatImage(image);
@@ -83,18 +83,60 @@ void Button::Build(std::string text, std::shared_ptr<Image> image)
     _image->SetFocusable(false);
     _image->SetScrollable(false);
     _image->SetAlign(jrect_align_t::Contains);
-   
+
     if (_text == nullptr) {
       Add(_image, jborderlayout_align_t::Center);
     } else {
       Add(_image, jborderlayout_align_t::West);
     }
   }
+  
+  Remove(textComponent);
+  Remove(imageComponent);
+
+  delete textComponent;
+  delete imageComponent;
+}
+
+std::function<void(Button *, bool)> Button::OnClick(std::function<void(Button *, bool)> callback)
+{
+  auto previous = _onclick;
+
+  _onclick = callback;
+
+  return previous;
+}
+
+void Button::Click()
+{
+  if (_onclick != nullptr) {
+    _onclick(this, true);
+  }
+
+  if (_onclick != nullptr) {
+    _onclick(this, false);
+  }
+}
+
+void Button::SetPressed(bool param)
+{
+  _is_pressed = param;
+}
+
+bool Button::IsPressed()
+{
+  return _is_pressed;
 }
 
 void Button::SetText(std::string text)
 {
-  Build(text, _image->GetImage());
+  std::shared_ptr<Image> image;
+
+  if (GetImageComponent() != nullptr) {
+    image = GetImageComponent()->GetImage();
+  }
+
+  Build(text, image);
 }
 
 Text * Button::GetTextComponent()
@@ -104,7 +146,13 @@ Text * Button::GetTextComponent()
 
 void Button::SetImage(std::shared_ptr<Image> image)
 {
-  Build(_text->GetText(), _image->GetImage());
+  std::string text;
+
+  if (GetTextComponent() != nullptr) {
+    text = GetTextComponent()->GetText();
+  }
+
+  Build(text, image);
 }
 
 FlatImage * Button::GetImageComponent()
@@ -119,7 +167,11 @@ bool Button::KeyPressed(KeyEvent *event)
   }
 
   if (event->GetSymbol() == jkeyevent_symbol_t::Enter) {
-    _is_down = true;
+    if (_onclick != nullptr) {
+      _onclick(this, true);
+    }
+
+    DispatchActionEvent(new ActionEvent(this));
 
     return true;
   }
@@ -134,7 +186,9 @@ bool Button::KeyReleased(KeyEvent *event)
   }
 
   if (event->GetSymbol() == jkeyevent_symbol_t::Enter) {
-    _is_down = false;
+    if (_onclick != nullptr) {
+      _onclick(this, false);
+    }
 
     DispatchActionEvent(new ActionEvent(this));
 
@@ -151,7 +205,11 @@ bool Button::MousePressed(MouseEvent *event)
   }
 
   if (event->GetButton() == jmouseevent_button_t::Button1) {
-    _is_down = true;
+    if (_onclick != nullptr) {
+      _onclick(this, true);
+    }
+
+    DispatchActionEvent(new ActionEvent(this));
 
     return true;
   }
@@ -166,7 +224,11 @@ bool Button::MouseReleased(MouseEvent *event)
   }
 
   if (event->GetButton() == jmouseevent_button_t::Button1) {
-    _is_down = false;
+    if (_onclick != nullptr) {
+      _onclick(this, false);
+    }
+
+    DispatchActionEvent(new ActionEvent(this));
 
     return true;
   }

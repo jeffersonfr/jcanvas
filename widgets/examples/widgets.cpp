@@ -92,7 +92,7 @@ class ImageAnimation : public Animation {
 
 };
 
-class App : public Frame, public ActionListener, public SelectListener, public ToggleListener {
+class App : public Frame, public ActionListener, public SelectListener {
 
 	private:
     std::mutex
@@ -219,6 +219,19 @@ class App : public Frame, public ActionListener, public SelectListener, public T
 
         _toggle = new Button("Toggle Button", nullptr);
         
+        _toggle->OnClick(
+            [oldTheme=_toggle->GetTheme()](Button *thiz, bool down) {
+              if (down == true) {
+                thiz->SetPressed(!thiz->IsPressed());
+              }
+
+              if (thiz->IsPressed() == false) {
+                thiz->GetTheme().bg.normal = oldTheme.bg.normal;
+              } else {
+                thiz->GetTheme().bg.normal = jcolor_t {0xffff0000};
+              }
+            });
+
         _toggle->SetBounds({insets.left, region.point.y + region.size.y + 8, 196, 48});
       }
 
@@ -316,42 +329,42 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         jrect_t
           region = _label1->GetVisibleBounds();
 
-        _check1 = new CheckButton(jcheckbox_type_t::Check, "Wrap Text");
-        _check2 = new CheckButton(jcheckbox_type_t::Check, "Password");
-        _check3 = new CheckButton(jcheckbox_type_t::Check, "Hide");
+        _check1 = new CheckButton(jcheckbutton_type_t::Check, "Wrap Text");
+        _check2 = new CheckButton(jcheckbutton_type_t::Check, "Password");
+        _check3 = new CheckButton(jcheckbutton_type_t::Check, "Hide");
         
         _check1->SetBounds({region.point.x, region.point.y + 1*(region.size.y + 8), region.size.x, 48});
         _check2->SetBounds({region.point.x, region.point.y + 2*(region.size.y + 8), region.size.x, 48});
         _check3->SetBounds({region.point.x, region.point.y + 3*(region.size.y + 8), region.size.x, 48});
 
-        _check1->SetSelected(true);
+        _check1->Click();
 
-        _check1->RegisterToggleListener(this);
-        _check2->RegisterToggleListener(this);
-        _check3->RegisterToggleListener(this);
+        _check1->RegisterActionListener(this);
+        _check2->RegisterActionListener(this);
+        _check3->RegisterActionListener(this);
       }
 
       {
         jrect_t
           region = _label2->GetVisibleBounds();
 
-        _radio1 = new CheckButton(jcheckbox_type_t::Radio, "Left");
-        _radio2 = new CheckButton(jcheckbox_type_t::Radio, "Center");
-        _radio3 = new CheckButton(jcheckbox_type_t::Radio, "Right");
+        _radio1 = new CheckButton(jcheckbutton_type_t::Radio, "Left");
+        _radio2 = new CheckButton(jcheckbutton_type_t::Radio, "Center");
+        _radio3 = new CheckButton(jcheckbutton_type_t::Radio, "Right");
         
         _radio1->SetBounds({region.point.x, region.point.y + 1*(region.size.y + 8), region.size.x, 48});
         _radio2->SetBounds({region.point.x, region.point.y + 2*(region.size.y + 8), region.size.x, 48});
         _radio3->SetBounds({region.point.x, region.point.y + 3*(region.size.y + 8), region.size.x, 48});
 
-        _radio2->SetSelected(true);
-
         _group.Add(_radio1);
         _group.Add(_radio2);
         _group.Add(_radio3);
 
-        _radio1->RegisterToggleListener(this);
-        _radio2->RegisterToggleListener(this);
-        _radio3->RegisterToggleListener(this);
+        _radio1->Click();
+
+        _radio1->RegisterActionListener(this);
+        _radio2->RegisterActionListener(this);
+        _radio3->RegisterActionListener(this);
       }
 
       {
@@ -444,43 +457,15 @@ class App : public Frame, public ActionListener, public SelectListener, public T
       _button1->RequestFocus();
     }
 
+    /*
     virtual void StateChanged(ToggleEvent *event)
     {
       _mutex.lock();
 
-      if (event->GetSource() == _check1 ||
-          event->GetSource() == _check2 ||
-          event->GetSource() == _check3) {
-        if (_check1->IsSelected() == true) {
-          _textarea->SetWrap(true);
-        } else {
-          _textarea->SetWrap(false);
-        }
-
-        if (_check2->IsSelected() == true) {
-          _textarea->SetEchoChar('*');
-        } else {
-          _textarea->SetEchoChar('\0');
-        }
-
-        if (_check3->IsSelected() == true) {
-          _textarea->SetVisible(false);
-        } else {
-          _textarea->SetVisible(true);
-        }
-      } else if (event->GetSource() == _radio1) {
-        _label1->SetHorizontalAlign(jhorizontal_align_t::Left);
-        _label2->SetHorizontalAlign(jhorizontal_align_t::Left);
-      } else if (event->GetSource() == _radio2) {
-        _label1->SetHorizontalAlign(jhorizontal_align_t::Center);
-        _label2->SetHorizontalAlign(jhorizontal_align_t::Center);
-      } else if (event->GetSource() == _radio3) {
-        _label1->SetHorizontalAlign(jhorizontal_align_t::Right);
-        _label2->SetHorizontalAlign(jhorizontal_align_t::Right);
-      }
       
       _mutex.unlock();
     }
+    */
 
     virtual void ItemChanged(SelectEvent *event)
     {
@@ -506,6 +491,22 @@ class App : public Frame, public ActionListener, public SelectListener, public T
         _progress->SetValue(_progress->GetValue() - 10);
         _slider->SetValue(_slider->GetValue() - 10);
       } else if (event->GetSource() == _button3) {
+        // do nothing;
+      } else if (event->GetSource() == _check1) {
+        _textarea->SetWrap(_check1->IsPressed());
+      } else if (event->GetSource() == _check2) {
+        _textarea->SetEchoChar((_check2->IsPressed()?'*':'\0'));
+      } else if (event->GetSource() == _check3) {
+        _textarea->SetVisible(!_check3->IsPressed());
+      } else if (event->GetSource() == _radio1) {
+        _label1->SetHorizontalAlign(jhorizontal_align_t::Left);
+        _label2->SetHorizontalAlign(jhorizontal_align_t::Left);
+      } else if (event->GetSource() == _radio2) {
+        _label1->SetHorizontalAlign(jhorizontal_align_t::Center);
+        _label2->SetHorizontalAlign(jhorizontal_align_t::Center);
+      } else if (event->GetSource() == _radio3) {
+        _label1->SetHorizontalAlign(jhorizontal_align_t::Right);
+        _label2->SetHorizontalAlign(jhorizontal_align_t::Right);
       }
       
       _mutex.unlock();

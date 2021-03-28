@@ -25,6 +25,7 @@
 #include "jcanvas/widgets/jtext.h"
 #include "jcanvas/widgets/jactionlistener.h"
 
+#include <functional>
 #include <mutex>
 
 namespace jcanvas {
@@ -45,11 +46,13 @@ class Button : public Container {
     /** \brief */
     std::mutex _action_listener_mutex;
     /** \brief */
+    std::function<void(Button *, bool)> _onclick;
+    /** \brief */
     FlatImage *_image {nullptr};
     /** \brief */
     Text *_text {nullptr};
     /** \brief */
-    bool _is_down {false};
+    bool _is_pressed {false};
 
     void Build(std::string text, std::shared_ptr<Image> image);
 
@@ -91,6 +94,30 @@ class Button : public Container {
      */
     virtual ~Button();
 
+    /**
+     * \brief
+     *
+     */
+    std::function<void(Button *, bool)> OnClick(std::function<void(Button *, bool)> callback);
+
+    /**
+     * \brief
+     *
+     */
+    void Click();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void SetPressed(bool param);
+    
+    /**
+     * \brief
+     *
+     */
+    virtual bool IsPressed();
+    
     /**
      * \brief
      *

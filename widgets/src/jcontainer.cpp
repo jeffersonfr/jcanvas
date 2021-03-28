@@ -147,30 +147,29 @@ bool Container::MoveScrollTowards(Component *next, jkeyevent_symbol_t symbol)
 
 void Container::InternalAddDialog(Dialog *dialog)
 {
-  _dialogs_mutex.lock();
+  std::lock_guard<std::mutex> lock(_dialogs_mutex);
 
   if (std::find(_dialogs.begin(), _dialogs.end(), dialog) != _dialogs.end()) {
-    _dialogs_mutex.unlock();
-
     throw std::runtime_error("Dialog is already added");
   }
 
   _dialogs.push_back(dialog);
   
-  _dialogs_mutex.unlock();
-
   Repaint();
 }
 
 void Container::InternalRemoveDialog(Dialog *dialog)
 {
-  _dialogs_mutex.lock();
+  std::lock_guard<std::mutex> lock(_dialogs_mutex);
 
   _dialogs.erase(std::remove(_dialogs.begin(), _dialogs.end(), dialog), _dialogs.end());
   
-  _dialogs_mutex.unlock();
-  
   Repaint();
+}
+
+void Container::SetLayout(std::shared_ptr<Layout> layout)
+{
+  _layout = layout;
 }
 
 jpoint_t<int> Container::GetScrollDimension()
@@ -290,9 +289,9 @@ void Container::SetOptimizedPaint(bool b)
 
 void Container::DoLayout()
 {
-  if (_layout != nullptr) {
-    std::lock_guard<std::recursive_mutex> lock(_container_mutex);
+  std::lock_guard<std::recursive_mutex> lock(_container_mutex);
 
+  if (_layout != nullptr) {
     SetIgnoreRepaint(true);
 
     _layout->DoLayout(this);
@@ -321,7 +320,7 @@ void Container::Pack(bool fit)
     max_w = 0,
     max_h = 0;
 
-  _container_mutex.lock();
+  std::lock_guard<std::recursive_mutex> lock(_container_mutex);
 
   DoLayout();
 
@@ -366,8 +365,6 @@ void Container::Pack(bool fit)
       max_h = cl.y + cs.y;
     }
   }
-
-  _container_mutex.unlock();
 
   SetSize(max_w + insets.right, max_h + insets.bottom);
 }
@@ -446,7 +443,7 @@ void Container::Paint(Graphics *g)
   }
 
   // INFO:: paint dialogs
-  _dialogs_mutex.lock();
+  std::lock_guard<std::mutex> dialog_lock(_dialogs_mutex);
 
   for (std::vector<Dialog *>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
     Dialog *c = (*i);
@@ -483,8 +480,6 @@ void Container::Paint(Graphics *g)
     }
   }
   
-  _dialogs_mutex.unlock();
-
   PaintGlassPane(g);
 }
 
@@ -521,7 +516,7 @@ void Container::Add(Component *c, int index)
     throw std::invalid_argument("Unable to add dialogs to container");
   }
 
-  _container_mutex.lock();
+  std::lock_guard<std::recursive_mutex>_lock(_container_mutex);
 
   if (std::find(_components.begin(), _components.end(), c) == _components.end()) {
     _components.insert(_components.begin()+index, c);
@@ -542,8 +537,6 @@ void Container::Add(Component *c, int index)
 
     DispatchContainerEvent(new ContainerEvent(c, jcontainerevent_type_t::Add));
   }
-
-  _container_mutex.unlock();
 
   DoLayout();
 }
@@ -639,7 +632,7 @@ void Container::Remove(Component *c)
     }
   }
 
-  _container_mutex.lock();
+  std::lock_guard<std::recursive_mutex> lock(_container_mutex);
 
   for (std::vector<Component *>::iterator i=_components.begin(); i!=_components.end(); i++) {
     if (c == (*i)) {
@@ -655,8 +648,6 @@ void Container::Remove(Component *c)
     }
   }
   
-  _container_mutex.unlock();
-
   DoLayout();
 }
 
@@ -682,7 +673,7 @@ void Container::RemoveAll()
     }
   }
 
-   _container_mutex.lock();
+  std::lock_guard<std::recursive_mutex> lock(_container_mutex);
 
   for (std::vector<Component *>::iterator i=_components.begin(); i!=_components.end(); i++) {
     Component *c = (*i);

@@ -123,14 +123,16 @@ class Container : public Component {
      * \brief
      *
      */
+    void SetLayout(std::shared_ptr<Layout> layout);
+
+    /**
+     * \brief
+     *
+     */
     template<typename T, typename ...Args>
-    std::shared_ptr<T> SetLayout(Args ...args) 
+    void SetLayout(Args ...args) 
     {
-      std::shared_ptr<T> layout = std::make_shared<T>(std::forward<Args>(args)...);
-
-      _layout = std::dynamic_pointer_cast<Layout>(layout);
-
-      return layout;
+      SetLayout(std::make_shared<T>(std::forward<Args>(args)...));
     }
     
     /**

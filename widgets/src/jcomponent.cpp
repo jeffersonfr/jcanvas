@@ -228,19 +228,9 @@ void Component::SetBackground(std::shared_ptr<Background> background)
   _background = background;
 }
 
-std::shared_ptr<Background> Component::GetBackground()
-{
-  return _background;
-}
-
 void Component::SetBorder(std::shared_ptr<Border> border)
 {
   _border = border;
-}
-
-std::shared_ptr<Border> Component::GetBorder()
-{
-  return _border;
 }
 
 void Component::SetName(std::string name)

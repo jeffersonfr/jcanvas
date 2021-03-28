@@ -21,7 +21,7 @@
 #define J_CHECKBUTTONGROUP_H
 
 #include "jcanvas/widgets/jcheckbutton.h"
-#include "jcanvas/widgets/jtogglelistener.h"
+#include "jcanvas/widgets/jactionlistener.h"
 
 #include <vector>
 #include <mutex>
@@ -33,7 +33,7 @@ namespace jcanvas {
  *
  * \author Jeff Ferr
  */
-class CheckButtonGroup : public ToggleListener {
+class CheckButtonGroup : public ActionListener {
 
   private:
     /** \brief */
@@ -46,7 +46,7 @@ class CheckButtonGroup : public ToggleListener {
      * \brief
      *
      */
-    virtual void StateChanged(ToggleEvent *event);
+    virtual void ActionPerformed(ActionEvent *event);
 
   public:
     /**

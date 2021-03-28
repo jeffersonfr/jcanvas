@@ -29,9 +29,6 @@ CheckButtonGroup::CheckButtonGroup()
 
 CheckButtonGroup::~CheckButtonGroup()
 {
-   std::lock_guard<std::recursive_mutex> guard(_group_mutex);
-
-  // INFO:: the user must remove listeners manually
 }
 
 void CheckButtonGroup::Add(CheckButton *button)
@@ -42,7 +39,7 @@ void CheckButtonGroup::Add(CheckButton *button)
     return;
   }
 
-  button->RegisterToggleListener(this);
+  button->RegisterActionListener(this);
 
   _buttons.push_back(button);
 }
@@ -51,30 +48,34 @@ void CheckButtonGroup::Remove(CheckButton *button)
 {
    std::lock_guard<std::recursive_mutex> guard(_group_mutex);
 
-  for (std::vector<CheckButton *>::iterator i=_buttons.begin(); i!=_buttons.end(); i++) {
-    if (button == (*i)) {
-      (*i)->RemoveToggleListener(this);
+   std::vector<CheckButton *>::iterator i = std::find(_buttons.begin(), _buttons.end(), button);
 
-      _buttons.erase(i);
-
-      break;
-    }
-  }
-}
-
-void CheckButtonGroup::StateChanged(ToggleEvent *event)
-{
-   std::lock_guard<std::recursive_mutex> guard(_group_mutex);
-
-  if (event->IsSelected() == false) {
+  if (i == _buttons.end()) {
     return;
   }
 
-  CheckButton *cb = reinterpret_cast<CheckButton *>(event->GetSource());
+  (*i)->RemoveActionListener(this);
+
+  _buttons.erase(i);
+}
+
+void CheckButtonGroup::ActionPerformed(ActionEvent *event)
+{
+   std::lock_guard<std::recursive_mutex> guard(_group_mutex);
+
+  CheckButton *cmp = reinterpret_cast<CheckButton *>(event->GetSource());
+
+  if (cmp->IsPressed() == false) {
+    cmp->Click();
+  }
 
   for (std::vector<CheckButton *>::iterator i=_buttons.begin(); i!=_buttons.end(); i++) {
-    if (cb != (*i)) {
-      (*i)->SetSelected(false);
+    CheckButton *cmp1 = (*i);
+
+    if (cmp != cmp1) {
+      if (cmp1->IsPressed()) {
+        cmp1->Click();
+      }
     }
   }
 }
@@ -84,8 +85,10 @@ CheckButton * CheckButtonGroup::GetSelected()
    std::lock_guard<std::recursive_mutex> guard(_group_mutex);
 
   for (std::vector<CheckButton *>::iterator i=_buttons.begin(); i!=_buttons.end(); i++) {
-    if ((*i)->IsSelected() == true) {
-      return (*i);
+    CheckButton *cmp = (*i);
+
+    if (cmp->IsPressed() == true) {
+      return cmp;
     }
   }
 

@@ -583,7 +583,7 @@ Paragraph::Paragraph(TextComponent *parent, std::string text)
 
   SetBackground(nullptr);
   SetScrollable(false);
-  SetLayout<NullLayout>() = nullptr;
+  SetLayout(nullptr);
 
   std::string word;
 

@@ -245,7 +245,21 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      * \brief
      *
      */
-    std::shared_ptr<Background> GetBackground();
+    template<typename T, typename ...Args>
+    void SetBackground(Args ...args) 
+    {
+      SetBackground(std::make_shared<T>(std::forward<Args>(args)...));
+    }
+    
+    /**
+     * \brief
+     *
+     */
+    template <typename T = Background>
+    std::shared_ptr<T> GetBackground()
+    {
+      return std::dynamic_pointer_cast<T>(_background);
+    }
 
     /**
      * \brief
@@ -257,7 +271,21 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      * \brief
      *
      */
-    std::shared_ptr<Border> GetBorder();
+    template<typename T, typename ...Args>
+    void SetBorder(Args ...args) 
+    {
+      SetBorder(std::make_shared<T>(std::forward<Args>(args)...));
+    }
+    
+    /**
+     * \brief
+     *
+     */
+    template <typename T = Border>
+    std::shared_ptr<T> GetBorder()
+    {
+      return std::dynamic_pointer_cast<T>(_border);
+    }
 
     /**
      * \brief

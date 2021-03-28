@@ -20,14 +20,13 @@
 #ifndef J_CHECKButton_H
 #define J_CHECKButton_H
 
-#include "jcanvas/widgets/jcomponent.h"
-#include "jcanvas/widgets/jtogglelistener.h"
+#include "jcanvas/widgets/jbutton.h"
 
 #include <mutex>
 
 namespace jcanvas {
 
-enum class jcheckbox_type_t {
+enum class jcheckbutton_type_t {
   Check,
   Radio
 };
@@ -37,34 +36,26 @@ enum class jcheckbox_type_t {
  *
  * \author Jeff Ferr
  */
-class CheckButton : public Component {
+class CheckButton : public Button {
 
   private:
     /** \brief */
-    std::vector<ToggleListener *> _check_listeners;
+    std::shared_ptr<Image> _check_image;
     /** \brief */
-    std::mutex _check_listener_mutex;
+    std::shared_ptr<Image> _radio_image;
     /** \brief */
-    std::string _text;
+    std::shared_ptr<Image> _checked_image;
     /** \brief */
-    jcheckbox_type_t _type;
+    std::shared_ptr<Image> _unchecked_image;
     /** \brief */
-    jhorizontal_align_t _halign;
-    /** \brief */
-    jvertical_align_t _valign;
-    /** \brief */
-    bool _checked;
-    /** \brief */
-    bool _just_check;
-    /** \brief */
-    bool _is_wrap;
+    jcheckbutton_type_t _type;
 
   public:
     /**
      * \brief
      *
      */
-    CheckButton(jcheckbox_type_t type, std::string text);
+    CheckButton(jcheckbutton_type_t type, std::string text);
   
     /**
      * \brief
@@ -76,134 +67,14 @@ class CheckButton : public Component {
      * \brief
      *
      */
-    virtual void SetWrap(bool b);
+    virtual void SetType(jcheckbutton_type_t type);
     
     /**
      * \brief
      *
      */
-    virtual bool IsWrap();
+    virtual jcheckbutton_type_t GetType();
     
-    /**
-     * \brief
-     *
-     */
-    virtual void SetText(std::string text);
-
-    /**
-     * \brief
-     *
-     */
-    virtual std::string GetText();
-
-    /**
-     * \brief
-     *
-     */
-    virtual void SetType(jcheckbox_type_t type);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual jcheckbox_type_t GetType();
-    
-    /**
-     * \brief
-     *
-     */
-    virtual bool IsSelected();
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void SetSelected(bool b);
-
-    /**
-     * \brief
-     *
-     */
-    virtual void SetHorizontalAlign(jhorizontal_align_t align);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual jhorizontal_align_t GetHorizontalAlign();
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void SetVerticalAlign(jvertical_align_t align);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual jvertical_align_t GetVerticalAlign();
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void Paint(Graphics *g);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual bool KeyPressed(KeyEvent *event);
-
-    /**
-     * \brief
-     *
-     */
-    virtual bool MousePressed(MouseEvent *event);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual bool MouseReleased(MouseEvent *event);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual bool MouseMoved(MouseEvent *event);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual bool MouseWheel(MouseEvent *event);
-
-    /**
-     * \brief
-     *
-     */
-    virtual void RegisterToggleListener(ToggleListener *listener);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void RemoveToggleListener(ToggleListener *listener);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void DispatchToggleEvent(ToggleEvent *event);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual const std::vector<ToggleListener *> & GetToggleListeners();
-
 };
 
 }

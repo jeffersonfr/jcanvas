@@ -655,11 +655,9 @@ void WindowAdapter::ToggleFullScreen()
 
   xcb_atom_t atom_from_cookie = getReplyAtomFromCookie(wm_state_ck); 
 
-  printf("::: 001\n");
   if (atom_from_cookie == 0) {
     return;
   }
-  printf("::: 002\n");
 
   xcb_client_message_event_t ev;
   // memset (&ev, 0, sizeof (ev));

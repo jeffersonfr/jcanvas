@@ -30,7 +30,9 @@ MessageDialog::MessageDialog(Container *parent, std::string title, std::string m
 
   _ok.RegisterActionListener(this);
   
-  auto layout = _container.SetLayout<FlowLayout>();
+  _container.SetLayout<FlowLayout>();
+
+  auto layout = _container.GetLayout<FlowLayout>();
 
   _container.Add(&_ok);
 

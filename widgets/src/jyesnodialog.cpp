@@ -31,7 +31,9 @@ YesNoDialog::YesNoDialog(Container *parent, std::string title, std::string msg):
   _yes.RegisterActionListener(this);
   _no.RegisterActionListener(this);
  
-  auto layout = _container.SetLayout<FlowLayout>();
+  _container.SetLayout<FlowLayout>();
+
+  auto layout = _container.GetLayout<FlowLayout>();
   
   layout->SetAlign(jflowlayout_align_t::Right);
 
