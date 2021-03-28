@@ -23,81 +23,23 @@
 
 namespace jcanvas {
 
-Animation::Animation(std::chrono::milliseconds start, std::chrono::milliseconds interval, bool loop):
-  Component()
-{
-  _timestamp = std::chrono::steady_clock::now();
-  _start = start;
-  _interval = interval;
-  _loop = loop;
-  _running = false;
-}
-
 Animation::~Animation()
 {
-  Stop();
-}
-
-void Animation::Paint(Graphics *g)
-{
-  std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-  std::chrono::milliseconds elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - _timestamp);
-
-  if (_start >= std::chrono::milliseconds(0) and elapsed > _start) {
-    _start = std::chrono::milliseconds(-1);
-    _timestamp = now;
-
-    Update(_start);
-  } else {
-    if (elapsed > _interval) {
-      _timestamp = now;
-
-      Update(_interval);
-    }
-  }
-
-  Render(g);
-  Repaint();
-}
-
-void Animation::SetLoop(bool param)
-{
-  _loop = param;
-}
-
-bool Animation::IsLoop()
-{
-  return _loop;
-}
-
-void Animation::SetInterval(std::chrono::milliseconds interval)
-{
-  _interval = interval;
-}
-
-std::chrono::milliseconds Animation::GetInterval()
-{
-  return _interval;
 }
 
 void Animation::Start()
 {
-  _timestamp = std::chrono::steady_clock::now();
-
-  _running = true;
+  _is_started = true;
 }
 
 void Animation::Stop()
 {
-  _running = false;
+  _is_started = false;
 }
 
-void Animation::Update(std::chrono::milliseconds tick)
+bool Animation::IsStarted()
 {
-}
-
-void Animation::Render(Graphics *g)
-{
+  return _is_started;
 }
 
 }

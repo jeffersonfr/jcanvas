@@ -20,10 +20,7 @@
 #ifndef J_ANIMATION_H
 #define J_ANIMATION_H
 
-#include "jcanvas/widgets/jcomponent.h"
-#include "jcanvas/core/jimage.h"
-
-#include <vector>
+#include <thread>
 
 namespace jcanvas {
 
@@ -32,34 +29,12 @@ namespace jcanvas {
  *
  * \author Jeff Ferr
  */
-class Animation : public Component {
+class Animation {
 
   private:
     /** \brief */
-    std::chrono::steady_clock::time_point _timestamp;
-    /** \brief */
-    std::chrono::milliseconds _start;
-    /** \brief */
-    std::chrono::milliseconds _interval;
-    /** \brief */
-    bool _loop;
-    /** \brief */
-    bool _running;
+    bool _is_started {true};
 
-  private:
-    /**
-     * \brief
-     *
-     */
-    virtual void Paint(Graphics *g);
-
-  protected:
-    /**
-     * \brief
-     *
-     */
-    Animation(std::chrono::milliseconds start, std::chrono::milliseconds interval, bool loop = true);
-    
   public:
     /**
      * \brief
@@ -67,30 +42,6 @@ class Animation : public Component {
      */
     virtual ~Animation();
 
-    /**
-     * \brief
-     *
-     */
-    virtual void SetLoop(bool param);
-
-    /**
-     * \brief
-     *
-     */
-    virtual bool IsLoop();
-
-    /**
-     * \brief
-     *
-     */
-    virtual void SetInterval(std::chrono::milliseconds interval);
-
-    /**
-     * \brief
-     *
-     */
-    virtual std::chrono::milliseconds GetInterval();
-    
     /**
      * \brief
      *
@@ -107,14 +58,14 @@ class Animation : public Component {
      * \brief
      *
      */
-    virtual void Update(std::chrono::milliseconds tick);
+    virtual bool IsStarted();
 
     /**
      * \brief
      *
      */
-    virtual void Render(Graphics *g);
-    
+    virtual void Update(std::chrono::milliseconds tick) = 0;
+
 };
 
 }

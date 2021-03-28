@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "jcanvas/widgets/jmarquee.h"
+#include "jcanvas/widgets/jtheme.h"
 
 #include <thread>
 
@@ -27,20 +28,32 @@
 
 namespace jcanvas {
 
-Marquee::Marquee(std::string text, std::chrono::milliseconds interval):
-   Animation(std::chrono::milliseconds(0), interval)
+Marquee::Marquee(std::string text):
+   Animation()
 {
-  _text = text;
-  _position = 0;
+  SetText(text);
 }
 
 Marquee::~Marquee()
 {
 }
 
+void Marquee::SetRatio(float ratio)
+{
+  _ratio = ratio;
+}
+
+float Marquee::GetRatio()
+{
+  return _ratio;
+}
+
 void Marquee::SetText(std::string text)
 {
+  jtheme_t theme = GetTheme();
+
   _text = text;
+  _text_size = theme.font.primary->GetStringWidth(_text);
 }
 
 std::string Marquee::GetText()
@@ -50,22 +63,19 @@ std::string Marquee::GetText()
 
 void Marquee::Update(std::chrono::milliseconds tick)
 {
-  jtheme_t
-    theme = GetTheme();
+  jpoint_t<int> size = GetSize();
+  std::chrono::duration<float> duration = tick;
 
-  jpoint_t<int>
-    size = GetSize();
-  int 
-    width = theme.font.primary->GetStringWidth(_text.c_str());
+  _position = _position - size.x*duration.count()*GetRatio();
 
-  _position = _position - STEP;
-
-  if (_position <= -width) {
+  if (_position <= -_text_size) {
     _position = size.x;
   }
+
+  Repaint();
 }
 
-void Marquee::Render(Graphics *g)
+void Marquee::Paint(Graphics *g)
 {
   // JDEBUG(JINFO, "paint\n");
 
@@ -78,17 +88,7 @@ void Marquee::Render(Graphics *g)
 
   if (theme.font.primary != nullptr) {
     g->SetFont(theme.font.primary);
-
-    if (IsEnabled() == true) {
-      if (HasFocus() == true) {
-        g->SetColor(theme.fg.focus);
-      } else {
-        g->SetColor(theme.fg.normal);
-      }
-    } else {
-      g->SetColor(theme.fg.disable);
-    }
-
+    g->SetColor(theme.fg.normal);
     g->DrawString(GetText(), jpoint_t<int>{_position, (size.y - theme.font.primary->GetSize())/2});
   }
 }

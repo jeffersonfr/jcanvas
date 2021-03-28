@@ -39,17 +39,19 @@
 
 using namespace jcanvas;
 
-class ImageAnimation : public Animation {
+class ImageAnimation : public Component, public Animation {
 
   private:
     std::vector<std::shared_ptr<Image>>
       _images;
+    std::chrono::milliseconds
+      _current;
     int 
       _index = 0;
 
   public:
     ImageAnimation(jrect_t<int> bounds):
-      Animation(std::chrono::milliseconds(0), std::chrono::milliseconds(2000))
+      Animation()
     {
       SetBounds(bounds);
 
@@ -82,10 +84,21 @@ class ImageAnimation : public Animation {
 
     virtual void Update(std::chrono::milliseconds tick)
     {
+      _current = _current + tick;
+
+      if (_current < std::chrono::seconds{1}) {
+        return;
+      }
+
+      if (_current > std::chrono::seconds{2}) {
+        _current = std::chrono::seconds{2};
+      }
+
+      _current = _current - std::chrono::seconds{1};
       _index = (_index + 1) % _images.size();
     }
 
-    virtual void Render(Graphics *g)
+    virtual void Paint(Graphics *g)
     {
       g->DrawImage(_images[_index], {0, 0, GetSize()});
     }
@@ -149,6 +162,9 @@ class App : public Frame, public ActionListener, public SelectListener {
 
     virtual ~App()
     {
+      UnregisterAnimation(_animation);
+      UnregisterAnimation(_marquee);
+
       _group.Remove(_radio1);
       _group.Remove(_radio2);
       _group.Remove(_radio3);
@@ -190,7 +206,7 @@ class App : public Frame, public ActionListener, public SelectListener {
       {
         _animation = new ImageAnimation(jrect_t<int>{insets.left, insets.top, 96, 96});
 
-        _animation->Start();
+        RegisterAnimation(_animation);
       }
 
       jpoint_t
@@ -263,11 +279,11 @@ class App : public Frame, public ActionListener, public SelectListener {
       }
 
       {
-        _marquee = new Marquee("Marquee Test", std::chrono::milliseconds(100));
+        _marquee = new Marquee("Marquee Test");
         
         _marquee->SetBounds({insets.left + 196 + 16, insets.top, size.x - 2*(196 + 16) - insets.left - insets.right, 48});
 
-        _marquee->Start();
+        RegisterAnimation(_marquee);
       }
 
       {

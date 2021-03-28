@@ -21,6 +21,9 @@
 #define J_MARQUEE_H
 
 #include "jcanvas/widgets/janimation.h"
+#include "jcanvas/widgets/jcomponent.h"
+
+#include <string>
 
 namespace jcanvas {
 
@@ -29,20 +32,24 @@ namespace jcanvas {
  *
  * \author Jeff Ferr
  */
-class Marquee : public Animation {
+class Marquee : public Component, public Animation {
 
   private:
     /** \brief */
     std::string _text;
     /** \brief */
-    int _position;
+    float _ratio {0.1f};
+    /** \brief */
+    int _text_size {0};
+    /** \brief */
+    int _position {0};
 
   public:
     /**
      * \brief
      *
      */
-    Marquee(std::string text, std::chrono::milliseconds interval);
+    Marquee(std::string text);
     
     /**
      * \brief
@@ -50,6 +57,18 @@ class Marquee : public Animation {
      */
     virtual ~Marquee();
 
+    /**
+     * \brief
+     *
+     */
+    virtual void SetRatio(float ratio);
+    
+    /**
+     * \brief
+     *
+     */
+    virtual float GetRatio();
+    
     /**
      * \brief
      *
@@ -72,7 +91,7 @@ class Marquee : public Animation {
      * \brief
      *
      */
-    virtual void Render(Graphics *g);
+    virtual void Paint(Graphics *g);
     
 };
 

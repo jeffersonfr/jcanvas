@@ -22,6 +22,7 @@
 
 #include "jcanvas/widgets/jcontainer.h"
 #include "jcanvas/widgets/jgridlayout.h"
+#include "jcanvas/widgets/janimation.h"
 #include "jcanvas/core/jimage.h"
 #include "jcanvas/core/jwindow.h"
 
@@ -37,6 +38,14 @@ namespace jcanvas {
 class Frame : public Window, public Container {
 
   private:
+    /** \brief */
+    std::vector<Animation *> _animations;
+    /** \brief */
+    std::thread _animation_thread;
+    /** \brief */
+    std::mutex _animation_mutex;
+    /** \brief */
+    std::condition_variable _animation_condition;
     /** \brief */
     Component *_focus_owner;
     /** \brief */
@@ -54,6 +63,30 @@ class Frame : public Window, public Container {
      *
      */
     virtual ~Frame();
+
+    /**
+     * \brief
+     *
+     */
+    void RegisterAnimation(Animation *animation);
+    
+    /**
+     * \brief
+     *
+     */
+    void UnregisterAnimation(Animation *animation);
+
+    /**
+     * \brief
+     *
+     */
+    virtual void SetVisible(bool visible);
+
+    /**
+     * \brief
+     *
+     */
+    virtual bool IsVisible();
 
     /**
      * \brief

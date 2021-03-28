@@ -35,6 +35,41 @@ Frame::Frame(jpoint_t<int> size, jpoint_t<int> point):
   _focus_owner = nullptr;
   _icon = nullptr;
 
+  _animation_thread = std::thread(
+      [this]() {
+        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+
+        while (IsVisible() == true) {
+          std::unique_lock lock(_animation_mutex);
+
+          if (_animations.size() == 0) {
+            _animation_condition.wait(lock, 
+                [this]() {
+                  return _animations.size() > 0;
+                });
+          
+            start = std::chrono::steady_clock::now(); // INFO:: to avoid huge time ticks
+          }
+
+          std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+          
+          for (auto animation : _animations) {
+            animation->Update(std::chrono::duration_cast<std::chrono::milliseconds>(now - start));
+          }
+
+          start = now;
+
+          _animations.erase(std::remove_if(_animations.begin(), _animations.end(), 
+              [](Animation *animation) {
+                return animation->IsStarted() == false;
+              }), _animations.end());
+
+          lock.unlock();
+
+          std::this_thread::sleep_until(now + std::chrono::milliseconds{15});
+        }
+      });
+
   SetInsets({8, 8, 8, 8});
   SetTitle("Main");
   SetLayout<BorderLayout>();
@@ -45,6 +80,44 @@ Frame::Frame(jpoint_t<int> size, jpoint_t<int> point):
 
 Frame::~Frame()
 {
+  SetVisible(false);
+
+  _animation_condition.notify_one();
+  _animation_thread.join();
+}
+
+void Frame::RegisterAnimation(Animation *animation)
+{
+  std::lock_guard<std::mutex> lock(_animation_mutex);
+
+  std::vector<Animation *>::iterator i = std::find(_animations.begin(), _animations.end(), animation);
+
+  if (i == _animations.end()) {
+    _animations.push_back(animation);
+
+    _animation_condition.notify_one();
+  }
+}
+
+void Frame::UnregisterAnimation(Animation *animation)
+{
+  std::lock_guard<std::mutex> lock(_animation_mutex);
+
+  std::vector<Animation *>::iterator i = std::find(_animations.begin(), _animations.end(), animation);
+
+  if (i != _animations.end()) {
+    _animations.erase(i);
+  }
+}
+
+void Frame::SetVisible(bool visible)
+{
+  Window::SetVisible(visible);
+}
+
+bool Frame::IsVisible()
+{
+  return Window::IsVisible();
 }
 
 jrect_t<int> Frame::GetVisibleBounds()
