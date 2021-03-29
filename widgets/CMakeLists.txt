@@ -17,6 +17,7 @@ set(SRCS
   src/jcardlayout.cpp
   src/jcheckbutton.cpp
   src/jcheckbuttongroup.cpp
+  src/jcolumnlayout.cpp
   src/jcomponent.cpp
   src/jcomponentevent.cpp
   src/jcomponentlistener.cpp
@@ -53,6 +54,7 @@ set(SRCS
   src/jraisedgradientrectangleborder.cpp
   src/jrectangleborder.cpp
   src/jroundedrectangleborder.cpp
+  src/jrowlayout.cpp
   src/jscrollbar.cpp
   src/jselectevent.cpp
   src/jselectlistener.cpp
