@@ -46,6 +46,8 @@ class Button : public Container {
     /** \brief */
     std::mutex _action_listener_mutex;
     /** \brief */
+    std::mutex _remove_action_listener_mutex;
+    /** \brief */
     std::function<void(Button *, bool)> _onclick;
     /** \brief */
     FlatImage *_image {nullptr};

@@ -985,7 +985,8 @@ void Text::RemoveTextListener(TextListener *listener)
     return;
   }
 
-  std::lock_guard<std::mutex> guard(mTextListenersMutex);
+  std::lock_guard<std::mutex> lock1(mRemoveTextListenersMutex);
+  std::lock_guard<std::mutex> lock2(mTextListenersMutex);
 
   mTextListeners.erase(std::remove(mTextListeners.begin(), mTextListeners.end(), listener), mTextListeners.end());
 }
@@ -1001,6 +1002,8 @@ void Text::DispatchTextEvent(TextEvent *event)
   std::vector<TextListener *> listeners = mTextListeners;
 
   mTextListenersMutex.unlock();
+
+  std::lock_guard<std::mutex> lock(mRemoveTextListenersMutex);
 
   for (std::vector<TextListener *>::iterator i=listeners.begin(); i!=listeners.end() && event->IsConsumed() == false; i++) {
     TextListener *listener = (*i);

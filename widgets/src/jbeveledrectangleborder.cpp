@@ -31,6 +31,26 @@ BeveledRectangleBorder::~BeveledRectangleBorder()
 {
 }
 
+void BeveledRectangleBorder::SetCornerSize(jpoint_t<int> size)
+{
+  _corner_size = size;
+}
+
+jpoint_t<int> BeveledRectangleBorder::GetCornerSize()
+{
+  return _corner_size;
+}
+
+void BeveledRectangleBorder::SetCorners(jrect_corner_t corners)
+{
+  _corners = corners;
+}
+
+jrect_corner_t BeveledRectangleBorder::GetCorners()
+{
+  return _corners;
+}
+
 void BeveledRectangleBorder::Paint(Component *cmp, Graphics *g)
 {
   if (cmp == nullptr) {
@@ -46,7 +66,7 @@ void BeveledRectangleBorder::Paint(Component *cmp, Graphics *g)
 
   g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
   g->SetColor(GetColor());
-  g->DrawBevelRectangle({0, 0, cmp->GetSize()});
+  g->DrawBevelRectangle({0, 0, cmp->GetSize()}, _corner_size.x, _corner_size.y, _corners);
   g->SetCompositeFlags(jcomposite_flags_t::Src);
   
   g->SetPen(oldPen);

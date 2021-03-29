@@ -255,7 +255,8 @@ void Button::RemoveActionListener(ActionListener *listener)
     return;
   }
 
-   std::lock_guard<std::mutex> guard(_action_listener_mutex);
+  std::lock_guard<std::mutex> lock1(_remove_action_listener_mutex);
+  std::lock_guard<std::mutex> lock2(_action_listener_mutex);
 
   _action_listeners.erase(std::remove(_action_listeners.begin(), _action_listeners.end(), listener), _action_listeners.end());
 }
@@ -271,6 +272,8 @@ void Button::DispatchActionEvent(ActionEvent *event)
   std::vector<ActionListener *> listeners = _action_listeners;
 
   _action_listener_mutex.unlock();
+
+  std::lock_guard<std::mutex> guard(_remove_action_listener_mutex);
 
   for (std::vector<ActionListener *>::iterator i=listeners.begin(); i!=listeners.end() && event->IsConsumed() == false; i++) {
     ActionListener *listener = (*i);

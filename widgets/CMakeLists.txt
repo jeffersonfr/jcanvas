@@ -34,6 +34,7 @@ set(SRCS
   src/jgridbaglayout.cpp
   src/jgridlayout.cpp
   src/jimagebackground.cpp
+  src/jimageborder.cpp
   src/jinputdialog.cpp
   src/jitemcomponent.cpp
   src/jkeyboarddialog.cpp
@@ -59,7 +60,6 @@ set(SRCS
   src/jslidercomponent.cpp
   src/jsolidbackground.cpp
   src/jspin.cpp
-  #src/jtabbedpane.cpp
   #src/jtable.cpp
   src/jtext.cpp
   src/jtextevent.cpp

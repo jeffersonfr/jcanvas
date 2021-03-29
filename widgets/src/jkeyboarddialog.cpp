@@ -820,7 +820,8 @@ void KeyboardDialog::RemoveKeyListener(KeyListener *listener)
     return;
   }
 
-   std::lock_guard<std::mutex> guard(_key_listeners_mutex);
+  std::lock_guard<std::mutex> lock1(_remove_key_listeners_mutex);
+  std::lock_guard<std::mutex> lock2(_key_listeners_mutex);
 
   _key_listeners.erase(std::remove(_key_listeners.begin(), _key_listeners.end(), listener), _key_listeners.end());
 }
@@ -831,13 +832,13 @@ void KeyboardDialog::DispatchKeyEvent(KeyEvent *event)
     return;
   }
 
-  std::vector<KeyListener *> listeners;
-  
   _key_listeners_mutex.lock();
 
-  listeners = _key_listeners;
+  std::vector<KeyListener *> listeners = _key_listeners;
 
   _key_listeners_mutex.unlock();
+
+  std::lock_guard<std::mutex> lock(_remove_key_listeners_mutex);
 
   for (std::vector<KeyListener *>::iterator i=listeners.begin(); i!=listeners.end() && event->IsConsumed() == false; i++) {
     KeyListener *listener = (*i);

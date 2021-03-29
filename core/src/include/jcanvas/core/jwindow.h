@@ -87,6 +87,8 @@ class Window {
     /** \brief */
     std::mutex _window_listener_mutex;
     /** \brief */
+    std::mutex _remove_window_listener_mutex;
+    /** \brief */
     EventManager _event_manager;
     /** \brief */
     WindowAdapter *_window_adapter;

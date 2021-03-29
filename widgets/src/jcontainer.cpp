@@ -1086,7 +1086,8 @@ void Container::RemoveContainerListener(ContainerListener *listener)
     return;
   }
 
-   std::lock_guard<std::mutex> guard(_container_listener_mutex);
+  std::lock_guard<std::mutex> lock1(_remove_container_listener_mutex);
+  std::lock_guard<std::mutex> lock2(_container_listener_mutex);
 
   _container_listeners.erase(std::remove(_container_listeners.begin(), _container_listeners.end(), listener), _container_listeners.end());
 }
@@ -1097,13 +1098,13 @@ void Container::DispatchContainerEvent(ContainerEvent *event)
     return;
   }
 
-  std::vector<ContainerListener *> listeners;
-  
   _container_listener_mutex.lock();
 
-  listeners = _container_listeners;
+  std::vector<ContainerListener *> listeners = _container_listeners;
 
   _container_listener_mutex.unlock();
+
+  std::lock_guard<std::mutex> lock(_remove_container_listener_mutex);
 
   for (std::vector<ContainerListener *>::iterator i=listeners.begin(); i!=listeners.end() && event->IsConsumed() == false; i++) {
     ContainerListener *listener = (*i);

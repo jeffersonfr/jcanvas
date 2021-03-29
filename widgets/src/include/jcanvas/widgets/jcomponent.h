@@ -112,7 +112,11 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
     /** \brief */
     std::mutex _focus_listener_mutex;
     /** \brief */
+    std::mutex _remove_focus_listener_mutex;
+    /** \brief */
     std::mutex _component_listener_mutex;
+    /** \brief */
+    std::mutex _remove_component_listener_mutex;
     /** \brief */
     std::mutex _data_listener_mutex;
     /** \brief */

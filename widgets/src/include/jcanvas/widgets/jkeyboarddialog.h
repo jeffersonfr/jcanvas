@@ -61,6 +61,8 @@ class KeyboardDialog : public Dialog, public ActionListener {
     /** \brief */
     std::mutex _key_listeners_mutex;
     /** \brief */
+    std::mutex _remove_key_listeners_mutex;
+    /** \brief */
     Text *_display;
     /** \brief */
     std::string _text;

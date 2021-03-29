@@ -53,6 +53,8 @@ class Container : public Component {
     /** \brief */
     std::mutex _container_listener_mutex;
     /** \brief */
+    std::mutex _remove_container_listener_mutex;
+    /** \brief */
     std::vector<Component *> _components;
     /** \brief */
     std::vector<Dialog *> _dialogs;

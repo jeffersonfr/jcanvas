@@ -154,7 +154,8 @@ void SliderComponent::RemoveAdjustmentListener(AdjustmentListener *listener)
     return;
   }
 
-   std::lock_guard<std::mutex> guard(_adjustment_listener_mutex);
+  std::lock_guard<std::mutex> lock1(_remove_adjustment_listener_mutex);
+  std::lock_guard<std::mutex> lock2(_adjustment_listener_mutex);
 
   _adjustment_listeners.erase(std::remove(_adjustment_listeners.begin(), _adjustment_listeners.end(), listener), _adjustment_listeners.end());
 }
@@ -170,6 +171,8 @@ void SliderComponent::DispatchAdjustmentEvent(AdjustmentEvent *event)
   std::vector<AdjustmentListener *> listeners = _adjustment_listeners;
 
   _adjustment_listener_mutex.unlock();
+
+  std::lock_guard<std::mutex> lock(_remove_adjustment_listener_mutex);
 
   for (std::vector<AdjustmentListener *>::iterator i=listeners.begin(); i!=listeners.end() && event->IsConsumed() == false; i++) {
     AdjustmentListener *listener = (*i);

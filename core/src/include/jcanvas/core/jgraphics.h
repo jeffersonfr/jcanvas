@@ -439,25 +439,25 @@ class Graphics {
      * \brief
      *
      */
-    virtual void FillBevelRectangle(jrect_t<int> rect, int dx = 10, int dy = 10, jrect_corner_t corners = (jrect_corner_t)0xff);
+    virtual void FillBevelRectangle(jrect_t<int> rect, int dx = 10, int dy = 10, jrect_corner_t corners = static_cast<jrect_corner_t>(0xff));
     
     /**
      * \brief
      *
      */
-    virtual void DrawBevelRectangle(jrect_t<int> rect, int dx = 10, int dy = 10, jrect_corner_t corners = (jrect_corner_t)0xff);
+    virtual void DrawBevelRectangle(jrect_t<int> rect, int dx = 10, int dy = 10, jrect_corner_t corners = static_cast<jrect_corner_t>(0xff));
     
     /**
      * \brief
      *
      */
-    virtual void FillRoundRectangle(jrect_t<int> rect, int dx = 10, int dy = 10, jrect_corner_t corners = (jrect_corner_t)0xff);
+    virtual void FillRoundRectangle(jrect_t<int> rect, int dx = 10, int dy = 10, jrect_corner_t corners = static_cast<jrect_corner_t>(0xff));
     
     /**
      * \brief
      *
      */
-    virtual void DrawRoundRectangle(jrect_t<int> rect, int dx = 10, int dy = 10, jrect_corner_t corners = (jrect_corner_t)0xff);
+    virtual void DrawRoundRectangle(jrect_t<int> rect, int dx = 10, int dy = 10, jrect_corner_t corners = static_cast<jrect_corner_t>(0xff));
     
     /**
      * \brief

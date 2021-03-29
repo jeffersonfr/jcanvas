@@ -235,6 +235,8 @@ class ItemComponent {
     /** \brief */
     std::mutex _select_listener_mutex;
     /** \brief */
+    std::mutex _remove_select_listener_mutex;
+    /** \brief */
     std::vector<Item *> _items;
     /** \brief */
     std::vector<Item *> _internal;

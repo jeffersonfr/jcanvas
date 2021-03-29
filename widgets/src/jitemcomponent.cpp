@@ -409,7 +409,8 @@ void ItemComponent::RemoveSelectListener(SelectListener *listener)
     return;
   }
 
-   std::lock_guard<std::mutex> guard(_select_listener_mutex);
+  std::lock_guard<std::mutex> lock1(_remove_select_listener_mutex);
+  std::lock_guard<std::mutex> lock2(_select_listener_mutex);
 
   _select_listeners.erase(std::remove(_select_listeners.begin(), _select_listeners.end(), listener), _select_listeners.end());
 }
@@ -425,6 +426,8 @@ void ItemComponent::DispatchSelectEvent(SelectEvent *event)
   std::vector<SelectListener *> listeners = _select_listeners;
 
   _select_listener_mutex.unlock();
+
+  std::lock_guard<std::mutex> lock(_remove_select_listener_mutex);
 
   for (std::vector<SelectListener *>::iterator i=listeners.begin(); i!=listeners.end() && event->IsConsumed() == false; i++) {
     SelectListener *listener = (*i);

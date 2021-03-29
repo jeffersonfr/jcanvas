@@ -45,10 +45,14 @@ Frame::Frame(jpoint_t<int> size, jpoint_t<int> point):
           if (_animations.size() == 0) {
             _animation_condition.wait(lock, 
                 [this]() {
-                  return _animations.size() > 0;
+                  return IsVisible() == false or _animations.size() > 0;
                 });
           
             start = std::chrono::steady_clock::now(); // INFO:: to avoid huge time ticks
+          }
+
+          if (IsVisible() == false) {
+            break;
           }
 
           std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
@@ -82,7 +86,7 @@ Frame::~Frame()
 {
   SetVisible(false);
 
-  _animation_condition.notify_one();
+  _animation_condition.notify_all();
   _animation_thread.join();
 }
 

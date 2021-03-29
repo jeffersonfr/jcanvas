@@ -21,6 +21,7 @@
 #define J_BEVELEDRECTANGLEBORDER_H
 
 #include "jcanvas/widgets/jrectangleborder.h"
+#include "jcanvas/core/jgraphics.h"
 
 namespace jcanvas {
 
@@ -30,6 +31,12 @@ namespace jcanvas {
  * \author Jeff Ferr
  */
 class BeveledRectangleBorder : public RectangleBorder {
+
+  private:
+    /** \brief */
+    jrect_corner_t _corners {static_cast<jrect_corner_t>(0xff)};
+    /** \brief */
+    jpoint_t<int> _corner_size {16};
 
   public:
     /**
@@ -43,6 +50,30 @@ class BeveledRectangleBorder : public RectangleBorder {
      *
      */
     virtual ~BeveledRectangleBorder();
+
+    /**
+     * \brief
+     *
+     */
+    void SetCornerSize(jpoint_t<int> size);
+
+    /**
+     * \brief
+     *
+     */
+    jpoint_t<int> GetCornerSize();
+
+    /**
+     * \brief
+     *
+     */
+    void SetCorners(jrect_corner_t corners);
+
+    /**
+     * \brief
+     *
+     */
+    jrect_corner_t GetCorners();
 
     /**
      * \brief

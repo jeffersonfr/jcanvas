@@ -1483,7 +1483,8 @@ void Component::RemoveFocusListener(FocusListener *listener)
     return;
   }
 
-   std::lock_guard<std::mutex> guard(_focus_listener_mutex);
+  std::lock_guard<std::mutex> lock1(_remove_focus_listener_mutex);
+  std::lock_guard<std::mutex> lock2(_focus_listener_mutex);
 
   _focus_listeners.erase(std::remove(_focus_listeners.begin(), _focus_listeners.end(), listener), _focus_listeners.end());
 }
@@ -1494,13 +1495,13 @@ void Component::DispatchFocusEvent(FocusEvent *event)
     return;
   }
 
-  std::vector<FocusListener *> listeners;
-  
   _focus_listener_mutex.lock();
 
-  listeners = _focus_listeners;
+  std::vector<FocusListener *> listeners = _focus_listeners;
 
   _focus_listener_mutex.unlock();
+
+  std::lock_guard<std::mutex> lock(_remove_focus_listener_mutex);
 
   for (std::vector<FocusListener *>::iterator i=listeners.begin(); i!=listeners.end() && event->IsConsumed() == false; i++) {
     FocusListener *listener = (*i);
@@ -1511,16 +1512,6 @@ void Component::DispatchFocusEvent(FocusEvent *event)
       listener->FocusLost(event);
     }
   }
-
-  /*
-  for (std::vector<FocusListener *>::iterator i=_focus_listeners.begin(); i!=_focus_listeners.end(); i++) {
-    if (event->GetType() == jfocusevent_type_t::Gain) {
-      (*i)->FocusGained(event);
-    } else if (event->GetType() == jfocusevent_type_t::Lost) {
-      (*i)->FocusLost(event);
-    }
-  }
-  */
 
   delete event;
 }
@@ -1549,7 +1540,8 @@ void Component::RemoveComponentListener(ComponentListener *listener)
     return;
   }
 
-   std::lock_guard<std::mutex> guard(_component_listener_mutex);
+  std::lock_guard<std::mutex> lock1(_remove_component_listener_mutex);
+  std::lock_guard<std::mutex> lock2(_component_listener_mutex);
 
   _component_listeners.erase(std::remove(_component_listeners.begin(), _component_listeners.end(), listener), _component_listeners.end());
 }
@@ -1560,13 +1552,13 @@ void Component::DispatchComponentEvent(ComponentEvent *event)
     return;
   }
 
-  std::vector<ComponentListener *> listeners;
-  
   _component_listener_mutex.lock();
 
-  listeners = _component_listeners;
+  std::vector<ComponentListener *> listeners = _component_listeners;
 
   _component_listener_mutex.unlock();
+
+  std::lock_guard<std::mutex> lock(_remove_component_listener_mutex);
 
   for (std::vector<ComponentListener *>::iterator i=listeners.begin(); i!=listeners.end() && event->IsConsumed() == false; i++) {
     ComponentListener *listener = (*i);

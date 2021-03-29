@@ -43,6 +43,7 @@ enum class jrect_align_t {
   NorthWest,
   SouthEast,
   SouthWest,
+  Stretch,
   Contains,
   Cover
 };
@@ -320,6 +321,8 @@ template<typename T, typename = typename std::enable_if<std::is_arithmetic<T>::v
             {0, size.y - obj.size.y}, 
             {obj.size.x, obj.size.y}
           };
+        } else if (align == jrect_align_t::Stretch) {
+          rect = *this;
         } else if (align == jrect_align_t::Contains) {
           jpoint_t<U> result_size = obj.size;
 

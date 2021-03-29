@@ -38,6 +38,20 @@ Marquee::~Marquee()
 {
 }
 
+void Marquee::SetBounceEnabled(bool enabled)
+{
+  _is_bounce_enabled = enabled;
+
+  if (_is_bounce_enabled == false) {
+    _direction = -std::abs(_direction);
+  }
+}
+
+bool Marquee::IsBounceEnabled()
+{
+  return _is_bounce_enabled;
+}
+
 void Marquee::SetRatio(float ratio)
 {
   _ratio = ratio;
@@ -66,10 +80,22 @@ void Marquee::Update(std::chrono::milliseconds tick)
   jpoint_t<int> size = GetSize();
   std::chrono::duration<float> duration = tick;
 
-  _position = _position - size.x*duration.count()*GetRatio();
+  _position = _position + _direction*size.x*duration.count()*GetRatio();
 
-  if (_position <= -_text_size) {
-    _position = size.x;
+  if (_is_bounce_enabled == false) {
+    if (_position <= -_text_size) {
+      _position = size.x;
+    }
+  } else {
+    if (_position < 0) {
+      _position = 0;
+      _direction = -_direction;
+    }
+    
+    if (_position > (size.x - _text_size)) {
+      _position = size.x - _text_size;
+      _direction = -_direction;
+    }
   }
 
   Repaint();

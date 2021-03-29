@@ -235,7 +235,8 @@ void Window::RemoveWindowListener(WindowListener *listener)
     return;
   }
 
-   std::lock_guard<std::mutex> guard(_window_listener_mutex);
+  std::lock_guard<std::mutex> lock1(_remove_window_listener_mutex);
+  std::lock_guard<std::mutex> lock2(_window_listener_mutex);
 
   _window_listeners.erase(std::remove(_window_listeners.begin(), _window_listeners.end(), listener), _window_listeners.end());
 }
@@ -246,13 +247,13 @@ void Window::DispatchWindowEvent(WindowEvent *event)
     return;
   }
 
-  std::vector<WindowListener *> listeners;
-  
   _window_listener_mutex.lock();
 
-  listeners = _window_listeners;
+  std::vector<WindowListener *> listeners = _window_listeners;
 
   _window_listener_mutex.unlock();
+
+  std::lock_guard<std::mutex> lock(_remove_window_listener_mutex);
 
   for (std::vector<WindowListener *>::iterator i=listeners.begin(); i!=listeners.end() && event->IsConsumed() == false; i++) {
     WindowListener *listener = (*i);

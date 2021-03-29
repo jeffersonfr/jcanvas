@@ -17,77 +17,49 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "jcanvas/widgets/jtabbedpane.h"
+#include "jcanvas/widgets/jimageborder.h"
+#include "jcanvas/widgets/jrectangleborder.h"
+#include "jcanvas/widgets/jroundedrectangleborder.h"
+#include "jcanvas/widgets/jbeveledrectangleborder.h"
+#include "jcanvas/widgets/jcomponent.h"
 
 namespace jcanvas {
 
-TabbedPane::TabbedPane():
-  Container()
+ImageBorder::ImageBorder(std::shared_ptr<Image> image)
 {
-  SetFocusable(true);
+  _image = image;
 }
 
-TabbedPane::~TabbedPane()
-{
-}
-
-int TabbedPane::GetCurrentTab()
-{
-  return 0;
-}
-
-void TabbedPane::AddTab(std::string title, Image *image, Component *component, int index)
+ImageBorder::~ImageBorder()
 {
 }
 
-void TabbedPane::RemoveTab(int index)
+void ImageBorder::SetImage(std::shared_ptr<Image> image)
 {
+  _image = image;
 }
 
-Component * TabbedPane::GetTabComponentAt(int index)
+std::shared_ptr<Image> ImageBorder::GetImage()
 {
-  return nullptr;
+  return _image;
 }
 
-void TabbedPane::SetTabTitle(int index, std::string title)
+void ImageBorder::Paint(Component *cmp, Graphics *g)
 {
-}
+  if (cmp == nullptr) {
+    return;
+  }
 
-std::string TabbedPane::GetTabTitle(int index)
-{
-  return "";
-}
+  if (_image == nullptr) {
+    return;
+  }
 
-int TabbedPane::GetTabCount()
-{
-  return 0;
-}
+  jpoint_t<int> size = cmp->GetSize();
+  jtheme_t theme = cmp->GetTheme();
 
-void TabbedPane::SetPaddind(int left, int top, int right, int bottom)
-{
+  g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
+  g->DrawImage(_image, jrect_t<int>{0, 0, size}.align(jrect_align_t::Stretch, jrect_t<int>{{0, 0}, _image->GetSize()}));
+  g->SetCompositeFlags(jcomposite_flags_t::Src);
 }
-
-int TabbedPane::IndexOfComponent(Component *cmp)
-{
-  return 0;
-}
-
-void TabbedPane::RegisterTabsListener(SelectListener *listener)
-{
-}
-
-void TabbedPane::RemoveTabsListener(SelectListener *listener)
-{
-}
-
-void TabbedPane::DispatchTabsEvent(SelectEvent *event)
-{
-}
-
-const std::vector<SelectListener *> & TabbedPane::GetTabsListeners()
-{
-  return _select_listeners;
-}
-
 
 }

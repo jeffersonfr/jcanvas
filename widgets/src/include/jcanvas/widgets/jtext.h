@@ -39,14 +39,30 @@ enum class jcaret_type_t {
 class TextComponent {
 
   public:
+    /**
+     * \brief
+     *
+     */
     virtual ~TextComponent()
     {
     }
 
+    /**
+     * \brief
+     *
+     */
     virtual int GetEchoChar() = 0;
     
+    /**
+     * \brief
+     *
+     */
     virtual bool IsEditable() = 0;
     
+    /**
+     * \brief
+     *
+     */
     virtual bool IsEnabled() = 0;
     
 };
@@ -91,9 +107,13 @@ class GenericChar : public Component {
     void Paint(jcanvas::Graphics *g);
 
   private:
+    /** \brief */
     TextComponent *mParent {nullptr};
+    /** \brief */
     jfont_extends_t mExtends;
+    /** \brief */
     char mChar {'\0'};
+    /** \brief */
     bool mSelected {false};
 
 };
@@ -271,6 +291,7 @@ class Word : public Container {
     virtual ~Word();
 
   private:
+    /** \brief */
     std::string mWord;
 
 };
@@ -291,6 +312,7 @@ class Paragraph : public Container {
     virtual ~Paragraph();
 
   private:
+    /** \brief */
     std::string mText;
 
 };
@@ -298,16 +320,29 @@ class Paragraph : public Container {
 class Text : public Container, public TextComponent {
 
   private:
+    /** \brief */
     std::vector<TextListener *> mTextListeners;
+    /** \brief */
     std::mutex mTextListenersMutex;
+    /** \brief */
+    std::mutex mRemoveTextListenersMutex;
+    /** \brief */
     Paragraph *mParagraph {nullptr};
+    /** \brief */
     std::string mText;
+    /** \brief */
     std::size_t mMaxSize {0};
+    /** \brief */
     std::size_t mCaretPosition {0};
+    /** \brief */
     std::size_t mSelectionLength {0};
+    /** \brief */
     int mEchoChar {'\0'};
+    /** \brief */
     bool mEditable {true};
+    /** \brief */
     bool mShiftPressed {false};
+    /** \brief */
     jcaret_type_t mCaretType {jcaret_type_t::Underscore};
 
     /**

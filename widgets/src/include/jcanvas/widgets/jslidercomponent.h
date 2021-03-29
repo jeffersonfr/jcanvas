@@ -45,6 +45,8 @@ class SliderComponent : public Component {
     /** \brief */
     std::mutex _adjustment_listener_mutex;
     /** \brief */
+    std::mutex _remove_adjustment_listener_mutex;
+    /** \brief */
     int _index;
     /** \brief */
     int _value;

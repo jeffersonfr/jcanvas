@@ -43,6 +43,10 @@ class Marquee : public Component, public Animation {
     int _text_size {0};
     /** \brief */
     int _position {0};
+    /** \brief */
+    int _direction {-1};
+    /** \brief */
+    bool _is_bounce_enabled {false};
 
   public:
     /**
@@ -57,6 +61,18 @@ class Marquee : public Component, public Animation {
      */
     virtual ~Marquee();
 
+    /**
+     * \brief
+     *
+     */
+    virtual void SetBounceEnabled(bool enabled);
+    
+    /**
+     * \brief
+     *
+     */
+    virtual bool IsBounceEnabled();
+    
     /**
      * \brief
      *

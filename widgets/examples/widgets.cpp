@@ -485,15 +485,7 @@ class App : public Frame, public ActionListener, public SelectListener {
 
     virtual void ItemChanged(SelectEvent *event)
     {
-      _mutex.lock();
-
-      if (_spin->GetCurrentIndex() == 0) {
-        // _marquee->SetType(JMM_LOOP);
-      } else if (_spin->GetCurrentIndex() == 1) {
-        // _marquee->SetType(JMM_BOUNCE);
-      }
-
-      _mutex.unlock();
+      _marquee->SetBounceEnabled(_spin->GetCurrentIndex());
     }
 
     virtual void ActionPerformed(ActionEvent *event)
