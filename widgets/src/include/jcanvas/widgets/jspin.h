@@ -98,6 +98,18 @@ class Spin : public Container, ActionListener {
      * \brief
      *
      */
+    void Previous();
+    
+    /**
+     * \brief
+     *
+     */
+    void Next();
+    
+    /**
+     * \brief
+     *
+     */
     virtual void SetLoopEnabled(bool enabled);
 
     /**

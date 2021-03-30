@@ -360,8 +360,7 @@ void CalendarDialog::ActionPerformed(ActionEvent *event)
 
 void CalendarDialog::ItemChanged(SelectEvent *event)
 {
-  Spin
-    *spin = reinterpret_cast<Spin *>(event->GetSource());
+  Spin *spin = reinterpret_cast<Spin *>(event->GetSource());
 
   if (event->GetType() == jselectevent_type_t::Left) {
     if (spin == _smonth and _smonth->GetCurrentIndex() == (12 - 1)) {

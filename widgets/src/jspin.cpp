@@ -66,8 +66,6 @@ Spin::~Spin()
 
 void Spin::Build(std::string value)
 {
-  // TODO:: ativar os eventos
-  // DispatchSelectEvent(new SelectEven(this, _current_index, jselectevent_type_t::Left));
   SetLayout<BorderLayout>();
 
   _previous.SetImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/left-arrow.png"));
@@ -103,36 +101,72 @@ void Spin::Build(std::string value)
   SetBorder(std::make_shared<RectangleBorder>());
 }
 
+void Spin::Previous()
+{
+  int index = _current_index - 1;
+
+  if (_is_range == false) {
+    if (index < 0) {
+      index = 0;
+
+      if (_is_loop_enabled == true) {
+        index = _items.size() - 1;
+      }
+    }
+  } else {
+    if (index < _low_range) {
+      index = _low_range;
+
+      if (_is_loop_enabled == true) {
+        index = _high_range - 1;
+      }
+    }
+  }
+    
+  SetCurrentIndex(index);
+}
+
+void Spin::Next()
+{
+  int index = _current_index + 1;
+
+  if (_is_range == false) {
+    if (index > (_items.size() - 1)) {
+      index = _items.size() - 1;
+
+      if (_is_loop_enabled == true) {
+        index = 0;
+      }
+    }
+  } else {
+    if (index > (_high_range - 1)) {
+      index = _high_range - 1;
+
+      if (_is_loop_enabled == true) {
+        index = _low_range;
+      }
+    }
+  }
+
+  SetCurrentIndex(index);
+}
+
 void Spin::ActionPerformed(ActionEvent *event)
 {
   Button *button = reinterpret_cast<Button *>(event->GetSource());
 
-  if (_is_range == false) {
-    if (button == &_previous) {
-      _current_index = _current_index - 1;
+  if (button->IsPressed() == false) {
+    return;
+  }
 
-      if (_current_index < 0) {
-        _current_index = 0;
+  if (button == &_previous) {
+    Previous();
 
-        if (_is_loop_enabled == true) {
-          _current_index = _items.size() - 1;
-        }
-      }
-    } else {
-      _current_index = _current_index + 1;
-
-      if (_current_index > (_items.size() - 1)) {
-        _current_index = _items.size() - 1;
-
-        if (_is_loop_enabled == true) {
-          _current_index = 0;
-        }
-      }
-    }
-
-    _text.SetText(_items[_current_index]);
+    DispatchSelectEvent(new SelectEvent(this, _current_index, jselectevent_type_t::Left));
   } else {
-    // TODO::
+    Next();
+  
+    DispatchSelectEvent(new SelectEvent(this, _current_index, jselectevent_type_t::Right));
   }
 }
 
@@ -162,6 +196,12 @@ void Spin::SetCurrentIndex(int index)
   }
 
   _current_index = index;
+
+  if (_is_range == false) {
+    _text.SetText(_items[_current_index]);
+  } else {
+    _text.SetText(std::to_string(_current_index));
+  }
 }
 
 int Spin::GetCurrentIndex()
