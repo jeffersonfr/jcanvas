@@ -26,6 +26,11 @@
 
 namespace jcanvas {
 
+Button::Button(std::shared_ptr<Image> image):
+  Button("", image)
+{
+}
+
 Button::Button(std::string text, std::shared_ptr<Image> image)
 {
   OnClick(
@@ -54,21 +59,21 @@ Button::~Button()
 
 void Button::Build(std::string text, std::shared_ptr<Image> image)
 {
-  Component *textComponent = _text;
-  Component *imageComponent = _image;
+  Text *textComponent = _text;
+  FlatImage *imageComponent = _image;
 
   _text = nullptr;
 
   if (text.empty() == false) {
     _text = new Text(text);
 
-    _text->SetBackground(nullptr);
-    _text->SetBorder(nullptr);
-    _text->SetEditable(false);
-    _text->SetFocusable(false);
-    _text->SetScrollable(false);
-    _text->SetHorizontalAlign(jhorizontal_align_t::Center);
-    _text->SetVerticalAlign(jvertical_align_t::Center);
+    _text->SetBackground((textComponent != nullptr)?textComponent->GetBackground():nullptr);
+    _text->SetBorder((textComponent != nullptr)?textComponent->GetBorder():nullptr);
+    _text->SetEditable((textComponent != nullptr)?textComponent->IsEditable():false);
+    _text->SetFocusable((textComponent != nullptr)?textComponent->IsFocusable():false);
+    _text->SetScrollable((textComponent != nullptr)?textComponent->IsScrollable():false);
+    _text->SetHorizontalAlign((textComponent != nullptr)?textComponent->GetHorizontalAlign():jhorizontal_align_t::Center);
+    _text->SetVerticalAlign((textComponent != nullptr)?textComponent->GetVerticalAlign():jvertical_align_t::Center);
 
     Add(_text, jborderlayout_align_t::Center);
   }
@@ -78,11 +83,11 @@ void Button::Build(std::string text, std::shared_ptr<Image> image)
   if (image != nullptr) {
     _image = new FlatImage(image);
 
-    _image->SetBackground(nullptr);
-    _image->SetBorder(nullptr);
-    _image->SetFocusable(false);
-    _image->SetScrollable(false);
-    _image->SetAlign(jrect_align_t::Contains);
+    _image->SetBackground((imageComponent != nullptr)?imageComponent->GetBackground():nullptr);
+    _image->SetBorder((imageComponent != nullptr)?imageComponent->GetBorder():nullptr);
+    _image->SetFocusable((imageComponent != nullptr)?imageComponent->IsFocusable():false);
+    _image->SetScrollable((imageComponent != nullptr)?imageComponent->IsScrollable():false);
+    _image->SetAlign((imageComponent != nullptr)?imageComponent->GetAlign():jrect_align_t::Contains);
 
     if (_text == nullptr) {
       Add(_image, jborderlayout_align_t::Center);

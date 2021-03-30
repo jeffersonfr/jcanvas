@@ -655,8 +655,14 @@ void Text::Build()
   }
 
   auto paragraph = new Paragraph(this, mText);
+  auto layout = paragraph->GetLayout<TextLayout>();
 
-  paragraph->GetLayout<TextLayout>()->SetWrap(wrap);
+  layout->SetWrap(wrap);
+
+  if (mParagraph != nullptr) {
+    layout->SetHorizontalAlign(mParagraph->GetLayout<TextLayout>()->GetHorizontalAlign());
+    layout->SetVerticalAlign(mParagraph->GetLayout<TextLayout>()->GetVerticalAlign());
+  }
 
   Add(paragraph, jborderlayout_align_t::Center);
 

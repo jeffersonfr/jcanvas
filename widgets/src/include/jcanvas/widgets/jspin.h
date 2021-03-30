@@ -20,8 +20,10 @@
 #ifndef J_SPIN_H
 #define J_SPIN_H
 
-#include "jcanvas/widgets/jitemcomponent.h"
-#include "jcanvas/widgets/jslidercomponent.h"
+#include "jcanvas/widgets/jcontainer.h"
+#include "jcanvas/widgets/jtext.h"
+#include "jcanvas/widgets/jbutton.h"
+#include "jcanvas/widgets/jactionlistener.h"
 #include "jcanvas/widgets/jselectlistener.h"
 
 #include <vector>
@@ -33,22 +35,58 @@ namespace jcanvas {
  *
  * \author Jeff Ferr
  */
-class Spin : public Component, public ItemComponent {
+class Spin : public Container, ActionListener {
 
   private:
     /** \brief */
-    jscroll_orientation_t _type;
+    std::vector<SelectListener *> _select_listeners;
+    /** \brief */
+    std::mutex _select_listener_mutex;
+    /** \brief */
+    std::mutex _remove_select_listener_mutex;
+    /** \brief */
+    std::vector<std::string> _items;
+    /** \brief */
+    Text _text;
+    /** \brief */
+    Button _previous;
+    /** \brief */
+    Button _next;
+    /** \brief */
+    int _current_index;
+    /** \brief */
+    int _low_range;
+    /** \brief */
+    int _high_range;
+    /** \brief */
+    bool _is_range;
+    /** \brief */
+    bool _is_loop_enabled;
 
-  private:
-    void NextItem();
-    void PreviousItem();
+    /**
+     * \brief
+     *
+     */
+    void Build(std::string value);
+
+    /**
+     * \brief
+     *
+     */
+    void ActionPerformed(ActionEvent *event);
 
   public:
     /**
      * \brief
      *
      */
-    Spin();
+    Spin(std::pair<int, int> range);
+    
+    /**
+     * \brief
+     *
+     */
+    Spin(const std::vector<std::string> &items);
     
     /**
      * \brief
@@ -60,73 +98,55 @@ class Spin : public Component, public ItemComponent {
      * \brief
      *
      */
-    virtual jscroll_orientation_t GetScrollOrientation();
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void SetScrollOrientation(jscroll_orientation_t type);
+    virtual void SetLoopEnabled(bool enabled);
 
     /**
      * \brief
      *
      */
-    virtual void AddEmptyItem();
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void AddTextItem(std::string text);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void AddImageItem(std::string text, std::shared_ptr<Image> image);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void AddCheckedItem(std::string text, bool checked);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void Paint(Graphics *g);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual bool KeyPressed(KeyEvent *event);
+    virtual bool IsLoopEnabled();
 
     /**
      * \brief
      *
      */
-    virtual bool MousePressed(MouseEvent *event);
+    virtual std::string GetValue();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void SetCurrentIndex(int index);
+
+    /**
+     * \brief
+     *
+     */
+    virtual int GetCurrentIndex();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void RegisterSelectListener(SelectListener *listener);
     
     /**
      * \brief
      *
      */
-    virtual bool MouseReleased(MouseEvent *event);
+    virtual void RemoveSelectListener(SelectListener *listener);
     
     /**
      * \brief
      *
      */
-    virtual bool MouseMoved(MouseEvent *event);
+    virtual void DispatchSelectEvent(SelectEvent *event);
     
     /**
      * \brief
      *
      */
-    virtual bool MouseWheel(MouseEvent *event);
+    virtual const std::vector<SelectListener *> & GetSelectListeners();
 
 };
 

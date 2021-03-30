@@ -18,355 +18,212 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "jcanvas/widgets/jspin.h"
+#include "jcanvas/widgets/jsolidbackground.h"
+#include "jcanvas/widgets/jrectangleborder.h"
+#include "jcanvas/core/jbufferedimage.h"
+
+#include <stdexcept>
 
 namespace jcanvas {
 
-Spin::Spin():
-  Component(),
-  ItemComponent()
+Spin::Spin(std::pair<int, int> range)
 {
-  _type = jscroll_orientation_t::Horizontal;
-  // _type = jscroll_orientation_t::Vertical;
+  _current_index = 0;
+  _low_range = range.first;
+  _high_range = range.second;
   
-  SetFocusable(true);
+  if ((_high_range - _low_range) <= 0) {
+    throw std::runtime_error("Items must have positive elements");
+  }
+
+  _is_range = true;
+  _is_loop_enabled = false;
+  
+  Build(std::to_string(_low_range));
+}
+
+Spin::Spin(const std::vector<std::string> &items):
+  _items(items)
+{
+  if (items.empty() == true) {
+    throw std::runtime_error("Items must have elements");
+  }
+
+  _current_index = 0;
+  _low_range = 0;
+  _high_range = items.size();
+  _is_range = false;
+  _is_loop_enabled = false;
+
+  Build(_items[0]);
 }
 
 Spin::~Spin()
 {
+  _previous.RemoveActionListener(this);
+  _next.RemoveActionListener(this);
 }
 
-void Spin::SetScrollOrientation(jscroll_orientation_t type)
+void Spin::Build(std::string value)
 {
-  if (_type == type) {
+  // TODO:: ativar os eventos
+  // DispatchSelectEvent(new SelectEven(this, _current_index, jselectevent_type_t::Left));
+  SetLayout<BorderLayout>();
+
+  _previous.SetImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/left-arrow.png"));
+  // _previous.SetFocusable(false);
+  _previous.SetPreferredSize(_previous.GetImageComponent()->GetPreferredSize());
+  _previous.SetBorder(nullptr);
+
+  _previous.RegisterActionListener(this);
+
+  _text.SetText(value);
+  _text.SetFocusable(false);
+  _text.SetEditable(false);
+  _text.SetBorder(nullptr);
+  _text.SetHorizontalAlign(jhorizontal_align_t::Center);
+  _text.SetVerticalAlign(jvertical_align_t::Center);
+
+  _next.SetImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/right-arrow.png"));
+  // _next.SetFocusable(false);
+  _next.SetPreferredSize(_next.GetImageComponent()->GetPreferredSize());
+  _next.SetBorder(nullptr);
+
+  _next.RegisterActionListener(this);
+
+  Add(&_previous, jborderlayout_align_t::West);
+  Add(&_text, jborderlayout_align_t::Center);
+  Add(&_next, jborderlayout_align_t::East);
+
+  SetInsets({2, 2, 2, 2});
+  SetScrollable(false);
+  SetFocusable(true);
+  SetPreferredSize({160, 32});
+  SetBackground(std::make_shared<SolidBackground>());
+  SetBorder(std::make_shared<RectangleBorder>());
+}
+
+void Spin::ActionPerformed(ActionEvent *event)
+{
+  Button *button = reinterpret_cast<Button *>(event->GetSource());
+
+  if (_is_range == false) {
+    if (button == &_previous) {
+      _current_index = _current_index - 1;
+
+      if (_current_index < 0) {
+        _current_index = 0;
+
+        if (_is_loop_enabled == true) {
+          _current_index = _items.size() - 1;
+        }
+      }
+    } else {
+      _current_index = _current_index + 1;
+
+      if (_current_index > (_items.size() - 1)) {
+        _current_index = _items.size() - 1;
+
+        if (_is_loop_enabled == true) {
+          _current_index = 0;
+        }
+      }
+    }
+
+    _text.SetText(_items[_current_index]);
+  } else {
+    // TODO::
+  }
+}
+
+void Spin::SetLoopEnabled(bool enabled)
+{
+  _is_loop_enabled = enabled;
+}
+
+bool Spin::IsLoopEnabled()
+{
+  return _is_loop_enabled;
+}
+
+std::string Spin::GetValue()
+{
+  return _text.GetText();
+}
+
+void Spin::SetCurrentIndex(int index)
+{
+  if (index < _low_range) {
+    index = _low_range;
+  }
+
+  if (index > _high_range) {
+    index = _high_range;
+  }
+
+  _current_index = index;
+}
+
+int Spin::GetCurrentIndex()
+{
+  return _current_index;
+}
+
+void Spin::RegisterSelectListener(SelectListener *listener)
+{
+  if (listener == nullptr) {
     return;
   }
 
-  _type = type;
+   std::lock_guard<std::mutex> guard(_select_listener_mutex);
+
+  if (std::find(_select_listeners.begin(), _select_listeners.end(), listener) == _select_listeners.end()) {
+    _select_listeners.push_back(listener);
+  }
 }
 
-jscroll_orientation_t Spin::GetScrollOrientation()
+void Spin::RemoveSelectListener(SelectListener *listener)
 {
-  return _type;
+  if (listener == nullptr) {
+    return;
+  }
+
+  std::lock_guard<std::mutex> lock1(_remove_select_listener_mutex);
+  std::lock_guard<std::mutex> lock2(_select_listener_mutex);
+
+  _select_listeners.erase(std::remove(_select_listeners.begin(), _select_listeners.end(), listener), _select_listeners.end());
 }
 
-void Spin::NextItem()
+void Spin::DispatchSelectEvent(SelectEvent *event)
 {
-  _index++;
-
-  if (_index >= (int)_items.size()) {
-    _index = _items.size()-1;
-
-    if (_loop == true) {
-      _index = 0;
-    }
+  if (event == nullptr) {
+    return;
   }
 
-  DispatchSelectEvent(new SelectEvent(this, _index, jselectevent_type_t::Right));
-}
+  _select_listener_mutex.lock();
 
-void Spin::PreviousItem()
-{
-  _index--;
+  std::vector<SelectListener *> listeners = _select_listeners;
 
-  if (_index < 0) {
-    _index = 0;
+  _select_listener_mutex.unlock();
 
-    if (_loop == true) {
-      _index = _items.size() - 1;
-    }
-  }
+  std::lock_guard<std::mutex> lock(_remove_select_listener_mutex);
 
-  DispatchSelectEvent(new SelectEvent(this, _index, jselectevent_type_t::Left));
-}
+  for (std::vector<SelectListener *>::iterator i=listeners.begin(); i!=listeners.end() && event->IsConsumed() == false; i++) {
+    SelectListener *listener = (*i);
 
-bool Spin::KeyPressed(KeyEvent *event)
-{
-  if (Component::KeyPressed(event) == true) {
-    return true;
-  }
-
-  if (_items.size() == 0) {
-    return true;
-  }
-
-  jkeyevent_symbol_t action = event->GetSymbol();
-
-  bool catched = false;
-
-  if (action == jkeyevent_symbol_t::CursorLeft) {
-    if (_type == jscroll_orientation_t::Horizontal) {
-      PreviousItem();
-
-      catched = true;
-    }
-  } else if (action == jkeyevent_symbol_t::CursorRight) {
-    if (_type == jscroll_orientation_t::Horizontal) {
-      NextItem();
-
-      catched = true;
-    }
-  } else if (action == jkeyevent_symbol_t::CursorUp) {
-    if (_type == jscroll_orientation_t::Vertical) {
-      PreviousItem();
-
-      catched = true;
-    }
-  } else if (action == jkeyevent_symbol_t::CursorDown) {
-    if (_type == jscroll_orientation_t::Vertical) {
-      NextItem();
-
-      catched = true;
-    }
-  } else if (action == jkeyevent_symbol_t::Enter) {
-    DispatchSelectEvent(new SelectEvent(this, _index, jselectevent_type_t::Action));
-
-    catched = true;
-  }
-
-  return catched;
-}
-
-bool Spin::MousePressed(MouseEvent *event)
-{
-  if (Component::MousePressed(event) == true) {
-    return true;
-  }
-
-  if (_items.size() == 0) {
-    return true;
-  }
-
-  jtheme_t
-    theme = GetTheme();
-  jpoint_t<int>
-    elocation = event->GetLocation();
-  jrect_t<int>
-    bounds = GetBounds();
-  int
-    h = bounds.size.y - theme.padding.top - theme.padding.bottom;
-  bool 
-    catched = false;
-
-  if (event->GetButton() == jmouseevent_button_t::Button1) {
-    int 
-      arrow_size;
-
-    catched = true;
-
-    if (_type == jscroll_orientation_t::Horizontal) {
-      arrow_size = h/2;
+    if (event->GetType() == jselectevent_type_t::Action) {
+      listener->ItemSelected(event);
     } else {
-      arrow_size = (h - 8)/2;
-    }
-
-    RequestFocus();
-
-    if (_type == jscroll_orientation_t::Horizontal) {
-      if (elocation.y > theme.padding.top && elocation.y < (theme.padding.top + bounds.size.y)) {
-        if (elocation.x > (bounds.size.x - arrow_size - theme.padding.left) && elocation.x < (bounds.size.x - theme.padding.left)) {
-          NextItem();
-        } else if (elocation.x > theme.padding.left && elocation.x < (theme.padding.left + arrow_size)) {
-          PreviousItem();
-        }
-      }
-    } else if (_type == jscroll_orientation_t::Vertical) {
-      if (elocation.x > (bounds.size.x - 2*arrow_size - theme.padding.left) && elocation.x < (bounds.size.x - theme.padding.left)) {
-        if (elocation.y > theme.padding.top && elocation.y < (h/2)) {
-          PreviousItem();
-        } else if (elocation.y > (theme.padding.top + h/2) && elocation.y < (theme.padding.top + h)) {
-          NextItem();
-        }
-      }
+      listener->ItemChanged(event);
     }
   }
 
-  return catched;
+  delete event;
 }
 
-
-bool Spin::MouseReleased(MouseEvent *event)
+const std::vector<SelectListener *> & Spin::GetSelectListeners()
 {
-  if (Component::MouseReleased(event) == true) {
-    return true;
-  }
-  
-  return false;
-}
-
-bool Spin::MouseMoved(MouseEvent *event)
-{
-  if (Component::MouseMoved(event) == true) {
-    return true;
-  }
-  
-  return false;
-}
-
-bool Spin::MouseWheel(MouseEvent *event)
-{
-  if (Component::MouseWheel(event) == true) {
-    return true;
-  }
-  
-  return false;
-}
-
-void Spin::AddEmptyItem()
-{
-  Item *item = new Item();
-
-  if (_type == jscroll_orientation_t::Horizontal) {
-    item->SetHorizontalAlign(jhorizontal_align_t::Center);
-  }
-    
-  AddInternalItem(item);
-  AddItem(item);
-}
-
-void Spin::AddTextItem(std::string text)
-{
-  Item *item = new Item(text);
-
-  if (_type == jscroll_orientation_t::Horizontal) {
-    item->SetHorizontalAlign(jhorizontal_align_t::Center);
-  }
-    
-  AddInternalItem(item);
-  AddItem(item);
-}
-
-void Spin::AddImageItem(std::string text, std::shared_ptr<Image> image)
-{
-  Item *item = new Item(text, image);
-
-  if (_type == jscroll_orientation_t::Horizontal) {
-    item->SetHorizontalAlign(jhorizontal_align_t::Center);
-  }
-    
-  AddInternalItem(item);
-  AddItem(item);
-}
-
-void Spin::AddCheckedItem(std::string text, bool checked)
-{
-  Item *item = new Item(text, checked);
-
-  if (_type == jscroll_orientation_t::Horizontal) {
-    item->SetHorizontalAlign(jhorizontal_align_t::Center);
-  }
-    
-  AddInternalItem(item);
-  AddItem(item);
-}
-
-void Spin::Paint(Graphics *g)
-{
-  Component::Paint(g);
-
-  jtheme_t
-    theme = GetTheme();
-  jrect_t<int>
-    bounds = GetBounds();
-  int
-    w = bounds.size.x - theme.padding.left - theme.padding.right,
-    h = bounds.size.y - theme.padding.top - theme.padding.bottom;
-  int
-    arrow_size = 8;
-
-  if (_type == jscroll_orientation_t::Horizontal) {
-    int offset = (bounds.size.y - 2*arrow_size)/2;
-
-    if (_loop == true || (_index < ((int)_items.size()-1))) {
-      if (HasFocus() == true) {
-        g->SetColor(theme.fg.focus);
-      } else {
-        g->SetColor(theme.fg.normal);
-      }
-
-      g->FillTriangle({w, theme.padding.top + arrow_size + offset}, {theme.padding.left + w - arrow_size, theme.padding.top + offset}, {theme.padding.left + w - arrow_size, theme.padding.top + 2*arrow_size + offset});
-    }
-
-    if (_loop == true || (_index > 0 && _items.size() > 0)) {
-      if (HasFocus() == true) {
-        g->SetColor(theme.fg.focus);
-      } else {
-        g->SetColor(theme.fg.normal);
-      }
-
-      g->FillTriangle({theme.padding.left, theme.padding.top + arrow_size + offset}, {theme.padding.left + arrow_size, theme.padding.top + offset}, {theme.padding.left + arrow_size, theme.padding.top + 2*arrow_size + offset});
-    }
-
-    if (_items.size() > 0) {
-      if (theme.font.primary != nullptr) {
-        g->SetFont(theme.font.primary);
-
-        if (IsEnabled() == true) {
-          if (HasFocus() == true) {
-            g->SetColor(theme.fg.focus);
-          } else {
-            g->SetColor(theme.fg.normal);
-          }
-        } else {
-          g->SetColor(theme.fg.disable);
-        }
-
-        std::string text = _items[_index]->GetValue();
-
-        // if (_wrap == false) {
-          text = theme.font.primary->TruncateString(text, "...", w);
-        // }
-
-        g->DrawString(text, {theme.padding.left, theme.padding.top, w, h}, _items[_index]->GetHorizontalAlign(), _items[_index]->GetVerticalAlign());
-      }
-    }
-  } else if (_type == jscroll_orientation_t::Vertical) {
-    int offset = (bounds.size.y/2 - arrow_size)/2;
-
-    if (_loop == true || (_index < ((int)_items.size()-1))) {
-      if (HasFocus() == true) {
-        g->SetColor(theme.fg.focus);
-      } else {
-        g->SetColor(theme.fg.normal);
-      }
-    }
-
-    g->FillTriangle({bounds.size.x - 2*arrow_size - theme.padding.left, theme.padding.top + arrow_size + offset}, {bounds.size.x - theme.padding.left, theme.padding.top + arrow_size + offset}, {bounds.size.x - arrow_size - theme.padding.left, theme.padding.top + offset});
-
-    if (_loop == true || (_index > 0 && _items.size() > 0)) {
-      if (HasFocus() == true) {
-        g->SetColor(theme.fg.focus);
-      } else {
-        g->SetColor(theme.fg.normal);
-      }
-    }
-
-    g->FillTriangle({bounds.size.x - 2*arrow_size - theme.padding.left, theme.padding.top + arrow_size + bounds.size.y/2}, {bounds.size.x - theme.padding.left, theme.padding.top + arrow_size + bounds.size.y/2}, {bounds.size.x - arrow_size - theme.padding.left, theme.padding.top + bounds.size.y - offset});
-
-
-    if (_items.size() > 0) {
-      if (theme.font.primary != nullptr) {
-        g->SetFont(theme.font.primary);
-
-        if (IsEnabled() == true) {
-          if (HasFocus() == true) {
-            g->SetColor(theme.fg.focus);
-          } else {
-            g->SetColor(theme.fg.normal);
-          }
-        } else {
-          g->SetColor(theme.fg.disable);
-        }
-
-        std::string text = _items[_index]->GetValue();
-
-        // if (_wrap == false) {
-          text = theme.font.primary->TruncateString(text, "...", w);
-        // }
-
-        g->DrawString(text, {theme.padding.left, theme.padding.top, w, h}, _items[_index]->GetHorizontalAlign(), _items[_index]->GetVerticalAlign());
-      }
-    }
-  }
+  return _select_listeners;
 }
 
 }

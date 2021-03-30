@@ -27,6 +27,10 @@
 
 namespace jcanvas {
 
+const int COMPONENT_STATE_NONE = 0;
+const int COMPONENT_STATE_HORIZONTAL_SCROLL = 1;
+const int COMPONENT_STATE_VERTICAL_SCROLL = 2;
+
 Component::Component(jrect_t<int> bounds):
   KeyListener(),
   MouseListener()
@@ -77,7 +81,7 @@ Component::Component(jrect_t<int> bounds):
   _scroll_minor_increment = 8;
   _scroll_major_increment = 64;
 
-  _component_state = 0;
+  _component_state = COMPONENT_STATE_NONE;
 
   _relative_mouse = {
     .x = 0,
@@ -1026,7 +1030,7 @@ bool Component::MousePressed(MouseEvent *event)
       max_offset = (int)(scroll_size.x*(sdimention.x - size.x)/sdimention.x);
 
     if (elocation.x > offset && elocation.x < (offset + scroll_size.x - max_offset)) {
-      _component_state = 11;
+      _component_state = COMPONENT_STATE_HORIZONTAL_SCROLL;
       _relative_mouse.x = elocation.x;
       _relative_mouse.y = elocation.y;
     } else if (elocation.x < offset) {
@@ -1045,7 +1049,7 @@ bool Component::MousePressed(MouseEvent *event)
       max_offset = (int)(scroll_size.y*(sdimention.y - size.y)/sdimention.y);
 
     if (elocation.y > offset && elocation.y < (offset + scroll_size.y - max_offset)) {
-      _component_state = 10;
+      _component_state = COMPONENT_STATE_VERTICAL_SCROLL;
       _relative_mouse.x = elocation.x;
       _relative_mouse.y = elocation.y;
     } else if (elocation.y < offset) {
@@ -1073,8 +1077,8 @@ bool Component::MouseReleased(MouseEvent *event)
   // int mousex = event->GetX(),
   //     mousey = event->GetY();
 
-  if (_component_state != 0) {
-    _component_state = 0;
+  if (_component_state != COMPONENT_STATE_NONE) {
+    _component_state = COMPONENT_STATE_NONE;
 
     return true;
   }
@@ -1099,13 +1103,13 @@ bool Component::MouseMoved(MouseEvent *event)
     size = GetSize(),
     sdimention = GetScrollDimension();
 
-  if (_component_state == 10) {
+  if (_component_state == COMPONENT_STATE_VERTICAL_SCROLL) {
     SetScrollLocation(slocation.x, slocation.y + (int)((elocation.y - _relative_mouse.y)*((double)sdimention.y/(double)size.y)));
     
     _relative_mouse.y = elocation.y;
 
     return true;
-  } else if (_component_state == 11) {
+  } else if (_component_state == COMPONENT_STATE_HORIZONTAL_SCROLL) {
     SetScrollLocation(slocation.x + (int)((elocation.x - _relative_mouse.x)*((double)sdimention.x/(double)size.x)), slocation.y);
 
     _relative_mouse.x = elocation.x;

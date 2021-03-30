@@ -88,6 +88,12 @@ class Button : public Container {
      * \brief
      *
      */
+    Button(std::shared_ptr<Image> image);
+    
+    /**
+     * \brief
+     *
+     */
     Button(std::string text = {}, std::shared_ptr<Image> image = {});
     
     /**

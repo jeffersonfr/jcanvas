@@ -44,37 +44,40 @@ CalendarDialog::CalendarDialog(Container *parent):
     dx = ds + 2,
     dy = ds + 2;
 
-  _syear = new Spin();
-  
-  _syear->SetBounds({insets.left, insets.top + 0*dy, 7*dx - 2, ds});
+  std::vector<std::string> years;
 
   for (int i=1900; i<2199; i++) {
     sprintf(tmp, "%d", i);
 
-    _syear->AddTextItem(tmp);
+    years.push_back(tmp);
   }
-
-  _syear->SetLoop(true);
+    
+  _syear = new Spin(years);
+  
+  _syear->SetBounds({insets.left, insets.top + 0*dy, 7*dx - 2, ds});
+  _syear->SetLoopEnabled(true);
   _syear->RegisterSelectListener(this);
 
-  _smonth = new Spin();
+  std::vector<std::string> months;
+
+  months.push_back("Janeiro");
+  months.push_back("Fevereiro");
+  months.push_back("Marco");
+  months.push_back("Abril");
+  months.push_back("Maio");
+  months.push_back("Junho");
+  months.push_back("Julho");
+  months.push_back("Agosto");
+  months.push_back("Setembro");
+  months.push_back("Outubro");
+  months.push_back("Novembro");
+  months.push_back("Dezembro");
+
+  _smonth = new Spin(months);
   
   _smonth->SetBounds({insets.left, insets.top + 1*dy, 7*dx - 2, ds});
 
-  _smonth->AddTextItem("Janeiro");
-  _smonth->AddTextItem("Fevereiro");
-  _smonth->AddTextItem("Marco");
-  _smonth->AddTextItem("Abril");
-  _smonth->AddTextItem("Maio");
-  _smonth->AddTextItem("Junho");
-  _smonth->AddTextItem("Julho");
-  _smonth->AddTextItem("Agosto");
-  _smonth->AddTextItem("Setembro");
-  _smonth->AddTextItem("Outubro");
-  _smonth->AddTextItem("Novembro");
-  _smonth->AddTextItem("Dezembro");
-
-  _smonth->SetLoop(true);
+  _smonth->SetLoopEnabled(true);
   _smonth->RegisterSelectListener(this);
 
   _ldom = new Text("D");

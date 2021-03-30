@@ -268,12 +268,9 @@ class App : public Frame, public ActionListener, public SelectListener {
         jrect_t
           region = _imagebutton1->GetVisibleBounds();
 
-        _spin = new Spin();
+        _spin = new Spin({"Loop", "Bounce"});
         
         _spin->SetBounds({insets.left+0*(32+16), region.point.y + region.size.y + 8, 196, 48});
-
-        _spin->AddTextItem("loop");
-        _spin->AddTextItem("bounce");
 
         _spin->RegisterSelectListener(this);
       }
@@ -311,6 +308,7 @@ class App : public Frame, public ActionListener, public SelectListener {
         
         _textfield->SetWrap(false);
         _textfield->SetBounds({insets.left + 196 + 16, region.point.y + 4*(region.size.y + 8), size.x - 2*(196 + 16) - insets.left - insets.right, 48});
+        _textfield->SetVerticalAlign(jvertical_align_t::Center);
       }
 
       {
@@ -331,6 +329,7 @@ class App : public Frame, public ActionListener, public SelectListener {
         _label1->SetEditable(false);
         _label1->SetFocusable(false);
         _label1->SetBounds({insets.left + 196 + 16, region.point.y + region.size.y + 8, (region.size.x - 16)/2, 48});
+        _label1->SetVerticalAlign(jvertical_align_t::Center);
         
         region = _label1->GetVisibleBounds();
 
@@ -339,6 +338,7 @@ class App : public Frame, public ActionListener, public SelectListener {
         _label2->SetEditable(false);
         _label2->SetFocusable(false);
         _label2->SetBounds({region.point.x + region.size.x + 16, region.point.y, region.size.x, 48});
+        _label2->SetVerticalAlign(jvertical_align_t::Center);
       }
 
       {
