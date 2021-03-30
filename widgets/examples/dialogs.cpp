@@ -75,6 +75,12 @@ class App : public Frame, public ActionListener {
 
     virtual void ActionPerformed(ActionEvent *event)
     {
+      Button *button = reinterpret_cast<Button *>(event->GetSource());
+
+      if (button->IsPressed() == false) {
+        return;
+      }
+
       static Dialog *dialog;
 
       if (dialog != nullptr) {

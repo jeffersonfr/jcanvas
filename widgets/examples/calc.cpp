@@ -612,6 +612,10 @@ void App::ActionPerformed(ActionEvent *event)
 {
 	Button *button = (Button *)event->GetSource();
 
+  if (button->IsPressed() == false) {
+    return;
+  }
+
 	Process(button->GetTextComponent()->GetText());
 
 	if (_state == 1) {

@@ -71,7 +71,7 @@ struct jtheme_t {
 
   jtheme_scroll_t scroll {
     .color {
-      0xff404040,
+      0xfff0f0f0,
       0xff404040,
       0xff404040,
       0xff404040,

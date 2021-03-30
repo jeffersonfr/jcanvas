@@ -427,7 +427,14 @@ void Container::Paint(Graphics *g)
         if (c->GetBorder() != nullptr) {
           c->GetBorder()->Paint(c, g);
         }
-        
+  
+        if (c->HasFocus() == true) {
+          jtheme_t theme = c->GetTheme();
+
+          g->SetColor(theme.fg.focus);
+          g->DrawRectangle({0, 0, bounds.size});
+        }
+
         g->Translate(-bounds.point);
         g->SetClip(clip);
       }
@@ -449,32 +456,37 @@ void Container::Paint(Graphics *g)
     Dialog *c = (*i);
 
     if (c->IsVisible() == true) {
-      jpoint_t 
-        cl = c->GetLocation();
-      jpoint_t<int> 
-        cs = c->GetSize();
-      int 
-        cx = cl.x - slocation.x,
-        cy = cl.y - slocation.y,
-        cw = cs.x,
-        ch = cs.y;
+      jrect_t 
+        bounds = c->GetBounds();
 
-      if (cw > 0 && ch > 0) {
-        g->Translate({cx, cy});
-        g->ClipRect({0, 0, cw, ch});
-  
+      bounds.point = bounds.point - slocation;
+
+      if (bounds.size.x > 0 && bounds.size.y > 0) {
+        g->Translate(bounds.point);
+        g->ClipRect({0, 0, bounds.size});
+
         if (c->GetBackground() != nullptr) {
           c->GetBackground()->Paint(c, g);
         }
 
         c->Paint(g);
-        c->PaintScrollbars(g);
+        
+        if (c->IsScrollVisible() == true) {
+          c->PaintScrollbars(g);
+        }
 
         if (c->GetBorder() != nullptr) {
           c->GetBorder()->Paint(c, g);
         }
         
-        g->Translate({-cx, -cy});
+        if (c->HasFocus() == true) {
+          jtheme_t theme = c->GetTheme();
+
+          g->SetColor(theme.fg.focus);
+          g->DrawRectangle({0, 0, bounds.size});
+        }
+
+        g->Translate(-bounds.point);
         g->SetClip(clip);
       }
     }
@@ -845,7 +857,7 @@ bool Container::MousePressed(MouseEvent *event)
     MouseEvent 
       evt(event->GetSource(), event->GetType(), event->GetButton(), event->GetButtons(), {elocation.x - dlocation.x, elocation.y - dlocation.y}, event->GetClicks());
 
-    if ((*i)->MousePressed(&evt) == true) {
+    if (dialog->MousePressed(&evt) == true) {
       return true;
     }
   }
@@ -874,17 +886,27 @@ bool Container::MouseReleased(MouseEvent *event)
     return true;
   }
 
+  jpoint_t
+    elocation = event->GetLocation();
+
   // INFO:: process dialogs first
   for (std::vector<Dialog *>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
-    if ((*i)->MouseReleased(event) == true) {
+    Dialog
+      *dialog = (*i);
+    jpoint_t
+      dlocation = dialog->GetLocation();
+    MouseEvent 
+      evt(event->GetSource(), event->GetType(), event->GetButton(), event->GetButtons(), {elocation.x - dlocation.x, elocation.y - dlocation.y}, event->GetClicks());
+
+    if (dialog->MouseReleased(&evt) == true) {
       return true;
     }
   }
 
-  jpoint_t
-    elocation = event->GetLocation();
   jpoint_t 
     slocation = GetScrollLocation();
+  
+  /*
   Component
     *focus = GetFocusOwner();
 
@@ -894,6 +916,7 @@ bool Container::MouseReleased(MouseEvent *event)
 
     return focus->MouseReleased(&evt);
   }
+  */
 
   int 
     dx,
@@ -917,17 +940,27 @@ bool Container::MouseMoved(MouseEvent *event)
     return true;
   }
 
+  jpoint_t
+    elocation = event->GetLocation();
+
   // INFO:: process dialogs first
   for (std::vector<Dialog *>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
-    if ((*i)->MouseMoved(event) == true) {
+    Dialog
+      *dialog = (*i);
+    jpoint_t
+      dlocation = dialog->GetLocation();
+    MouseEvent 
+      evt(event->GetSource(), event->GetType(), event->GetButton(), event->GetButtons(), {elocation.x - dlocation.x, elocation.y - dlocation.y}, event->GetClicks());
+
+    if (dialog->MouseMoved(&evt) == true) {
       return true;
     }
   }
 
-  jpoint_t
-    elocation = event->GetLocation();
   jpoint_t 
     slocation = GetScrollLocation();
+  
+  /*
   Component
     *focus = GetFocusOwner();
 
@@ -937,6 +970,7 @@ bool Container::MouseMoved(MouseEvent *event)
 
     return focus->MouseMoved(&evt);
   }
+  */
 
   int dx, dy;
 
@@ -958,15 +992,24 @@ bool Container::MouseWheel(MouseEvent *event)
     return true;
   }
 
+  jpoint_t
+    elocation = event->GetLocation();
+
   // INFO:: process dialogs first
   for (std::vector<Dialog *>::iterator i=_dialogs.begin(); i!=_dialogs.end(); i++) {
-    if ((*i)->MouseWheel(event) == true) {
+    Dialog
+      *dialog = (*i);
+    jpoint_t
+      dlocation = dialog->GetLocation();
+    MouseEvent 
+      evt(event->GetSource(), event->GetType(), event->GetButton(), event->GetButtons(), {elocation.x - dlocation.x, elocation.y - dlocation.y}, event->GetClicks());
+
+    if (dialog->MouseWheel(&evt) == true) {
       return true;
     }
   }
 
-  jpoint_t
-    elocation = event->GetLocation();
+  /*
   Component
     *focus = GetFocusOwner();
 
@@ -976,6 +1019,7 @@ bool Container::MouseWheel(MouseEvent *event)
 
     return focus->MouseWheel(&evt);
   }
+  */
 
   int dx, dy;
 

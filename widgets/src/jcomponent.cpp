@@ -412,7 +412,7 @@ void Component::SetScrollLocation(int x, int y)
     size = GetSize(),
     sdimention = GetScrollDimension();
   int 
-    diffx = sdimention.x  - size.x,
+    diffx = sdimention.x - size.x,
     diffy = sdimention.y - size.y;
 
   _scroll_location.x = x;
@@ -471,70 +471,42 @@ void Component::PaintScrollbars(Graphics *g)
 
   jtheme_t
     theme = GetTheme();
-  jpoint_t<int> 
-    slocation = GetScrollLocation();
   jpoint_t<int>
-    size = GetSize(),
+    size = GetSize();
+  jpoint_t<int> 
+    slocation = GetScrollLocation(),
     sdimention = GetScrollDimension();
+  jpoint_t<int>
+    scroll_size = size - theme.scroll.size;
 
   if (IsScrollableX() == true) {
-    double 
-      offset_ratio = (double)slocation.x/(double)sdimention.x,
-      block_size_ratio = (double)size.x/(double)sdimention.x;
     int 
-      offset = (int)(size.x*offset_ratio),
-      block_size = (int)(size.x*block_size_ratio);
+      offset = (int)(scroll_size.x*slocation.x/sdimention.x);
+    int 
+      max_offset = (int)(scroll_size.x*(sdimention.x - size.x)/sdimention.x);
 
-    g->SetColor(theme.fg.normal);
-    g->FillRectangle({0, size.y - theme.scroll.size.y, size.x, theme.scroll.size.y});
-    g->SetGradientStop(0.0, theme.fg.normal);
-    g->SetGradientStop(1.0, theme.bg.normal);
-    g->FillLinearGradient({offset, size.y - theme.scroll.size.y, block_size, theme.scroll.size.y}, {0, 0}, {0, theme.scroll.size.y});
-    g->ResetGradientStop();
+    g->SetColor(theme.scroll.color.normal);
+    g->FillRectangle({0, size.y - theme.scroll.size.y, scroll_size.x, theme.scroll.size.y});
+    g->SetColor(theme.scroll.color.select);
+    g->FillRectangle({offset + 1, size.y - theme.scroll.size.y + 1, scroll_size.x - max_offset - 2, theme.scroll.size.y - 2});
   }
   
   if (IsScrollableY() == true) {
-    double 
-      offset_ratio = (double)slocation.y/(double)sdimention.y,
-      block_size_ratio = (double)size.y/(double)sdimention.y;
     int 
-      offset = (int)(size.y*offset_ratio),
-      block_size = (int)(size.y*block_size_ratio);
+      offset = (int)(scroll_size.y*slocation.y/sdimention.y);
+    int 
+      max_offset = (int)(scroll_size.y*(sdimention.y - size.y)/sdimention.y);
 
-    g->SetColor(theme.fg.normal);
-    g->FillRectangle({size.x - theme.scroll.size.x, 0, theme.scroll.size.x, size.y});
-
-    g->SetGradientStop(0.0, theme.fg.normal);
-    g->SetGradientStop(1.0, theme.bg.normal);
-    g->FillLinearGradient({size.x - theme.scroll.size.x, offset, theme.scroll.size.x, block_size}, {0, 0}, {theme.scroll.size.x, 0});
-    g->ResetGradientStop();
+    g->SetColor(theme.scroll.color.normal);
+    g->FillRectangle({size.x - theme.scroll.size.x, 0, theme.scroll.size.x, scroll_size.y});
+    g->SetColor(theme.scroll.color.select);
+    g->FillRectangle({scroll_size.x + 1, offset + 1, theme.scroll.size.x - 2, scroll_size.y - max_offset - 2});
   }
 
-  if (IsScrollableX() == true && IsScrollableY() == true) {
-    int radius = std::min(theme.scroll.size.x, theme.scroll.size.y);
-    int radius2 = radius/2;
-
-    g->SetGradientStop(0.0, theme.bg.normal);
-    g->SetGradientStop(1.0, theme.fg.normal);
-    g->FillRadialGradient({size.x-radius2, size.y-radius2}, {radius, radius}, {0, 0}, 0);
-    g->ResetGradientStop();
-  }
-
-  /*
-  jpen_t 
-    pen = g->GetPen();
-  int 
-    width = pen.width;
-
-  pen.width = -border.size.x;
-  g->SetPen(pen);
-
-  g->DrawRectangle({0, 0, size.x, size.y});
-
-  pen.width = width;
-
-  g->SetPen(pen);
-  */
+  g->SetColor(theme.scroll.color.normal);
+  g->FillRectangle({size.x - theme.scroll.size.x, size.y - theme.scroll.size.y, theme.scroll.size.x, theme.scroll.size.y});
+  g->SetColor(theme.scroll.color.select);
+  g->FillRectangle({size.x - theme.scroll.size.x + 1, size.y - theme.scroll.size.y + 1, theme.scroll.size.x - 2, theme.scroll.size.y - 2});
 }
 
 void Component::Paint(Graphics *g)
@@ -1040,50 +1012,50 @@ bool Component::MousePressed(MouseEvent *event)
     slocation = GetScrollLocation();
   jpoint_t<int> 
     elocation = event->GetLocation();
+  jpoint_t<int>
+    scroll_size = size - theme.scroll.size;
 
   if (IsFocusable() == true) {
     RequestFocus();
   }
 
-  if (IsScrollableY() && elocation.x > (size.x - theme.scroll.size.x)) {
-    double 
-      offset_ratio = (double)slocation.y/(double)sdimention.y,
-      block_size_ratio = (double)size.y/(double)sdimention.y;
+  if (IsScrollableX() && elocation.y > (size.y - theme.scroll.size.y)) {
     int 
-      offset = (int)(size.y*offset_ratio),
-      block_size = (int)(size.y*block_size_ratio);
-
-    if (elocation.y > offset && elocation.y < (offset+block_size)) {
-      _component_state = 10;
-      _relative_mouse.x = elocation.x;
-      _relative_mouse.y = elocation.y;
-    } else if (elocation.y < offset) {
-      SetScrollLocation(slocation.x, slocation.y - _scroll_major_increment);
-    } else if (elocation.y > (offset + block_size)) {
-      SetScrollLocation(slocation.x, slocation.y + _scroll_major_increment);
-    }
-
-    return true;
-  } else if (IsScrollableX() && elocation.y > (size.y - theme.scroll.size.y)) {
-    double 
-      offset_ratio = (double)slocation.x/(double)sdimention.x,
-      block_size_ratio = (double)size.x/(double)sdimention.x;
+      offset = (int)(scroll_size.x*slocation.x/sdimention.x);
     int 
-      offset = (int)(size.x*offset_ratio),
-      block_size = (int)(size.x*block_size_ratio);
+      max_offset = (int)(scroll_size.x*(sdimention.x - size.x)/sdimention.x);
 
-    if (elocation.x > offset && elocation.x < (offset + block_size)) {
+    if (elocation.x > offset && elocation.x < (offset + scroll_size.x - max_offset)) {
       _component_state = 11;
       _relative_mouse.x = elocation.x;
       _relative_mouse.y = elocation.y;
     } else if (elocation.x < offset) {
       SetScrollLocation(slocation.x - _scroll_major_increment, slocation.y);
-    } else if (elocation.x > (offset + block_size)) {
+    } else if (elocation.x > (offset + scroll_size.x - max_offset)) {
       SetScrollLocation(slocation.x + _scroll_major_increment, slocation.y);
     }
 
     return true;
-  } 
+  }
+  
+  if (IsScrollableY() && elocation.x > (size.x - theme.scroll.size.x)) {
+    int 
+      offset = (int)(scroll_size.y*slocation.y/sdimention.y);
+    int 
+      max_offset = (int)(scroll_size.y*(sdimention.y - size.y)/sdimention.y);
+
+    if (elocation.y > offset && elocation.y < (offset + scroll_size.y - max_offset)) {
+      _component_state = 10;
+      _relative_mouse.x = elocation.x;
+      _relative_mouse.y = elocation.y;
+    } else if (elocation.y < offset) {
+      SetScrollLocation(slocation.x, slocation.y - _scroll_major_increment);
+    } else if (elocation.y > (offset + scroll_size.y - max_offset)) {
+      SetScrollLocation(slocation.x, slocation.y + _scroll_major_increment);
+    }
+
+    return true;
+  }
 
   return false;
 }

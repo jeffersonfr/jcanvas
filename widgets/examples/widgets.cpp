@@ -490,6 +490,12 @@ class App : public Frame, public ActionListener, public SelectListener {
 
     virtual void ActionPerformed(ActionEvent *event)
     {
+      Button *button = reinterpret_cast<Button *>(event->GetSource());
+
+      if (button->IsPressed() == false) {
+        return;
+      }
+
       _mutex.lock();
 
       if (event->GetSource() == _button1) {

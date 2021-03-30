@@ -85,6 +85,12 @@ std::string YesNoDialog::GetResponse()
 
 void YesNoDialog::ActionPerformed(ActionEvent *event)
 {
+  Button *button = reinterpret_cast<Button *>(event->GetSource());
+
+  if (button->IsPressed() == false) {
+    return;
+  }
+
   Close();
 }
 

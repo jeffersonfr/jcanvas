@@ -93,6 +93,30 @@ CalendarDialog::CalendarDialog(Container *parent):
   _lsex->SetBounds({insets.left + 5*dx, insets.top + 2*dy, ds, ds});
   _lsab->SetBounds({insets.left + 6*dx, insets.top + 2*dy, ds, ds});
 
+  _ldom->SetEditable(false);
+  _lseg->SetEditable(false);
+  _lter->SetEditable(false);
+  _lqua->SetEditable(false);
+  _lqui->SetEditable(false);
+  _lsex->SetEditable(false);
+  _lsab->SetEditable(false);
+
+  _ldom->SetFocusable(false);
+  _lseg->SetFocusable(false);
+  _lter->SetFocusable(false);
+  _lqua->SetFocusable(false);
+  _lqui->SetFocusable(false);
+  _lsex->SetFocusable(false);
+  _lsab->SetFocusable(false);
+
+  _ldom->SetHorizontalAlign(jhorizontal_align_t::Center);
+  _lseg->SetHorizontalAlign(jhorizontal_align_t::Center);
+  _lter->SetHorizontalAlign(jhorizontal_align_t::Center);
+  _lqua->SetHorizontalAlign(jhorizontal_align_t::Center);
+  _lqui->SetHorizontalAlign(jhorizontal_align_t::Center);
+  _lsex->SetHorizontalAlign(jhorizontal_align_t::Center);
+  _lsab->SetHorizontalAlign(jhorizontal_align_t::Center);
+
   _week_day_theme.bg.normal = jcolor_t {0xff808080};
   _selected_theme.bg.normal = jcolor_t {0xff408040};
 
@@ -275,7 +299,7 @@ void CalendarDialog::BuildCalendar()
 
   for (int i=0; i<day_count; i++) {
     int
-      ds = 32,
+      ds = 36,
       dx = ds + 2,
       dy = ds + 2;
 
@@ -319,6 +343,12 @@ void CalendarDialog::BuildCalendar()
 
 void CalendarDialog::ActionPerformed(ActionEvent *event)
 {
+  Button *button = reinterpret_cast<Button *>(event->GetSource());
+
+  if (button->IsPressed() == false) {
+    return;
+  }
+
   // TODO:: send a generic action event com a data atual selectionada
   // TODO:: deixar o button como checked (toggle)
 

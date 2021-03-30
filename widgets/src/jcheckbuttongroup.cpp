@@ -61,7 +61,7 @@ void CheckButtonGroup::Remove(CheckButton *button)
 
 void CheckButtonGroup::ActionPerformed(ActionEvent *event)
 {
-   std::lock_guard<std::recursive_mutex> guard(_group_mutex);
+  std::lock_guard<std::recursive_mutex> guard(_group_mutex);
 
   CheckButton *cmp = reinterpret_cast<CheckButton *>(event->GetSource());
 
