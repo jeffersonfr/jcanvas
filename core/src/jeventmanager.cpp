@@ -153,6 +153,10 @@ void EventManager::ProcessEvents()
           button_timestamp[event->GetButton()] = event->GetTimestamp();
         } else if (event->GetType() == jmouseevent_type_t::Released) {
           _mouse_button_map[event->GetButton()] = false;
+        } else if (event->GetType() == jmouseevent_type_t::Moved) {
+          clicks = 0;
+        } else if (event->GetType() == jmouseevent_type_t::Rotated) {
+          clicks = event->GetClicks();
         }
         
         if (_mouse_button_map[jmouseevent_button_t::Button1] == true) {

@@ -20,25 +20,75 @@
 #ifndef J_SLIDER_H
 #define J_SLIDER_H
 
-#include "jcanvas/widgets/jslidercomponent.h"
+#include "jcanvas/widgets/jcomponent.h"
+#include "jcanvas/widgets/jadjustmentlistener.h"
 
 namespace jcanvas {
+
+struct jrange_t {
+  float min;
+  float max;
+};
 
 /**
  * \brief
  *
  * \author Jeff Ferr
  */
-class Slider : public SliderComponent {
+class Slider : public Component {
 
   private:
     /** \brief */
-    int _stone_size;
+    std::vector<AdjustmentListener *> _adjustment_listeners;
     /** \brief */
-    bool _pressed;
+    std::mutex _adjustment_listener_mutex;
     /** \brief */
-    bool _inverted;
+    std::mutex _remove_adjustment_listener_mutex;
+    /** \brief */
+    std::shared_ptr<Image> _stone_image;
+    /** \brief */
+    jrange_t _range;
+    /** \brief */
+    jrange_t _ticks;
+    /** \brief */
+    float _value;
+    /** \brief */
+    bool _is_pressed;
+    /** \brief */
+    bool _is_vertical;
+    /** \brief */
+    bool _is_metric_visible;
 
+    /**
+     * \brief
+     *
+     */
+    virtual bool KeyPressed(KeyEvent *event);
+
+    /**
+     * \brief
+     *
+     */
+    virtual bool MousePressed(MouseEvent *event) override;
+    
+    /**
+     * \brief
+     *
+     */
+    virtual bool MouseReleased(MouseEvent *event) override;
+    
+    /**
+     * \brief
+     *
+     */
+    virtual bool MouseMoved(MouseEvent *event) override;
+    
+    /**
+     * \brief
+     *
+     */
+    virtual bool MouseWheel(MouseEvent *event) override;
+    
   public:
     /**
      * \brief
@@ -56,55 +106,103 @@ class Slider : public SliderComponent {
      * \brief
      *
      */
-    virtual int GetStoneSize();
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void SetStoneSize(int size);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void SetInverted(bool b);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual bool KeyPressed(KeyEvent *event);
+    virtual void SetRange(jrange_t range);
 
     /**
      * \brief
      *
      */
-    virtual bool MousePressed(MouseEvent *event);
+    virtual jrange_t GetRange();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void SetTicks(jrange_t ticks);
+
+    /**
+     * \brief
+     *
+     */
+    virtual jrange_t GetTicks();
+
+    /**
+     * \brief
+     *
+     */
+    void SetStoneImage(std::shared_ptr<Image> image);
+
+    /**
+     * \brief
+     *
+     */
+    std::shared_ptr<Image> GetStoneImage();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void SetVertical(bool vertical);
+
+    /**
+     * \brief
+     *
+     */
+    virtual bool IsVertical();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void SetMetricVisible(bool visible);
+
+    /**
+     * \brief
+     *
+     */
+    virtual bool IsMetricVisible();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void SetValue(float value);
+
+    /**
+     * \brief
+     *
+     */
+    virtual float GetValue();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void Paint(Graphics *g) override;
+
+    /**
+     * \brief
+     *
+     */
+    virtual void RegisterAdjustmentListener(AdjustmentListener *listener);
     
     /**
      * \brief
      *
      */
-    virtual bool MouseReleased(MouseEvent *event);
+    virtual void RemoveAdjustmentListener(AdjustmentListener *listener);
     
     /**
      * \brief
      *
      */
-    virtual bool MouseMoved(MouseEvent *event);
+    virtual void DispatchAdjustmentEvent(AdjustmentEvent *event);
     
     /**
      * \brief
      *
      */
-    virtual bool MouseWheel(MouseEvent *event);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void Paint(Graphics *g);
+    virtual const std::vector<AdjustmentListener *> & GetAdjustmentListeners();
 
 };
 

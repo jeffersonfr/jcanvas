@@ -23,7 +23,6 @@
 #include "jcanvas/widgets/jcomponent.h"
 #include "jcanvas/widgets/jborderlayout.h"
 #include "jcanvas/widgets/jgridbaglayout.h"
-#include "jcanvas/widgets/jscrollbar.h"
 #include "jcanvas/widgets/jcontainerlistener.h"
 
 #include <vector>

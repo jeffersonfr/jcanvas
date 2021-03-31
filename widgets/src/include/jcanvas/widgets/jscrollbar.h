@@ -20,7 +20,10 @@
 #ifndef J_SCROLLBAR_H
 #define J_SCROLLBAR_H
 
-#include "jcanvas/widgets/jslidercomponent.h"
+#include "jcanvas/widgets/jcontainer.h"
+#include "jcanvas/widgets/jslider.h"
+#include "jcanvas/widgets/jbutton.h"
+#include "jcanvas/widgets/jactionlistener.h"
 
 namespace jcanvas {
 
@@ -29,21 +32,22 @@ namespace jcanvas {
  *
  * \author Jeff Ferr
  */
-class ScrollBar : public SliderComponent {
+class ScrollBar : public Container, public ActionListener {
 
   private:
     /** \brief */
-    std::vector<AdjustmentListener *> _adjust_listeners;
+    Slider _slider;
     /** \brief */
-    int _index;
+    Button _previous;
     /** \brief */
-    int _stone_size;
+    Button _next;
     /** \brief */
-    int _count_paint;
-    /** \brief */
-    bool _pressed;
-    /** \brief */
-    bool _label_visible;
+    
+    /**
+     * \brief
+     *
+     */
+    virtual void ActionPerformed(ActionEvent *event) override;
     
   public:
     /**
@@ -62,62 +66,73 @@ class ScrollBar : public SliderComponent {
      * \brief
      *
      */
-    virtual jscroll_orientation_t GetScrollOrientation();
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void SetScrollOrientation(jscroll_orientation_t type);
+    virtual void SetValue(float value);
 
     /**
      * \brief
      *
      */
-    virtual int GetStoneSize();
+    virtual float GetValue();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void SetRange(jrange_t range);
+
+    /**
+     * \brief
+     *
+     */
+    virtual jrange_t GetRange();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void SetTicks(jrange_t ticks);
+
+    /**
+     * \brief
+     *
+     */
+    virtual jrange_t GetTicks();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void SetVertical(bool vertical);
+
+    /**
+     * \brief
+     *
+     */
+    virtual bool IsVertical();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void RegisterAdjustmentListener(AdjustmentListener *listener);
     
     /**
      * \brief
      *
      */
-    virtual void SetStoneSize(int size);
+    virtual void RemoveAdjustmentListener(AdjustmentListener *listener);
     
     /**
      * \brief
      *
      */
-    virtual bool KeyPressed(KeyEvent *event);
+    virtual void DispatchAdjustmentEvent(AdjustmentEvent *event);
     
     /**
      * \brief
      *
      */
-    virtual bool MousePressed(MouseEvent *event);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual bool MouseReleased(MouseEvent *event);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual bool MouseMoved(MouseEvent *event);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual bool MouseWheel(MouseEvent *event);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void Paint(Graphics *g);
-    
+    virtual const std::vector<AdjustmentListener *> & GetAdjustmentListeners();
 };
 
 }

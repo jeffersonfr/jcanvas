@@ -18,289 +18,134 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "jcanvas/widgets/jscrollbar.h"
+#include "jcanvas/widgets/jsolidbackground.h"
+#include "jcanvas/widgets/jrectangleborder.h"
+#include "jcanvas/core/jbufferedimage.h"
 
 namespace jcanvas {
 
-ScrollBar::ScrollBar():
-  SliderComponent()
+ScrollBar::ScrollBar()
 {
-  _pressed = false;
-  _stone_size = 32;
-  _label_visible = true;
-  
+  SetLayout<BorderLayout>();
+  SetVertical(false);
+  SetInsets({2, 2, 2, 2});
+  SetScrollable(false);
   SetFocusable(true);
+  SetPreferredSize({128, 32});
+  SetBackground(std::make_shared<SolidBackground>());
+  SetBorder(std::make_shared<RectangleBorder>());
+  
+  _previous.RegisterActionListener(this);
+  _next.RegisterActionListener(this);
 }
 
 ScrollBar::~ScrollBar()
 {
+  _previous.RemoveActionListener(this);
+  _next.RemoveActionListener(this);
 }
 
-void ScrollBar::SetScrollOrientation(jscroll_orientation_t type)
+void ScrollBar::SetValue(float value)
 {
-  if (_type == type) {
-    return;
-  }
-
-  _type = type;
+  _slider.SetValue(value);
 }
 
-jscroll_orientation_t ScrollBar::GetScrollOrientation()
+float ScrollBar::GetValue()
 {
-  return _type;
+  return _slider.GetValue();
 }
 
-void ScrollBar::SetStoneSize(int size)
+void ScrollBar::SetRange(jrange_t range)
 {
-  _stone_size = size;
+  _slider.SetRange(range);
 }
 
-int ScrollBar::GetStoneSize()
+jrange_t ScrollBar::GetRange()
 {
-  return _stone_size;
+  return _slider.GetRange();
 }
 
-bool ScrollBar::KeyPressed(KeyEvent *event)
+void ScrollBar::SetTicks(jrange_t ticks)
 {
-  if (Component::KeyPressed(event) == true) {
-    return true;
-  }
-
-  jkeyevent_symbol_t action = event->GetSymbol();
-
-  bool catched = false;
-
-  if (_type == jscroll_orientation_t::Horizontal) {
-    if (action == jkeyevent_symbol_t::CursorLeft) {
-      SetValue(_value-_minimum_tick);
-
-      catched = true;
-    } else if (action == jkeyevent_symbol_t::CursorRight) {
-      SetValue(_value+_minimum_tick);
-
-      catched = true;
-    } else if (action == jkeyevent_symbol_t::PageDown) {
-      SetValue(_value-_maximum_tick);
-
-      catched = true;
-    } else if (action == jkeyevent_symbol_t::PageUp) {
-      SetValue(_value+_maximum_tick);
-
-      catched = true;
-    }
-  } else if (_type == jscroll_orientation_t::Vertical) {
-    if (action == jkeyevent_symbol_t::CursorUp) {
-      SetValue(_value-_minimum_tick);
-
-      catched = true;
-    } else if (action == jkeyevent_symbol_t::CursorDown) {
-      SetValue(_value+_minimum_tick);
-
-      catched = true;
-    } else if (action == jkeyevent_symbol_t::PageDown) {
-      SetValue(_value-_maximum_tick);
-
-      catched = true;
-    } else if (action == jkeyevent_symbol_t::PageUp) {
-      SetValue(_value+_maximum_tick);
-
-      catched = true;
-    }
-  }
-
-  return catched;
+  _slider.SetTicks(ticks);
 }
 
-bool ScrollBar::MousePressed(MouseEvent *event)
+jrange_t ScrollBar::GetTicks()
 {
-  if (Component::MousePressed(event) == true) {
-    return true;
-  }
+  return _slider.GetTicks();
+}
 
-  jtheme_t
-    theme = GetTheme();
-  jpoint_t
-    elocation = event->GetLocation();
-  jrect_t<int>
-    bounds = GetBounds();
-  int 
-    arrow_size,
-    dx = theme.padding.left,
-    dy = theme.padding.right,
-    dw = bounds.size.x - 2*dx - _stone_size,
-    dh = bounds.size.y - 2*dy - _stone_size;
-  bool 
-    catched = false;
+void ScrollBar::SetVertical(bool vertical)
+{
+  _slider.SetVertical(vertical);
 
-  if (_type == jscroll_orientation_t::Horizontal) {
-    arrow_size = bounds.size.y/2;
+  if (vertical == false) {
+    _previous.SetImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/left-arrow.png"));
+    _next.SetImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/right-arrow.png"));
+
+    Add(&_previous, jborderlayout_align_t::West);
+    Add(&_next, jborderlayout_align_t::East);
   } else {
-    arrow_size = bounds.size.x/2;
-  }
+    _previous.SetImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/down-arrow.png"));
+    _previous.SetPreferredSize(_previous.GetImageComponent()->GetPreferredSize());
 
-  if (event->GetButton() != jmouseevent_button_t::Button1) {
-    return false;
-  }
+    _next.SetImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/up-arrow.png"));
+    _next.SetPreferredSize(_next.GetImageComponent()->GetPreferredSize());
 
-  catched = true;
-
-  if (_type == jscroll_orientation_t::Horizontal) {
-    if (elocation.y > 0 && elocation.y < (bounds.size.y)) {
-      int d = (int)((_value*(dw-2*arrow_size))/(GetMaximum()-GetMinimum()));
-
-      _pressed = false;
-
-      if (elocation.x > (dx) && elocation.x < (arrow_size + dx)) {
-        SetValue(_value - _minimum_tick);
-      } else if (elocation.x > (bounds.size.x - arrow_size - dx) && elocation.x < (bounds.size.x - dx)) {
-        SetValue(_value + _minimum_tick);
-      } else if (elocation.x > (arrow_size + dx) && elocation.x < (arrow_size + dx + d)) {
-        SetValue(_value - _maximum_tick);
-      } else if (elocation.x > (arrow_size + dx + d + _stone_size) && elocation.x < (bounds.size.x - arrow_size)) {
-        SetValue(_value + _maximum_tick);
-      } else if (elocation.x > (arrow_size + dx + d) && elocation.x < (arrow_size + dx + d + _stone_size)) {
-        _pressed = true;
-      }
-    }
-  } else if (_type == jscroll_orientation_t::Vertical) {
-    if (elocation.x > 0 && elocation.x < (bounds.size.x)) {
-      int d = (int)((_value*(dh-2*arrow_size))/(GetMaximum()-GetMinimum()));
-
-      _pressed = false;
-
-      if (elocation.y > (dy) && elocation.y < (arrow_size + dy)) {
-        SetValue(_value - _minimum_tick);
-      } else if (elocation.y > (bounds.size.y - arrow_size - dy) && elocation.y < (bounds.size.y - dy)) {
-        SetValue(_value + _minimum_tick);
-      } else if (elocation.y > (arrow_size + dy) && elocation.y < (arrow_size + dy + d)) {
-        SetValue(_value - _maximum_tick);
-      } else if (elocation.y > (arrow_size + dy + d + _stone_size) && elocation.y < (bounds.size.y - arrow_size)) {
-        SetValue(_value + _maximum_tick);
-      } else if (elocation.y > (arrow_size + dy + d) && elocation.y < (arrow_size + dy + d + _stone_size)) {
-        _pressed = true;
-      }
-    }
-  }
-
-
-  return catched;
-}
-
-bool ScrollBar::MouseReleased(MouseEvent *event)
-{
-  if (Component::MouseReleased(event) == true) {
-    return true;
+    Add(&_previous, jborderlayout_align_t::South);
+    Add(&_next, jborderlayout_align_t::North);
   }
   
-  _pressed = false;
+  // _slider.SetBackground(nullptr);
+  _slider.SetBorder(nullptr);
+  _slider.SetMetricVisible(false);
+  _slider.SetStoneImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/stone.png"));
 
-  return true;
+  _previous.SetBackground(nullptr);
+  _previous.SetBorder(nullptr);
+  _previous.SetPreferredSize(_previous.GetImageComponent()->GetPreferredSize());
+
+  _next.SetBackground(nullptr);
+  _next.SetBorder(nullptr);
+  _next.SetPreferredSize(_next.GetImageComponent()->GetPreferredSize());
+
+  Add(&_slider, jborderlayout_align_t::Center);
 }
 
-bool ScrollBar::MouseMoved(MouseEvent *event)
+bool ScrollBar::IsVertical()
 {
-  if (Component::MouseMoved(event) == true) {
-    return true;
-  }
-  
-  jtheme_t
-    theme = GetTheme();
-  jpoint_t
-    elocation = event->GetLocation();
-  jrect_t<int>
-    bounds = GetBounds();
-  int 
-    arrow_size,
-    dx = theme.padding.left,
-    dy = theme.padding.right,
-    dw = bounds.size.x - 2*dx - _stone_size,
-    dh = bounds.size.y - 2*dy - _stone_size;
+  return _slider.IsVertical();
+}
 
-  if (_type == jscroll_orientation_t::Horizontal) {
-    arrow_size = bounds.size.y/2;
+void ScrollBar::ActionPerformed(ActionEvent *event)
+{
+  Button *button = reinterpret_cast<Button *>(event->GetSource());
+
+  if (button == &_previous) {
+    SetValue(GetValue() - GetTicks().min);
   } else {
-    arrow_size = bounds.size.x/2;
+    SetValue(GetValue() + GetTicks().min);
   }
-
-  if (_pressed == true) {
-    int 
-      diff = GetMaximum()-GetMinimum();
-
-    if (_type == jscroll_orientation_t::Horizontal) {
-      SetValue(diff*(elocation.x - _stone_size/2 - arrow_size)/(dw - 2*arrow_size));
-    } else if (_type == jscroll_orientation_t::Vertical) {
-      SetValue(diff*(elocation.y - _stone_size/2 - arrow_size)/(dh - 2*arrow_size));
-    }
-
-    return true;
-  }
-
-  return false;
 }
 
-bool ScrollBar::MouseWheel(MouseEvent *event)
+void ScrollBar::RegisterAdjustmentListener(AdjustmentListener *listener)
 {
-  if (Component::MouseWheel(event) == true) {
-    return true;
-  }
-  
-  _pressed = false;
-
-  SetValue(GetValue()+_minimum_tick*event->GetClicks());
-
-  return true;
+  _slider.RegisterAdjustmentListener(listener);
 }
 
-void ScrollBar::Paint(Graphics *g)
+void ScrollBar::RemoveAdjustmentListener(AdjustmentListener *listener)
 {
-  Component::Paint(g);
+  _slider.RemoveAdjustmentListener(listener);
+}
 
-  jtheme_t
-    theme = GetTheme();
-  jrect_t<int>
-    bounds = GetBounds();
+void ScrollBar::DispatchAdjustmentEvent(AdjustmentEvent *event)
+{
+  _slider.DispatchAdjustmentEvent(event);
+}
 
-  if (_type == jscroll_orientation_t::Horizontal) {
-    int
-      arrow_size = bounds.size.y/2,
-      limit = bounds.size.x - _stone_size - 2*arrow_size;
-    double 
-      d = (_value*limit)/(GetMaximum() - GetMinimum());
-
-    if (d > limit) {
-      d = limit;
-    }
-
-    if (HasFocus() == true) {
-      g->SetColor(theme.fg.focus);
-    } else {
-      g->SetColor(theme.scroll.color.normal);
-    }
-
-    g->FillRectangle({(int)d + arrow_size + theme.padding.left, theme.padding.top, _stone_size, bounds.size.y});
-
-    g->FillTriangle({theme.padding.left + bounds.size.x, theme.padding.top+arrow_size}, {theme.padding.left + bounds.size.x - arrow_size, theme.padding.top}, {theme.padding.left + bounds.size.x - arrow_size, theme.padding.top+2*arrow_size});
-    g->FillTriangle({theme.padding.left, theme.padding.top+arrow_size}, {theme.padding.left+arrow_size, theme.padding.top}, {theme.padding.left+arrow_size, theme.padding.top+2*arrow_size});
-  } else if (_type == jscroll_orientation_t::Vertical) {
-    int 
-      arrow_size = bounds.size.x/2,
-      limit = bounds.size.y - _stone_size - 2*arrow_size - theme.padding.top - theme.padding.bottom;
-    double 
-      d = (_value*limit)/(GetMaximum()-GetMinimum());
-
-    if (d > limit) {
-      d = limit;
-    }
-
-    if (HasFocus() == true) {
-      g->SetColor(theme.fg.focus);
-    } else {
-      g->SetColor(theme.scroll.color.normal);
-    }
-
-    g->FillRectangle({theme.padding.left, (int)d + arrow_size + theme.padding.top + theme.padding.top + theme.padding.bottom, bounds.size.x, _stone_size});
-    g->FillTriangle({theme.padding.left, theme.padding.top+arrow_size}, {theme.padding.left + bounds.size.x/2, theme.padding.top}, {theme.padding.left + bounds.size.x, theme.padding.top+arrow_size});
-    g->FillTriangle({theme.padding.left, theme.padding.top + bounds.size.y -arrow_size}, {theme.padding.left + bounds.size.x/2, theme.padding.top + bounds.size.y}, {theme.padding.left + bounds.size.x, theme.padding.top + bounds.size.y -arrow_size});
-  }
+const std::vector<AdjustmentListener *> & ScrollBar::GetAdjustmentListeners()
+{
+  return _slider.GetAdjustmentListeners();
 }
 
 }

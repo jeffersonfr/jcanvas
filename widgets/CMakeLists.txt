@@ -59,7 +59,6 @@ set(SRCS
   src/jselectevent.cpp
   src/jselectlistener.cpp
   src/jslider.cpp
-  src/jslidercomponent.cpp
   src/jsolidbackground.cpp
   src/jspin.cpp
   #src/jtable.cpp

@@ -529,14 +529,11 @@ void Application::Loop()
         jmouseevent_type_t type = jmouseevent_type_t::Unknown;
         int mouse_z = 0;
 
-        sg_mouse_x = event.motion.x;
-        sg_mouse_y = event.motion.y;
-
-        sg_mouse_x = CLAMP(sg_mouse_x, 0, sg_screen.x-1);
-        sg_mouse_y = CLAMP(sg_mouse_y, 0, sg_screen.y-1);
-
         if (event.type == SDL_MOUSEMOTION) {
           type = jmouseevent_type_t::Moved;
+        
+          sg_mouse_x = CLAMP(event.motion.x, 0, sg_screen.x-1);
+          sg_mouse_y = CLAMP(event.motion.y, 0, sg_screen.y-1);
         } else if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP) {
           if (event.button.button == SDL_BUTTON_LEFT) {
             button = jmouseevent_button_t::Button1;

@@ -59,11 +59,6 @@ std::string Panel::GetTitle()
   return _title;
 }
     
-void Panel::Paint(Graphics *g)
-{
-  Container::Paint(g);
-}
-
 void Panel::PaintGlassPane(Graphics *g)
 {
   jtheme_t

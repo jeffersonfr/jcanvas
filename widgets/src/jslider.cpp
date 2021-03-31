@@ -18,40 +18,152 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "jcanvas/widgets/jslider.h"
+#include "jcanvas/core/jbufferedimage.h"
 
 namespace jcanvas {
 
-Slider::Slider():
-  SliderComponent()
+Slider::Slider()
 {
-  _pressed = false;
-  _stone_size = 24;
-  _inverted = false;
+  _stone_image = std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/marker.png");
 
+  _is_pressed = false;
+
+  SetRange({0.0f, 100.0f});
+  SetTicks({1.0f, 10.0f});
+  SetValue(0.0f);
+  SetVertical(false);
+  SetMetricVisible(true);
   SetFocusable(true);
 }
 
 Slider::~Slider()
 {
+  _stone_image = nullptr;
 }
 
-int Slider::GetStoneSize()
+void Slider::SetRange(jrange_t range)
 {
-  return _stone_size;
-}
-    
-void Slider::SetStoneSize(int size)
-{
-  _stone_size = size;
+  _range = range;
 }
 
-void Slider::SetInverted(bool b)
+jrange_t Slider::GetRange()
 {
-  if (_inverted == b) {
-    return;
+  return _range;
+}
+
+void Slider::SetTicks(jrange_t ticks)
+{
+  _ticks = ticks;
+}
+
+jrange_t Slider::GetTicks()
+{
+  return _ticks;
+}
+
+void Slider::SetStoneImage(std::shared_ptr<Image> image)
+{
+  _stone_image = image;;
+}
+
+std::shared_ptr<Image> Slider::GetStoneImage()
+{
+  return _stone_image;
+}
+
+void Slider::SetVertical(bool vertical)
+{
+  _is_vertical = vertical;
+}
+
+bool Slider::IsVertical()
+{
+  return _is_vertical;
+}
+
+void Slider::SetMetricVisible(bool visible)
+{
+  _is_metric_visible = visible;
+}
+
+bool Slider::IsMetricVisible()
+{
+  return _is_metric_visible;
+}
+
+void Slider::SetValue(float value)
+{
+  if (value < _range.min) {
+    value = _range.min;
   }
 
-  _inverted = b;
+  if (value > _range.max) {
+    value = _range.max;
+  }
+
+  _value = value;
+}
+
+float Slider::GetValue()
+{
+  return _value;
+}
+
+void Slider::Paint(Graphics *g)
+{
+  Component::Paint(g);
+
+  jtheme_t
+    theme = GetTheme();
+  jpoint_t<int>
+    size = GetSize();
+  jpoint_t<int>
+    isize = _stone_image->GetSize();
+
+  float
+    percent = (_value - _range.min)/static_cast<float>(_range.max - _range.min)/1.0f;
+
+  if (IsVertical() == false) {
+    int 
+      max = size.x - theme.padding.left - theme.padding.right - isize.x,
+      pos = max*percent;
+
+    g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
+    g->DrawImage(_stone_image, jpoint_t<int>{pos + theme.padding.left, (size.y - isize.y)/2});
+    g->SetCompositeFlags(jcomposite_flags_t::Src);
+
+    if (IsMetricVisible() == true) {
+      int offset = theme.padding.left + isize.x/2;
+
+      g->SetColor(theme.fg.normal);
+
+      for (int i=0; i<=10; i++) {
+        g->DrawLine({offset, size.y/2 - 2}, {offset, size.y/2 + 4});
+
+        offset = offset + max/10;
+      }
+    }
+  } else {
+    int
+      max = size.x - theme.padding.left - theme.padding.right - isize.x,
+      pos = max*percent;
+
+    g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
+    g->DrawImage(_stone_image, jpoint_t<int>{(size.x - isize.x)/2, pos + theme.padding.top});
+    g->SetCompositeFlags(jcomposite_flags_t::Src);
+    
+    if (IsMetricVisible() == true) {
+      int offset = theme.padding.top + isize.y/2;
+
+      g->SetColor(theme.fg.normal);
+
+      for (int i=0; i<=10; i++) {
+        g->DrawLine({size.x/2 - 2, offset}, {size.y/2 + 4, offset});
+
+        offset = offset + max/10;
+      }
+    }
+  }
 }
 
 bool Slider::KeyPressed(KeyEvent *event)
@@ -60,120 +172,117 @@ bool Slider::KeyPressed(KeyEvent *event)
     return true;
   }
 
-  if (IsEnabled() == false) {
-    return false;
-  }
-
   jkeyevent_symbol_t action = event->GetSymbol();
 
-  bool catched = false;
-
-  if (_type == jscroll_orientation_t::Horizontal) {
+  if (IsVertical() == false) {
     if (action == jkeyevent_symbol_t::CursorLeft) {
-      SetValue(_value-_minimum_tick);
+      SetValue(_value - _ticks.min);
 
-      catched = true;
+      return true;
     } else if (action == jkeyevent_symbol_t::CursorRight) {
-      SetValue(_value+_minimum_tick);
+      SetValue(_value + _ticks.min);
 
-      catched = true;
+      return true;
     } else if (action == jkeyevent_symbol_t::PageDown) {
-      SetValue(_value+_maximum_tick);
+      SetValue(_value - _ticks.max);
 
-      catched = true;
+      return true;
     } else if (action == jkeyevent_symbol_t::PageUp) {
-      SetValue(_value-_maximum_tick);
+      SetValue(_value + _ticks.max);
 
-      catched = true;
+      return true;
     }
-  } else if (_type == jscroll_orientation_t::Vertical) {
+  } else {
     if (action == jkeyevent_symbol_t::CursorUp) {
-      SetValue(_value-_minimum_tick);
+      SetValue(_value - _ticks.min);
 
-      catched = true;
+      return true;
     } else if (action == jkeyevent_symbol_t::CursorDown) {
-      SetValue(_value+_minimum_tick);
+      SetValue(_value + _ticks.min);
 
-      catched = true;
+      return true;
     } else if (action == jkeyevent_symbol_t::PageDown) {
-      SetValue(_value-_maximum_tick);
+      SetValue(_value + _ticks.max);
 
-      catched = true;
+      return true;
     } else if (action == jkeyevent_symbol_t::PageUp) {
-      SetValue(_value+_maximum_tick);
+      SetValue(_value - _ticks.max);
 
-      catched = true;
+      return true;
     }
   }
 
-  return catched;
+  return false;
 }
-    
+
 bool Slider::MousePressed(MouseEvent *event)
 {
   if (Component::MousePressed(event) == true) {
     return true;
   }
 
+  if (event->GetButton() != jmouseevent_button_t::Button1) {
+    return false;
+  } 
+
   jtheme_t
     theme = GetTheme();
   jpoint_t<int>
-    elocation = event->GetLocation();
-  jrect_t<int>
-    bounds = GetBounds();
-  int
-    dw = bounds.size.x - theme.padding.left - theme.padding.right - _stone_size,
-    dh = bounds.size.y - theme.padding.top - theme.padding.bottom - _stone_size;
-  bool 
-    catched = false;
+    location = event->GetLocation();
+  jpoint_t<int>
+    size = GetSize();
+  jpoint_t<int>
+    isize = _stone_image->GetSize();
 
-  if (event->GetButton() == jmouseevent_button_t::Button1) {
-    catched = true;
+  _is_pressed = false;
 
-    if (_type == jscroll_orientation_t::Horizontal) {
-      if (elocation.y > 0 && elocation.y < (bounds.size.y)) {
-        int d = (int)((_value*dw)/(GetMaximum()-GetMinimum()));
+  float
+    percent = (_value - _range.min)/static_cast<float>(_range.max - _range.min)/1.0f;
 
-        _pressed = false;
-
-        if (elocation.x > theme.padding.left && elocation.x < (theme.padding.left+d)) {
-          SetValue(_value-_maximum_tick);
-        } else if (elocation.x > (theme.padding.left+d+_stone_size) && elocation.x < (bounds.size.x)) {
-          SetValue(_value+_maximum_tick);
-        } else if (elocation.x > (theme.padding.left+d) && elocation.x < (theme.padding.left+d+_stone_size)) {
-          _pressed = true;
-        }
-      }
-    } else if (_type == jscroll_orientation_t::Vertical) {
-      if (elocation.x > 0 && elocation.x < (bounds.size.x)) {
-        int d = (int)((_value*dh)/(GetMaximum()-GetMinimum()));
-
-        _pressed = false;
-
-        if (elocation.y > theme.padding.top && elocation.y < (theme.padding.top+d)) {
-          SetValue(_value-_maximum_tick);
-        } else if (elocation.y > (theme.padding.top+d+_stone_size) && elocation.y < (bounds.size.y)) {
-          SetValue(_value+_maximum_tick);
-        }
-      }
+  if (IsVertical() == false) {
+    int 
+      max = size.x - theme.padding.left - theme.padding.right - isize.x,
+      pos = max*percent;
+      
+    if (location.x < pos) {
+      SetValue(_value - _ticks.max);
+    } else if (location.x > (pos + isize.x)) {
+      SetValue(_value + _ticks.max);
+    } else {
+      _is_pressed = true;
     }
-  } 
 
-  return catched;
+    return true;
+  } else {
+    int
+      max = size.y - theme.padding.top - theme.padding.bottom - isize.y,
+      pos = max*percent;
+
+    if (location.y < pos) {
+      SetValue(_value - _ticks.max);
+    } else if (location.y > (pos + isize.y)) {
+      SetValue(_value + _ticks.max);
+    } else {
+      _is_pressed = true;
+    }
+
+    return true;
+  }
+
+  return false;
 }
 
-    
 bool Slider::MouseReleased(MouseEvent *event)
 {
   if (Component::MouseReleased(event) == true) {
     return true;
   }
 
-  _pressed = false;
+  _is_pressed = false;
 
   return false;
 }
-    
+
 bool Slider::MouseMoved(MouseEvent *event)
 {
   if (Component::MouseMoved(event) == true) {
@@ -183,128 +292,99 @@ bool Slider::MouseMoved(MouseEvent *event)
   jtheme_t
     theme = GetTheme();
   jpoint_t<int>
-    elocation = event->GetLocation();
-  jrect_t<int>
-    bounds = GetBounds();
-  int
-    dw = bounds.size.x - theme.padding.left - theme.padding.right - _stone_size,
-    dh = bounds.size.y - theme.padding.top - theme.padding.bottom - _stone_size;
+    location = event->GetLocation();
+  jpoint_t<int>
+    size = GetSize();
+  jpoint_t<int>
+    isize = _stone_image->GetSize();
 
-  if (_pressed == true) {
-    int diff = GetMaximum()-GetMinimum();
+  if (_is_pressed == false) {
+    return false;
+  }
 
-    if (_type == jscroll_orientation_t::Horizontal) {
-      SetValue(diff*(elocation.x - _stone_size/2)/dw);
-    } else if (_type == jscroll_orientation_t::Vertical) {
-      SetValue(diff*(elocation.y - _stone_size/2)/dh);
-    }
+  jrange_t range = GetRange();
 
+  if (IsVertical() == false) {
+    int max = size.x - theme.padding.left - theme.padding.right - isize.x;
+
+    SetValue((range.max - range.min)*(location.x - isize.x/2)/max);
+
+    return true;
+  } else {
+    int max = size.y - theme.padding.top - theme.padding.bottom - isize.y;
+
+    SetValue((range.max - range.min)*(location.y - isize.y/2)/max);
+    
     return true;
   }
 
   return false;
 }
-    
+
 bool Slider::MouseWheel(MouseEvent *event)
 {
   if (Component::MouseWheel(event) == true) {
     return true;
   }
 
-  _pressed = false;
+  _is_pressed = false;
 
-  SetValue(GetValue()+_minimum_tick*event->GetClicks());
+  SetValue(GetValue() - _ticks.min*event->GetClicks());
 
   return true;
 }
-    
-void Slider::Paint(Graphics *g)
+
+void Slider::RegisterAdjustmentListener(AdjustmentListener *listener)
 {
-  Component::Paint(g);
-
-  jtheme_t
-    theme = GetTheme();
-  jrect_t<int>
-    bounds = GetBounds();
-  int
-    w = bounds.size.x - theme.padding.left - theme.padding.right,
-    h = bounds.size.y - theme.padding.top - theme.padding.bottom;
-
-  if (_type == jscroll_orientation_t::Horizontal) {
-    int 
-      d = (int)((_value*(w - _stone_size))/(GetMaximum() - GetMinimum()));
-
-    if (d > (w - _stone_size)) {
-      d = w - _stone_size;
-    }
-
-    if (HasFocus() == true) {
-      g->SetColor(theme.fg.focus);
-    } else {
-      g->SetColor(theme.scroll.color.normal);
-    }
-    
-    g->FillRectangle({theme.padding.left, theme.padding.top+(h-4)/2, w, 4});
-
-    if (_inverted == false) {
-      std::vector<jpoint_t<int>> p = {
-        {0, 0},
-        {_stone_size, 0},
-        {_stone_size, (int)(h*0.4)},
-        {_stone_size/2, h},
-        {0, (int)(h*0.4)}
-      };
-
-      g->FillPolygon({(int)d + theme.padding.left, theme.padding.top}, p, 5);
-    } else {
-      std::vector<jpoint_t<int>> p = {
-        {_stone_size/2, 0},
-        {_stone_size, (int)(h*0.6)},
-        {_stone_size, h},
-        {0, h},
-        {0, (int)(h*0.6)}
-      };
-
-      g->FillPolygon({(int)d + theme.padding.left, theme.padding.top}, p);
-    }
-  } else if (_type == jscroll_orientation_t::Vertical) {
-    int 
-      d = (int)((_value*(h-_stone_size))/(GetMaximum()-GetMinimum()));
-
-    if (d > (h - _stone_size)) {
-      d = h - _stone_size;
-    }
-
-    if (HasFocus() == true) {
-      g->SetColor(theme.fg.focus);
-    } else {
-      g->SetColor(theme.scroll.color.normal);
-    }
-    
-    g->FillRectangle({(w-10)/2 + theme.padding.left, theme.padding.top, 10, h});
-
-    if (_inverted == false) {
-      std::vector<jpoint_t<int>> p = {
-        {0, 0},
-        {(int)(bounds.size.x*0.4), 0},
-        {w, _stone_size/2},
-        {(int)(bounds.size.x*0.4), _stone_size},
-        {0, _stone_size}
-      };
-
-      g->FillPolygon({theme.padding.left, (int)d + theme.padding.top}, p);
-    } else {
-      std::vector<jpoint_t<int>> p = {
-        {0, _stone_size/2},
-        {(int)(bounds.size.x*0.6), 0},
-        {w, 0},
-        {w, _stone_size},
-        {(int)(bounds.size.x*0.6), _stone_size}
-      };
-
-      g->FillPolygon({theme.padding.left, (int)d + theme.padding.top}, p);
-    }
+  if (listener == nullptr) {
+    return;
   }
+
+   std::lock_guard<std::mutex> guard(_adjustment_listener_mutex);
+
+  if (std::find(_adjustment_listeners.begin(), _adjustment_listeners.end(), listener) == _adjustment_listeners.end()) {
+    _adjustment_listeners.push_back(listener);
+  }
+}
+
+void Slider::RemoveAdjustmentListener(AdjustmentListener *listener)
+{
+  if (listener == nullptr) {
+    return;
+  }
+
+  std::lock_guard<std::mutex> lock1(_remove_adjustment_listener_mutex);
+  std::lock_guard<std::mutex> lock2(_adjustment_listener_mutex);
+
+  _adjustment_listeners.erase(std::remove(_adjustment_listeners.begin(), _adjustment_listeners.end(), listener), _adjustment_listeners.end());
+}
+
+void Slider::DispatchAdjustmentEvent(AdjustmentEvent *event)
+{
+  if (event == nullptr) {
+    return;
+  }
+
+  _adjustment_listener_mutex.lock();
+
+  std::vector<AdjustmentListener *> listeners = _adjustment_listeners;
+
+  _adjustment_listener_mutex.unlock();
+
+  std::lock_guard<std::mutex> lock(_remove_adjustment_listener_mutex);
+
+  for (std::vector<AdjustmentListener *>::iterator i=listeners.begin(); i!=listeners.end() && event->IsConsumed() == false; i++) {
+    AdjustmentListener *listener = (*i);
+
+    listener->AdjustmentValueChanged(event);
+  }
+
+  delete event;
+}
+
+const std::vector<AdjustmentListener *> & Slider::GetAdjustmentListeners()
+{
+  return _adjustment_listeners;
 }
 
 }
