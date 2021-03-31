@@ -21,6 +21,7 @@
 #define J_PROGRESSBAR_H
 
 #include "jcanvas/widgets/jslidercomponent.h"
+#include "jcanvas/widgets/janimation.h"
 
 namespace jcanvas {
 
@@ -32,28 +33,28 @@ class ButtonEvent;
  *
  * \author Jeff Ferr
  */
-class ProgressBar : public Component {
+class ProgressBar : public Component, public Animation {
 
   private:
     /** \brief */
-    jscroll_orientation_t _type;
+    float _value;
     /** \brief */
-    int _value;
+    bool _is_vertical;
     /** \brief */
-    int _index;
-    /** \brief */
-    int _delta;
-    /** \brief */
-    int _fixe_delta;
-    /** \brief */
-    int _stone_size;
+    bool _is_continuous;
+
+    /**
+     * \brief
+     *
+     */
+    virtual void Update(std::chrono::milliseconds tick);
 
   public:
     /**
      * \brief
      *
      */
-    ProgressBar(jscroll_orientation_t type = jscroll_orientation_t::Horizontal);
+    ProgressBar();
     
     /**
      * \brief
@@ -65,37 +66,37 @@ class ProgressBar : public Component {
      * \brief
      *
      */
-    virtual jscroll_orientation_t GetScrollOrientation();
+    virtual bool IsVertical();
     
     /**
      * \brief
      *
      */
-    virtual void SetScrollOrientation(jscroll_orientation_t type);
-
-    /**
-     * \brief
-     *
-     */
-    virtual int GetStoneSize();
+    virtual void SetVertical(bool vertical);
     
     /**
      * \brief
      *
      */
-    virtual void SetStoneSize(int size);
+    virtual bool IsContinuous();
     
     /**
      * \brief
      *
      */
-    virtual double GetValue();
+    virtual void SetContinuous(bool continuous);
     
     /**
      * \brief
      *
      */
-    virtual void SetValue(double i);
+    virtual float GetValue();
+    
+    /**
+     * \brief
+     *
+     */
+    virtual void SetValue(float value);
     
     /**
      * \brief

@@ -164,6 +164,7 @@ class App : public Frame, public ActionListener, public SelectListener {
     {
       UnregisterAnimation(_animation);
       UnregisterAnimation(_marquee);
+      UnregisterAnimation(_progress);
 
       _group.Remove(_radio1);
       _group.Remove(_radio2);
@@ -291,6 +292,8 @@ class App : public Frame, public ActionListener, public SelectListener {
         _slider = new Slider();
         _scroll = new ScrollBar();
         
+        RegisterAnimation(_progress);
+
         _progress->SetBounds({insets.left + 196 + 16, region.point.y + 1*(region.size.y + 8), size.x - 2*(196 + 16) - insets.left - insets.right, 48});
         _slider->SetBounds({insets.left + 196 + 16, region.point.y + 2*(region.size.y + 8), size.x - 2*(196 + 16) - insets.left - insets.right, 48});
         _scroll->SetBounds({insets.left + 196 + 16, region.point.y + 3*(region.size.y + 8), size.x - 2*(196 + 16) - insets.left - insets.right, 48});

@@ -21,60 +21,77 @@
 
 namespace jcanvas {
 
-ProgressBar::ProgressBar(jscroll_orientation_t type):
+ProgressBar::ProgressBar():
   Component()
 {
-  _type = type;
-  _value = 0;
-  _fixe_delta = 10;
-  _delta = _fixe_delta;
-  _stone_size = 32;
+  SetValue(40);
+  SetVertical(false);
+  SetContinuous(false);
 }
 
 ProgressBar::~ProgressBar()
 {
 }
 
-void ProgressBar::SetScrollOrientation(jscroll_orientation_t type)
+void ProgressBar::Update(std::chrono::milliseconds tick)
 {
-  if (_type == type) {
+  if (_is_continuous == false) {
     return;
   }
 
-  _type = type;
+  std::chrono::duration<float> offset = tick;
+
+  SetValue(GetValue() + 100*offset.count()*0.5f);
+
+  if (GetValue() >= 100.0f) {
+    SetValue(0.0f);
+  }
+
+  Repaint();
 }
 
-jscroll_orientation_t ProgressBar::GetScrollOrientation()
+void ProgressBar::SetVertical(bool vertical)
 {
-  return _type;
+  _is_vertical = vertical;
 }
 
-int ProgressBar::GetStoneSize()
+bool ProgressBar::IsVertical()
 {
-  return _stone_size;
+  return _is_vertical;
 }
 
-void ProgressBar::SetStoneSize(int size)
+void ProgressBar::SetContinuous(bool continuous)
 {
-  _stone_size = size;
+  _is_continuous = continuous;
+
+  if (_is_continuous == true) {
+    Start();
+  } else {
+    Stop();
+  }
 }
-    
-double ProgressBar::GetValue()
+
+bool ProgressBar::IsContinuous()
+{
+  return _is_continuous;
+}
+
+float ProgressBar::GetValue()
 {
   return _value;
 }
 
-void ProgressBar::SetValue(double i)
+void ProgressBar::SetValue(float value)
 {
-  _value = (int)i;
-
-  if (_value < 0.0) {
-    _value = 0;
+  if (value < 0.0f) {
+    value = 0.0f;
   }
 
-  if (_value > 100) {
-    _value = 100;
+  if (value > 100.0f) {
+    value = 100.0f;
   }
+
+  _value = value;
 }
 
 void ProgressBar::Paint(Graphics *g)
@@ -83,58 +100,24 @@ void ProgressBar::Paint(Graphics *g)
 
   jtheme_t
     theme = GetTheme();
-  jrect_t<int>
-    bounds = GetBounds();
-  std::string 
-    text;
+  jpoint_t<int>
+    size = GetSize();
 
-  if (_type == jscroll_orientation_t::Horizontal) {
-    double 
-      d = (_value*bounds.size.x)/100.0;
-    char 
-      t[255];
+  g->SetColor(theme.bg.select);
 
-    if (d > bounds.size.x) {
-      d = bounds.size.x;
-    }
+  size.x = size.x - theme.padding.left - theme.padding.right;
+  size.y = size.y - theme.padding.top - theme.padding.bottom;
 
-    g->SetColor(theme.scroll.color.normal);
-    g->FillRectangle({theme.padding.left, theme.padding.top, (int)d, bounds.size.y});
-
-    snprintf(t, 255-1, "%d %%", _value);
-
-    text = (char *)t;
-  } else if (_type == jscroll_orientation_t::Vertical) {
-    double 
-      d = (_value*bounds.size.y)/100.0;
-    char 
-      t[255];
-
-    if (d > bounds.size.y) {
-      d = bounds.size.y;
-    }
-
-    g->SetColor(theme.scroll.color.normal);
-    g->FillRectangle({theme.padding.left, theme.padding.top, bounds.size.x, (int)d});
-
-    snprintf(t, 255-1, "%d %%", _value);
-
-    text = (char *)t;
-  }
-
-  if (IsEnabled() == true) {
-    if (HasFocus() == true) {
-      g->SetColor(theme.fg.focus);
-    } else {
-      g->SetColor(theme.fg.normal);
-    }
+  if (IsVertical() == false) {
+    g->FillRectangle({theme.padding.left, theme.padding.top, static_cast<int>(size.x*_value/100.0f), size.y});
   } else {
-    g->SetColor(theme.fg.disable);
+    g->FillRectangle({theme.padding.left, theme.padding.top + static_cast<int>(size.y*(100.0f - _value)/100.0f), size.x, static_cast<int>(size.y*_value/100)});
   }
 
-  int length = theme.font.primary->GetStringWidth(theme.font.primary->TruncateString(text, "...", bounds.size.x));
-
-  g->DrawString(text, {theme.padding.left + (bounds.size.x - length)/2, theme.padding.top, bounds.size.x, bounds.size.y});
+  if (_is_continuous == false) {
+    g->SetColor(theme.fg.normal);
+    g->DrawString(std::to_string(static_cast<int>(_value)) + '%', {0, 0, size}, jhorizontal_align_t::Center, jvertical_align_t::Center);
+  }
 }
 
 }
