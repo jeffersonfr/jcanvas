@@ -124,7 +124,7 @@ void ColumnLayout::DoLayout(Container *target)
   if (target->IsScrollableY() == true) {
     jtheme_t theme = target->GetTheme();
 
-    maxx = maxx - theme.scroll.size.x - _gap;
+    maxx = maxx - theme.scroll.size.x - theme.scroll.padding.x;
   }
 
   for (auto cmp : target->GetComponents()) {

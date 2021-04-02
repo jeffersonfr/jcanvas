@@ -53,7 +53,7 @@ void RowLayout::DoLayout(Container *target)
   if (target->IsScrollableX() == true) {
     jtheme_t theme = target->GetTheme();
 
-    maxy = maxy - theme.scroll.size.y - _gap;
+    maxy = maxy - theme.scroll.size.y - theme.scroll.size.y;
   }
 
   for (auto cmp : target->GetComponents()) {

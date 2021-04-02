@@ -235,7 +235,7 @@ int TextLayout::MoveComponents(Container *target, int x, int y, int width, int h
   if (target->IsScrollableY() == true) {
     jtheme_t theme = target->GetTheme();
 
-    maxwidth = maxwidth - theme.scroll.size.x - _gap.x - 8;
+    maxwidth = maxwidth - theme.scroll.size.x - theme.scroll.padding.x;
   }
 
   float step = 0.0f;
@@ -439,7 +439,7 @@ void TextLayout::DoLayout(Container *target)
   if (target->IsScrollableY() == true) {
     jtheme_t theme = target->GetTheme();
 
-    maxwidth = maxwidth - theme.scroll.size.x - _gap.x - 8;
+    maxwidth = maxwidth - theme.scroll.size.x - theme.scroll.padding.x;
   }
 
   int nmembers = target->GetComponentCount();
