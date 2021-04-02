@@ -84,13 +84,13 @@ class WatchTeste : public Window {
 
 			jpen_t pen = g->GetPen();
 
-			pen.width = 10;
+			pen.size = 10;
 			g->SetPen(pen);
 			
 			g->SetColor({0xf0, 0xf0, 0xf0, 0xff});
 			g->DrawCircle({(int)xc, (int)yc}, (int)(vs+10));
 
-			pen.width = 1;
+			pen.size = 1;
 			g->SetPen(pen);
 			
 			g->SetColor({0x00, 0x0, 0x00, 0xff});

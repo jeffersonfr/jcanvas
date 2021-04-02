@@ -138,7 +138,7 @@ class Primitives : public Window {
         rcolor(0x00, 0x00, 0x00, 0x80);
       jpen_t pen = g->GetPen();
 
-      pen.width = 1;
+      pen.size = 1;
       g->SetPen(pen);
 
       g->SetColor(rcolor);
@@ -150,20 +150,20 @@ class Primitives : public Window {
       }
 
       // draw circle
-      pen.width = -10;
+      pen.size = -10;
       g->SetPen(pen);
 
       g->SetColor(pcolor);
       g->DrawCircle({10+0*(120+10)+60, 10+3*(120+10)+40}, 50);
 
-      pen.width = 10;
+      pen.size = 10;
       g->SetPen(pen);
 
       g->DrawCircle({10+0*(120+10)+60, 10+4*(120+10)+40}, 50);
       g->FillCircle({10+0*(120+10)+60, 10+5*(120+10)+40}, 50);
       g->SetColor(ccolor);
 
-      pen.width = 1;
+      pen.size = 1;
       g->SetPen(pen);
 
       g->DrawCircle({10+0*(120+10)+60, 10+2*(120+10)+40}, 50);
@@ -172,20 +172,20 @@ class Primitives : public Window {
       g->DrawCircle({10+0*(120+10)+60, 10+5*(120+10)+40}, 50);
 
       // draw ellipse
-      pen.width = -10;
+      pen.size = -10;
       g->SetPen(pen);
 
       g->SetColor(pcolor);
       g->DrawEllipse({10+1*(120+10)+60, 10+3*(120+10)+40}, {30, 50});
 
-      pen.width = 10;
+      pen.size = 10;
       g->SetPen(pen);
 
       g->DrawEllipse({10+1*(120+10)+60, 10+4*(120+10)+40}, {30, 50});
       g->FillEllipse({10+1*(120+10)+60, 10+5*(120+10)+40}, {30, 50});
       g->SetColor(ccolor);
 
-      pen.width = 1;
+      pen.size = 1;
       g->SetPen(pen);
 
       g->DrawEllipse({10+1*(120+10)+60, 10+2*(120+10)+40}, {30, 50});
@@ -193,20 +193,20 @@ class Primitives : public Window {
       g->DrawEllipse({10+1*(120+10)+60, 10+4*(120+10)+40}, {30, 50});
       g->DrawEllipse({10+1*(120+10)+60, 10+5*(120+10)+40}, {30, 50});
 
-      pen.width = -10;
+      pen.size = -10;
       g->SetPen(pen);
 
       g->SetColor(pcolor);
       g->DrawEllipse({10+2*(120+10)+60, 10+3*(120+10)+40}, {50, 30});
 
-      pen.width = 10;
+      pen.size = 10;
       g->SetPen(pen);
 
       g->DrawEllipse({10+2*(120+10)+60, 10+4*(120+10)+40}, {50, 30});
       g->FillEllipse({10+2*(120+10)+60, 10+5*(120+10)+40}, {50, 30});
       g->SetColor(ccolor);
 
-      pen.width = 1;
+      pen.size = 1;
       g->SetPen(pen);
 
       g->DrawEllipse({10+2*(120+10)+60, 10+2*(120+10)+40}, {50, 30});
@@ -219,20 +219,20 @@ class Primitives : public Window {
 			  arc0 = M_PI/6.0,
         arc1 = -arc0;
 
-      pen.width = -10;
+      pen.size = -10;
       g->SetPen(pen);
 
       g->SetColor(pcolor);
       g->DrawArc({10+3*(120+10)+60, 10+3*(120+10)+40}, {50, 50}, arc0, arc1);
 
-      pen.width = 10;
+      pen.size = 10;
       g->SetPen(pen);
 
       g->DrawArc({10+3*(120+10)+60, 10+4*(120+10)+40}, {50, 50}, arc0, arc1);
       g->FillArc({10+3*(120+10)+60, 10+5*(120+10)+40}, {50, 50}, arc0, arc1);
       g->SetColor(ccolor);
 
-      pen.width = 1;
+      pen.size = 1;
       g->SetPen(pen);
 
       g->DrawArc({10+3*(120+10)+60, 10+2*(120+10)+40}, {50, 50}, arc0, arc1);
@@ -244,20 +244,20 @@ class Primitives : public Window {
       arc0 = 3*M_PI_2+1*M_PI/3.0;
       arc1 = 1*M_PI_2+1*M_PI/3.0;
 
-      pen.width = -10;
+      pen.size = -10;
       g->SetPen(pen);
 
       g->SetColor(pcolor);
       g->DrawChord({10+4*(120+10)+60, 10+3*(120+10)+40}, {50, 50}, arc0, arc1);
 
-      pen.width = 10;
+      pen.size = 10;
       g->SetPen(pen);
 
       g->DrawChord({10+4*(120+10)+60, 10+4*(120+10)+40}, {50, 50}, arc0, arc1);
       g->FillChord({10+4*(120+10)+60, 10+5*(120+10)+40}, {50, 50}, arc0, arc1);
       g->SetColor(ccolor);
 
-      pen.width = 1;
+      pen.size = 1;
       g->SetPen(pen);
 
       g->DrawChord({10+4*(120+10)+60, 10+2*(120+10)+40}, {50, 50}, arc0, arc1);
@@ -269,20 +269,20 @@ class Primitives : public Window {
       arc0 = M_PI/6.0;
       arc1 = -arc0;
 
-      pen.width = -10;
+      pen.size = -10;
       g->SetPen(pen);
 
       g->SetColor(pcolor);
       g->DrawPie({10+5*(120+10)+60, 10+3*(120+10)+40}, {50, 50}, arc0, arc1);
 
-      pen.width = 10;
+      pen.size = 10;
       g->SetPen(pen);
 
       g->DrawPie({10+5*(120+10)+60, 10+4*(120+10)+40}, {50, 50}, arc0, arc1);
       g->FillPie({10+5*(120+10)+60, 10+5*(120+10)+40}, {50, 50}, arc0, arc1);
       g->SetColor(ccolor);
 
-      pen.width = 1;
+      pen.size = 1;
       g->SetPen(pen);
 
       g->DrawPie({10+5*(120+10)+60, 10+2*(120+10)+40}, {50, 50}, arc0, arc1);
@@ -291,20 +291,20 @@ class Primitives : public Window {
       g->DrawPie({10+5*(120+10)+60, 10+5*(120+10)+40}, {50, 50}, arc0, arc1);
 
       // draw rectangle miter
-      pen.width = -10;
+      pen.size = -10;
       g->SetPen(pen);
 
       g->SetColor(pcolor);
       g->DrawRectangle({10+6*(120+10)+10, 3*(120+10), 100, 100});
 
-      pen.width = 10;
+      pen.size = 10;
       g->SetPen(pen);
 
       g->DrawRectangle({10+6*(120+10)+10, 4*(120+10), 100, 100});
       g->FillRectangle({10+6*(120+10)+10, 5*(120+10), 100, 100});
       g->SetColor(ccolor);
 
-      pen.width = 1;
+      pen.size = 1;
       g->SetPen(pen);
 
       g->DrawRectangle({10+6*(120+10)+10, 2*(120+10), 100, 100});
@@ -313,20 +313,20 @@ class Primitives : public Window {
       g->DrawRectangle({10+6*(120+10)+10, 5*(120+10), 100, 100});
 
       // draw rectangle bevel
-      pen.width = -10;
+      pen.size = -10;
       g->SetPen(pen);
 
       g->SetColor(pcolor);
       g->DrawBevelRectangle({10+7*(120+10)+10, 3*(120+10), 100, 100});
 
-      pen.width = 10;
+      pen.size = 10;
       g->SetPen(pen);
 
       g->DrawBevelRectangle({10+7*(120+10)+10, 4*(120+10), 100, 100});
       g->FillBevelRectangle({10+7*(120+10)+10, 5*(120+10), 100, 100});
       g->SetColor(ccolor);
 
-      pen.width = 1;
+      pen.size = 1;
       g->SetPen(pen);
 
       g->DrawBevelRectangle({10+7*(120+10)+10, 2*(120+10), 100, 100});
@@ -335,20 +335,20 @@ class Primitives : public Window {
       g->DrawBevelRectangle({10+7*(120+10)+10, 5*(120+10), 100, 100});
 
       // draw rectangle round
-      pen.width = -10;
+      pen.size = -10;
       g->SetPen(pen);
 
       g->SetColor(pcolor);
       g->DrawRoundRectangle({10+8*(120+10)+10, 3*(120+10), 100, 100});
 
-      pen.width = 10;
+      pen.size = 10;
       g->SetPen(pen);
 
       g->DrawRoundRectangle({10+8*(120+10)+10, 4*(120+10), 100, 100});
       g->FillRoundRectangle({10+8*(120+10)+10, 5*(120+10), 100, 100});
       g->SetColor(ccolor);
 
-      pen.width = 1;
+      pen.size = 1;
       g->SetPen(pen);
 
       g->DrawRoundRectangle({10+8*(120+10)+10, 2*(120+10), 100, 100});
@@ -357,14 +357,14 @@ class Primitives : public Window {
       g->DrawRoundRectangle({10+8*(120+10)+10, 5*(120+10), 100, 100});
 
       // draw triangle
-      pen.width = 1;
+      pen.size = 1;
       g->SetPen(pen);
 
       g->SetColor(ccolor);
       g->DrawTriangle({10+9*(120+10)+10, 2*(120+10)+100}, {10+9*(120+10)+10+100, 2*(120+10)+100}, {10+9*(120+10)+10+100/2, 2*(120+10)});
       g->SetColor(pcolor);
 
-      pen.width = 10;
+      pen.size = 10;
       pen.join = jline_join_t::Bevel;
       g->SetPen(pen);
 
@@ -396,7 +396,7 @@ class Primitives : public Window {
         {15, 100}
       };
 
-      pen.width = 1;
+      pen.size = 1;
       pen.join = jline_join_t::Bevel;
       g->SetPen(pen);
 
@@ -418,7 +418,7 @@ class Primitives : public Window {
       x0 = 10+10*(120+10)+10;
       y0 = 4*(120+10);
 
-      pen.width = 40;
+      pen.size = 40;
       g->SetPen(pen);
 
       g->SetColor(pcolor);
@@ -426,22 +426,22 @@ class Primitives : public Window {
       g->DrawLine({x0, y0+(240-10)}, {x0+100, y0});
       g->DrawLine({x0, y0+(240-10)/2}, {x0+100, y0+(240-10)/2});
 
-      pen.width = 40;
+      pen.size = 40;
       g->SetPen(pen);
 
       g->DrawLine({x0+150, y0}, {x0+250, y0+(240-10)});
 
-      pen.width = 20;
+      pen.size = 20;
       g->SetPen(pen);
 
       g->DrawLine({x0+150, y0+(240-10)}, {x0+250, y0});
 
-      pen.width = 10;
+      pen.size = 10;
       g->SetPen(pen);
 
       g->DrawLine({x0+150, y0+(240-10)/2}, {x0+250, y0+(240-10)/2});
 
-      pen.width = 1;
+      pen.size = 1;
       g->SetPen(pen);
 
       g->SetColor(rcolor);
@@ -449,33 +449,32 @@ class Primitives : public Window {
       g->DrawLine({x0, y0+(240-10)/2}, {x0+250, y0+(240-10)/2});
 
       // draw line dashes
-      double dashes[] = {
+      std::vector<float> dashes {
         50.0,  // ink
         10.0,  // skip
         10.0,  // ink
         10.0   // skip
       };
 
-      pen.width = 5;
       pen.dashes = dashes;
-      pen.dashes_size = 4;
+      pen.size = 5;
+
       g->SetPen(pen);
 
       g->SetColor(pcolor);
       g->DrawLine({10+0*(120+10)+10, 6*(120+10)+10}, {10+10*(120+10)-20, 6*(120+10)+10});
 
-      pen.width = 10;
+      pen.size = 10;
       g->SetPen(pen);
 
       g->DrawLine({10+0*(120+10)+10, 6*(120+10)+40}, {10+10*(120+10)-20, 6*(120+10)+40});
 
-      pen.width = 20;
+      pen.size = 20;
 
       g->SetPen(pen);
       g->DrawLine({10+0*(120+10)+10, 6*(120+10)+80}, {10+10*(120+10)-20, 6*(120+10)+80});
 
-      pen.dashes = nullptr;
-      pen.dashes_size = 0;
+      pen.dashes = {};
       g->SetPen(pen);
 
       // draw bezier curve
@@ -497,7 +496,7 @@ class Primitives : public Window {
 
       g->SetColor(rcolor);
 
-      pen.width = 1;
+      pen.size = 1;
 
       g->SetPen(pen);
 
@@ -602,7 +601,7 @@ class Primitives : public Window {
 
       jpen_t pen = g->GetPen();
 
-      pen.width = 16;
+      pen.size = 16;
       g->SetPen(pen);
 
       g->SetColor(jcolor_name_t::Green);
@@ -619,7 +618,7 @@ class Primitives : public Window {
       g->Close();
       g->Stroke();
 
-      pen.width = 1;
+      pen.size = 1;
 
       g->SetPen(pen);
 
@@ -644,7 +643,7 @@ class Primitives : public Window {
 
       pen = g->GetPen();
 
-      pen.width = 16;
+      pen.size = 16;
       g->SetPen(pen);
 
       g->SetColor(jcolor_name_t::Green);
@@ -659,7 +658,7 @@ class Primitives : public Window {
       g->Close();
       g->Stroke();
 
-      pen.width = 1;
+      pen.size = 1;
       g->SetPen(pen);
 
       // draw curves
@@ -683,7 +682,7 @@ class Primitives : public Window {
 
       pen = g->GetPen();
 
-      pen.width = 16;
+      pen.size = 16;
       g->SetPen(pen);
 
       g->SetColor(jcolor_name_t::Green);
@@ -698,7 +697,7 @@ class Primitives : public Window {
       g->Close();
       g->Stroke();
 
-      pen.width = 1;
+      pen.size = 1;
       g->SetPen(pen);
 
       // draw text
@@ -729,7 +728,7 @@ class Primitives : public Window {
 
       pen = g->GetPen();
 
-      pen.width = 16;
+      pen.size = 16;
       g->SetPen(pen);
 
       g->SetColor(jcolor_name_t::Green);
@@ -744,13 +743,13 @@ class Primitives : public Window {
       g->Close();
       g->Stroke();
 
-      pen.width = 1;
+      pen.size = 1;
       g->SetPen(pen);
 
       g->SetFont(old);
 
       // draw text
-      pen.width = 10;
+      pen.size = 10;
       g->SetPen(pen);
 
       g->SetColor(jcolor_name_t::Gray);
@@ -762,7 +761,7 @@ class Primitives : public Window {
       g->CurveTo({2*(150+32)+32, 3*(150+32)+96+72}, {3*(150+32)+32, 3*(150+32)+96+72}, {4*(150+32)+32, 3*(150+32)+96+72+72+32});
       g->Stroke();
 
-      pen.width = 1;
+      pen.size = 1;
       g->SetPen(pen);
 
       g->SetColor(jcolor_name_t::Black);

@@ -202,11 +202,10 @@ enum class jrect_corner_t {
  *
  */
 struct jpen_t {
+  std::vector<float> dashes;
   jline_join_t join;
   jline_style_t style;
-  double *dashes;
-  int dashes_size;
-  int width;
+  int size;
 };
 
 /**

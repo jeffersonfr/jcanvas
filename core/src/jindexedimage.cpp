@@ -182,11 +182,11 @@ std::shared_ptr<Image> IndexedImage::Flip(jflip_t t)
   return image;
 }
 
-std::shared_ptr<Image> IndexedImage::Rotate(double radians, bool resize)
+std::shared_ptr<Image> IndexedImage::Rotate(float radians, bool resize)
 {
   jpoint_t<int> 
     isize = GetSize();
-  double 
+  float 
     angle = fmod(radians, 2*M_PI);
   int 
     precision = 1024,
@@ -243,14 +243,14 @@ std::shared_ptr<Image> IndexedImage::Scale(jpoint_t<int> size)
 
   jpoint_t<int> 
     isize = GetSize();
-  double 
-    xRatio = isize.x/(double)size.x,
-    yRatio = isize.y/(double)size.y;
+  float 
+    xRatio = isize.x/(float)size.x,
+    yRatio = isize.y/(float)size.y;
   uint8_t 
     *data = new uint8_t[size.x*size.y];
 
   for(int y=0; y<size.y; y++) {
-    double 
+    float 
       src = ((int)(y * yRatio)) * isize.x;
     int 
       dst = y * size.x;
@@ -291,7 +291,7 @@ std::shared_ptr<Image> IndexedImage::Crop(jrect_t<int> rect)
   return image;
 }
 
-std::shared_ptr<Image> IndexedImage::Blend(double alpha)
+std::shared_ptr<Image> IndexedImage::Blend(float alpha)
 {
   return nullptr;
 }

@@ -50,14 +50,14 @@ void RaisedEtchedRectangleBorder::Paint(Component *cmp, Graphics *g)
 
   g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
   
-  pen.width = -GetSize();
+  pen.size = -GetSize();
 
   g->SetPen(pen);
 
   g->SetColor({dr + step, dg + step, db + step});
   g->DrawRectangle({0, 0, size});
     
-  pen.width = -GetSize()/2;
+  pen.size = -GetSize()/2;
 
   g->SetPen(pen);
 

@@ -262,6 +262,10 @@ class Layouts : public Frame, public ActionListener {
         container->RemoveAll();
 
         for (auto cmp : cmps) {
+          if (dynamic_cast<Text *>(cmp) != nullptr or dynamic_cast<Button *>(cmp) != nullptr) { // they both are containers
+            continue;
+          }
+
           RecursiveDelete(cmp);
 
           delete cmp;

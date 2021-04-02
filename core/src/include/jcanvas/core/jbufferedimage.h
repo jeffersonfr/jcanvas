@@ -97,7 +97,7 @@ class BufferedImage : public virtual Image {
      * \brief
      *
      */
-    virtual std::shared_ptr<Image> Rotate(double radians, bool resize = true);
+    virtual std::shared_ptr<Image> Rotate(float radians, bool resize = true);
     
     /**
      * \brief
@@ -115,7 +115,7 @@ class BufferedImage : public virtual Image {
      * \brief
      *
      */
-    virtual std::shared_ptr<Image> Blend(double alpha);
+    virtual std::shared_ptr<Image> Blend(float alpha);
 
     /**
      * \brief

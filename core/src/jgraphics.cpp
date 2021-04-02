@@ -45,11 +45,9 @@ Graphics::Graphics(cairo_surface_t *surface)
   
   _is_vertical_sync_enabled = false;
 
-  _pen.dashes = nullptr;
-  _pen.dashes_size = 0;
-  _pen.width = 1;
   _pen.join = jline_join_t::Miter;
   _pen.style = jline_style_t::Butt;
+  _pen.size = 1;
 
   cairo_format_t
     format = cairo_image_surface_get_format(surface);
@@ -393,7 +391,13 @@ void Graphics::SetPen(jpen_t t)
     cairo_set_line_cap(_cairo_context, CAIRO_LINE_CAP_SQUARE);
   }
   
-  cairo_set_dash(_cairo_context, _pen.dashes, _pen.dashes_size, 0.0);
+  std::vector<double> dashes;
+
+  dashes.reserve(_pen.dashes.size());
+
+  std::copy(dashes.begin(), dashes.end(), _pen.dashes.begin());
+
+  cairo_set_dash(_cairo_context, dashes.data(), dashes.size(), 0.0);
 }
 
 jpen_t Graphics::GetPen()
@@ -403,7 +407,7 @@ jpen_t Graphics::GetPen()
 
 void Graphics::DrawLine(jpoint_t<int> p0, jpoint_t<int> p1)
 {
-  if (_pen.width <= 0) {
+  if (_pen.size <= 0) {
     return;
   }
 
@@ -412,7 +416,7 @@ void Graphics::DrawLine(jpoint_t<int> p0, jpoint_t<int> p1)
   cairo_save(_cairo_context);
   cairo_move_to(_cairo_context, p0.x + t.x, p0.y + t.y);
   cairo_line_to(_cairo_context, p1.x + t.x, p1.y + t.y);
-  cairo_set_line_width(_cairo_context, _pen.width);
+  cairo_set_line_width(_cairo_context, _pen.size);
   cairo_stroke(_cairo_context);
   cairo_restore(_cairo_context);
 }
@@ -468,7 +472,7 @@ float EvaluateBezier0(float *data, int ndata, float t)
 
 void Graphics::DrawBezierCurve(std::vector<jpoint_t<int>> points, int interpolation)
 {
-  if (_pen.width <= 0 or points.size() < 3 or interpolation < 2) {
+  if (_pen.size <= 0 or points.size() < 3 or interpolation < 2) {
     return;
   }
 
@@ -513,7 +517,7 @@ void Graphics::DrawBezierCurve(std::vector<jpoint_t<int>> points, int interpolat
   delete [] y;
 
   cairo_restore(_cairo_context);
-  cairo_set_line_width(_cairo_context, _pen.width);
+  cairo_set_line_width(_cairo_context, _pen.size);
 }
 
 void Graphics::FillRectangle(jrect_t<int> rect)
@@ -538,7 +542,7 @@ void Graphics::DrawRectangle(jrect_t<int> rect)
   int y = rect.point.y + t.y;
   int w = rect.size.x;
   int h = rect.size.y;
-  int line_width = _pen.width;
+  int line_width = _pen.size;
   
   if (line_width > 0) {
     line_width = line_width/2;
@@ -559,7 +563,7 @@ void Graphics::DrawRectangle(jrect_t<int> rect)
   cairo_save(_cairo_context);
   cairo_rectangle(_cairo_context, x, y, w, h);
   cairo_restore(_cairo_context);
-  cairo_set_line_width(_cairo_context, abs(_pen.width));
+  cairo_set_line_width(_cairo_context, abs(_pen.size));
   cairo_stroke(_cairo_context);
 }
 
@@ -632,7 +636,7 @@ void Graphics::DrawBevelRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
   int y = rect.point.y + t.y;
   int w = rect.size.x;
   int h = rect.size.y;
-  int line_width = _pen.width;
+  int line_width = _pen.size;
 
   if (line_width > 0) {
     line_width = line_width/2;
@@ -691,7 +695,7 @@ void Graphics::DrawBevelRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
 
   cairo_close_path(_cairo_context);
   cairo_restore(_cairo_context);
-  cairo_set_line_width(_cairo_context, abs(_pen.width));
+  cairo_set_line_width(_cairo_context, abs(_pen.size));
   cairo_stroke(_cairo_context);
 }
 
@@ -776,7 +780,7 @@ void Graphics::DrawRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
   int y = rect.point.y + t.y;
   int w = rect.size.x;
   int h = rect.size.y;
-  int line_width = _pen.width;
+  int line_width = _pen.size;
 
   if (line_width > 0) {
     line_width = line_width/2;
@@ -847,7 +851,7 @@ void Graphics::DrawRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
 
   cairo_close_path(_cairo_context);
   cairo_restore(_cairo_context);
-  cairo_set_line_width(_cairo_context, abs(_pen.width));
+  cairo_set_line_width(_cairo_context, abs(_pen.size));
   cairo_stroke(_cairo_context);
 }
 
@@ -895,7 +899,7 @@ void Graphics::DrawChord(jpoint_t<int> point, jpoint_t<int> size, float arc0, fl
   int yc = point.y + t.y;
   int rx = size.x;
   int ry = size.y;
-  int line_width = _pen.width;
+  int line_width = _pen.size;
 
   if (line_width > 0) {
     rx = rx + line_width / 2;
@@ -953,7 +957,7 @@ void Graphics::DrawArc(jpoint_t<int> point, jpoint_t<int> size, float arc0, floa
   int yc = point.y + t.y;
   int rx = size.x;
   int ry = size.y;
-  int line_width = _pen.width;
+  int line_width = _pen.size;
 
   if (line_width > 0) {
     rx = rx + line_width / 2;
@@ -973,7 +977,7 @@ void Graphics::DrawArc(jpoint_t<int> point, jpoint_t<int> size, float arc0, floa
   cairo_scale(_cairo_context, rx, ry);
   cairo_arc_negative(_cairo_context, 0.0, 0.0, 1.0, arc0, arc1);
   cairo_restore(_cairo_context);
-  cairo_set_line_width(_cairo_context, abs(_pen.width));
+  cairo_set_line_width(_cairo_context, abs(_pen.size));
   cairo_stroke(_cairo_context);
 }
 
@@ -990,7 +994,7 @@ void Graphics::DrawPie(jpoint_t<int> point, jpoint_t<int> size, float arc0, floa
   int yc = point.y + t.y;
   int rx = size.x;
   int ry = size.y;
-  int line_width = _pen.width;
+  int line_width = _pen.size;
 
   if (line_width > 0) {
     rx = rx + line_width / 2;
@@ -1012,7 +1016,7 @@ void Graphics::DrawPie(jpoint_t<int> point, jpoint_t<int> size, float arc0, floa
   cairo_line_to(_cairo_context, 0, 0);
   cairo_close_path(_cairo_context);
   cairo_restore(_cairo_context);
-  cairo_set_line_width(_cairo_context, abs(_pen.width));
+  cairo_set_line_width(_cairo_context, abs(_pen.size));
   cairo_stroke(_cairo_context);
 }
     
@@ -1028,7 +1032,7 @@ void Graphics::DrawTriangle(jpoint_t<int> p0, jpoint_t<int> p1, jpoint_t<int> p2
 
 void Graphics::DrawPolygon(jpoint_t<int> point, std::vector<jpoint_t<int>> points, bool closed)
 {
-  if (points.size() < 1 or _pen.width <= 0) {
+  if (points.size() < 1 or _pen.size <= 0) {
     return;
   }
 
@@ -1052,7 +1056,7 @@ void Graphics::DrawPolygon(jpoint_t<int> point, std::vector<jpoint_t<int>> point
   }
   
   cairo_restore(_cairo_context);
-  cairo_set_line_width(_cairo_context, _pen.width);
+  cairo_set_line_width(_cairo_context, _pen.size);
   cairo_stroke(_cairo_context);
 }
 
@@ -2169,7 +2173,7 @@ void Graphics::Close()
 
 void Graphics::Stroke()
 {
-  int width = _pen.width;
+  int width = _pen.size;
 
   if (width < 0) {
     width = -width;
@@ -2217,11 +2221,10 @@ void Graphics::Reset()
   // _translate.x = 0;
   // _translate.y = 0;
 
-  _pen.dashes = nullptr;
-  _pen.dashes_size = 0;
-  _pen.width = 1;
+  _pen.dashes.clear();
   _pen.join = jline_join_t::Miter;
   _pen.style = jline_style_t::Butt;
+  _pen.size = 1;
 
   // ReleaseClip();
   SetAntialias(jantialias_t::Normal);

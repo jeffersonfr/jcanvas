@@ -299,9 +299,9 @@ static void BicubicScale(uint32_t *src, uint32_t *dst, int w, int h, int sw, int
   }
 }
 
-static void NearesNeighborRotate(uint32_t *src, int w, int h, uint32_t *dst, int dw, int dh, double radians, bool resize)
+static void NearesNeighborRotate(uint32_t *src, int w, int h, uint32_t *dst, int dw, int dh, float radians, bool resize)
 {
-  double angle = fmod(radians, 2*M_PI);
+  float angle = fmod(radians, 2*M_PI);
   int precision = 1024;
   int sinTheta = precision*sin(angle);
   int cosTheta = precision*cos(angle);
@@ -677,9 +677,9 @@ std::shared_ptr<Image> BufferedImage::Shear(jpoint_t<float> size)
   return tmp;
 }
 
-std::shared_ptr<Image> BufferedImage::Rotate(double radians, bool resize)
+std::shared_ptr<Image> BufferedImage::Rotate(float radians, bool resize)
 {
-  double angle = fmod(radians, 2*M_PI);
+  float angle = fmod(radians, 2*M_PI);
 
   int iw = _size.x;
   int ih = _size.y;
@@ -851,7 +851,7 @@ std::shared_ptr<Image> BufferedImage::Scale(jpoint_t<int> size)
     cairo_t *context = cairo_create(image->GetGraphics()->GetCairoSurface());
 
     cairo_surface_flush(_cairo_surface);
-    cairo_scale(context, (double)size.x/_size.x, (double)size.y/_size.y);
+    cairo_scale(context, (float)size.x/_size.x, (float)size.y/_size.y);
     cairo_set_source_surface(context, _cairo_surface, 0, 0);
     cairo_paint(context);
 
@@ -894,7 +894,7 @@ std::shared_ptr<Image> BufferedImage::Crop(jrect_t<int> rect)
   return tmp;
 }
 
-std::shared_ptr<Image> BufferedImage::Blend(double alpha)
+std::shared_ptr<Image> BufferedImage::Blend(float alpha)
 {
   if (alpha < 0.0) {
     alpha = 0.0;

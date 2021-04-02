@@ -790,12 +790,14 @@ struct jcolor_t {
     };
   }
 
-  T FromGray(float g)
+  static jcolor_t<T> FromGray(float g)
   {
-    red = g;
-    green = g;
-    blue = g;
-    alpha = 0xff;
+    jcolor_t {
+      g,
+      g,
+      g,
+      0xff
+    };
   }
 
   /**
@@ -817,8 +819,13 @@ struct jcolor_t {
    *
    * \return the RGB value of the color with the indicated hue, saturation, and brightness.
    */
-  void FromHSB(const jvector_t<3, T> &hsb)
+  static jcolor_t<T> FromHSB(const jvector_t<3, T> &hsb)
   {
+    T 
+      red, 
+      green, 
+      blue;
+
     if (hsb[1] == T(0.0)) {
       red = green = blue = hsb[2];
     } else {
@@ -861,10 +868,21 @@ struct jcolor_t {
           break;
       }
     }
+    
+    return jcolor_t {
+      red,
+      green,
+      blue,
+      0xff
+    };
   }
 
-  void FromXYZ(const jvector_t<3, T> &xyz)
+  static jcolor_t<T> FromXYZ(const jvector_t<3, T> &xyz)
   {
+    T 
+      red, 
+      green, 
+      blue;
     T
       x = xyz[0],
       y = xyz[1],
@@ -881,16 +899,23 @@ struct jcolor_t {
     red = (red > 0.0031308)?(1.055 * std::pow(red, 1/2.4) - 0.055):(12.92*red);
     green = (green > 0.0031308)?(1.055 * std::pow(green, 1/2.4) - 0.055):(12.92*green);
     blue = (blue > 0.0031308)?(1.055 * std::pow(blue, 1/2.4) - 0.055):(12.92*blue);
+
+    jcolor_t {
+      red,
+      green,
+      blue,
+      0xff
+    };
   }
 
-  void FromLab(const jvector_t<3, T> &lab)
+  static jcolor_t<T> FromLab(const jvector_t<3, T> &lab)
   {
     T
       y = (lab[0] + 16) / 116,
       x = lab[1] / 500 + y,
       z = y - lab[2] / 200;
 
-    FromXYZ({x, y, z});
+    return FromXYZ({x, y, z});
   }
 
   T ToGray(float r = 0.30f, float g = 0.59f, float b = 0.11f)
@@ -975,6 +1000,57 @@ struct jcolor_t {
       xyz = ToXYZ();
 
     return {(116*xyz[1]) - 16, 500*(xyz[0] - xyz[1]), 200*(xyz[1] - xyz[2])};
+  }
+
+  static jcolor_t<T> LerpRGB(jcolor_t<T> a, jcolor_t<T> b, float t)
+  {
+    jcolor_t {
+      a.red + t*(b.red - a.red),
+      a.green + t*(b.green - a.green),
+      a.blue + t*(b.blue - a.blue),
+      a.alpha + t*(b.alpha - a.alpha),
+    };
+  }
+
+  static jvector_t<3, T> LerpGray(float a, float b, float t)
+  {
+    return a + t*(b - a);
+  }
+
+  static jvector_t<3, T> LerpLab(jvector_t<3, T> a, jvector_t<3, T> b, float t)
+  {
+    jvector_t<3, T> {
+      a[0] + t*(b[0] - a[0]),
+      a[1] + t*(b[1] - a[1]),
+      a[2] + t*(b[2] - a[2]),
+    };
+  }
+
+  static jvector_t<3, T> LerpHSB(jvector_t<3, T> a, jvector_t<3, T> b, float t)
+  {
+    float h = 0, d = b[0] - a[0];
+
+    if (a[0] > b[0]) {
+      std::swap(a[0], b[0]);
+
+      d = -d;
+      t = 1.0f - t;
+    }
+
+    if (d > 0.5f) {
+      a[0] = a[0] + 1.0f;
+      h = fmod((a[0] + t*(b[0] - a[0]))%1.0f);
+    }
+
+    if (d <= 0.5f) {
+      h = a[0] - t*d;
+    }
+  
+    jvector_t {
+      h,
+      a[1] + t*(b[1] - a[1]),
+      a[2] + t*(b[2] - a[2]),
+    };
   }
 
   friend std::ostream & operator<<(std::ostream& out, const jcolor_t<T> &param)

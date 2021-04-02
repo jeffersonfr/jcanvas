@@ -138,7 +138,7 @@ void Slider::Paint(Graphics *g)
       g->SetColor(theme.fg.normal);
 
       for (int i=0; i<=10; i++) {
-        g->DrawLine({offset, size.y/2 - 2}, {offset, size.y/2 + 4});
+        g->FillCircle({offset, size.y/2}, 3);
 
         offset = offset + max/10;
       }
@@ -158,7 +158,7 @@ void Slider::Paint(Graphics *g)
       g->SetColor(theme.fg.normal);
 
       for (int i=0; i<=10; i++) {
-        g->DrawLine({size.x/2 - 2, offset}, {size.y/2 + 4, offset});
+        g->FillCircle({size.x/2, offset}, 3);
 
         offset = offset + max/10;
       }

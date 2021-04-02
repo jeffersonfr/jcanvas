@@ -210,11 +210,11 @@ class GraphicPanel : public Window {
 		  DrawString("Draw Lines");
 
 			if (k == 0) {
-				pen.width = 1;
+				pen.size = 1;
 			} else if (k == 1) {
-				pen.width = 20;
+				pen.size = 20;
 			} else if (k == 2) {
-				pen.width = 40;
+				pen.size = 40;
 			}
 
 			g->SetPen(pen);
@@ -267,7 +267,7 @@ class GraphicPanel : public Window {
 			}
 		}
 
-		pen.width = 1;
+		pen.size = 1;
 
 		g->SetPen(pen);
 

@@ -40,7 +40,7 @@ void LoweredBeveledRectangleBorder::Paint(Component *cmp, Graphics *g)
   const jpen_t oldPen = g->GetPen();
   jpen_t pen = g->GetPen();
 
-  pen.width = 1;
+  pen.size = 1;
 
   g->SetPen(pen);
 

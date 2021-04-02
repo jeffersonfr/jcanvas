@@ -67,7 +67,7 @@ std::shared_ptr<Image> Image::Shear(jpoint_t<float> size)
   return nullptr;
 }
 
-std::shared_ptr<Image> Image::Rotate(double radians, bool resize)
+std::shared_ptr<Image> Image::Rotate(float radians, bool resize)
 {
   return nullptr;
 }
@@ -82,7 +82,7 @@ std::shared_ptr<Image> Image::Crop(jrect_t<int> rect)
   return nullptr;
 }
 
-std::shared_ptr<Image> Image::Blend(double alpha)
+std::shared_ptr<Image> Image::Blend(float alpha)
 {
   return nullptr;
 }
