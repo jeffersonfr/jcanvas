@@ -20,7 +20,7 @@
 #ifndef J_PROGRESSBAR_H
 #define J_PROGRESSBAR_H
 
-#include "jcanvas/widgets/jslidercomponent.h"
+#include "jcanvas/widgets/jcomponent.h"
 #include "jcanvas/widgets/janimation.h"
 
 namespace jcanvas {

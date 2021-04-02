@@ -227,6 +227,15 @@ void Component::ScrollToVisibleArea(jrect_t<int> rect, Component *coordinateSpac
   }
 }
 
+void Component::ScrollToVisibleArea() 
+{
+  Container *parent = GetParent();
+
+  if (parent != nullptr) {
+    parent->ScrollToVisibleArea(GetBounds(), parent);
+  }
+}
+
 void Component::SetBackground(std::shared_ptr<Background> background)
 {
   _background = background;

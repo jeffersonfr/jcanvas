@@ -1278,7 +1278,7 @@ void Graphics::DrawString(std::string text, jrect_t<int> rect, jhorizontal_align
     }
   } else if (halign == jhorizontal_align_t::Justify) {
     for (int i=0; i<(int)lines.size(); i++) {
-      auto tokens = jmixin::String(lines[i]).split(" ");
+      auto tokens = jmixin::String(lines[i]).split(std::string(" "));
 
       if (tokens.size() <= 1) {
         words.push_back({
@@ -1339,7 +1339,7 @@ void Graphics::DrawString(std::string text, jrect_t<int> rect, jhorizontal_align
       float d = 0.0f;
 
       jmixin::String(line.text)
-        .split(" ")
+        .split(std::string(" "))
         .for_each(
             [&](auto word) {
               DrawString(word, jpoint_t<int>{rect.point.x + line.dx + (int)d, rect.point.y + line.dy});

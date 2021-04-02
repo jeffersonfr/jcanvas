@@ -231,6 +231,13 @@ int TextLayout::MoveComponents(Container *target, int x, int y, int width, int h
 
   jinsets_t insets = target->GetInsets();
   int maxwidth = target->GetSize().x - (insets.left + insets.right + 2*_gap.x);
+
+  if (target->IsScrollableY() == true) {
+    jtheme_t theme = target->GetTheme();
+
+    maxwidth = maxwidth - theme.scroll.size.x - _gap.x - 8;
+  }
+
   float step = 0.0f;
 
   if (newLine == false and _halign == jhorizontal_align_t::Justify) {
@@ -427,7 +434,15 @@ void TextLayout::DoLayout(Container *target)
     size.x = INT_MAX;
   }
 
-  int maxwidth = size.x - (insets.left + insets.right + _gap.x*2), nmembers = target->GetComponentCount();
+  int maxwidth = size.x - (insets.left + insets.right + 2*_gap.x);
+
+  if (target->IsScrollableY() == true) {
+    jtheme_t theme = target->GetTheme();
+
+    maxwidth = maxwidth - theme.scroll.size.x - _gap.x - 8;
+  }
+
+  int nmembers = target->GetComponentCount();
   int x = insets.left, y = insets.top + _gap.y;
   int rowh = 0, start = 0;
   int *ascent = nullptr, *descent = nullptr;
@@ -582,7 +597,6 @@ Paragraph::Paragraph(TextComponent *parent, std::string text)
   mText = text;
 
   SetBackground(nullptr);
-  SetScrollable(false);
   SetLayout(nullptr);
 
   std::string word;
@@ -705,6 +719,11 @@ void Text::Paint(Graphics *g)
     }
 
     jrect_t<int> rect {cmp->GetAbsoluteLocation() - GetAbsoluteLocation(), cmp->GetSize()};
+
+    if (mParagraph != nullptr) {
+      rect.point = rect.point - 2*mParagraph->GetScrollLocation();
+    }
+
     jtheme_t theme = cmp->GetTheme();
 
     g->SetColor(theme.fg.focus);
@@ -807,6 +826,16 @@ void Text::SetCaretPosition(std::size_t pos)
   mCaretPosition = pos;
 
   current = GetCurrentChar();
+
+  if (current != nullptr) {
+    Container *container = dynamic_cast<Word *>(current->GetParent());
+
+    if (container != nullptr) {
+      container->ScrollToVisibleArea();
+    } else {
+      current->ScrollToVisibleArea();
+    }
+  }
 }
 
 std::size_t Text::GetCaretPosition()

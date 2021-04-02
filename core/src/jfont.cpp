@@ -304,20 +304,20 @@ void Font::GetStringBreak(std::vector<std::string> *lines, std::string text, jpo
   }
 
   jmixin::String(text)
-    .split("\n")
+    .split(std::string("\n"))
     .for_each(
         [&](auto line) {
           std::vector<std::string> words;
 
           line = jmixin::String(line)
-            .replace("\r", "")
-            .replace("\n", "")
-            .replace("\t", "    ");
+            .replace(std::string("\r"), std::string(""))
+            .replace(std::string("\n"), std::string(""))
+            .replace(std::string("\t"), std::string("    "));
 
           std::string temp, previous;
 
           jmixin::String(line)
-            .split(" ")
+            .split(std::string(" "))
             .for_each(
                 [&](auto word) {
                   temp = word;

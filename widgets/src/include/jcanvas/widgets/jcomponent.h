@@ -243,6 +243,12 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      * \brief
      *
      */
+    virtual void ScrollToVisibleArea();
+
+    /**
+     * \brief
+     *
+     */
     void SetBackground(std::shared_ptr<Background> background);
 
     /**
