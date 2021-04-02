@@ -221,8 +221,11 @@ void Component::ScrollToVisibleArea(jrect_t<int> rect, Component *coordinateSpac
     Container *parent = GetParent();
 
     if (parent != nullptr) {
+      jpoint_t<int> absolute = GetAbsoluteLocation();
+      jpoint_t<int> parent_absolute = parent->GetAbsoluteLocation();
+
       parent->ScrollToVisibleArea(
-          {GetAbsoluteLocation().x - parent->GetAbsoluteLocation().x + rect.point.x, GetAbsoluteLocation().y - parent->GetAbsoluteLocation().y + rect.point.y, rect.size.x, rect.size.y}, parent);
+          {absolute.x - parent_absolute.x + rect.point.x, absolute.y - parent_absolute.y + rect.point.y, rect.size.x, rect.size.y}, parent);
     }
   }
 }
@@ -879,16 +882,10 @@ jpoint_t<int> Component::GetAbsoluteLocation()
   location = _location;
 
   do {
-    slocation = parent->GetScrollLocation();
-
-    location.x = location.x + slocation.x;  
-    location.y = location.y + slocation.y;  
+    location = location - parent->GetScrollLocation();
   
     if (parent->GetParent() != nullptr) {
-      jpoint_t<int> t = parent->GetLocation();
-
-      location.x = location.x + t.x;
-      location.y = location.y + t.y;
+      location = location + parent->GetLocation();
     }
   } while ((parent = parent->GetParent()) != nullptr);
 

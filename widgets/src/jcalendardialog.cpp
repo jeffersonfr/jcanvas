@@ -40,7 +40,7 @@ CalendarDialog::CalendarDialog(Container *parent):
   char 
     tmp[255];
   int
-    ds = 32,
+    ds = 36,
     dx = ds + 2,
     dy = ds + 2;
 

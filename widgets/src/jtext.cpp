@@ -596,6 +596,7 @@ Paragraph::Paragraph(TextComponent *parent, std::string text)
 {
   mText = text;
 
+  SetScrollable(false);
   SetBackground(nullptr);
   SetLayout(nullptr);
 
@@ -678,6 +679,8 @@ void Text::Build()
     layout->SetVerticalAlign(mParagraph->GetLayout<TextLayout>()->GetVerticalAlign());
   }
 
+  paragraph->SetScrollable(IsScrollable());
+
   Add(paragraph, jborderlayout_align_t::Center);
 
   Remove(mParagraph);
@@ -719,11 +722,6 @@ void Text::Paint(Graphics *g)
     }
 
     jrect_t<int> rect {cmp->GetAbsoluteLocation() - GetAbsoluteLocation(), cmp->GetSize()};
-
-    if (mParagraph != nullptr) {
-      rect.point = rect.point - 2*mParagraph->GetScrollLocation();
-    }
-
     jtheme_t theme = cmp->GetTheme();
 
     g->SetColor(theme.fg.focus);
