@@ -50,13 +50,20 @@ void RowLayout::DoLayout(Container *target)
   int
     maxy = size.y - insets.top - insets.bottom;
 
+  if (target->IsScrollableX() == true) {
+    jtheme_t theme = target->GetTheme();
+
+    maxy = maxy - theme.scroll.size.y - _gap;
+  }
+
   for (auto cmp : target->GetComponents()) {
     jpoint_t cpoint = cmp->GetLocation();
     jpoint_t<int> csize = cmp->GetPreferredSize();
     
+    cpoint.y = 0;
+
     if (csize.y > maxy) {
       csize.y = maxy;
-      cpoint.y = 0;
     }
 
     if (_cross_align == jcrossaxis_align_t::Start) {

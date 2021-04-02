@@ -403,48 +403,48 @@ class App : public Frame, public ActionListener, public SelectListener {
         
         _list->SetBounds({region.point.x, region.point.y + region.size.y + 8, 196, 196});
 
-        _list->AddImageItem("Item 01", std::make_shared<BufferedImage>(("images/tux-alien.png")));
-        _list->AddTextItem("Item 02");
-        _list->AddImageItem("Item 03", std::make_shared<BufferedImage>(("images/tux-bart.png")));
-        _list->AddTextItem("Item 04");
-        _list->AddImageItem("Item 05", std::make_shared<BufferedImage>(("images/tux-batman.png")));
-        _list->AddTextItem("Item 06");
-        _list->AddImageItem("Item 07", std::make_shared<BufferedImage>(("images/tux-freddy.png")));
-        _list->AddTextItem("Item 08");
-        _list->AddImageItem("Item 09", std::make_shared<BufferedImage>(("images/tux-homer.png")));
-        _list->AddTextItem("Item 10");
-        _list->AddImageItem("Item 11", std::make_shared<BufferedImage>(("images/tux-indiana.png")));
-        _list->AddTextItem("Item 12");
-        _list->AddImageItem("Item 13", std::make_shared<BufferedImage>(("images/tux-ipod.png")));
-        _list->AddTextItem("Item 14");
-        _list->AddImageItem("Item 15", std::make_shared<BufferedImage>(("images/tux-jamaican.png")));
-        _list->AddTextItem("Item 16");
-        _list->AddImageItem("Item 17", std::make_shared<BufferedImage>(("images/tux-jason.png")));
-        _list->AddTextItem("Item 18");
-        _list->AddImageItem("Item 19", std::make_shared<BufferedImage>(("images/tux-kenny.png")));
-        _list->AddTextItem("Item 20");
-        _list->AddImageItem("Item 21", std::make_shared<BufferedImage>(("images/tux-mario.png")));
-        _list->AddTextItem("Item 22");
-        _list->AddImageItem("Item 23", std::make_shared<BufferedImage>(("images/tux-neo.png")));
-        _list->AddTextItem("Item 24");
-        _list->AddImageItem("Item 25", std::make_shared<BufferedImage>(("images/tux-potter.png")));
-        _list->AddTextItem("Item 26");
-        _list->AddImageItem("Item 27", std::make_shared<BufferedImage>(("images/tux-raider.png")));
-        _list->AddTextItem("Item 28");
-        _list->AddImageItem("Item 29", std::make_shared<BufferedImage>(("images/tux-rambo.png")));
-        _list->AddTextItem("Item 30");
-        _list->AddImageItem("Item 31", std::make_shared<BufferedImage>(("images/tux-rapper.png")));
-        _list->AddTextItem("Item 32");
-        _list->AddImageItem("Item 33", std::make_shared<BufferedImage>(("images/tux-shrek.png")));
-        _list->AddTextItem("Item 34");
-        _list->AddImageItem("Item 35", std::make_shared<BufferedImage>(("images/tux-spiderman.png")));
-        _list->AddTextItem("Item 36");
-        _list->AddImageItem("Item 37", std::make_shared<BufferedImage>(("images/tux-turtle.png")));
-        _list->AddTextItem("Item 38");
-        _list->AddImageItem("Item 39", std::make_shared<BufferedImage>(("images/tux-wolverine.png")));
-        _list->AddTextItem("Item 40");
-        _list->AddImageItem("Item 41", std::make_shared<BufferedImage>(("images/tux-zombie.png")));
-        _list->AddTextItem("Item 42");
+        _list->AddItem<Button>("Item 01", std::make_shared<BufferedImage>(("images/tux-alien.png")));
+        _list->AddItem<Button>("Item 02");
+        _list->AddItem<Button>("Item 03", std::make_shared<BufferedImage>(("images/tux-bart.png")));
+        _list->AddItem<Button>("Item 04");
+        _list->AddItem<Button>("Item 05", std::make_shared<BufferedImage>(("images/tux-batman.png")));
+        _list->AddItem<Button>("Item 06");
+        _list->AddItem<Button>("Item 07", std::make_shared<BufferedImage>(("images/tux-freddy.png")));
+        _list->AddItem<Button>("Item 08");
+        _list->AddItem<Button>("Item 09", std::make_shared<BufferedImage>(("images/tux-homer.png")));
+        _list->AddItem<Button>("Item 10");
+        _list->AddItem<Button>("Item 11", std::make_shared<BufferedImage>(("images/tux-indiana.png")));
+        _list->AddItem<Button>("Item 12");
+        _list->AddItem<Button>("Item 13", std::make_shared<BufferedImage>(("images/tux-ipod.png")));
+        _list->AddItem<Button>("Item 14");
+        _list->AddItem<Button>("Item 15", std::make_shared<BufferedImage>(("images/tux-jamaican.png")));
+        _list->AddItem<Button>("Item 16");
+        _list->AddItem<Button>("Item 17", std::make_shared<BufferedImage>(("images/tux-jason.png")));
+        _list->AddItem<Button>("Item 18");
+        _list->AddItem<Button>("Item 19", std::make_shared<BufferedImage>(("images/tux-kenny.png")));
+        _list->AddItem<Button>("Item 20");
+        _list->AddItem<Button>("Item 21", std::make_shared<BufferedImage>(("images/tux-mario.png")));
+        _list->AddItem<Button>("Item 22");
+        _list->AddItem<Button>("Item 23", std::make_shared<BufferedImage>(("images/tux-neo.png")));
+        _list->AddItem<Button>("Item 24");
+        _list->AddItem<Button>("Item 25", std::make_shared<BufferedImage>(("images/tux-potter.png")));
+        _list->AddItem<Button>("Item 26");
+        _list->AddItem<Button>("Item 27", std::make_shared<BufferedImage>(("images/tux-raider.png")));
+        _list->AddItem<Button>("Item 28");
+        _list->AddItem<Button>("Item 29", std::make_shared<BufferedImage>(("images/tux-rambo.png")));
+        _list->AddItem<Button>("Item 30");
+        _list->AddItem<Button>("Item 31", std::make_shared<BufferedImage>(("images/tux-rapper.png")));
+        _list->AddItem<Button>("Item 32");
+        _list->AddItem<Button>("Item 33", std::make_shared<BufferedImage>(("images/tux-shrek.png")));
+        _list->AddItem<Button>("Item 34");
+        _list->AddItem<Button>("Item 35", std::make_shared<BufferedImage>(("images/tux-spiderman.png")));
+        _list->AddItem<Button>("Item 36");
+        _list->AddItem<Button>("Item 37", std::make_shared<BufferedImage>(("images/tux-turtle.png")));
+        _list->AddItem<Button>("Item 38");
+        _list->AddItem<Button>("Item 39", std::make_shared<BufferedImage>(("images/tux-wolverine.png")));
+        _list->AddItem<Button>("Item 40");
+        _list->AddItem<Button>("Item 41", std::make_shared<BufferedImage>(("images/tux-zombie.png")));
+        _list->AddItem<Button>("Item 42");
       }
 
       Add(_marquee);
@@ -494,10 +494,6 @@ class App : public Frame, public ActionListener, public SelectListener {
     virtual void ActionPerformed(ActionEvent *event)
     {
       Button *button = reinterpret_cast<Button *>(event->GetSource());
-
-      if (button->IsPressed() == false) {
-        return;
-      }
 
       _mutex.lock();
 

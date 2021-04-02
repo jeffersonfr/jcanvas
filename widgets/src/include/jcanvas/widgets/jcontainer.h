@@ -65,6 +65,8 @@ class Container : public Component {
     jinsets_t<int> _insets;
     /** \brief */
     bool _optimized_paint;
+    /** \brief */
+    bool _is_auto_scroll;
 
   protected:
     /**
@@ -124,6 +126,18 @@ class Container : public Component {
      * \brief
      *
      */
+    virtual void SetAutoScroll(bool enabled);
+
+    /**
+     * \brief
+     *
+     */
+    virtual bool IsSetAutoScroll();
+
+    /**
+     * \brief
+     *
+     */
     void SetLayout(std::shared_ptr<Layout> layout);
 
     /**
@@ -168,13 +182,25 @@ class Container : public Component {
      * \brief
      *
      */
-    virtual void Add(Component *c, int index);
-    
+    template <typename T, typename ...Args>
+    void AddItem(Args ...args)
+    {
+      static_assert(std::is_base_of<Component, T>::value, "T must be a component");
+
+      Add(new T {std::forward<Args>(args)...});
+    }
+
     /**
      * \brief
      *
      */
     virtual void Add(Component *c);
+    
+    /**
+     * \brief
+     *
+     */
+    virtual void Add(Component *c, int index);
     
     /**
      * \brief

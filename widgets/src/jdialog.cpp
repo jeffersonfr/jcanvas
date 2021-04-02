@@ -154,6 +154,10 @@ void Dialog::RequestComponentFocus(Component *c)
 
   _focus_owner = c;
 
+  if (_focus_owner != nullptr and IsSetAutoScroll() == true) {
+    _focus_owner->GetParent()->ScrollToVisibleArea(_focus_owner->GetBounds(), _focus_owner->GetParent());
+  }
+
   Repaint();
 
   c->DispatchFocusEvent(new FocusEvent(c, jfocusevent_type_t::Gain));

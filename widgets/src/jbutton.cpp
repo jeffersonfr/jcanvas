@@ -195,8 +195,6 @@ bool Button::KeyReleased(KeyEvent *event)
       _onclick(this, false);
     }
 
-    DispatchActionEvent(new ActionEvent(this));
-
     return true;
   }
 
@@ -232,8 +230,6 @@ bool Button::MouseReleased(MouseEvent *event)
     if (_onclick != nullptr) {
       _onclick(this, false);
     }
-
-    DispatchActionEvent(new ActionEvent(this));
 
     return true;
   }

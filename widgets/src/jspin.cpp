@@ -155,10 +155,6 @@ void Spin::ActionPerformed(ActionEvent *event)
 {
   Button *button = reinterpret_cast<Button *>(event->GetSource());
 
-  if (button->IsPressed() == false) {
-    return;
-  }
-
   if (button == &_previous) {
     Previous();
 

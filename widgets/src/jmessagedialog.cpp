@@ -70,12 +70,6 @@ jvertical_align_t MessageDialog::GetVerticalAlign()
 
 void MessageDialog::ActionPerformed(ActionEvent *event)
 {
-  Button *button = reinterpret_cast<Button *>(event->GetSource());
-
-  if (button->IsPressed() == false) {
-    return;
-  }
-
   Close();
 }
 

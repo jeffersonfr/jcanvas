@@ -65,10 +65,6 @@ void CheckButtonGroup::ActionPerformed(ActionEvent *event)
 
   CheckButton *cmp = reinterpret_cast<CheckButton *>(event->GetSource());
 
-  if (cmp->IsPressed() == false) {
-    cmp->Click();
-  }
-
   for (std::vector<CheckButton *>::iterator i=_buttons.begin(); i!=_buttons.end(); i++) {
     CheckButton *cmp1 = (*i);
 

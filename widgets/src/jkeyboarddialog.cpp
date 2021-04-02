@@ -120,10 +120,6 @@ void KeyboardDialog::ActionPerformed(ActionEvent *event)
 {
   Button *button = reinterpret_cast<Button *>(event->GetSource());
 
-  if (button->IsPressed() == false) {
-    return;
-  }
-
   std::string label = button->GetTextComponent()->GetText();
   jkeyevent_modifiers_t modifiers = jkeyevent_modifiers_t::None;
   jkeyevent_symbol_t symbol = jkeyevent_symbol_t::Unknown;

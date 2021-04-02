@@ -23,7 +23,7 @@
 #include "jcanvas/widgets/jitemcomponent.h"
 #include "jcanvas/widgets/jactionlistener.h"
 #include "jcanvas/widgets/jselectlistener.h"
-#include "jcanvas/core/jimage.h"
+#include "jcanvas/widgets/jbutton.h"
 
 namespace jcanvas {
 
@@ -42,34 +42,25 @@ enum class jlistbox_selection_t {
  *
  * \author Jeff Ferr
  */
-class ListBox : public Component, public ItemComponent {
+class ListBox : public Container, public ActionListener {
 
   private:
     /** \brief */
-    int _selected_index;
+    std::vector<SelectListener *> _select_listeners;
     /** \brief */
-    bool _pressed;
+    std::mutex _itemcomponent_mutex;
     /** \brief */
-    jlistbox_selection_t _mode;
-
-  private:
-    /**
-     * \brief
-     *
-     */
-    void IncrementLines(int lines);
+    std::mutex _select_listener_mutex;
+    /** \brief */
+    std::mutex _remove_select_listener_mutex;
+    /** \brief */
+    jlistbox_selection_t _selection_type;
 
     /**
      * \brief
      *
      */
-    void DecrementLines(int lines);
-    
-    /**
-     * \brief
-     *
-     */
-    void UpdatePreferredSize();
+    virtual void ActionPerformed(ActionEvent *event) override;
 
   public:
     /**
@@ -88,6 +79,75 @@ class ListBox : public Component, public ItemComponent {
      * \brief
      *
      */
+    template <typename T, typename ...Args>
+    void AddItem(Args ...args)
+    {
+      static_assert(std::is_base_of<Button, T>::value, "T must be a button");
+
+      Button *button = new T {std::forward<Args>(args)...};
+
+      button->OnClick(nullptr);
+      button->RegisterActionListener(this);
+
+      if (_selection_type == jlistbox_selection_t::None) {
+        button->SetFocusable(false);
+      }
+
+      FlatImage *image = button->GetImageComponent();
+
+      if (image != nullptr) {
+        image->SetPreferredSize({});
+      }
+
+      Container::Add(button);
+    }
+
+    /**
+     * \brief
+     *
+     */
+    virtual void RemoveItem(Button *item);
+
+    /**
+     * \brief
+     *
+     */
+    virtual void RemoveItemByIndex(int index);
+
+    /**
+     * \brief
+     *
+     */
+    virtual void SelectItem(Button *item);
+
+    /**
+     * \brief
+     *
+     */
+    virtual void SelectItemByIndex(int index);
+
+    /**
+     * \brief
+     *
+     */
+    virtual void UnselectItem(Button *item);
+
+    /**
+     * \brief
+     *
+     */
+    virtual void UnselectItemByIndex(int index);
+
+    /**
+     * \brief
+     *
+     */
+    virtual void UnselectAll();
+
+    /**
+     * \brief
+     *
+     */
     virtual void SetSelectionType(jlistbox_selection_t type);
     
     /**
@@ -100,104 +160,49 @@ class ListBox : public Component, public ItemComponent {
      * \brief
      *
      */
-    void AddEmptyItem();
+    virtual void SelectIndexes(std::vector<int> itemsitem);
     
     /**
      * \brief
      *
      */
-    void AddTextItem(std::string text);
-    
-    /**
-     * \brief
-     *
-     */
-    void AddImageItem(std::string text, std::shared_ptr<Image> image);
-    
-    /**
-     * \brief
-     *
-     */
-    void AddCheckedItem(std::string text, bool checked);
+    virtual std::vector<int> GetSelectedIndexes();
 
     /**
      * \brief
      *
      */
-    virtual bool IsSelected(int i);
-
-    /**
-     * \brief Invert current selection state from item. Use with IsSelected() to avoid
-     * unexpected states.
-     *
-     */
-    virtual void SetSelected(int i);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void Select(int i);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void Deselect(int i);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual int GetSelectedIndex();
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void SetCurrentIndex(int i);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual jpoint_t<int> GetScrollDimension();
+    virtual std::vector<Button *> GetSelectedItems();
 
     /**
      * \brief
      *
      */
-    virtual bool KeyPressed(KeyEvent *event);
-
-    /**
-     * \brief
-     *
-     */
-    virtual bool MousePressed(MouseEvent *event);
+    virtual Button * GetItemByIndex(int index);
     
     /**
      * \brief
      *
      */
-    virtual bool MouseReleased(MouseEvent *event);
+    virtual void RegisterSelectListener(SelectListener *listener);
     
     /**
      * \brief
      *
      */
-    virtual bool MouseMoved(MouseEvent *event);
+    virtual void RemoveSelectListener(SelectListener *listener);
     
     /**
      * \brief
      *
      */
-    virtual bool MouseWheel(MouseEvent *event);
+    virtual void DispatchSelectEvent(SelectEvent *event);
     
     /**
      * \brief
      *
      */
-    virtual void Paint(Graphics *g);
+    virtual const std::vector<SelectListener *> & GetSelectListeners();
 
 };
 

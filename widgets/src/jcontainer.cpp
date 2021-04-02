@@ -30,6 +30,7 @@ Container::Container(jrect_t<int> bounds):
 {
   _is_focus_cycle_root = false;
 
+  SetAutoScroll(true);
   SetEnabled(true);
   SetVisible(true);
   SetLayout<BorderLayout>();
@@ -165,6 +166,16 @@ void Container::InternalRemoveDialog(Dialog *dialog)
   _dialogs.erase(std::remove(_dialogs.begin(), _dialogs.end(), dialog), _dialogs.end());
   
   Repaint();
+}
+
+void Container::SetAutoScroll(bool enabled)
+{
+  _is_auto_scroll = enabled;
+}
+
+bool Container::IsSetAutoScroll()
+{
+  return _is_auto_scroll;
 }
 
 void Container::SetLayout(std::shared_ptr<Layout> layout)

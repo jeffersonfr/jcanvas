@@ -121,13 +121,20 @@ void ColumnLayout::DoLayout(Container *target)
   int
     maxx = size.x - insets.left - insets.right;
 
+  if (target->IsScrollableY() == true) {
+    jtheme_t theme = target->GetTheme();
+
+    maxx = maxx - theme.scroll.size.x - _gap;
+  }
+
   for (auto cmp : target->GetComponents()) {
     jpoint_t cpoint = cmp->GetLocation();
     jpoint_t<int> csize = cmp->GetPreferredSize();
     
+    cpoint.x = 0;
+
     if (csize.x > maxx) {
       csize.x = maxx;
-      cpoint.x = 0;
     }
 
     if (_cross_align == jcrossaxis_align_t::Start) {

@@ -273,10 +273,6 @@ class Layouts : public Frame, public ActionListener {
 		{
       Button *button = reinterpret_cast<Button *>(event->GetSource());
 
-      if (button->IsPressed() == false) {
-        return;
-      }
-
       std::shared_ptr<CardLayout> card = std::dynamic_pointer_cast<CardLayout>(_cardcontainer->GetLayout());
 
 			if (event->GetSource() == _first) {

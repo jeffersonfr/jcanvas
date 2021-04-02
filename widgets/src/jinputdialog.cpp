@@ -84,12 +84,6 @@ jvertical_align_t InputDialog::GetVerticalAlign()
 
 void InputDialog::ActionPerformed(ActionEvent *event)
 {
-  Button *button = reinterpret_cast<Button *>(event->GetSource());
-
-  if (button->IsPressed() == false) {
-    return;
-  }
-
   Close();
 }
 

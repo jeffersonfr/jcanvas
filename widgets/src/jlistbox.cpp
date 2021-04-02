@@ -18,501 +18,220 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "jcanvas/widgets/jlistbox.h"
+#include "jcanvas/widgets/jcolumnlayout.h"
+#include "jcanvas/widgets/jrectangleborder.h"
 
 namespace jcanvas {
 
-ListBox::ListBox():
-  Component(),
-  ItemComponent()
+ListBox::ListBox()
 {
-  _pressed = false;
-  _selected_index = -1;
-  _mode = jlistbox_selection_t::None;
+  _selection_type = jlistbox_selection_t::Single;
+
+  SetLayout<ColumnLayout>();
+  GetLayout<ColumnLayout>()->SetCrossAxisAlign(jcrossaxis_align_t::Stretch);
 
   SetFocusable(true);
+  SetInsets({2, 2, 2, 2});
+  SetBorder<RectangleBorder>();
 }
 
 ListBox::~ListBox() 
 {
 }
 
-void ListBox::UpdatePreferredSize()
+void ListBox::ActionPerformed(ActionEvent *event)
 {
-  jtheme_t
-    theme = GetTheme();
-  jrect_t<int> 
-    bounds = GetBounds();
+  Button *item = reinterpret_cast<Button *>(event->GetSource());
 
-  // TODO:: list all items to see the largest width [+ image.x + gap] 
+  SelectItem(item);
+}
 
-  bounds.size.x = bounds.size.x + theme.padding.left + theme.padding.right;
-  bounds.size.y = _items.size()*(GetItemSize() + GetItemGap()) - GetItemGap() + theme.padding.top + theme.padding.bottom;
+void ListBox::SelectItem(Button *item)
+{
+  if (item == nullptr) {
+    return;
+  }
 
-  SetPreferredSize(bounds.size);
+  if (_selection_type == jlistbox_selection_t::Single) {
+    UnselectAll();
+
+    jtheme_t &theme = item->GetTheme();
+
+    theme.bg.normal = GetTheme().bg.select;
+
+    item->SetPressed(true);
+  } else if (_selection_type == jlistbox_selection_t::Multiple) {
+    if (item->IsPressed() == true) {
+      UnselectItem(item);
+    } else {
+      jtheme_t &theme = item->GetTheme();
+
+      theme.bg.normal = GetTheme().bg.select;
+
+      item->SetPressed(true);
+    }
+  }
+}
+
+void ListBox::SelectItemByIndex(int index)
+{
+  SelectItem(GetItemByIndex(index));
+}
+
+void ListBox::UnselectItem(Button *item)
+{
+  if (item == nullptr) {
+    return;
+  }
+
+  jtheme_t &theme = item->GetTheme();
+
+  theme.bg.normal = GetTheme().bg.normal;
+
+  item->SetPressed(false);
+}
+
+void ListBox::UnselectItemByIndex(int index)
+{
+  UnselectItem(GetItemByIndex(index));
+}
+
+void ListBox::UnselectAll()
+{
+  for (auto item : GetComponents()) {
+    UnselectItem(dynamic_cast<Button *>(item));
+  }
+}
+
+void ListBox::RemoveItem(Button *item)
+{
+  item->RemoveActionListener(this);
+
+  Container::Remove(item);
+
+  delete item;
+}
+
+void ListBox::RemoveItemByIndex(int index)
+{
+  RemoveItem(GetItemByIndex(index));
 }
 
 void ListBox::SetSelectionType(jlistbox_selection_t type)
 {
-  if (_mode == type) {
-    return;
-  }
+  _selection_type = type;
 
-  _mode = type;
-  _selected_index = -1;
-
-  for (std::vector<Item *>::iterator i=_items.begin(); i!=_items.end(); i++) {
-    (*i)->SetSelected(false);
+  for (auto cmp : GetComponents()) {
+    if (_selection_type == jlistbox_selection_t::None) {
+      cmp->SetFocusable(false);
+    } else {
+      cmp->SetFocusable(true);
+    }
   }
 }
 
 jlistbox_selection_t ListBox::GetSelectionType()
 {
-  return _mode;
+  return _selection_type;
 }
 
-void ListBox::AddEmptyItem()
+void ListBox::SelectIndexes(std::vector<int> indexes)
 {
-  Item *item = new Item();
-
-  item->SetHorizontalAlign(jhorizontal_align_t::Left);
-    
-  AddInternalItem(item);
-  AddItem(item);
-
-  UpdatePreferredSize();
-}
-
-void ListBox::AddTextItem(std::string text)
-{
-  Item *item = new Item(text);
-
-  item->SetHorizontalAlign(jhorizontal_align_t::Left);
-    
-  AddInternalItem(item);
-  AddItem(item);
-  
-  UpdatePreferredSize();
-}
-
-void ListBox::AddImageItem(std::string text, std::shared_ptr<Image> image)
-{
-  Item *item = new Item(text, image);
-
-  item->SetHorizontalAlign(jhorizontal_align_t::Left);
-    
-  AddInternalItem(item);
-  AddItem(item);
-
-  UpdatePreferredSize();
-}
-
-void ListBox::AddCheckedItem(std::string text, bool checked)
-{
-  Item *item = new Item(text, checked);
-
-  item->SetHorizontalAlign(jhorizontal_align_t::Left);
-    
-  AddInternalItem(item);
-  AddItem(item);
-
-  UpdatePreferredSize();
-}
-
-void ListBox::SetCurrentIndex(int i)
-{
-  if (i < 0 || i >= (int)_items.size()) {
-    throw std::out_of_range("Index out of bounds exception");
+  for (auto index : indexes) {
+    GetItemByIndex(index)->SetPressed(true);
   }
-
-  _index = i;
-
-  jpoint_t<int>
-    slocation = GetScrollLocation();
-
-  SetScrollLocation(slocation.x, _index*(GetItemSize() + GetItemGap()));
 }
 
-bool ListBox::IsSelected(int i)
+std::vector<int> ListBox::GetSelectedIndexes()
 {
-  if (i < 0 || i >= (int)_items.size()) {
-    return false;
-  }
+  std::vector<int> indexes;
+  int i = 0;
 
-  if (_mode == jlistbox_selection_t::Single) {
-    if (_selected_index == i) {
-      return true;
+  for (auto cmp : GetComponents()) {
+    Button *item = dynamic_cast<Button *>(cmp);
+
+    if (item->IsPressed() == true) {
+      indexes.push_back(i);
     }
-  } else if (_mode == jlistbox_selection_t::Multiple) {
-    return _items[i]->IsSelected();
+
+    i = i + 1;
   }
 
-  return false;
+  return indexes;
 }
 
-void ListBox::SetSelected(int i)
+std::vector<Button *> ListBox::GetSelectedItems()
 {
-  if (i < 0 || i >= (int)_items.size()) {
+  std::vector<Button *> items;
+
+  for (auto cmp : GetComponents()) {
+    Button *item = dynamic_cast<Button *>(cmp);
+
+    if (item->IsPressed() == true) {
+      items.push_back(item);
+    }
+  }
+
+  return items;
+}
+
+Button * ListBox::GetItemByIndex(int index)
+{
+  return dynamic_cast<Button *>(GetComponents()[index]);
+}
+
+void ListBox::RegisterSelectListener(SelectListener *listener)
+{
+  if (listener == nullptr) {
     return;
   }
 
-  Item *item = _items[i];
+   std::lock_guard<std::mutex> guard(_select_listener_mutex);
 
-  if (item->IsEnabled() == false) {
+  if (std::find(_select_listeners.begin(), _select_listeners.end(), listener) == _select_listeners.end()) {
+    _select_listeners.push_back(listener);
+  }
+}
+
+void ListBox::RemoveSelectListener(SelectListener *listener)
+{
+  if (listener == nullptr) {
     return;
   }
 
-  if (_mode == jlistbox_selection_t::Single) {
-    if (_selected_index == i) {
-      _selected_index = -1;
+   std::lock_guard<std::mutex> guard(_select_listener_mutex);
+
+  _select_listeners.erase(std::remove(_select_listeners.begin(), _select_listeners.end(), listener), _select_listeners.end());
+}
+
+void ListBox::DispatchSelectEvent(SelectEvent *event)
+{
+  if (event == nullptr) {
+    return;
+  }
+
+  _select_listener_mutex.lock();
+
+  std::vector<SelectListener *> listeners = _select_listeners;
+
+  _select_listener_mutex.unlock();
+
+  for (std::vector<SelectListener *>::iterator i=listeners.begin(); i!=listeners.end() && event->IsConsumed() == false; i++) {
+    SelectListener *listener = (*i);
+
+    if (event->GetType() == jselectevent_type_t::Action) {
+      listener->ItemSelected(event);
     } else {
-      _selected_index = i;
-    }
-  } else if (_mode == jlistbox_selection_t::Multiple) {
-    if (item->IsSelected()) {
-      item->SetSelected(false);
-    } else {
-      item->SetSelected(true);
-    }
-  }
-}
-
-void ListBox::Select(int i)
-{
-  if (i < 0 || i >= (int)_items.size()) {
-    return;
-  }
-
-  Item *item = _items[i];
-
-  if (item->IsEnabled() == false) {
-    return;
-  }
-
-  if (_mode == jlistbox_selection_t::Single) {
-    _selected_index = i;
-  } else if (_mode == jlistbox_selection_t::Multiple) {
-    item->SetSelected(true);
-  }
-}
-
-void ListBox::Deselect(int i)
-{
-  if (i < 0 || i >= (int)_items.size()) {
-    return;
-  }
-
-  Item *item = _items[i];
-
-  if (item->IsEnabled() == false) {
-    return;
-  }
-
-  if (_mode == jlistbox_selection_t::Single) {
-    _selected_index = -1;
-  } else if (_mode == jlistbox_selection_t::Multiple) {
-    item->SetSelected(false);
-  }
-}
-
-int ListBox::GetSelectedIndex()
-{
-  return _selected_index;
-}
-
-bool ListBox::KeyPressed(KeyEvent *event)
-{
-  if (Component::KeyPressed(event) == true) {
-    return true;
-  }
-
-  if (IsEnabled() == false) {
-    return false;
-  }
-
-  jtheme_t
-    theme = GetTheme();
-  jpoint_t<int>
-    size = GetSize();
-  jkeyevent_symbol_t 
-    action = event->GetSymbol();
-  bool 
-    catched = false;
-
-  if (action == jkeyevent_symbol_t::CursorUp) {
-    IncrementLines(1);
-    
-    catched = true;
-  } else if (action == jkeyevent_symbol_t::PageUp) {
-    IncrementLines((size.y - theme.padding.top - theme.padding.bottom)/(GetItemSize() + GetItemGap()));
-    
-    catched = true;
-  } else if (action == jkeyevent_symbol_t::CursorDown) {
-    DecrementLines(1);
-
-    catched = true;
-  } else if (action == jkeyevent_symbol_t::PageDown) {
-    DecrementLines((size.y - theme.padding.top - theme.padding.bottom)/(GetItemSize() + GetItemGap()));
-
-    catched = true;
-  } else if (action == jkeyevent_symbol_t::Home) {
-    IncrementLines(_items.size());
-    
-    catched = true;
-  } else if (action == jkeyevent_symbol_t::End) {
-    DecrementLines(_items.size());
-    
-    catched = true;
-  } else if (action == jkeyevent_symbol_t::Enter) {
-    SetSelected(_index);
-
-    if (_items.size() > 0) { 
-      DispatchSelectEvent(new SelectEvent(_items[_index], _index, jselectevent_type_t::Action));
-    }
-
-    catched = true;
-  }
-
-  return catched;
-}
-
-bool ListBox::MousePressed(MouseEvent *event)
-{
-  if (Component::MousePressed(event) == true) {
-    return true;
-  }
-
-  return true;
-}
-
-bool ListBox::MouseReleased(MouseEvent *event)
-{
-  if (Component::MouseReleased(event) == true) {
-    return true;
-  }
-
-  return false;
-}
-  
-bool ListBox::MouseMoved(MouseEvent *event)
-{
-  if (Component::MouseMoved(event) == true) {
-    return true;
-  }
-
-  return false;
-}
-
-bool ListBox::MouseWheel(MouseEvent *event)
-{
-  if (Component::MouseWheel(event) == true) {
-    return true;
-  }
-  
-  jpoint_t<int>
-    slocation = GetScrollLocation();
-
-  SetScrollLocation(slocation.x, slocation.y + GetItemSize()*event->GetClicks());
-
-  Repaint();
-
-  return true;
-}
-
-void ListBox::Paint(Graphics *g)
-{
-  Component::Paint(g);
-
-  jtheme_t
-    theme = GetTheme();
-  jpoint_t<int> 
-    scroll_location = GetScrollLocation();
-  jrect_t<int>
-    bounds = GetBounds();
-  int 
-    scrollx = (IsScrollableX() == true)?scroll_location.x:0,
-    scrolly = (IsScrollableY() == true)?scroll_location.y:0;
-  int 
-    offset = theme.padding.left;
-
-  for (std::vector<Item *>::iterator i=_items.begin(); i!=_items.end(); i++) {
-    if ((*i)->GetType() == jitem_type_t::Image) {
-      offset += GetItemSize() + theme.padding.left;
-
-      break;
+      listener->ItemChanged(event);
     }
   }
 
-  theme.padding.left = theme.padding.left - scrollx;
-  theme.padding.top = theme.padding.top - scrolly;
-
-  for (int i=0; i<(int)_items.size(); i++) {
-    int dy = theme.padding.top + (GetItemSize() + GetItemGap())*i;
-
-    if ((dy + GetItemSize()) < 0 || dy > bounds.size.y) {
-      continue;
-    }
-
-    Item *item = _items[i];
-
-    if (item->IsEnabled() == true) {
-      g->SetColor(theme.bg.normal);
-    } else {
-      g->SetColor(theme.bg.disable);
-    }
-
-    if (_index != i) {
-      if (_mode == jlistbox_selection_t::Single) {  
-        if (_selected_index == i) {  
-          g->SetColor(theme.bg.select);
-        }
-      } else if (_mode == jlistbox_selection_t::Multiple) {  
-        if (item->IsSelected() == true) {  
-          g->SetColor(theme.bg.select);
-        }
-      }
-    } else {
-      g->SetColor(theme.bg.focus);
-    }
-
-    g->FillRectangle({theme.padding.left, theme.padding.top + (GetItemSize() + GetItemGap())*i, bounds.size.x, GetItemSize()});
-
-    if (theme.font.primary != nullptr) {
-      g->SetFont(theme.font.primary);
-
-      if (item->IsEnabled() == true) {
-        g->SetColor(theme.fg.normal);
-      } else {
-        g->SetColor(theme.fg.disable);
-      }
-
-      if (_index != i) {
-        if (_mode == jlistbox_selection_t::Single) {  
-          if (_selected_index == i) {  
-            g->SetColor(theme.fg.select);
-          }
-        } else if (_mode == jlistbox_selection_t::Multiple) {  
-          if (item->IsSelected() == true) {  
-            g->SetColor(theme.fg.select);
-          }
-        }
-      } else {
-        g->SetColor(theme.fg.focus);
-      }
-
-      std::string text = _items[i]->GetValue();
-
-      // if (_wrap == false) {
-        text = theme.font.primary->TruncateString(text, "...", bounds.size.x - offset);
-      // }
-
-      g->DrawString(text, {theme.padding.left + offset, theme.padding.top + (GetItemSize() + GetItemGap())*i, bounds.size.x - offset, GetItemSize()}, _items[i]->GetHorizontalAlign(), _items[i]->GetVerticalAlign());
-    }
-    
-    if (_items[i]->GetType() == jitem_type_t::Empty) {
-    } else if (_items[i]->GetType() == jitem_type_t::Text) {
-    } else if (_items[i]->GetType() == jitem_type_t::Image) {
-      if (_items[i]->GetImage() != nullptr) {
-        g->DrawImage(_items[i]->GetImage(), {theme.padding.left, theme.padding.top + (GetItemSize() + GetItemGap())*i, GetItemSize(), GetItemSize()});
-      }
-    }
-
-  }
+  delete event;
 }
 
-void ListBox::IncrementLines(int lines)
+const std::vector<SelectListener *> & ListBox::GetSelectListeners()
 {
-  if (_items.size() == 0) {
-    return;
-  }
-
-  int 
-    old_index = _index;
-
-  _index = _index - lines;
-
-  if (_index < 0) {
-    if (_loop == false) {
-      _index = 0;
-    } else {
-      _index = (int)(_items.size()-1);
-    }
-  }
-
-  jpoint_t<int> 
-    scroll_location = GetScrollLocation();
-  jpoint_t<int>
-    size = GetSize();
-  int 
-    scrollx = (IsScrollableX() == true)?scroll_location.x:0,
-    scrolly = (IsScrollableY() == true)?scroll_location.y:0;
-
-  if ((GetItemSize() + GetItemGap())*_index < scrolly) {
-    ScrollToVisibleArea({scrollx, (std::max)(0, (GetItemSize() + GetItemGap())*_index), size.x, size.y}, this);
-  } else if ((scrolly+size.y) < (GetItemSize() + GetItemGap())*(int)_index) {
-    ScrollToVisibleArea({scrollx, (GetItemSize() + GetItemGap())*(_index + 1) - size.y + 2*GetItemGap(), size.x, size.y}, this);
-  }
-
-  if (_index != old_index) {
-    Repaint();
-
-    DispatchSelectEvent(new SelectEvent(_items[_index], _index, jselectevent_type_t::Up)); 
-  }
-}
-
-void ListBox::DecrementLines(int lines)
-{
-  if (_items.size() == 0) { 
-    return;
-  }
-
-  int 
-    old_index = _index;
-
-  _index = _index + lines;
-
-  if (_index >= (int)_items.size()) {
-    if (_loop == false) {
-      if (_items.size() > 0) {
-        _index = _items.size()-1;
-      } else {
-        _index = 0;
-      }
-    } else {
-      _index = 0;
-    }
-  }
-
-  jpoint_t<int> 
-    scroll_location = GetScrollLocation();
-  jpoint_t<int>
-    size = GetSize();
-  int 
-    scrollx = (IsScrollableX() == true)?scroll_location.x:0,
-    scrolly = (IsScrollableY() == true)?scroll_location.y:0;
-
-  if ((scrolly + size.y) < (GetItemSize() + GetItemGap())*(int)(_index + 1)) {
-    ScrollToVisibleArea({scrollx, (GetItemSize() + GetItemGap())*(_index + 1)-size.y+2*GetItemGap(), size.x, size.y}, this);
-  } else if ((GetItemSize() + GetItemGap())*_index < scrolly) {
-    ScrollToVisibleArea({scrollx, (std::max)(0, (GetItemSize() + GetItemGap())*_index), size.x, size.y}, this);
-  }
-
-  if (_index != old_index) {
-    Repaint();
-
-    DispatchSelectEvent(new SelectEvent(_items[_index], _index, jselectevent_type_t::Down)); 
-  }
-}
-
-jpoint_t<int> ListBox::GetScrollDimension()
-{
-  jtheme_t
-    theme = GetTheme();
-  jrect_t<int> 
-    bounds = GetBounds();
-
-  bounds.size.y = _items.size()*(GetItemSize() + GetItemGap()) + theme.padding.top + theme.padding.bottom;
-
-  return bounds.size;
+  return _select_listeners;
 }
 
 }

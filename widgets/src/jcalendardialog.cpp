@@ -348,10 +348,6 @@ void CalendarDialog::ActionPerformed(ActionEvent *event)
 {
   Button *button = reinterpret_cast<Button *>(event->GetSource());
 
-  if (button->IsPressed() == false) {
-    return;
-  }
-
   // TODO:: send a generic action event com a data atual selectionada
   // TODO:: deixar o button como checked (toggle)
 

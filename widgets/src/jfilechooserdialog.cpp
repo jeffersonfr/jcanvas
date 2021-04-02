@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "jcanvas/widgets/jfilechooserdialog.h"
+#include "jcanvas/widgets/jbutton.h"
 
 #include "jmixin/jstring.h"
 
@@ -66,7 +67,7 @@ FileChooserDialog::~FileChooserDialog()
 std::string FileChooserDialog::GetPath()
 {
   std::filesystem::path
-    path {_directory + "/" + _list->GetCurrentItem()->GetValue()};
+    path {_directory + "/" + _list->GetSelectedItems()[0]->GetTextComponent()->GetText()};
 
   return path.string();
 }
@@ -89,9 +90,9 @@ bool FileChooserDialog::ShowFiles(std::string directory)
     return false;
   }
 
-  _list->RemoveItems();
-  _list->AddImageItem("..", _image_folder);
-  _list->SetCurrentIndex(0);
+  _list->RemoveAll();
+  _list->AddItem<Button>("..", _image_folder);
+  _list->GetItemByIndex(0)->RequestFocus();
 
   std::sort(files.begin(), files.end(), 
       [&](auto &a, auto &b) {
@@ -108,7 +109,7 @@ bool FileChooserDialog::ShowFiles(std::string directory)
       std::filesystem::path path(directory + "/" + item);
 
       if (std::filesystem::is_directory(std::filesystem::status(path)) == true) {
-        _list->AddImageItem(path.filename(), _image_folder); 
+        _list->AddItem<Button>(path.filename(), _image_folder); 
       }
     }
   }
@@ -119,7 +120,7 @@ bool FileChooserDialog::ShowFiles(std::string directory)
       
       if (std::filesystem::is_regular_file(std::filesystem::status(path)) == true) {
         if (_extensions.size() == 0) {
-          _list->AddImageItem(path.filename(), _image_file);
+          _list->AddItem<Button>(path.filename(), _image_file);
         } else {
           for (auto &ext : _extensions) {
             std::string path_ext = path.extension();
@@ -130,7 +131,7 @@ bool FileChooserDialog::ShowFiles(std::string directory)
             }
 
             if (ext == path_ext) {
-              _list->AddImageItem(path.filename(), _image_file);
+              _list->AddItem<Button>(path.filename(), _image_file);
             }
           }
         }
@@ -154,7 +155,7 @@ bool FileChooserDialog::ListFiles(std::string path, std::vector<std::string> *fi
 
 void FileChooserDialog::ItemSelected(SelectEvent *event)
 {
-  std::string item = _list->GetCurrentItem()->GetValue();
+  std::string item = _list->GetSelectedItems()[0]->GetTextComponent()->GetText();
   std::filesystem::path path(_directory + "/" + item);
 
   path = std::filesystem::canonical(path);
