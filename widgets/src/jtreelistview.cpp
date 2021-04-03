@@ -316,8 +316,8 @@ void TreeListView::Paint(Graphics *g)
   int
     w = size.x - GetHorizontalPadding();
   int 
-    scrollx = (IsScrollableX() == true)?scroll_location.x:0,
-    scrolly = (IsScrollableY() == true)?scroll_location.y:0;
+    scrollx = (IsScrollXVisible() == true)?scroll_location.x:0,
+    scrolly = (IsScrollYVisible() == true)?scroll_location.y:0;
   int offset = 4;
 
   for (std::vector<Item *>::iterator i=_items.begin(); i!=_items.end(); i++) {
@@ -403,8 +403,8 @@ void TreeListView::IncrementLines(int lines)
   jpoint_t 
     scroll_location = GetScrollLocation();
   int
-    scrollx = (IsScrollableX() == true)?scroll_location.x:0,
-    scrolly = (IsScrollableY() == true)?scroll_location.y:0;
+    scrollx = (IsScrollXVisible() == true)?scroll_location.x:0,
+    scrolly = (IsScrollYVisible() == true)?scroll_location.y:0;
   int 
     old_index = _index;
 
@@ -455,8 +455,8 @@ void TreeListView::DecrementLines(int lines)
   }
 
   jpoint_t scroll_location = GetScrollLocation();
-  int scrollx = (IsScrollableX() == true)?scroll_location.x:0,
-      scrolly = (IsScrollableY() == true)?scroll_location.y:0;
+  int scrollx = (IsScrollXVisible() == true)?scroll_location.x:0,
+      scrolly = (IsScrollYVisible() == true)?scroll_location.y:0;
 
   if ((scrolly+size.y) < (_item_size+_item_gap)*(int)(_index+1)) {
     ScrollToVisibleArea({scrollx, (_item_size+_item_gap)*(_index+1)-size.y+2*_item_gap, size.x, size.y}, this);

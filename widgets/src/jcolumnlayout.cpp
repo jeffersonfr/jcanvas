@@ -121,7 +121,7 @@ void ColumnLayout::DoLayout(Container *target)
   int
     maxx = size.x - insets.left - insets.right;
 
-  if (target->IsScrollableY() == true) {
+  if (target->IsScrollYVisible() == true) {
     jtheme_t theme = target->GetTheme();
 
     maxx = maxx - theme.scroll.size.x - theme.scroll.padding.x;

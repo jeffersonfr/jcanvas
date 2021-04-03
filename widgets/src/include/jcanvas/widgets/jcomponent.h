@@ -188,8 +188,6 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
     /** \brief */
     bool _is_scrollable_y;
     /** \brief */
-    bool _is_scroll_visible;
-    /** \brief */
     bool _is_smooth_scroll;
     /** \brief */
     bool _is_opaque;
@@ -433,7 +431,13 @@ class Component : public std::enable_shared_from_this<Component>, public KeyList
      * \brief
      *
      */
-    virtual bool IsScrollVisible();
+    virtual bool IsScrollXVisible();
+    
+    /**
+     * \brief
+     *
+     */
+    virtual bool IsScrollYVisible();
     
     /**
      * \brief

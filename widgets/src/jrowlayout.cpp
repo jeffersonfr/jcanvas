@@ -50,7 +50,7 @@ void RowLayout::DoLayout(Container *target)
   int
     maxy = size.y - insets.top - insets.bottom;
 
-  if (target->IsScrollableX() == true) {
+  if (target->IsScrollXVisible() == true) {
     jtheme_t theme = target->GetTheme();
 
     maxy = maxy - theme.scroll.size.y - theme.scroll.size.y;

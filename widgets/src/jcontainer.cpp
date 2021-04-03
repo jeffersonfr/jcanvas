@@ -259,8 +259,8 @@ jpoint_t<int> Container::GetScrollDimension()
 Component * Container::GetTargetComponent(Container *target, int x, int y, int *dx, int *dy)
 {
   jpoint_t slocation = GetScrollLocation();
-  int scrollx = (IsScrollableX() == true)?slocation.x:0,
-      scrolly = (IsScrollableY() == true)?slocation.y:0;
+  int scrollx = (IsScrollXVisible() == true)?slocation.x:0,
+      scrolly = (IsScrollYVisible() == true)?slocation.y:0;
 
   if ((void *)dx != nullptr) {
     *dx = x;
@@ -431,7 +431,7 @@ void Container::Paint(Graphics *g)
 
         c->Paint(g);
         
-        if (c->IsScrollVisible() == true) {
+        if (c->IsScrollable() == true) {
           c->PaintScrollbars(g);
         }
 
@@ -452,7 +452,7 @@ void Container::Paint(Graphics *g)
     }
   }
         
-  if (IsScrollVisible() == true) {
+  if (IsScrollable() == true) {
     PaintScrollbars(g);
   }
   
@@ -482,7 +482,7 @@ void Container::Paint(Graphics *g)
 
         c->Paint(g);
         
-        if (c->IsScrollVisible() == true) {
+        if (c->IsScrollable() == true) {
           c->PaintScrollbars(g);
         }
 

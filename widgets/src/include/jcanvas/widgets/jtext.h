@@ -311,9 +311,63 @@ class Paragraph : public Container {
      */
     virtual ~Paragraph();
 
+    /**
+     * \brief
+     *
+     */
+    const std::string & GetText();
+
+    /**
+     * \brief
+     *
+     */
+    void SetCurrentIndex(std::size_t index);
+
+    /**
+     * \brief
+     *
+     */
+    std::size_t GetCurrentIndex();
+
+    /**
+     * \brief
+     *
+     */
+    std::size_t GetCharsCount();
+
+    /**
+     * \brief
+     *
+     */
+    Component * GetCharByIndex(std::size_t index);
+
+    /**
+     * \brief
+     *
+     */
+    void SetCaretType(jcaret_type_t type);
+
+    /**
+     * \brief
+     *
+     */
+    jcaret_type_t GetCaretType();
+
+    /**
+     * \brief
+     *
+     */
+    virtual void Paint(Graphics *g) override;
+
   private:
     /** \brief */
+    TextComponent *mParent {nullptr};
+    /** \brief */
     std::string mText;
+    /** \brief */
+    std::size_t mCurrentIndex {0};
+    /** \brief */
+    jcaret_type_t mCaretType {jcaret_type_t::Underscore};
 
 };
 
@@ -329,8 +383,6 @@ class Text : public Container, public TextComponent {
     /** \brief */
     Paragraph *mParagraph {nullptr};
     /** \brief */
-    std::string mText;
-    /** \brief */
     std::size_t mMaxSize {0};
     /** \brief */
     std::size_t mCaretPosition {0};
@@ -342,14 +394,12 @@ class Text : public Container, public TextComponent {
     bool mEditable {true};
     /** \brief */
     bool mShiftPressed {false};
-    /** \brief */
-    jcaret_type_t mCaretType {jcaret_type_t::Underscore};
 
     /**
      * \brief
      *
      */
-    void Build();
+    void Build(const std::string &text);
 
 	public:
     /**
@@ -368,6 +418,24 @@ class Text : public Container, public TextComponent {
      * \brief
      *
      */
+    virtual void SetScrollableX(bool param);
+    
+    /**
+     * \brief
+     *
+     */
+    virtual void SetScrollableY(bool param);
+    
+    /**
+     * \brief
+     *
+     */
+    virtual void SetScrollable(bool param) override;
+
+    /**
+     * \brief
+     *
+     */
     void SetWrap(bool param);
 
     /**
@@ -381,12 +449,6 @@ class Text : public Container, public TextComponent {
      *
      */
     bool IsEnabled();
-
-    /**
-     * \brief
-     *
-     */
-    void Paint(Graphics *g);
 
     /**
      * \brief
@@ -434,7 +496,7 @@ class Text : public Container, public TextComponent {
      * \brief
      *
      */
-    std::string GetText();
+    const std::string & GetText();
 
     /**
      * \brief
@@ -507,6 +569,12 @@ class Text : public Container, public TextComponent {
      *
      */
     void SetCaretType(jcaret_type_t type);
+
+    /**
+     * \brief
+     *
+     */
+    jcaret_type_t GetCaretType();
 
     /**
      * \brief

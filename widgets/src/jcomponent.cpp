@@ -76,8 +76,6 @@ Component::Component(jrect_t<int> bounds):
   _is_scrollable_x = true;
   _is_scrollable_y = true;
 
-  _is_scroll_visible = true;
-
   _scroll_minor_increment = 8;
   _scroll_major_increment = 64;
 
@@ -173,7 +171,7 @@ void Component::ScrollToVisibleArea(jrect_t<int> rect, Component *coordinateSpac
     jpoint_t<int>
       nslocation = slocation;
 
-    if (IsScrollableX()) {
+    if (IsScrollXVisible()) {
       int 
         rightX = relativeX + rect.size.x; // - s.getPadding(LEFT) - s.getPadding(RIGHT);
 
@@ -190,7 +188,7 @@ void Component::ScrollToVisibleArea(jrect_t<int> rect, Component *coordinateSpac
       }
     }
 
-    if (IsScrollableY()) {
+    if (IsScrollYVisible()) {
       int 
         bottomY = relativeY + rect.size.y; // - s.getPadding(TOP) - s.getPadding(BOTTOM);
 
@@ -341,18 +339,12 @@ jcomponent_orientation_t Component::GetComponentOrientation()
 
 bool Component::IsScrollableX()
 {
-  jpoint_t<int>
-    size = GetSize();
-
-  return (_is_scrollable_x == true) && (GetScrollDimension().x > size.x);
+  return _is_scrollable_x;
 }
 
 bool Component::IsScrollableY()
 {
-  jpoint_t<int>
-    size = GetSize();
-
-  return (_is_scrollable_y == true) && (GetScrollDimension().y > size.y);
+  return _is_scrollable_y;
 }
 
 bool Component::IsScrollable()
@@ -360,9 +352,14 @@ bool Component::IsScrollable()
   return (IsScrollableX() == true || IsScrollableY() == true);
 }
 
-bool Component::IsScrollVisible()
+bool Component::IsScrollXVisible()
 {
-  return _is_scroll_visible;
+  return (IsScrollableX() == true) && (GetScrollDimension().x > GetSize().x);
+}
+
+bool Component::IsScrollYVisible()
+{
+  return (IsScrollableY() == true) && (GetScrollDimension().y > GetSize().y);
 }
 
 void Component::SetScrollableX(bool scrollable)
@@ -396,11 +393,11 @@ jpoint_t<int> Component::GetScrollLocation()
   jpoint_t<int>
     location = _scroll_location;
 
-  if (IsScrollableX() == false) {
+  if (IsScrollXVisible() == false) {
     location.x = 0;
   }
   
-  if (IsScrollableY() == false) {
+  if (IsScrollYVisible() == false) {
     location.y = 0;
   }
 
@@ -481,7 +478,7 @@ void Component::SetMajorScrollIncrement(int increment)
 
 void Component::PaintScrollbars(Graphics *g)
 {
-  if (IsScrollable() == false) {
+  if (IsScrollXVisible() == false and IsScrollYVisible() == false) {
     return;
   }
 
@@ -495,7 +492,7 @@ void Component::PaintScrollbars(Graphics *g)
   jpoint_t<int>
     scroll_size = size - theme.scroll.size;
 
-  if (IsScrollableX() == true) {
+  if (IsScrollXVisible() == true) {
     int 
       offset = (int)(scroll_size.x*slocation.x/sdimention.x);
     int 
@@ -507,7 +504,7 @@ void Component::PaintScrollbars(Graphics *g)
     g->FillRectangle({offset + 1, size.y - theme.scroll.size.y + 1, scroll_size.x - max_offset - 2, theme.scroll.size.y - 2});
   }
   
-  if (IsScrollableY() == true) {
+  if (IsScrollYVisible() == true) {
     int 
       offset = (int)(scroll_size.y*slocation.y/sdimention.y);
     int 
@@ -1029,7 +1026,7 @@ bool Component::MousePressed(MouseEvent *event)
     RequestFocus();
   }
 
-  if (IsScrollableX() && elocation.y > (size.y - theme.scroll.size.y)) {
+  if (IsScrollXVisible() && elocation.y > (size.y - theme.scroll.size.y)) {
     int 
       offset = (int)(scroll_size.x*slocation.x/sdimention.x);
     int 
@@ -1048,7 +1045,7 @@ bool Component::MousePressed(MouseEvent *event)
     return true;
   }
   
-  if (IsScrollableY() && elocation.x > (size.x - theme.scroll.size.x)) {
+  if (IsScrollYVisible() && elocation.x > (size.x - theme.scroll.size.x)) {
     int 
       offset = (int)(scroll_size.y*slocation.y/sdimention.y);
     int 

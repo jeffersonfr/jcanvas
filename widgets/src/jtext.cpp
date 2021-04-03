@@ -232,7 +232,7 @@ int TextLayout::MoveComponents(Container *target, int x, int y, int width, int h
   jinsets_t insets = target->GetInsets();
   int maxwidth = target->GetSize().x - (insets.left + insets.right + 2*_gap.x);
 
-  if (target->IsScrollableY() == true) {
+  if (target->IsScrollYVisible() == true) {
     jtheme_t theme = target->GetTheme();
 
     maxwidth = maxwidth - theme.scroll.size.x - theme.scroll.padding.x;
@@ -436,7 +436,7 @@ void TextLayout::DoLayout(Container *target)
 
   int maxwidth = size.x - (insets.left + insets.right + 2*_gap.x);
 
-  if (target->IsScrollableY() == true) {
+  if (target->IsScrollYVisible() == true) {
     jtheme_t theme = target->GetTheme();
 
     maxwidth = maxwidth - theme.scroll.size.x - theme.scroll.padding.x;
@@ -594,9 +594,10 @@ Word::~Word()
 
 Paragraph::Paragraph(TextComponent *parent, std::string text)
 {
+  mParent = parent;
   mText = text;
 
-  SetScrollable(false);
+  SetScrollable(true);
   SetBackground(nullptr);
   SetLayout(nullptr);
 
@@ -644,78 +645,85 @@ Paragraph::~Paragraph()
   }
 }
 
-Text::Text(std::string text)
+const std::string & Paragraph::GetText()
 {
-  SetInsets({4, 4, 4, 4});
-  SetLayout<BorderLayout>();
-  SetText(text);
-  SetBackground(nullptr);
-  SetBorder(std::make_shared<RectangleBorder>());
-  SetFocusable(true);
+  return mText;
 }
 
-Text::~Text()
+void Paragraph::SetCurrentIndex(std::size_t index)
 {
-  RemoveAll();
-
-  delete mParagraph;
-}
-
-void Text::Build()
-{
-  bool wrap = true;
-
-  if (mParagraph != nullptr) {
-    wrap = mParagraph->GetLayout<TextLayout>()->IsWrap();
+  mCurrentIndex = index;
+  
+  if (mCurrentIndex > GetCharsCount()) {
+    mCurrentIndex = GetCharsCount();
   }
 
-  auto paragraph = new Paragraph(this, mText);
-  auto layout = paragraph->GetLayout<TextLayout>();
+  Component *current = GetCharByIndex(mCurrentIndex);
 
-  layout->SetWrap(wrap);
+  if (current != nullptr) {
+    Container *container = dynamic_cast<Word *>(current->GetParent());
 
-  if (mParagraph != nullptr) {
-    layout->SetHorizontalAlign(mParagraph->GetLayout<TextLayout>()->GetHorizontalAlign());
-    layout->SetVerticalAlign(mParagraph->GetLayout<TextLayout>()->GetVerticalAlign());
+    if (container != nullptr) {
+      container->ScrollToVisibleArea();
+    } else {
+      current->ScrollToVisibleArea();
+    }
+  }
+}
+
+std::size_t Paragraph::GetCurrentIndex()
+{
+  return mCurrentIndex;
+}
+
+std::size_t Paragraph::GetCharsCount()
+{
+  return mText.size();
+}
+
+Component * Paragraph::GetCharByIndex(std::size_t index)
+{
+  for (auto cmp : GetComponents()) {
+    auto word = dynamic_cast<Word *>(cmp);
+
+    if (index == 0) {
+      if (word != nullptr) {
+        return word->GetComponents()[index];
+      } 
+
+      return cmp;
+    }
+
+    if (word != nullptr) {
+      if (index >= word->GetComponentCount()) {
+        index = index - word->GetComponentCount();
+      } else {
+        return word->GetComponents()[index];
+      }
+    } else {
+      index = index - 1;
+    }
   }
 
-  paragraph->SetScrollable(IsScrollable());
-
-  Add(paragraph, jborderlayout_align_t::Center);
-
-  Remove(mParagraph);
-
-  delete mParagraph;
-  mParagraph = paragraph;
-
-  mSelectionLength = 0;
-
-  SetCaretPosition(0);
-
-  SetPreferredSize({32, 32});
+  return nullptr;
 }
 
-void Text::SetWrap(bool param)
+void Paragraph::SetCaretType(jcaret_type_t type)
 {
-  mParagraph->GetLayout<TextLayout>()->SetWrap(param);
+  mCaretType = type;
 }
 
-bool Text::IsWrap()
+jcaret_type_t Paragraph::GetCaretType()
 {
-  return mParagraph->GetLayout<TextLayout>()->IsWrap();
+  return mCaretType;
 }
 
-bool Text::IsEnabled()
-{
-  return Container::IsEnabled();
-}
-
-void Text::Paint(Graphics *g)
+void Paragraph::Paint(Graphics *g)
 {
   Container::Paint(g);
 
-  if (IsEditable() == true and HasFocus()) {
-    Component *cmp = GetCurrentChar();
+  if (mParent->IsEditable() == true and dynamic_cast<Component *>(mParent)->HasFocus()) {
+    Component *cmp = GetCharByIndex(GetCurrentIndex());
 
     if (cmp == nullptr) {
       return;
@@ -747,6 +755,95 @@ void Text::Paint(Graphics *g)
       g->FillRectangle({rect.point.x, rect.point.y, width, rect.size.y});
     }
   }
+}
+
+Text::Text(std::string text)
+{
+  SetInsets({4, 4, 4, 4});
+  SetLayout<BorderLayout>();
+  SetText(text);
+  SetBackground(nullptr);
+  SetBorder(std::make_shared<RectangleBorder>());
+  SetFocusable(true);
+}
+
+Text::~Text()
+{
+  RemoveAll();
+
+  delete mParagraph;
+}
+
+void Text::Build(const std::string &text)
+{
+  bool wrap = true;
+
+  if (mParagraph != nullptr) {
+    wrap = mParagraph->GetLayout<TextLayout>()->IsWrap();
+  }
+
+  auto paragraph = new Paragraph(this, text);
+  auto layout = paragraph->GetLayout<TextLayout>();
+
+  layout->SetWrap(wrap);
+
+  if (mParagraph != nullptr) {
+    paragraph->SetCaretType(mParagraph->GetCaretType());
+
+    layout->SetHorizontalAlign(mParagraph->GetLayout<TextLayout>()->GetHorizontalAlign());
+    layout->SetVerticalAlign(mParagraph->GetLayout<TextLayout>()->GetVerticalAlign());
+  }
+  
+  paragraph->SetScrollable(IsScrollable());
+
+  Add(paragraph, jborderlayout_align_t::Center);
+
+  Remove(mParagraph);
+
+  delete mParagraph;
+  mParagraph = paragraph;
+
+  mSelectionLength = 0;
+
+  SetCaretPosition(0);
+
+  SetPreferredSize({32, 32});
+}
+
+void Text::SetScrollableX(bool param)
+{
+  Component::SetScrollableX(param);
+
+  mParagraph->SetScrollableX(param);
+}
+
+void Text::SetScrollableY(bool param)
+{
+  Component::SetScrollableY(param);
+
+  mParagraph->SetScrollableY(param);
+}
+    
+void Text::SetScrollable(bool param)
+{
+  Component::SetScrollable(param);
+
+  mParagraph->SetScrollable(param);
+}
+
+void Text::SetWrap(bool param)
+{
+  mParagraph->GetLayout<TextLayout>()->SetWrap(param);
+}
+
+bool Text::IsWrap()
+{
+  return mParagraph->GetLayout<TextLayout>()->IsWrap();
+}
+
+bool Text::IsEnabled()
+{
+  return Container::IsEnabled();
 }
 
 void Text::SetHorizontalAlign(jhorizontal_align_t align)
@@ -781,25 +878,23 @@ std::size_t Text::GetMaxSize()
 
 void Text::SetText(std::string text)
 {
-  mText = text;
-
   if (mMaxSize > 0) {
-    mText = mText.substr(0, std::min(mText.size(), mMaxSize));
+    text = GetText().substr(0, std::min(GetText().size(), mMaxSize));
   }
 
-  Build();
+  Build(text);
 
-  DispatchTextEvent(new TextEvent(this, mText));
+  DispatchTextEvent(new TextEvent(this, text));
 }
 
-std::string Text::GetText()
+const std::string & Text::GetText()
 {
-  return mText;
+  return mParagraph->GetText();
 }
 
 std::size_t Text::GetCharsCount()
 {
-  return mText.size();
+  return mParagraph->GetCharsCount();
 }
 
 void Text::SetCaretPosition(std::size_t pos)
@@ -817,28 +912,12 @@ void Text::SetCaretPosition(std::size_t pos)
 
   mSelectionLength = 0;
 
-  if (pos > GetCharsCount()) {
-    pos = GetCharsCount();
-  }
-
-  mCaretPosition = pos;
-
-  current = GetCurrentChar();
-
-  if (current != nullptr) {
-    Container *container = dynamic_cast<Word *>(current->GetParent());
-
-    if (container != nullptr) {
-      container->ScrollToVisibleArea();
-    } else {
-      current->ScrollToVisibleArea();
-    }
-  }
+  mParagraph->SetCurrentIndex(pos);
 }
 
 std::size_t Text::GetCaretPosition()
 {
-  return mCaretPosition;
+  return mParagraph->GetCurrentIndex();
 }
 
 void Text::NextChar()
@@ -855,11 +934,13 @@ void Text::Insert(std::string text)
 {
   std::size_t caretPosition = GetCaretPosition();
 
+  std::string currentText = GetText();
+
   if (mSelectionLength > 0) {
-    SetText(mText.replace(caretPosition, mSelectionLength, text));
+    SetText(currentText.replace(caretPosition, mSelectionLength, text));
     SetCaretPosition(caretPosition);
   } else {
-    SetText(mText.insert(caretPosition, text));
+    SetText(currentText.insert(caretPosition, text));
     SetCaretPosition(caretPosition + text.size());
   }
 }
@@ -914,7 +995,12 @@ int Text::GetEchoChar()
 
 void Text::SetCaretType(jcaret_type_t type)
 {
-  mCaretType = type;
+  mParagraph->SetCaretType(type);
+}
+
+jcaret_type_t Text::GetCaretType()
+{
+  return mParagraph->GetCaretType();
 }
 
 void Text::SetEditable(bool enable)
@@ -929,7 +1015,7 @@ bool Text::IsEditable()
 
 std::string Text::GetSelectedText()
 {
-  return mText.substr(mCaretPosition, mCaretPosition + mSelectionLength);
+  return mParagraph->GetText().substr(mCaretPosition, mCaretPosition + mSelectionLength);
 }
 
 void Text::Backspace()
@@ -964,34 +1050,12 @@ void Text::Delete()
   Insert("");
   SetCaretPosition(pos);
 
-  DispatchTextEvent(new TextEvent(this, mText));
+  DispatchTextEvent(new TextEvent(this, GetText()));
 }
 
 Component * Text::GetCharByIndex(std::size_t index)
 {
-  for (auto cmp : mParagraph->GetComponents()) {
-    auto word = dynamic_cast<Word *>(cmp);
-
-    if (index == 0) {
-      if (word != nullptr) {
-        return word->GetComponents()[index];
-      } 
-
-      return cmp;
-    }
-
-    if (word != nullptr) {
-      if (index >= word->GetComponentCount()) {
-        index = index - word->GetComponentCount();
-      } else {
-        return word->GetComponents()[index];
-      }
-    } else {
-      index = index - 1;
-    }
-  }
-
-  return nullptr;
+  return mParagraph->GetCharByIndex(index);
 }
 
 Component * Text::GetCurrentChar()
