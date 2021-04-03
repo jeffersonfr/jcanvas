@@ -31,7 +31,10 @@
   _display = new Text(_text);                               \
                                                             \
   if (_is_password == true) {                               \
-    _display->SetEchoChar('*');                             \
+    _display->OnKeyMap(                                     \
+        [](jkeyevent_symbol_t symbol) {                     \
+          return std::make_pair(true, jkeyevent_symbol_t::Star); \
+        });                                                 \
   }                                                         \
                                                             \
   _display->SetFocusable(false);                            \

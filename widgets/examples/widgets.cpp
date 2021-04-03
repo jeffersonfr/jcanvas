@@ -153,6 +153,8 @@ class App : public Frame, public ActionListener, public SelectListener {
 			*_imagebutton3;
 		Button
 			*_toggle;
+    std::string
+      _oldText;
 
 	public:
 		App():
@@ -508,7 +510,16 @@ class App : public Frame, public ActionListener, public SelectListener {
       } else if (event->GetSource() == _check1) {
         _textarea->SetWrap(_check1->IsPressed());
       } else if (event->GetSource() == _check2) {
-        _textarea->SetEchoChar((_check2->IsPressed()?'*':'\0'));
+        if (_check2->IsPressed() == false) {
+          _textarea->OnKeyMap(nullptr);
+        } else {
+          _textarea->OnKeyMap(
+              [](jkeyevent_symbol_t symbol) {
+                std::cout << "Key: " << static_cast<char>(KeyEvent::GetCodeFromSymbol(symbol)) << std::endl;
+
+                return std::make_pair(true, jkeyevent_symbol_t::Star);
+              });
+        }
       } else if (event->GetSource() == _check3) {
         _textarea->SetVisible(!_check3->IsPressed());
       } else if (event->GetSource() == _radio1) {

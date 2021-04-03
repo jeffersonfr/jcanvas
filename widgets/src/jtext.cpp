@@ -83,19 +83,13 @@ void GenericChar::Paint(jcanvas::Graphics *g)
   g->FillRectangle({0, 0, GetSize()});
 
   if (mChar >= 0x20) { // greater than space
-    char ch = mChar;
-
-    if (mParent->GetEchoChar() > 0) {
-      ch = mParent->GetEchoChar();
-    }
-
     g->SetColor(theme.fg.normal);
 
     if (IsSelected() == true) {
       g->SetColor(theme.fg.select);
     }
 
-    g->DrawString(std::string(1, ch), jpoint_t<int>{static_cast<int>(GetSize().x - mExtends.size.x)/2, 0});
+    g->DrawString(std::string(1, mChar), jpoint_t<int>{static_cast<int>(GetSize().x - mExtends.size.x)/2, 0});
   }
   
   g->SetCompositeFlags(jcomposite_flags_t::Src);
@@ -810,7 +804,7 @@ void Text::Build(const std::string &text)
   SetPreferredSize({32, 32});
 }
 
-std::function<bool(jkeyevent_symbol_t)> Text::OnKeyMap(std::function<bool(jkeyevent_symbol_t)> callback)
+std::function<Text::KeyMapResult(jkeyevent_symbol_t)> Text::OnKeyMap(std::function<Text::KeyMapResult(jkeyevent_symbol_t)> callback)
 {
   std::lock_guard<std::mutex> lock(mKeyMapMutex);
 
@@ -994,16 +988,6 @@ void Text::SelectAll()
   mSelectionLength = GetCharsCount();
 }
 
-void Text::SetEchoChar(int ch)
-{
-  mEchoChar = ch;
-}
-
-int Text::GetEchoChar()
-{
-  return mEchoChar;
-}
-
 void Text::SetCaretType(jcaret_type_t type)
 {
   mParagraph->SetCaretType(type);
@@ -1150,16 +1134,6 @@ bool Text::KeyPressed(KeyEvent *event)
     return false;
   }
 
-  {
-    std::lock_guard<std::mutex> lock(mKeyMapMutex);
-  
-    if (mKeyMap != nullptr) {
-      if (mKeyMap(event->GetSymbol()) == false) {
-        return false;
-      }
-    }
-  }
-
   if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {
     // TODO:: adjust the text selection to both sides
     if (mShiftPressed) {
@@ -1189,7 +1163,23 @@ bool Text::KeyPressed(KeyEvent *event)
   } else if (event->GetSymbol() == jkeyevent_symbol_t::Backspace) {
     Backspace();
   } else {
-    int code = KeyEvent::GetCodeFromSymbol(event->GetSymbol());
+    jkeyevent_symbol_t symbol = event->GetSymbol();
+
+    {
+      std::lock_guard<std::mutex> lock(mKeyMapMutex);
+    
+      if (mKeyMap != nullptr) {
+        KeyMapResult result = mKeyMap(event->GetSymbol());
+
+        if (result.first == false) {
+          return false;
+        }
+
+        symbol = result.second;
+      }
+    }
+
+    int code = KeyEvent::GetCodeFromSymbol(symbol);
 
     if (code > 0x00 and code < 0xff) {
       if (mShiftPressed == true) {

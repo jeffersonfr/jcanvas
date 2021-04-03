@@ -51,12 +51,6 @@ class TextComponent {
      * \brief
      *
      */
-    virtual int GetEchoChar() = 0;
-    
-    /**
-     * \brief
-     *
-     */
     virtual bool IsEditable() = 0;
     
     /**
@@ -373,39 +367,9 @@ class Paragraph : public Container {
 
 class Text : public Container, public TextComponent {
 
-  private:
-    /** \brief */
-    std::function<bool(jkeyevent_symbol_t)> mKeyMap;
-    /** \brief */
-    std::mutex mKeyMapMutex;
-    /** \brief */
-    std::vector<TextListener *> mTextListeners;
-    /** \brief */
-    std::mutex mTextListenersMutex;
-    /** \brief */
-    std::mutex mRemoveTextListenersMutex;
-    /** \brief */
-    Paragraph *mParagraph {nullptr};
-    /** \brief */
-    std::size_t mMaxSize {0};
-    /** \brief */
-    std::size_t mCaretPosition {0};
-    /** \brief */
-    std::size_t mSelectionLength {0};
-    /** \brief */
-    int mEchoChar {'\0'};
-    /** \brief */
-    bool mEditable {true};
-    /** \brief */
-    bool mShiftPressed {false};
-
-    /**
-     * \brief
-     *
-     */
-    void Build(const std::string &text);
-
 	public:
+    using KeyMapResult = std::pair<bool, jkeyevent_symbol_t>;
+
     /**
      * \brief
      *
@@ -422,7 +386,7 @@ class Text : public Container, public TextComponent {
      * \brief
      *
      */
-    virtual std::function<bool(jkeyevent_symbol_t)> OnKeyMap(std::function<bool(jkeyevent_symbol_t)> callback);
+    virtual std::function<KeyMapResult(jkeyevent_symbol_t)> OnKeyMap(std::function<KeyMapResult(jkeyevent_symbol_t)> callback);
 
     /**
      * \brief
@@ -566,18 +530,6 @@ class Text : public Container, public TextComponent {
      * \brief
      *
      */
-    void SetEchoChar(int ch);
-
-    /**
-     * \brief
-     *
-     */
-    int GetEchoChar();
-
-    /**
-     * \brief
-     *
-     */
     void SetCaretType(jcaret_type_t type);
 
     /**
@@ -663,6 +615,36 @@ class Text : public Container, public TextComponent {
      *
      */
     bool KeyPressed(KeyEvent *event) override;
+
+  private:
+    /** \brief */
+    std::function<KeyMapResult(jkeyevent_symbol_t)> mKeyMap;
+    /** \brief */
+    std::mutex mKeyMapMutex;
+    /** \brief */
+    std::vector<TextListener *> mTextListeners;
+    /** \brief */
+    std::mutex mTextListenersMutex;
+    /** \brief */
+    std::mutex mRemoveTextListenersMutex;
+    /** \brief */
+    Paragraph *mParagraph {nullptr};
+    /** \brief */
+    std::size_t mMaxSize {0};
+    /** \brief */
+    std::size_t mCaretPosition {0};
+    /** \brief */
+    std::size_t mSelectionLength {0};
+    /** \brief */
+    bool mEditable {true};
+    /** \brief */
+    bool mShiftPressed {false};
+
+    /**
+     * \brief
+     *
+     */
+    void Build(const std::string &text);
 
 };
 
