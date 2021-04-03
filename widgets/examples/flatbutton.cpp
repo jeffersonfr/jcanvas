@@ -44,7 +44,7 @@ class App : public Frame {
     {
       SetLayout<GridLayout>(4, 3);
 
-      for (int i=0; i<11; i++) {
+      for (int i=0; i<12; i++) {
         jrect_align_t align;
         std::string id;
 
@@ -76,9 +76,12 @@ class App : public Frame {
           align = jrect_align_t::SouthWest;
           id = "southwest";
         } else if (i == 9) {
+          align = jrect_align_t::Stretch;
+          id = "stretch";
+        } else if (i == 10) {
           align = jrect_align_t::Contains;
           id = "contains";
-        } else if (i == 10) {
+        } else if (i == 11) {
           align = jrect_align_t::Cover;
           id = "cover";
         }
@@ -92,7 +95,7 @@ class App : public Frame {
         container->Add(title, jborderlayout_align_t::North);
         container->Add(flatimage, jborderlayout_align_t::Center);
 
-        flatimage->SetAlign(static_cast<jrect_align_t>(i));
+        flatimage->SetAlign(align);
 
         Add(container);
       }
