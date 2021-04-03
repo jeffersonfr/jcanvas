@@ -810,6 +810,17 @@ void Text::Build(const std::string &text)
   SetPreferredSize({32, 32});
 }
 
+std::function<bool(jkeyevent_symbol_t)> Text::OnKeyMap(std::function<bool(jkeyevent_symbol_t)> callback)
+{
+  std::lock_guard<std::mutex> lock(mKeyMapMutex);
+
+  auto old = mKeyMap;
+
+  mKeyMap = callback;
+
+  return old;
+}
+
 void Text::SetScrollableX(bool param)
 {
   Component::SetScrollableX(param);
@@ -1139,10 +1150,14 @@ bool Text::KeyPressed(KeyEvent *event)
     return false;
   }
 
-  KeyMap *keymap = GetKeyMap();
-
-  if (keymap != nullptr && keymap->HasKey(event->GetSymbol()) == false) {
-    return false;
+  {
+    std::lock_guard<std::mutex> lock(mKeyMapMutex);
+  
+    if (mKeyMap != nullptr) {
+      if (mKeyMap(event->GetSymbol()) == false) {
+        return false;
+      }
+    }
   }
 
   if (event->GetSymbol() == jkeyevent_symbol_t::CursorLeft) {

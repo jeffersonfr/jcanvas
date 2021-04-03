@@ -375,6 +375,10 @@ class Text : public Container, public TextComponent {
 
   private:
     /** \brief */
+    std::function<bool(jkeyevent_symbol_t)> mKeyMap;
+    /** \brief */
+    std::mutex mKeyMapMutex;
+    /** \brief */
     std::vector<TextListener *> mTextListeners;
     /** \brief */
     std::mutex mTextListenersMutex;
@@ -413,6 +417,12 @@ class Text : public Container, public TextComponent {
      *
      */
     virtual ~Text();
+
+    /**
+     * \brief
+     *
+     */
+    virtual std::function<bool(jkeyevent_symbol_t)> OnKeyMap(std::function<bool(jkeyevent_symbol_t)> callback);
 
     /**
      * \brief

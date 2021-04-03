@@ -16,7 +16,6 @@ set(SRCS
   src/jindexedimage.cpp
   src/jkeyevent.cpp
   src/jkeylistener.cpp
-  src/jkeymap.cpp
   src/jlistener.cpp
   src/jmouseevent.cpp
   src/jmouselistener.cpp
