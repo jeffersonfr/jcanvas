@@ -36,7 +36,7 @@ class RoundedRectangleBorder : public RectangleBorder {
     /** \brief */
     jrect_corner_t _corners {static_cast<jrect_corner_t>(0xff)};
     /** \brief */
-    jpoint_t<int> _corner_size {16};
+    jpoint_t<int> _corner_size {16, 16};
 
   public:
     /**
