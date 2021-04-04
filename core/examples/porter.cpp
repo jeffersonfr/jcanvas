@@ -25,7 +25,7 @@ using namespace jcanvas;
 
 #define RECT_SIZE	64
 
-class PorterTeste : public Window {
+class PorterTeste : public Window, public KeyListener {
 
 	private:
     std::shared_ptr<Image> _img1;

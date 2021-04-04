@@ -66,6 +66,7 @@ Font::Font(std::string name, jfont_attributes_t attributes, int size, const jmat
       throw std::runtime_error("Cannot load a native font");
     }
 
+    // FT_Set_Pixel_Sizes(_face, size, size);
     FT_Select_Charmap(_face, ft_encoding_unicode);
 
     _font = cairo_ft_font_face_create_for_ft_face(_face, FT_LOAD_NO_AUTOHINT);

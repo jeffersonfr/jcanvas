@@ -788,7 +788,14 @@ void Raster::DrawString(std::string text, const jpoint_t<int> &v1)
     return;
   }
 
-  FT_Face face = _font->_face;
+  FT_Face face = cairo_ft_scaled_font_lock_face(_font->_scaled_font);
+  
+  if (face == nullptr) {
+    cairo_ft_scaled_font_unlock_face(_font->_scaled_font);
+
+    return;
+  }
+  
   FT_GlyphSlot slot = face->glyph;
   int space = 0;
 
@@ -813,6 +820,8 @@ void Raster::DrawString(std::string text, const jpoint_t<int> &v1)
       
     space = space + bitmap->width + 4;
   }
+    
+  cairo_ft_scaled_font_unlock_face(_font->_scaled_font);
 }
 
 }

@@ -490,7 +490,7 @@ class chip8 {
 
 };
 
-class Emulator : public Window {
+class Emulator : public Window, public KeyListener {
 
   private:
     std::shared_ptr<Image>

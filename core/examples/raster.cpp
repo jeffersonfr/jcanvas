@@ -27,8 +27,6 @@ using namespace jcanvas;
 
 class RasterTest : public Window {
 
-  private:
-
   public:
     RasterTest():
       Window({720, 480})
