@@ -136,7 +136,7 @@ void Graphics::SetClip(jrect_t<int> rect)
   _internal_clip = {clip.point.x, clip.point.y, clip.size.x, clip.size.y};
 
   cairo_reset_clip(_cairo_context);
-  cairo_rectangle(_cairo_context, clip.point.x, clip.point.y, clip.size.x + 1, clip.size.y + 1);
+  cairo_rectangle(_cairo_context, clip.point.x, clip.point.y, clip.size.x, clip.size.y);
   cairo_clip(_cairo_context);
 }
 
@@ -770,6 +770,10 @@ void Graphics::FillRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
 
 void Graphics::DrawRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corner_t corners)
 {
+  if (dx < 1 or dy < 1) {
+    throw std::invalid_argument("dx and dy must be greater than 1");
+  }
+
   if (rect.size.x <=0 || rect.size.y <= 0) {
     return;
   }
