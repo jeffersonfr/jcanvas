@@ -43,13 +43,13 @@ class CardLayout : public Layout {
 
   private:
     /** \brief */
-    std::vector<struct jcardlayout_map_t> vector;
+    std::vector<struct jcardlayout_map_t> _cards;
     /** \brief */
     int _hgap;
     /** \brief */
     int _vgap;
     /** \brief */
-    int _current_card;
+    int _index;
 
   public:
     /**

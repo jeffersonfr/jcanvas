@@ -652,6 +652,12 @@ void Container::Remove(Component *c)
     
     if (layout != nullptr) {
       layout->RemoveLayoutComponent(c);
+    } else {
+      std::shared_ptr<CardLayout> layout = std::dynamic_pointer_cast<CardLayout>(_layout);
+      
+      if (layout != nullptr) {
+        layout->RemoveLayoutComponent(c);
+      }
     }
   }
 

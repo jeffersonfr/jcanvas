@@ -27,7 +27,7 @@ CardLayout::CardLayout(int hgap, int vgap):
 {
   _hgap = hgap;
   _vgap = vgap;
-  _current_card = 0;
+  _index = 0;
 }
 
 CardLayout::~CardLayout()
@@ -57,12 +57,13 @@ void CardLayout::SetVGap(int vgap)
 void CardLayout::AddLayoutComponent(std::string name, Component *comp) 
 {
   // WARN:: sync
-  if (!vector.empty()) {
+  if (!_cards.empty()) {
     comp->SetVisible(false);
   }
-  for (int i=0; i < (int)vector.size(); i++) {
-    if (vector[i].name == name) {
-      vector[i].component = comp;
+  
+  for (int i=0; i < (int)_cards.size(); i++) {
+    if (_cards[i].name == name) {
+      _cards[i].component = comp;
 
       return;
     }
@@ -73,24 +74,24 @@ void CardLayout::AddLayoutComponent(std::string name, Component *comp)
   t.name = name;
   t.component = comp;
 
-  vector.push_back(t);
+  _cards.push_back(t);
 }
 
 void CardLayout::RemoveLayoutComponent(Component *comp) 
 {
   // WARN:: sync
-  for (int i = 0; i < (int)vector.size(); i++) {
-    if (vector[i].component == comp) { 
+  for (int i = 0; i < (int)_cards.size(); i++) {
+    if (_cards[i].component == comp) { 
       // if we remove current component we should show next one
       if (comp->IsVisible() && (comp->GetParent() != nullptr)) {
         Next(comp->GetParent());
       }
 
-      // WARN:: vector.remove(i);
+      // WARN:: _cards.remove(i);
 
       // correct currentCard if this is necessary
-      if (_current_card > i) {
-        _current_card--;
+      if (_index > i) {
+        _index--;
       }
 
       break;
@@ -128,7 +129,7 @@ void CardLayout::First(Container *parent)
     }
 
     if (ncomponents > 0) {
-      _current_card = 0;
+      _index = 0;
     
       parent->GetComponents()[0]->SetVisible(true);
       // WARN:: parent.validate();
@@ -147,8 +148,8 @@ void CardLayout::Next(Container *parent)
 
     if (comp->IsVisible()) {
       comp->SetVisible(false);
-      _current_card = (i + 1) % ncomponents;
-      comp = parent->GetComponents()[_current_card];
+      _index = (i + 1) % ncomponents;
+      comp = parent->GetComponents()[_index];
       comp->SetVisible(true);
       // WARN:: parent.validate();
       return;
@@ -170,8 +171,8 @@ void CardLayout::Previous(Container *parent)
 
       if (comp->IsVisible()) {
         comp->SetVisible(false);
-        _current_card = ((i > 0) ? i-1 : ncomponents-1);
-        comp = parent->GetComponents()[_current_card];
+        _index = ((i > 0) ? i-1 : ncomponents-1);
+        comp = parent->GetComponents()[_index];
         comp->SetVisible(true);
         // WARN:: parent.validate();
         return;
@@ -184,7 +185,7 @@ void CardLayout::Previous(Container *parent)
 void CardLayout::ShowDefaultComponent(Container *parent) 
 {
   if (parent->GetComponentCount() > 0) {
-    _current_card = 0;
+    _index = 0;
     parent->GetComponents()[0]->SetVisible(true);
     // WARN:: parent.validate();
   }
@@ -209,8 +210,8 @@ void CardLayout::Last(Container *parent)
     }
 
     if (ncomponents > 0) {
-      _current_card = ncomponents - 1;
-      parent->GetComponents()[_current_card]->SetVisible(true);
+      _index = ncomponents - 1;
+      parent->GetComponents()[_index]->SetVisible(true);
       // WARN:: parent.validate();
     }
 }
