@@ -50,12 +50,6 @@ void RowLayout::DoLayout(Container *target)
   int
     maxy = size.y - insets.top - insets.bottom;
 
-  if (target->IsScrollXVisible() == true) {
-    jtheme_t theme = target->GetTheme();
-
-    maxy = maxy - theme.scroll.size.y - theme.scroll.size.y;
-  }
-
   for (auto cmp : target->GetComponents()) {
     jpoint_t cpoint = cmp->GetLocation();
     jpoint_t<int> csize = cmp->GetPreferredSize();

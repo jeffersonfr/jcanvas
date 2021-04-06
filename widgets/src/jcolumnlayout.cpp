@@ -85,6 +85,19 @@ jpoint_t<int> ColumnLayout::GetPreferredLayoutSize(Container *target)
 
   jinsets_t insets = target->GetInsets();
   jpoint_t<int> t = {0, 0};
+  jpoint_t<int> d = {insets.left + insets.right, insets.top + insets.bottom};
+
+  if (target->IsScrollXVisible() == true) {
+    jtheme_t theme = target->GetTheme();
+
+    d.y = d.y + theme.scroll.size.y;
+  }
+
+  if (target->IsScrollYVisible() == true) {
+    jtheme_t theme = target->GetTheme();
+
+    d.x = d.x + theme.scroll.size.x;
+  }
 
   int members = target->GetComponentCount();
 
@@ -92,10 +105,10 @@ jpoint_t<int> ColumnLayout::GetPreferredLayoutSize(Container *target)
     Component *cmp = target->GetComponents()[i];
 
     jpoint_t point = cmp->GetLocation();
-    jpoint_t<int> size = cmp->GetSize();
+    jpoint_t<int> size = cmp->GetPreferredSize();
 
-    t.x = std::max(t.x, point.x+size.x+(insets.left+insets.right));
-    t.y = std::max(t.y, point.y+size.y+(insets.top+insets.bottom));
+    t.x = std::max(t.x, point.x + size.x + d.x);
+    t.y = std::max(t.y, point.y + size.y + d.y);
   }
 
   return t;
