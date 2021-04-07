@@ -38,7 +38,8 @@ void LoweredEtchedRectangleBorder::Paint(Component *cmp, Graphics *g)
   }
 
   const jpen_t oldPen = g->GetPen();
-  jpen_t pen = g->GetPen();
+  jpen_t pen = oldPen;
+
   jpoint_t<int> size = cmp->GetSize();
   jcolor_t<float> color = GetColor();
   std::size_t width = GetSize();
@@ -50,14 +51,14 @@ void LoweredEtchedRectangleBorder::Paint(Component *cmp, Graphics *g)
 
   g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
   
-  pen.size = -GetSize();
+  pen.size = GetSize();
 
   g->SetPen(pen);
 
   g->SetColor({dr - step, dg - step, db - step});
   g->DrawRectangle({0, 0, size});
     
-  pen.size = -GetSize()/2;
+  pen.size = GetSize()/2;
 
   g->SetPen(pen);
 

@@ -23,7 +23,7 @@
 
 using namespace jcanvas;
 
-class Primitives : public Window {
+class Primitives : public Window, public KeyListener {
 
 	private:
     int

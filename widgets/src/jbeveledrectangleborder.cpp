@@ -60,7 +60,7 @@ void BeveledRectangleBorder::Paint(Component *cmp, Graphics *g)
   const jpen_t oldPen = g->GetPen();
   jpen_t pen = g->GetPen();
 
-  pen.size = -GetSize();
+  pen.size = GetSize();
 
   g->SetPen(pen);
 

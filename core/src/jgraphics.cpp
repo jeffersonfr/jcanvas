@@ -537,33 +537,18 @@ void Graphics::DrawRectangle(jrect_t<int> rect)
   }
 
   struct jpoint_t<int> t = Translate();
+  jpen_t pen = GetPen();
 
-  int x = rect.point.x + t.x;
-  int y = rect.point.y + t.y;
-  int w = rect.size.x;
-  int h = rect.size.y;
-  int line_width = _pen.size;
-  
-  if (line_width > 0) {
-    line_width = line_width/2;
-
-    x = x - line_width;
-    y = y - line_width;
-    w = w + 2*line_width;
-    h = h + 2*line_width;
-  } else {
-    line_width = -line_width/2;
-
-    x = x + line_width;
-    y = y + line_width;
-    w = w - 2*line_width;
-    h = h - 2*line_width;
-  }
+  int offset = pen.size/2 + pen.size%2;
+  int x = rect.point.x + t.x + offset;
+  int y = rect.point.y + t.y + offset;
+  int w = rect.size.x - 2*offset;
+  int h = rect.size.y - 2*offset;
 
   cairo_save(_cairo_context);
   cairo_rectangle(_cairo_context, x, y, w, h);
   cairo_restore(_cairo_context);
-  cairo_set_line_width(_cairo_context, abs(_pen.size));
+  cairo_set_line_width(_cairo_context, abs(pen.size));
   cairo_stroke(_cairo_context);
 }
 
@@ -631,28 +616,13 @@ void Graphics::DrawBevelRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
   }
 
   struct jpoint_t<int> t = Translate();
+  jpen_t pen = GetPen();
 
-  int x = rect.point.x + t.x;
-  int y = rect.point.y + t.y;
-  int w = rect.size.x;
-  int h = rect.size.y;
-  int line_width = _pen.size;
-
-  if (line_width > 0) {
-    line_width = line_width/2;
-
-    x = x - line_width;
-    y = y - line_width;
-    w = w + 2*line_width;
-    h = h + 2*line_width;
-  } else {
-    line_width = -line_width/2;
-
-    x = x + line_width - 1;
-    y = y + line_width - 1;
-    w = w - 2*line_width + 2;
-    h = h - 2*line_width + 2;
-  }
+  int offset = pen.size/2 + pen.size%2;
+  int x = rect.point.x + t.x + offset;
+  int y = rect.point.y + t.y + offset;
+  int w = rect.size.x - 2*offset;
+  int h = rect.size.y - 2*offset;
 
   if (dx > rect.size.x/2) {
     dx = rect.size.x/2;
@@ -695,7 +665,7 @@ void Graphics::DrawBevelRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
 
   cairo_close_path(_cairo_context);
   cairo_restore(_cairo_context);
-  cairo_set_line_width(_cairo_context, abs(_pen.size));
+  cairo_set_line_width(_cairo_context, abs(pen.size));
   cairo_stroke(_cairo_context);
 }
 
@@ -779,28 +749,13 @@ void Graphics::DrawRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
   }
 
   struct jpoint_t<int> t = Translate();
+  jpen_t pen = GetPen();
 
-  int x = rect.point.x + t.x;
-  int y = rect.point.y + t.y;
-  int w = rect.size.x;
-  int h = rect.size.y;
-  int line_width = _pen.size;
-
-  if (line_width > 0) {
-    line_width = line_width/2;
-
-    x = x - line_width;
-    y = y - line_width;
-    w = w + 2*line_width;
-    h = h + 2*line_width;
-  } else {
-    line_width = -line_width/2;
-
-    x = x + line_width - 1;
-    y = y + line_width - 1;
-    w = w - 2*line_width + 2;
-    h = h - 2*line_width + 2;
-  }
+  int offset = pen.size/2 + pen.size%2;
+  int x = rect.point.x + t.x + offset;
+  int y = rect.point.y + t.y + offset;
+  int w = rect.size.x - 2*offset;
+  int h = rect.size.y - 2*offset;
 
   if (dx > rect.size.x/2) {
     dx = rect.size.x/2;
@@ -855,7 +810,7 @@ void Graphics::DrawRoundRectangle(jrect_t<int> rect, int dx, int dy, jrect_corne
 
   cairo_close_path(_cairo_context);
   cairo_restore(_cairo_context);
-  cairo_set_line_width(_cairo_context, abs(_pen.size));
+  cairo_set_line_width(_cairo_context, abs(pen.size));
   cairo_stroke(_cairo_context);
 }
 
@@ -898,22 +853,13 @@ void Graphics::FillChord(jpoint_t<int> point, jpoint_t<int> size, float arc0, fl
 void Graphics::DrawChord(jpoint_t<int> point, jpoint_t<int> size, float arc0, float arc1)
 {
   struct jpoint_t<int> t = Translate();
+  jpen_t pen = GetPen();
 
+  int offset = pen.size/2 + pen.size%2;
   int xc = point.x + t.x;
   int yc = point.y + t.y;
-  int rx = size.x;
-  int ry = size.y;
-  int line_width = _pen.size;
-
-  if (line_width > 0) {
-    rx = rx + line_width / 2;
-    ry = ry + line_width / 2;
-  } else {
-    line_width = -line_width;
-
-    rx = rx - line_width / 2;
-    ry = ry - line_width / 2;
-  }
+  int rx = size.x - offset;
+  int ry = size.y - offset;
 
   arc0 = M_2PI - arc0;
   arc1 = M_2PI - arc1;
@@ -924,7 +870,7 @@ void Graphics::DrawChord(jpoint_t<int> point, jpoint_t<int> size, float arc0, fl
   cairo_arc(_cairo_context, 0.0, 0.0, 1.0, arc1, arc0);
   cairo_close_path(_cairo_context);
   cairo_restore(_cairo_context);
-  cairo_set_line_width(_cairo_context, line_width);
+  cairo_set_line_width(_cairo_context, pen.size);
   cairo_stroke(_cairo_context);
 }
 
@@ -956,22 +902,13 @@ void Graphics::DrawArc(jpoint_t<int> point, jpoint_t<int> size, float arc0, floa
   }
 
   struct jpoint_t<int> t = Translate();
+  jpen_t pen = GetPen();
 
+  int offset = pen.size/2 + pen.size%2;
   int xc = point.x + t.x;
   int yc = point.y + t.y;
-  int rx = size.x;
-  int ry = size.y;
-  int line_width = _pen.size;
-
-  if (line_width > 0) {
-    rx = rx + line_width / 2;
-    ry = ry + line_width / 2;
-  } else {
-    line_width = -line_width;
-
-    rx = rx - line_width / 2;
-    ry = ry - line_width / 2;
-  }
+  int rx = size.x - offset;
+  int ry = size.y - offset;
 
   arc0 = M_2PI - arc0;
   arc1 = M_2PI - arc1;
@@ -981,7 +918,7 @@ void Graphics::DrawArc(jpoint_t<int> point, jpoint_t<int> size, float arc0, floa
   cairo_scale(_cairo_context, rx, ry);
   cairo_arc_negative(_cairo_context, 0.0, 0.0, 1.0, arc0, arc1);
   cairo_restore(_cairo_context);
-  cairo_set_line_width(_cairo_context, abs(_pen.size));
+  cairo_set_line_width(_cairo_context, abs(pen.size));
   cairo_stroke(_cairo_context);
 }
 
@@ -993,22 +930,13 @@ void Graphics::FillPie(jpoint_t<int> point, jpoint_t<int> size, float arc0, floa
 void Graphics::DrawPie(jpoint_t<int> point, jpoint_t<int> size, float arc0, float arc1)
 {
   struct jpoint_t<int> t = Translate();
+  jpen_t pen = GetPen();
 
+  int offset = pen.size/2 + pen.size%2;
   int xc = point.x + t.x;
   int yc = point.y + t.y;
-  int rx = size.x;
-  int ry = size.y;
-  int line_width = _pen.size;
-
-  if (line_width > 0) {
-    rx = rx + line_width / 2;
-    ry = ry + line_width / 2;
-  } else {
-    line_width = -line_width;
-
-    rx = rx - line_width / 2;
-    ry = ry - line_width / 2;
-  }
+  int rx = size.x - offset;
+  int ry = size.y - offset;
 
   arc0 = M_2PI - arc0;
   arc1 = M_2PI - arc1;
@@ -1020,7 +948,7 @@ void Graphics::DrawPie(jpoint_t<int> point, jpoint_t<int> size, float arc0, floa
   cairo_line_to(_cairo_context, 0, 0);
   cairo_close_path(_cairo_context);
   cairo_restore(_cairo_context);
-  cairo_set_line_width(_cairo_context, abs(_pen.size));
+  cairo_set_line_width(_cairo_context, abs(pen.size));
   cairo_stroke(_cairo_context);
 }
     

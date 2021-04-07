@@ -45,17 +45,22 @@ void SolidBackground::Paint(Component *cmp, Graphics *g)
   g->SetCompositeFlags(jcomposite_flags_t::SrcOver);
 
   if (static_cast<uint32_t>(theme.bg.normal) & 0xff000000) {
-    g->SetColor(theme.bg.normal);
-    g->FillRectangle({0, 0, size});
-
     std::shared_ptr<Border> border = cmp->GetBorder();
 
-    if (std::dynamic_pointer_cast<RectangleBorder>(border) != nullptr) {
-      g->FillRectangle({0, 0, size});
-    } else if (std::dynamic_pointer_cast<RoundedRectangleBorder>(border) != nullptr) {
-      g->FillRoundRectangle({0, 0, size});
+    g->SetColor(theme.bg.normal);
+
+    if (std::dynamic_pointer_cast<RoundedRectangleBorder>(border) != nullptr) {
+      std::shared_ptr<RoundedRectangleBorder> border = std::dynamic_pointer_cast<RoundedRectangleBorder>(border);
+      jpoint_t<int> border_size = border->GetCornerSize();
+
+      g->FillRoundRectangle({0, 0, size}, border_size.x, border_size.y, border->GetCorners());
     } else if (std::dynamic_pointer_cast<BeveledRectangleBorder>(border) != nullptr) {
-      g->FillBevelRectangle({0, 0, size});
+      std::shared_ptr<BeveledRectangleBorder> border = std::dynamic_pointer_cast<BeveledRectangleBorder>(border);
+      jpoint_t<int> border_size = border->GetCornerSize();
+
+      g->FillBevelRectangle({0, 0, size}, border_size.x, border_size.y, border->GetCorners());
+    } else if (std::dynamic_pointer_cast<RectangleBorder>(border) != nullptr) {
+      g->FillRectangle({0, 0, size});
     }
   }
 

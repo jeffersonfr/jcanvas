@@ -58,9 +58,9 @@ void RoundedRectangleBorder::Paint(Component *cmp, Graphics *g)
   }
 
   const jpen_t oldPen = g->GetPen();
-  jpen_t pen = g->GetPen();
+  jpen_t pen = oldPen;
 
-  pen.size = -GetSize();
+  pen.size = GetSize();
 
   g->SetPen(pen);
 
