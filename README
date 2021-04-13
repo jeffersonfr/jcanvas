@@ -1,0 +1,25 @@
+:Problems
+
+1. with ENABLE_MEDIA=libvlc the jmedia not working corretly with lua
+R: disable or remove the lua plugin "/usr/lib/vlc/plugins/lua/liblua_plugin.so"
+
+2. jsystem::Beep() not working
+R: enable pcspkr module as following:
+
+	sudo modprobe pcspkr
+	echo -e "\a"
+
+3. the module sox no compile and print a message asking for -fpic
+R: recompile libsox with the option "--enable-shared"
+
+4. the jmedia does not working correctly
+R: try to remove "bpg" from ENABLE_IMAGE and then "make all install"
+
+5. run gtk3 with root
+R: gksu ./app
+
+6. problems to link nanax
+R: add the following line to nana/CMakeFile.txt
+
+  set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+

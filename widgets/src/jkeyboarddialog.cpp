@@ -56,7 +56,7 @@
   for (int i=0; i<5; i++) {                                 \
     lines[i] = new Container();                             \
                                                             \
-    lines[i]->SetLayout<FlowLayout>(jflowlayout_align_t::Center, 4, 0); \
+    lines[i]->SetLayout<FlowLayout>(jflowlayout_align_t::Center, jpoint_t<int>{4, 0}); \
                                                             \
     lines[i]->SetScrollableX(false);                        \
     lines[i]->SetScrollableY(false);                        \

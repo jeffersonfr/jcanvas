@@ -33,11 +33,11 @@ class Particle {
     jpoint_t<float> vel;
     jpoint_t<float> acc;
 
-    Particle()
+    Particle(jpoint_t<int> size)
     {
       int v = 16;
 
-      pos = jpoint_t<long>{random()%720, 0};
+      pos = jpoint_t<long>{random()%size.x, 0};
       vel = jpoint_t<long>{random()%v - v/2, 0};
       acc = jpoint_t<float>{random()%2, random()%16 + 16};
     }
@@ -64,9 +64,7 @@ class Particle {
 
 class App : public Window {
 
-  std::vector<Particle> mParticles {
-    {}
-  };
+  std::vector<Particle> mParticles;
   std::shared_ptr<Image> _image = std::make_shared<BufferedImage>("images/tux-santa.png");
 
   public:
@@ -88,7 +86,8 @@ class App : public Window {
 
       std::chrono::steady_clock::time_point current = std::chrono::steady_clock::now();
 
-      mParticles.emplace_back();
+      mParticles.emplace_back(GetSize());
+
       for (auto &p : mParticles) {
         p.Update(current - now);
       }

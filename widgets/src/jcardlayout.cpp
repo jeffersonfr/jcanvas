@@ -22,11 +22,10 @@
 
 namespace jcanvas {
 
-CardLayout::CardLayout(int hgap, int vgap):
+CardLayout::CardLayout(jpoint_t<int> gap):
   Layout()
 {
-  _hgap = hgap;
-  _vgap = vgap;
+  _gap = gap;
   _index = 0;
 }
 
@@ -34,24 +33,14 @@ CardLayout::~CardLayout()
 {
 }
 
-int CardLayout::GetHGap() 
+jpoint_t<int> CardLayout::GetGap() 
 {
-  return _hgap;
+  return _gap;
 }
 
-void CardLayout::SetHGap(int hgap) 
+void CardLayout::SetGap(jpoint_t<int> gap) 
 {
-  _hgap = hgap;
-}
-
-int CardLayout::GetVGap() 
-{
-  return _vgap;
-}
-
-void CardLayout::SetVGap(int vgap) 
-{
-  _vgap = vgap;
+  _gap = gap;
 }
 
 void CardLayout::AddLayoutComponent(std::string name, Component *comp) 
@@ -237,7 +226,7 @@ jpoint_t<int> CardLayout::GetMinimumLayoutSize(Container *parent)
     }
   }
 
-  jpoint_t<int> t = {insets.left + insets.right + w + _hgap*2, insets.top + insets.bottom + h + _vgap*2};
+  jpoint_t<int> t = {insets.left + insets.right + w + _gap.x*2, insets.top + insets.bottom + h + _gap.y*2};
 
   return t;
 }
@@ -270,7 +259,7 @@ jpoint_t<int> CardLayout::GetPreferredLayoutSize(Container *parent)
     }
   }
 
-  jpoint_t<int> t = {insets.left + insets.right + w + _hgap*2, insets.top + insets.bottom + h + _vgap*2};
+  jpoint_t<int> t = {insets.left + insets.right + w + _gap.x*2, insets.top + insets.bottom + h + _gap.y*2};
 
   return t;
 }
@@ -289,10 +278,10 @@ void CardLayout::DoLayout(Container *parent)
     comp = parent->GetComponents()[i];
 
     comp->SetBounds(
-        _hgap + insets.left, 
-        _vgap + insets.top, 
-        size.x - (_hgap*2 + insets.left + insets.right), 
-        size.y - (_vgap*2 + insets.top + insets.bottom));
+        _gap.x + insets.left, 
+        _gap.y + insets.top, 
+        size.x - (_gap.x*2 + insets.left + insets.right), 
+        size.y - (_gap.y*2 + insets.top + insets.bottom));
 
     if (comp->IsVisible()) {
       currentFound = true;

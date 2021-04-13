@@ -565,7 +565,7 @@ Word::Word(TextComponent *parent, std::string word)
 {
   mWord = word;
 
-  SetLayout<FlowLayout>(jflowlayout_align_t::Left, 0, 0);
+  SetLayout<FlowLayout>(jflowlayout_align_t::Left, jpoint_t<int>{0, 0});
 
   for (auto ch : mWord) {
     Add(new GenericChar(parent, ch));

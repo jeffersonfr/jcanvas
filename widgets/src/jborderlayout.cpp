@@ -24,11 +24,10 @@
 
 namespace jcanvas {
 
-BorderLayout::BorderLayout(int hgap, int vgap):
+BorderLayout::BorderLayout(jpoint_t<int> gap):
   Layout()
 {
-  _hgap = hgap;
-  _vgap = vgap;
+  _gap = gap;
   
   north = nullptr;
   west = nullptr;
@@ -45,24 +44,14 @@ BorderLayout::~BorderLayout()
 {
 }
 
-int BorderLayout::GetHGap() 
+jpoint_t<int> BorderLayout::GetGap() 
 {
-  return _hgap;
+  return _gap;
 }
 
-void BorderLayout::SetHGap(int hgap) 
+void BorderLayout::SetGap(jpoint_t<int> gap) 
 {
-  _hgap = hgap;
-}
-
-int BorderLayout::GetVGap() 
-{
-  return _vgap;
-}
-
-void BorderLayout::SetVgap(int vgap) 
-{
-  _vgap = vgap;
+  _gap = gap;
 }
 
 jpoint_t<int> BorderLayout::GetMinimumLayoutSize(Container *parent)
@@ -74,13 +63,13 @@ jpoint_t<int> BorderLayout::GetMinimumLayoutSize(Container *parent)
       
   if ((cmp = GetChild(jborderlayout_align_t::East, ltr)) != nullptr) {
       jpoint_t<int> d = cmp->GetMinimumSize();
-      t.x += d.x + _hgap;
+      t.x += d.x + _gap.x;
       t.y = (std::max)(d.y, t.y);
   }
   
   if ((cmp = GetChild(jborderlayout_align_t::West, ltr)) != nullptr) {
       jpoint_t<int> d = cmp->GetMinimumSize();
-      t.x += d.x + _hgap;
+      t.x += d.x + _gap.x;
       t.y = (std::max)(d.y, t.y);
   }
   
@@ -93,13 +82,13 @@ jpoint_t<int> BorderLayout::GetMinimumLayoutSize(Container *parent)
   if ((cmp = GetChild(jborderlayout_align_t::North, ltr)) != nullptr) {
       jpoint_t<int> d = cmp->GetMinimumSize();
       t.x = (std::max)(d.x, t.x);
-      t.y += d.y + _vgap;
+      t.y += d.y + _gap.y;
   }
   
   if ((cmp = GetChild(jborderlayout_align_t::South, ltr)) != nullptr) {
       jpoint_t<int> d = cmp->GetMinimumSize();
       t.x = (std::max)(d.x, t.x);
-      t.y += d.y + _vgap;
+      t.y += d.y + _gap.y;
   }
 
   jinsets_t insets = parent->GetInsets();
@@ -126,13 +115,13 @@ jpoint_t<int> BorderLayout::GetPreferredLayoutSize(Container *parent)
       
   if ((cmp = GetChild(jborderlayout_align_t::East, ltr)) != nullptr) {
       jpoint_t<int> d = cmp->GetPreferredSize();
-      t.x += d.x + _hgap;
+      t.x += d.x + _gap.x;
       t.y = (std::max)(d.y, t.y);
   }
   
   if ((cmp = GetChild(jborderlayout_align_t::West, ltr)) != nullptr) {
       jpoint_t<int> d = cmp->GetPreferredSize();
-      t.x += d.x + _hgap;
+      t.x += d.x + _gap.x;
       t.y = (std::max)(d.y, t.y);
   }
   
@@ -145,13 +134,13 @@ jpoint_t<int> BorderLayout::GetPreferredLayoutSize(Container *parent)
   if ((cmp = GetChild(jborderlayout_align_t::North, ltr)) != nullptr) {
       jpoint_t<int> d = cmp->GetPreferredSize();
       t.x = (std::max)(d.x, t.x);
-      t.y += d.y + _vgap;
+      t.y += d.y + _gap.y;
   }
   
   if ((cmp = GetChild(jborderlayout_align_t::South, ltr)) != nullptr) {
       jpoint_t<int> d = cmp->GetPreferredSize();
       t.x = (std::max)(d.x, t.x);
-      t.y += d.y + _vgap;
+      t.y += d.y + _gap.y;
   }
 
   jinsets_t insets = parent->GetInsets();
@@ -185,7 +174,7 @@ void BorderLayout::DoLayout(Container *target)
     psize = c->GetPreferredSize();
 
     c->SetBounds(left, top, right - left, psize.y);
-    top += psize.y + _vgap;
+    top += psize.y + _gap.y;
   }
 
   if ((c = GetChild(jborderlayout_align_t::South, ltr)) != nullptr) {
@@ -194,7 +183,7 @@ void BorderLayout::DoLayout(Container *target)
     psize = c->GetPreferredSize();
 
     c->SetBounds(left, bottom - psize.y, right - left, psize.y);
-    bottom -= psize.y + _vgap;
+    bottom -= psize.y + _gap.y;
   }
 
   if ((c = GetChild(jborderlayout_align_t::East, ltr)) != nullptr) {
@@ -203,7 +192,7 @@ void BorderLayout::DoLayout(Container *target)
     psize = c->GetPreferredSize();
 
     c->SetBounds(right - psize.x, top, psize.x, bottom - top);
-    right -= psize.x + _hgap;
+    right -= psize.x + _gap.x;
   }
 
   if ((c = GetChild(jborderlayout_align_t::West, ltr)) != nullptr) {
@@ -212,7 +201,7 @@ void BorderLayout::DoLayout(Container *target)
     psize = c->GetPreferredSize();
 
     c->SetBounds(left, top, psize.x, bottom - top);
-    left += psize.x + _hgap;
+    left += psize.x + _gap.x;
   }
 
   if ((c = GetChild(jborderlayout_align_t::Center, ltr)) != nullptr) {

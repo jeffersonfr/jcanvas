@@ -45,9 +45,7 @@ class CardLayout : public Layout {
     /** \brief */
     std::vector<struct jcardlayout_map_t> _cards;
     /** \brief */
-    int _hgap;
-    /** \brief */
-    int _vgap;
+    jpoint_t<int> _gap;
     /** \brief */
     int _index;
 
@@ -56,7 +54,7 @@ class CardLayout : public Layout {
      * \brief
      *
      */
-    CardLayout(int hgap = 10, int vgap = 10);
+    CardLayout(jpoint_t<int> gap = jpoint_t<int>{8, 8});
     
     /**
      * \brief
@@ -68,25 +66,13 @@ class CardLayout : public Layout {
      * \brief
      *
      */
-    virtual int GetHGap();
+    virtual jpoint_t<int> GetGap();
     
     /**
      * \brief
      *
      */
-    virtual int GetVGap();
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void SetHGap(int hgap);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void SetVGap(int vgap);
+    virtual void SetGap(jpoint_t<int> gap);
 
     /**
      * \brief

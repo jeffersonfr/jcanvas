@@ -69,16 +69,14 @@ class BorderLayout : public Layout {
     /** \brief */
     Component *lastItem;
     /** \brief */
-    int _hgap;
-    /** \brief */
-    int _vgap;
+    jpoint_t<int> _gap;
 
   public:
     /**
      * \brief
      *
      */
-    BorderLayout(int hgap = 8, int vgap = 8);
+    BorderLayout(jpoint_t<int> gap = jpoint_t<int>{8, 8});
     
     /**
      * \brief
@@ -90,26 +88,14 @@ class BorderLayout : public Layout {
      * \brief
      *
      */
-    virtual int GetHGap();
+    virtual jpoint_t<int> GetGap();
     
     /**
      * \brief
      *
      */
-    virtual int GetVGap();
+    virtual void SetGap(jpoint_t<int> gap);
     
-    /**
-     * \brief
-     *
-     */
-    virtual void SetHGap(int hgap);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void SetVgap(int vgap);
-
     /**
      * \brief
      *

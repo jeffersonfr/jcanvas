@@ -50,9 +50,7 @@ class FlowLayout : public Layout {
     /** \brief */
     jflowlayout_align_t _newalign;
     /** \brief */
-    int _hgap;
-    /** \brief */
-    int _vgap;
+    jpoint_t<int> _gap;
     /** \brief */
     bool _align_on_baseline;
 
@@ -61,7 +59,7 @@ class FlowLayout : public Layout {
      * \brief
      *
      */
-    FlowLayout(jflowlayout_align_t align = jflowlayout_align_t::Center, int hgap = 8, int vgap = 8);
+    FlowLayout(jflowlayout_align_t align = jflowlayout_align_t::Center, jpoint_t<int> gap = jpoint_t<int>{8, 8});
     
     /**
      * \brief
@@ -79,13 +77,13 @@ class FlowLayout : public Layout {
      * \brief
      *
      */
-    virtual int GetHGap();
+    virtual jpoint_t<int> GetGap();
     
     /**
      * \brief
      *
      */
-    virtual int GetVGap();
+    virtual void SetGap(jpoint_t<int> gap);
     
     /**
      * \brief
@@ -98,18 +96,6 @@ class FlowLayout : public Layout {
      *
      */
     virtual void SetAlign(jflowlayout_align_t align);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void SetHGap(int hgap);
-    
-    /**
-     * \brief
-     *
-     */
-    virtual void SetVGap(int vgap);
     
     /**
      * \brief

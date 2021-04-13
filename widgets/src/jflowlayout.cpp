@@ -21,10 +21,9 @@
 
 namespace jcanvas {
 
-FlowLayout::FlowLayout(jflowlayout_align_t align, int hgap, int vgap)
+FlowLayout::FlowLayout(jflowlayout_align_t align, jpoint_t<int> gap)
 {
-  _hgap = hgap;
-  _vgap = vgap;
+  _gap = gap;
   _align_on_baseline = false;
 
   SetAlign(align);
@@ -39,14 +38,14 @@ jflowlayout_align_t FlowLayout::GetAlign()
   return _newalign;
 }
 
-int FlowLayout::GetHGap()
+jpoint_t<int> FlowLayout::GetGap()
 {
-  return _hgap;
+  return _gap;
 }
 
-int FlowLayout::GetVGap()
+void FlowLayout::SetGap(jpoint_t<int> gap)
 {
-  return _vgap;
+  _gap = gap;
 }
 
 bool FlowLayout::GetAlignOnBaseline()
@@ -69,16 +68,6 @@ void FlowLayout::SetAlign(jflowlayout_align_t align)
       _align = align;
       break;
   }
-}
-
-void FlowLayout::SetHGap(int hgap)
-{
-  _hgap = hgap;
-}
-
-void FlowLayout::SetVGap(int vgap)
-{
-  _vgap = vgap;
 }
 
 void FlowLayout::SetAlignOnBaseline(bool align_on_baseline)
@@ -152,7 +141,7 @@ int FlowLayout::MoveComponents(Container *target, int x, int y, int width, int h
         m->SetLocation(size2.x - x - size.x, cy);
       }
 
-      x += size.x + _hgap;
+      x += size.x + _gap.x;
     }
   }
 
@@ -183,7 +172,7 @@ jpoint_t<int> FlowLayout::GetMinimumLayoutSize(Container *target)
       if (firstVisibleComponent) {
         firstVisibleComponent = false;
       } else {
-        t.x += _hgap;
+        t.x += _gap.x;
       }
 
       t.x += d.x;
@@ -205,8 +194,8 @@ jpoint_t<int> FlowLayout::GetMinimumLayoutSize(Container *target)
 
   jinsets_t insets = target->GetInsets();
 
-  t.x += insets.left + insets.right + _hgap*2;
-  t.y += insets.top + insets.bottom + _vgap*2;
+  t.x += insets.left + insets.right + _gap.x*2;
+  t.y += insets.top + insets.bottom + _gap.y*2;
 
   return t;
 }
@@ -242,7 +231,7 @@ jpoint_t<int> FlowLayout::GetPreferredLayoutSize(Container *target)
       if (firstVisibleComponent) {
         firstVisibleComponent = false;
       } else {
-        t.x += _hgap;
+        t.x += _gap.x;
       }
 
       t.x += d.x;
@@ -263,8 +252,8 @@ jpoint_t<int> FlowLayout::GetPreferredLayoutSize(Container *target)
 
   jinsets_t insets = target->GetInsets();
 
-  t.x += insets.left + insets.right + _hgap*2;
-  t.y += insets.top + insets.bottom + _vgap*2;
+  t.x += insets.left + insets.right + _gap.x*2;
+  t.y += insets.top + insets.bottom + _gap.y*2;
   
   return t;
 }
@@ -277,11 +266,11 @@ void FlowLayout::DoLayout(Container *target)
   jpoint_t<int> 
     size = target->GetSize();
   int 
-    maxwidth = size.x - (insets.left + insets.right + _hgap*2),
+    maxwidth = size.x - (insets.left + insets.right + _gap.x*2),
     nmembers = target->GetComponentCount();
   int
     x = 0, 
-    y = insets.top + _vgap;
+    y = insets.top + _gap.y;
   int
     rowh = 0, 
     start = 0;
@@ -318,22 +307,22 @@ void FlowLayout::DoLayout(Container *target)
 
       if ((x == 0) || ((x + psize.x) <= maxwidth)) {
         if (x > 0) {
-          x += _hgap;
+          x += _gap.x;
         }
         x += psize.x;
 
         rowh = std::max(rowh, psize.y);
       } else {
-        rowh = MoveComponents(target, insets.left + _hgap, y, maxwidth - x, rowh, start, i, ltr, useBaseline, ascent, descent);
+        rowh = MoveComponents(target, insets.left + _gap.x, y, maxwidth - x, rowh, start, i, ltr, useBaseline, ascent, descent);
         x = psize.x;
-        y += _vgap + rowh;
+        y += _gap.y + rowh;
         rowh = psize.y;
         start = i;
       }
     }
   }
 
-  MoveComponents(target, insets.left + _hgap, y, maxwidth - x, rowh, start, nmembers, ltr, useBaseline, ascent, descent);
+  MoveComponents(target, insets.left + _gap.x, y, maxwidth - x, rowh, start, nmembers, ltr, useBaseline, ascent, descent);
 
   if (ascent != nullptr) {
     delete [] ascent;
