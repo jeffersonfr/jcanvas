@@ -1099,6 +1099,8 @@ bool Component::MouseMoved(MouseEvent *event)
     return true;
   }
 
+  jtheme_t
+    theme = GetTheme();
   jpoint_t<int> 
     slocation = GetScrollLocation(),
     elocation = event->GetLocation();
@@ -1107,13 +1109,13 @@ bool Component::MouseMoved(MouseEvent *event)
     sdimention = GetScrollDimension();
 
   if (_component_state == COMPONENT_STATE_VERTICAL_SCROLL) {
-    SetScrollLocation(slocation.x, slocation.y + (int)((elocation.y - _relative_mouse.y)*((double)sdimention.y/(double)size.y)));
+    SetScrollLocation(slocation.x, slocation.y + (int)((elocation.y - _relative_mouse.y)*((double)(sdimention.y)/(double)(size.y - theme.scroll.size.y))));
     
     _relative_mouse.y = elocation.y;
 
     return true;
   } else if (_component_state == COMPONENT_STATE_HORIZONTAL_SCROLL) {
-    SetScrollLocation(slocation.x + (int)((elocation.x - _relative_mouse.x)*((double)sdimention.x/(double)size.x)), slocation.y);
+    SetScrollLocation(slocation.x + (int)((elocation.x - _relative_mouse.x)*((double)sdimention.x/(double)(size.x - theme.scroll.size.x))), slocation.y);
 
     _relative_mouse.x = elocation.x;
 
