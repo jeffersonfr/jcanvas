@@ -636,7 +636,7 @@ class Graphics {
      * \brief
      *
      */
-    virtual void SetRGBArray(uint32_t *rgb, jrect_t<int> rect);
+    virtual void SetRGBArray(const uint32_t *rgb, jrect_t<int> rect);
   
     /**
      * \brief

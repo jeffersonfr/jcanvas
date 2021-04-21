@@ -1431,7 +1431,7 @@ void Graphics::SetRGB(uint32_t rgb, jpoint_t<int> point)
   }
 }
 
-void Graphics::SetRGBArray(uint32_t *rgb, jrect_t<int> rect) 
+void Graphics::SetRGBArray(const uint32_t *rgb, jrect_t<int> rect) 
 {
   if (rgb == nullptr) {
     throw std::invalid_argument("Pixel array is null");
