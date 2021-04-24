@@ -1066,7 +1066,7 @@ static int read_image_data(std::istream &stream, uint32_t width, uint32_t height
 
 	/* Get the image data */
 	int sz = bytes_per_line * height;
-	if (!stream.read((char *)&buf, sz)) {
+	if (!stream.read((char *)buf, sz)) {
     delete [] mask;
     delete [] mask_buf;
     delete [] image;
@@ -1110,7 +1110,7 @@ static int read_image_data(std::istream &stream, uint32_t width, uint32_t height
 
 	/* Read transparency mask */
 	sz = mask_bytes_per_line * height;
-	if (!stream.read((char *)&mask_buf, sz)) {
+	if (!stream.read((char *)mask_buf, sz)) {
 		return 0;
 	}
 
