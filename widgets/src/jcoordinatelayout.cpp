@@ -56,14 +56,14 @@ jcoordinatelayout_orientation_t CoordinateLayout::GetType()
   return _type;
 }
 
-jpoint_t<int> CoordinateLayout::GetMinimumLayoutSize(Container *parent)
+jpoint_t<int> CoordinateLayout::GetMinimumLayoutSize(Container *)
 {
   jpoint_t<int> t = {0, 0};
 
   return t;
 }
 
-jpoint_t<int> CoordinateLayout::GetMaximumLayoutSize(Container *parent)
+jpoint_t<int> CoordinateLayout::GetMaximumLayoutSize(Container *)
 {
   jpoint_t<int> t = {INT_MAX, INT_MAX};
 

@@ -70,7 +70,7 @@ class Mines : public Window, public KeyListener {
 		game_status_t game_state;
 
 	public:
-		Mines(int x, int y);
+		Mines();
 		virtual ~Mines();
 
 		void InitializeFlags();
@@ -82,7 +82,7 @@ class Mines : public Window, public KeyListener {
 
 };
 
-Mines::Mines(int x, int y):
+Mines::Mines():
 	Window(jpoint_t<int>{720, 480})
 {
 	srand((int)time(nullptr));
@@ -133,8 +133,8 @@ void Mines::Paint(Graphics *g)
 	int delta = 4;
   int left = 0;
   int top = 0;
-  int right = 0;
-  int bottom = 0;
+  // int right = 0;
+  // int bottom = 0;
 
 	g->SetFont(font);
 
@@ -406,7 +406,7 @@ int main(int argc, char **argv)
 {
 	Application::Init(argc, argv);
 
-	Mines app(100, 100);
+	Mines app;
 
   app.SetTitle("Mines");
 

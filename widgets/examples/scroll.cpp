@@ -35,7 +35,7 @@ class App : public Frame {
     Button button5 {"Button 5"};
 
 	public:
-		App(std::string title, int width, int height):
+		App(int width, int height):
 			Frame({width, height})
 		{
     }
@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 {
 	Application::Init(argc, argv);
 
-	auto app = std::make_shared<App>("Clip", 720, 480);
+	auto app = std::make_shared<App>(720, 480);
 
   app->Init();
 	app->SetTitle("Scroll");

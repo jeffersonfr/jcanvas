@@ -23,7 +23,7 @@
 
 namespace jcanvas {
 
-ToastDialog::ToastDialog(Container *parent, std::string msg, bool wrap):
+ToastDialog::ToastDialog(Container *parent, std::string msg, [[maybe_unused]] bool wrap):
   Dialog(parent, {0, 0, 560, 280})
 {
   _label.SetText(msg);

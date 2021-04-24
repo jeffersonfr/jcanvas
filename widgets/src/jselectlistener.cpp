@@ -30,11 +30,11 @@ SelectListener::~SelectListener()
 {
 }
 
-void SelectListener::ItemChanged(SelectEvent *event)
+void SelectListener::ItemChanged(SelectEvent *)
 {
 }
 
-void SelectListener::ItemSelected(SelectEvent *event)
+void SelectListener::ItemSelected(SelectEvent *)
 {
 }
 

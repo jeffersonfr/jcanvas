@@ -1057,16 +1057,21 @@ static int read_image_data(std::istream &stream, uint32_t width, uint32_t height
 	int	i, j, k;
 	/* cheesy, but I don't want to deal w/ malloc and this mess */
 	uint32_t	bytes_per_line = width * bpp /8;
-	uint8_t	buf[height*bytes_per_line];
-	uint8_t	image[width*height];
+	uint8_t	*buf = new uint8_t[height*bytes_per_line];
+	uint8_t	*image = new uint8_t[width*height];
 
-	uint32_t	mask_bytes_per_line = width * 1/8;
-	uint8_t	mask_buf[height*mask_bytes_per_line];
-	uint8_t	mask[width*height];
+	uint32_t mask_bytes_per_line = width * 1/8;
+	uint8_t	*mask_buf = new uint8_t[height*mask_bytes_per_line];
+	uint8_t	*mask = new uint8_t[width*height];
 
 	/* Get the image data */
 	int sz = bytes_per_line * height;
 	if (!stream.read((char *)&buf, sz)) {
+    delete [] mask;
+    delete [] mask_buf;
+    delete [] image;
+    delete [] buf;
+
 		return 0;
 	}
 
@@ -1075,17 +1080,22 @@ static int read_image_data(std::istream &stream, uint32_t width, uint32_t height
 		for (i=0; i<(int)(bytes_per_line*height); i++) {
 			image[i] = buf[i];
 		}
-	}
-	else if (bpp == 4) {
+	} else if (bpp == 4) {
 		for (i=0; i<(int)(bytes_per_line*height); i++) {
 			image[i*2]   = buf[i] >> 4;
 			image[i*2+1] = buf[i] << 4;
 			image[i*2+1] = image[i*2+1] >> 4;
 		}
-	}
-	else {
+	} else {
+    delete [] mask;
+    delete [] mask_buf;
+    delete [] image;
+    delete [] buf;
+
 		ico_error_code = icoFileFormatError;
+
     std::cerr << "Monochrome image" << std::endl;
+
 		return 0;
 	}
 
@@ -1113,6 +1123,7 @@ static int read_image_data(std::istream &stream, uint32_t width, uint32_t height
 			mask[i*8+j] = b;
 		}
 	}
+
 	/* Flip the mask over */
 	k=0;
 	for (i=0; i<(int)height; i++) {
@@ -1122,9 +1133,13 @@ static int read_image_data(std::istream &stream, uint32_t width, uint32_t height
 		}
 	}
 
+  delete [] mask;
+  delete [] mask_buf;
+  delete [] image;
+  delete [] buf;
+
 	return 1;
 }
-
 
 /*
    read_uint8_t()

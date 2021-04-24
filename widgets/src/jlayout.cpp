@@ -29,28 +29,28 @@ Layout::~Layout()
 {
 }
 
-jpoint_t<int> Layout::GetMinimumLayoutSize(Container *parent)
+jpoint_t<int> Layout::GetMinimumLayoutSize(Container *)
 {
   jpoint_t<int> t = {0, 0};
 
   return t;
 }
 
-jpoint_t<int> Layout::GetMaximumLayoutSize(Container *parent)
+jpoint_t<int> Layout::GetMaximumLayoutSize(Container *)
 {
   jpoint_t<int> t = {0, 0};
 
   return t;
 }
 
-jpoint_t<int> Layout::GetPreferredLayoutSize(Container *parent)
+jpoint_t<int> Layout::GetPreferredLayoutSize(Container *)
 {
   jpoint_t<int> t = {0, 0};
 
   return t;
 }
 
-void Layout::DoLayout(Container *c)
+void Layout::DoLayout(Container *)
 {
 }
 

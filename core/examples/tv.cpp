@@ -48,7 +48,7 @@ class TV : public Window {
       int
         length = size.x*size.y;
       uint32_t
-        buffer[length];
+        *buffer = new uint32_t[length];
       uint32_t 
         *ptr = buffer;
 
@@ -69,6 +69,8 @@ class TV : public Window {
       }
 
       g->SetRGBArray(buffer, {0, 0, size.x, size.y});
+
+      delete [] buffer;
 
       Repaint();
     }

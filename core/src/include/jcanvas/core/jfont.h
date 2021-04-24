@@ -94,7 +94,7 @@ class Font {
 
   public:
 #define StaticFont(Name, Size) \
-    inline static std::shared_ptr<Font> Name = std::make_shared<Font>("Tiresias", (jfont_attributes_t)(jfont_attributes_t::None), Size);
+    inline static std::shared_ptr<Font> Name = std::make_shared<Font>("Tiresias", (jfont_attributes_t)(jfont_attributes_t::None), Size)
     
     StaticFont(Tiny, 8);
     StaticFont(Small, 12);

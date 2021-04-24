@@ -74,9 +74,9 @@ class Main : public Window {
 
       jpoint_t
         size = GetSize();
-      int left = 0;
+      // int left = 0;
       int top = 0;
-      int right = 0;
+      // int right = 0;
       int bottom = 0;
 			int 
         items = 5,

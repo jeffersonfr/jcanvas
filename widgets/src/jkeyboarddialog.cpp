@@ -32,7 +32,7 @@
                                                             \
   if (_is_password == true) {                               \
     _display->OnKeyMap(                                     \
-        [](jkeyevent_symbol_t symbol) {                     \
+        [](jkeyevent_symbol_t) {                            \
           return std::make_pair(true, jkeyevent_symbol_t::Star); \
         });                                                 \
   }                                                         \
@@ -51,7 +51,7 @@
   container->SetScrollableX(false);                         \
   container->SetScrollableY(false);                         \
   container->SetSize({720, 5*(KEY_SIZE_1 + 4)});            \
-  container->SetPreferredSize({720, 5*(KEY_SIZE_1 + 4)});            \
+  container->SetPreferredSize({720, 5*(KEY_SIZE_1 + 4)});   \
                                                             \
   for (int i=0; i<5; i++) {                                 \
     lines[i] = new Container();                             \
@@ -88,7 +88,7 @@ class KeyButton : public Button {
 
 };
 
-KeyboardDialog::KeyboardDialog(Container *parent, jkeyboard_type_t type, bool text_visible, bool is_password):
+KeyboardDialog::KeyboardDialog(Container *parent, jkeyboard_type_t type, [[maybe_unused]] bool text_visible, bool is_password):
    Dialog("Keyboard", parent)
 {
   _display = NULL;

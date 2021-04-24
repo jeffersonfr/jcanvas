@@ -52,18 +52,18 @@ void LoweredGradientRectangleBorder::Paint(Component *cmp, Graphics *g)
   int 
     dr = color[2],
     dg = color[1],
-    db = color[0],
-    da = color[3];
+    db = color[0];
+    // da = color[3];
   float step = (0xff - std::max(std::max(dr, dg), db))/width;
 
-  for (int i=0; i<width && i<size.x && i<size.y; i++) {
+  for (int i=0; i<(int)width && i<size.x && i<size.y; i++) {
     g->SetColor({dr - step*(width - i), dg - step*(width - i), db - step*(width - i)});
     g->DrawLine({i, i}, {size.x - i, i}); //cima
     g->SetColor({dr + step*(width - i), dg + step*(width - i), db + step*(width - i)});
     g->DrawLine({i, size.y - i}, {size.x - i, size.y - i}); //baixo
   }
 
-  for (int i=0; i<width && i<size.x && i<size.y; i++) {
+  for (int i=0; i<(int)width && i<size.x && i<size.y; i++) {
     g->SetColor({dr - step*(width - i), dg - step*(width - i), db - step*(width - i)});
     g->DrawLine({i, i}, {i, size.y - i}); //esquerda
     g->SetColor({dr + step*(width - i), dg + step*(width - i), db + step*(width - i)});

@@ -108,8 +108,9 @@ struct GIFData {
 		 int oldcode;
      int clear_code;
 		 int end_code;
-     int table[2][(1<< MAX_LWZ_BITS)];
-     int stack[(1<<(MAX_LWZ_BITS))*2], *sp;
+     int table[2][(1 << MAX_LWZ_BITS)];
+     int stack[(1 << (MAX_LWZ_BITS))*2];
+     int *sp;
 
      std::istream &stream;
 };
@@ -684,6 +685,7 @@ cairo_surface_t * create_gif_surface_from_stream(std::istream &stream)
     .image_colorkey = 0x00000000,
     .Width = 0,
     .Height = 0,
+    .ColorMap = {},
     .BitPixel = 0,
     .ColorResolution = 0,
     .Background = 0,
@@ -693,6 +695,7 @@ cairo_surface_t * create_gif_surface_from_stream(std::istream &stream)
     .delayTime = 0,
     .inputFlag = 0,
     .disposal = 0,
+    .buf = {},
     .curbit = 0,
     .lastbit = 0,
     .done = 0,
@@ -706,6 +709,9 @@ cairo_surface_t * create_gif_surface_from_stream(std::istream &stream)
     .oldcode = 0,
     .clear_code = 0,
     .end_code = 0,
+    .table = {},
+    .stack = {},
+    .sp = nullptr,
     .stream = stream
   };
 

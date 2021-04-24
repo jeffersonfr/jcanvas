@@ -66,7 +66,7 @@ class Mandelbrot : public Window {
 		{
 		}
 
-		virtual bool KeyPressed(KeyEvent *event)
+		virtual bool KeyPressed(KeyEvent *)
 		{
 			center = START_POS;
 			zoom = START_ZOOM;

@@ -667,7 +667,7 @@ class Component {
       return _bounds.size;
     }
 
-    virtual void Paint(Graphics *g)
+    virtual void Paint(Graphics *)
     {
     }
 };
@@ -830,7 +830,7 @@ class RGBImageTest : public Picture {
 			jpoint_t
 				size = image->GetSize();
 			uint32_t 
-				rgb[size.x*size.y];
+				*rgb = new uint32_t[size.x*size.y];
 
 			image->GetRGBArray(rgb, {0, 0, size.x, size.y});
 
@@ -838,6 +838,8 @@ class RGBImageTest : public Picture {
 
       _image->GetGraphics()->SetCompositeFlags(jcomposite_flags_t::Src);
       _image->GetGraphics()->SetRGBArray(rgb, {0, 0, size.x, size.y});
+
+      delete [] rgb;
 
 			_title = "RGB Image";
 		}
@@ -900,7 +902,7 @@ class IndexedImageTest : public Picture {
 			int 
 				length = size.x*size.y;
 			uint32_t 
-				rgb[size.x*size.y],
+				*rgb = new uint32_t[size.x*size.y],
 				*pixels = new uint32_t[length];
 
 			image->GetRGBArray(rgb, {0, 0, size.x, size.y});
@@ -915,8 +917,8 @@ class IndexedImageTest : public Picture {
 
 			_image = IndexedImage::Pack(pixels, size);
 
+      delete [] rgb;
       delete [] pixels;
-      pixels = nullptr;
 
 			_title = "Indexed Image";
 		}

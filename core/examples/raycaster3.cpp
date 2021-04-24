@@ -140,7 +140,7 @@ void CombSort(int* order, double* dist, int amount)
 	}
 }
 
-int loadImage(std::vector<uint32_t>& out, unsigned long& w, unsigned long& h, const std::string& filename)
+int loadImage(std::vector<uint32_t> &out, [[maybe_unused]] unsigned long &w, [[maybe_unused]] unsigned long &h, const std::string &filename)
 {
   std::shared_ptr<Image> image = std::make_shared<BufferedImage>(filename);
 

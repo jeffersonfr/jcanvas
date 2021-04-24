@@ -153,7 +153,7 @@ bool FileChooserDialog::ListFiles(std::string path, std::vector<std::string> *fi
   return true;
 }
 
-void FileChooserDialog::ItemSelected(SelectEvent *event)
+void FileChooserDialog::ItemSelected(SelectEvent *)
 {
   std::string item = _list->GetSelectedItems()[0]->GetTextComponent()->GetText();
   std::filesystem::path path(_directory + "/" + item);

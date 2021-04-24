@@ -161,7 +161,7 @@ class Ball {
 				g->DrawImage(_image, jpoint_t<int>{(int)x-w/2, (int)y-h/2});
 		}
 
-		void Update(std::shared_ptr<Image> img, int x, int y, int width, int height) 
+		void Update(std::shared_ptr<Image> img, [[maybe_unused]] int x, [[maybe_unused]] int y, int width, int height) 
 		{
 			if (img == _image) {
 				w = width;

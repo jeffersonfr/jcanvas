@@ -39,7 +39,7 @@ class Particle {
 
       pos = jpoint_t<long>{random()%size.x, 0};
       vel = jpoint_t<long>{random()%v - v/2, 0};
-      acc = jpoint_t<float>{random()%2, random()%16 + 16};
+      acc = jpoint_t<float>{(float)(random()%2), (float)(random()%16 + 16)};
     }
 
     virtual ~Particle()

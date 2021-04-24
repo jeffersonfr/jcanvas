@@ -214,7 +214,7 @@ Container * Frame::GetFocusCycleRootAncestor()
   return this;
 }
 
-void Frame::Repaint(Component *cmp)
+void Frame::Repaint(Component *)
 {
   Window::Repaint();
 }
@@ -225,10 +225,6 @@ void Frame::PaintGlassPane(Graphics *g)
 
   jtheme_t
     theme = GetTheme();
-  jpoint_t
-    size = Window::GetSize();
-  jinsets_t
-    insets = GetInsets();
 
   g->SetFont(theme.font.primary);
   g->SetColor(jcolor_name_t::White);

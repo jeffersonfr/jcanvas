@@ -141,8 +141,8 @@ struct Shape {
 
 };
 
+jpoint3d_t<float> Shape::vWorldOffset = { 0.0f, 0.0f, 0.0f };
 float Shape::fWorldScale = 1.0f;
-jpoint3d_t<float> Shape::vWorldOffset = { 0,0 };
 
 struct Line : public Shape {
 	Line()
@@ -255,8 +255,8 @@ struct Curve : public Shape {
 class CAD : public Window, public KeyListener, public MouseListener {
 
 	private:
-    jpoint3d_t<float> vOffset = {0.0f, 0.0f};
-    jpoint3d_t<float> vStartPan = {0.0f, 0.0f};
+    jpoint3d_t<float> vOffset = {0.0f, 0.0f, 0.0f};
+    jpoint3d_t<float> vStartPan = {0.0f, 0.0f, 0.0f};
     float fScale = 10.0f;
     float fGrid = 1.0f;
 
@@ -275,7 +275,7 @@ class CAD : public Window, public KeyListener, public MouseListener {
     Shape* tempShape = nullptr;
     std::list<Shape*> listShapes;
     sNode *selectedNode = nullptr;
-    jpoint3d_t<float> vCursor = {0, 0};
+    jpoint3d_t<float> vCursor = {0.0f, 0.0f, 0.0f};
 
   public:
     CAD():
@@ -286,7 +286,7 @@ class CAD : public Window, public KeyListener, public MouseListener {
       jpoint_t<int>
         size = GetSize();
 
-		  vOffset = {(float)(-size.x/2)/fScale, (float)(-size.y/2)/fScale};
+		  vOffset = {(float)(-size.x/2)/fScale, (float)(-size.y/2)/fScale, 0.0f};
     }
 
     virtual ~CAD()
@@ -323,7 +323,7 @@ class CAD : public Window, public KeyListener, public MouseListener {
       jpoint_t<int>
         elocation = event->GetLocation();
 
-      jpoint3d_t<float> vMouse = {(float)elocation.x, (float)elocation.y};
+      jpoint3d_t<float> vMouse = {(float)elocation.x, (float)elocation.y, 0.0f};
 
       if (event->GetButton() == jmouseevent_button_t::Button2) {
         vStartPan = vMouse;
@@ -352,7 +352,7 @@ class CAD : public Window, public KeyListener, public MouseListener {
 			return true;
 		}
 
-		virtual bool MouseReleased(MouseEvent *event)
+		virtual bool MouseReleased(MouseEvent *)
 		{
       if (tempShape != nullptr) {
         selectedNode = tempShape->GetNextNode(vCursor);
@@ -371,7 +371,7 @@ class CAD : public Window, public KeyListener, public MouseListener {
       jpoint_t<int>
         elocation = event->GetLocation();
 
-      jpoint3d_t<float> vMouse = {(float)elocation.x, (float)elocation.y};
+      jpoint3d_t<float> vMouse = {(float)elocation.x, (float)elocation.y, 0.0f};
 
       if (jenum_t<jmouseevent_button_t>{event->GetButtons()}.And(jmouseevent_button_t::Button2)) {
         vOffset = {vOffset.x - (vMouse.x - vStartPan.x)/fScale, vOffset.y - (vMouse.y - vStartPan.y)/fScale, 0.0f};
@@ -436,18 +436,18 @@ class CAD : public Window, public KeyListener, public MouseListener {
 
       for (float x = vWorldTopLeft.x; x < vWorldBottomRight.x; x += fGrid) {
         for (float y = vWorldTopLeft.y; y < vWorldBottomRight.y; y += fGrid) {
-          WorldToScreen({ x, y }, sx, sy);
+          WorldToScreen({x, y, 0}, sx, sy);
           g->SetRGB(0xff00f000, {sx, sy});
         }
       }
 
       g->SetColor(jcolor_name_t::Gray);
 
-      WorldToScreen({ 0,vWorldTopLeft.y }, sx, sy);
-      WorldToScreen({ 0,vWorldBottomRight.y }, ex, ey);
+      WorldToScreen({0, vWorldTopLeft.y, 0}, sx, sy);
+      WorldToScreen({0, vWorldBottomRight.y, 0}, ex, ey);
       g->DrawLine({sx, sy}, {ex, ey});
-      WorldToScreen({ vWorldTopLeft.x,0 }, sx, sy);
-      WorldToScreen({ vWorldBottomRight.x,0 }, ex, ey);
+      WorldToScreen({vWorldTopLeft.x ,0, 0}, sx, sy);
+      WorldToScreen({vWorldBottomRight.x, 0, 0}, ex, ey);
       g->DrawLine({sx, sy}, {ex, ey});
 
       Shape::fWorldScale = fScale;

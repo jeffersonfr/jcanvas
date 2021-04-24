@@ -200,7 +200,7 @@ jpoint_t<int> FlowLayout::GetMinimumLayoutSize(Container *target)
   return t;
 }
 
-jpoint_t<int> FlowLayout::GetMaximumLayoutSize(Container *target)
+jpoint_t<int> FlowLayout::GetMaximumLayoutSize(Container *)
 {
   jpoint_t<int> t = {INT_MAX, INT_MAX};
 

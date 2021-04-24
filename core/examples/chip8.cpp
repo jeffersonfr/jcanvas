@@ -415,7 +415,8 @@ class chip8 {
       }
 
       // Copy the file into the buffer
-      size_t result = fread (buffer, 1, lSize, pFile);
+      long int result = fread (buffer, 1, lSize, pFile);
+
       if (result != lSize) {
         fputs("Reading error",stderr); 
         return false;

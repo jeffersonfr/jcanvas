@@ -297,7 +297,7 @@ bool Component::IsOpaque()
   return _is_opaque;
 }
 
-int Component::GetBaseline(int width, int height)
+int Component::GetBaseline(int, int)
 {
   return -1;
 }
@@ -522,7 +522,7 @@ void Component::PaintScrollbars(Graphics *g)
   g->FillRectangle({size.x - theme.scroll.size.x + 1, size.y - theme.scroll.size.y + 1, theme.scroll.size.x - 2, theme.scroll.size.y - 2});
 }
 
-void Component::Paint(Graphics *g)
+void Component::Paint(Graphics *)
 {
 }
 
@@ -873,8 +873,8 @@ jpoint_t<int> Component::GetAbsoluteLocation()
     return location;
   }
 
-  jpoint_t<int>
-    slocation = GetScrollLocation();
+  // jpoint_t<int>
+    // slocation = GetScrollLocation();
 
   location = _location;
 
@@ -961,7 +961,7 @@ int Component::GetGradientLevel()
   return _gradient_level;
 }
 
-bool Component::KeyPressed(KeyEvent *event)
+bool Component::KeyPressed(KeyEvent *)
 {
   if (IsVisible() == false) {
     return false;
@@ -974,7 +974,7 @@ bool Component::KeyPressed(KeyEvent *event)
   return false;
 }
 
-bool Component::KeyReleased(KeyEvent *event)
+bool Component::KeyReleased(KeyEvent *)
 {
   if (IsVisible() == false) {
     return false;
@@ -987,7 +987,7 @@ bool Component::KeyReleased(KeyEvent *event)
   return false;
 }
 
-bool Component::KeyTyped(KeyEvent *event)
+bool Component::KeyTyped(KeyEvent *)
 {
   if (IsVisible() == false) {
     return false;
@@ -1067,7 +1067,7 @@ bool Component::MousePressed(MouseEvent *event)
   return false;
 }
 
-bool Component::MouseReleased(MouseEvent *event)
+bool Component::MouseReleased(MouseEvent *)
 {
   if (IsVisible() == false) {
     return false;
@@ -1125,7 +1125,7 @@ bool Component::MouseMoved(MouseEvent *event)
   return false;
 }
 
-bool Component::MouseWheel(MouseEvent *event)
+bool Component::MouseWheel(MouseEvent *)
 {
   if (IsVisible() == false) {
     return false;

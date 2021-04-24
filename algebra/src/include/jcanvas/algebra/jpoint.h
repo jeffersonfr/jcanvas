@@ -46,7 +46,7 @@ template<typename T, typename = typename std::enable_if<std::is_arithmetic<T>::v
       {
         return {
           .x = (U)x,
-            .y = (U)y
+          .y = (U)y
         };
       }
 

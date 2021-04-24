@@ -392,11 +392,11 @@ class StaticComponent : public Component {
     {
     }
 
-    virtual void Update(float tick) override
+    virtual void Update(float) override
     {
     }
     
-    virtual void Render(Graphics *g) override
+    virtual void Render(Graphics *) override
     {
     }
 
@@ -424,7 +424,7 @@ class TransformComponent : public StaticComponent {
       pos = pos + vel*tick;
     }
     
-    virtual void Render(Graphics *g) override
+    virtual void Render(Graphics *) override
     {
     }
 
@@ -462,7 +462,7 @@ class ProjectileComponent : public TransformComponent {
       }
     }
     
-    virtual void Render(Graphics *g) override
+    virtual void Render(Graphics *) override
     {
     }
 
@@ -491,7 +491,7 @@ class SpriteComponent : public Component {
     {
     }
 
-    virtual void Update(float tick) override
+    virtual void Update(float) override
     {
       StaticComponent
         *transform = owner->GetComponent<StaticComponent>();
@@ -718,7 +718,7 @@ class CollisionComponent : public Component {
     {
     }
 
-    virtual void Update(float tick) override
+    virtual void Update(float) override
     {
       if (owner->Exists<SpriteComponent>()) {
         SpriteComponent 
@@ -777,7 +777,7 @@ class TextComponent : public Component {
     {
     }
 
-    virtual void Update(float tick) override
+    virtual void Update(float) override
     {
     }
     
@@ -841,7 +841,7 @@ class TimeoutComponent : public Component {
       }
     }
     
-    virtual void Render(Graphics *g) override
+    virtual void Render(Graphics *) override
     {
     }
 
@@ -1122,7 +1122,7 @@ class TrembleComponent : public Component {
       count = count + tick;
     }
     
-    virtual void Render(Graphics *g) override
+    virtual void Render(Graphics *) override
     {
     }
 
@@ -1149,7 +1149,7 @@ class BoundedComponent : public Component {
     {
     }
 
-    virtual void Update(float tick) override
+    virtual void Update(float) override
     {
       StaticComponent 
 				*transform = owner->GetComponent<StaticComponent>();
@@ -1173,7 +1173,7 @@ class BoundedComponent : public Component {
 			}
     }
     
-    virtual void Render(Graphics *g) override
+    virtual void Render(Graphics *) override
     {
     }
 
@@ -1209,7 +1209,7 @@ class RadarComponent : public Component {
 
     virtual void Update(float tick) override
     {
-      _angle = _angle + 0.05f;
+      _angle = _angle + 0.05f*tick;
     }
     
     virtual void Render(Graphics *g) override
@@ -1369,7 +1369,7 @@ class KeyboardComponent : public Component {
       _counter = _counter + tick;
     }
     
-    virtual void Render(Graphics *g) override
+    virtual void Render(Graphics *) override
     {
     }
 
@@ -1755,11 +1755,11 @@ class Game : public Window, public KeyListener {
 
     void LoadLevel(int level)
     {
+      std::cout << "Load Level:[" << level << "]" << std::endl;
+
       _entityManager.RemoveAllEntities();
 
       LoadMap("assets/maps/level-00.map", 2.0f);
-
-      // std::cout << _entityManager << std::endl;
     }
 
 };

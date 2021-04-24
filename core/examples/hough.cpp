@@ -194,7 +194,7 @@ class Test : public Window, public KeyListener {
 			size = _image->GetSize();
 
 			uint32_t 
-        data[size.x*size.y];
+        *data = new uint32_t[size.x*size.y];
       
 			_image->GetGraphics()->GetRGBArray(data, {0, 0, size.x, size.y});
 
@@ -220,9 +220,11 @@ class Test : public Window, public KeyListener {
 				}
 			}
 
+      delete [] data;
+
 			// INFO:: converto to edges
 			uint8_t 
-        edges[size.x*size.y];
+        *edges = new uint8_t[size.x*size.y];
 			int 
         k, 
         offset, 
@@ -264,10 +266,10 @@ class Test : public Window, public KeyListener {
 			}
 
 			// INFO:: convert to rgba
-			uint32_t 
-        gray32[size.x*size.y];
 			int 
         count = size.x*size.y;
+			uint32_t 
+        *gray32 = new uint32_t[count];
 
 			for (int i=0; i<count; i++) {
 				gray32[i] = 0xff000000 | (edges[i] << 0x10) | (edges[i] << 0x08) | (edges[i] << 0x00);
@@ -276,10 +278,13 @@ class Test : public Window, public KeyListener {
       _hough->GetGraphics()->SetCompositeFlags(jcomposite_flags_t::Src);
       _hough->GetGraphics()->SetRGBArray(gray32, {0, 0, size.x, size.y});
 
+      delete [] gray32;
 			delete [] gray;
 
 			// INFO:: initializing hough transform
 			_transform.Transform(edges, size.x, size.y);
+
+      delete [] edges;
 		}
 
 		virtual void Paint(Graphics *g) 

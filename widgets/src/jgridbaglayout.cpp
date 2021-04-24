@@ -67,7 +67,7 @@ jpoint_t<int> GridBagLayout::GetMinimumLayoutSize(Container *parent)
   return result;
 }
 
-jpoint_t<int> GridBagLayout::GetMaximumLayoutSize(Container *parent)
+jpoint_t<int> GridBagLayout::GetMaximumLayoutSize(Container *)
 {
   jpoint_t<int> t = {INT_MAX, INT_MAX};
 
@@ -1161,7 +1161,7 @@ void GridBagLayout::ArrangeGrid(Container *parent)
   GridBagConstraints *constraints = nullptr;
   GridBagLayoutInfo *info = nullptr;
   jinsets_t insets = parent->GetInsets();
-  jrect_t<int> r = {0, 0};
+  jrect_t<int> r {0, 0, 0, 0};
   jpoint_t<int> d;
   double weight;
   int compindex;

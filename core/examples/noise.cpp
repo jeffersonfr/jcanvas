@@ -178,7 +178,7 @@ class NeuralNet {
 			return v; // 1/(1+exp(-v));
 		}
 
-		double DFunction(double v)
+		double DFunction(double)
 		{
 			return 1; // Function(v)*(1-Function(v));
 		}
@@ -305,7 +305,7 @@ class Noise : public Window {
         tinput,
         toutput;
 
-      int training_set = 5000;
+      const int training_set = 5000;
       Signal 
         *sinput[training_set],
         *soutput[training_set];

@@ -2140,11 +2140,11 @@ void Graphics::SetMask(std::shared_ptr<Image> image)
   cairo_mask_surface(_cairo_context, image->GetGraphics()->GetCairoSurface(), 0, 0);
 }
 
-void Graphics::SetMatrix(float *matrix)
+void Graphics::SetMatrix(float *)
 {
 }
 
-void Graphics::GetMatrix(float **matrix)
+void Graphics::GetMatrix(float **)
 {
 }
 

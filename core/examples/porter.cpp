@@ -68,11 +68,13 @@ class PorterTeste : public Window, public KeyListener {
 				ig->DrawImage(_img2, jpoint_t<int>{2*RECT_SIZE/2, 2*RECT_SIZE/2});
 			} else {
 				jpoint_t size = _img2->GetSize();
-				uint32_t buffer[size.x*size.y];
+				uint32_t *buffer = new uint32_t[size.x*size.y];
 
 				_img2->GetGraphics()->GetRGBArray(buffer, {0, 0, size.x, size.y});
 
 				ig->SetRGBArray(buffer, {2*RECT_SIZE/2, 2*RECT_SIZE/2, size.x, size.y});
+
+        delete [] buffer;
 			}
 
 			g->SetCompositeFlags(jcomposite_flags_t::SrcOver);

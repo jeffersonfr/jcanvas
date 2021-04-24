@@ -275,7 +275,7 @@ class Layouts : public Frame, public ActionListener {
 
 		virtual void ActionPerformed(ActionEvent *event)
 		{
-      Button *button = reinterpret_cast<Button *>(event->GetSource());
+      // Button *button = reinterpret_cast<Button *>(event->GetSource());
 
       std::shared_ptr<CardLayout> card = std::dynamic_pointer_cast<CardLayout>(_cardcontainer->GetLayout());
 

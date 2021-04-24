@@ -30,7 +30,7 @@ AdjustmentListener::~AdjustmentListener()
 {
 }
 
-void AdjustmentListener::AdjustmentValueChanged(AdjustmentEvent *event)
+void AdjustmentListener::AdjustmentValueChanged(AdjustmentEvent *)
 {
 }
 

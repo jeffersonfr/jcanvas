@@ -83,7 +83,7 @@ class GraphicsTeste : public Window, public MouseListener {
 			return true;
 		}
 
-		virtual bool MouseReleased(MouseEvent *event)
+		virtual bool MouseReleased(MouseEvent *)
 		{
       pressed = false;
       last = {-1, -1};

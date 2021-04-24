@@ -30,7 +30,7 @@ TextListener::~TextListener()
 {
 }
 
-void TextListener::TextChanged(TextEvent *event)
+void TextListener::TextChanged(TextEvent *)
 {
 }
 

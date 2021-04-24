@@ -610,13 +610,15 @@ class ExtraStorageMergeSortAlgorithm : public SortAlgorithm{
 			_is_locked = true;
 			_stop_requested = false;
 
-			int scratch[_array_size];
+			int *scratch = new int[_array_size];
 
-			Sort(0, _array_size-1, scratch);
+			Sort(0, _array_size - 1, scratch);
 
-					if (_stop_requested == true) {
-						goto _exit;
-					}
+      delete [] scratch;
+
+      if (_stop_requested == true) {
+        goto _exit;
+      }
 
 _exit:
 			_is_locked = false;

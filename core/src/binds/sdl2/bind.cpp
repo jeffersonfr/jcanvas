@@ -349,7 +349,7 @@ static jkeyevent_symbol_t TranslateToNativeKeySymbol(SDL_Keysym symbol)
 	return jkeyevent_symbol_t::Unknown;
 }
 
-void Application::Init(int argc, char **argv)
+void Application::Init(int, char **)
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING)) {  
 		throw std::runtime_error("Problem to init SDL2");
@@ -590,7 +590,7 @@ void Application::Quit()
   sg_loop_mutex.unlock();
 }
 
-void Application::SetVerticalSyncEnabled(bool enabled)
+void Application::SetVerticalSyncEnabled(bool)
 {
 }
 
@@ -672,7 +672,7 @@ std::string WindowAdapter::GetTitle()
 	return std::string(SDL_GetWindowTitle(sg_window));
 }
 
-void WindowAdapter::SetOpacity(float opacity)
+void WindowAdapter::SetOpacity(float)
 {
 	// SDL_SetWindowOpacity(sg_window, opacity);
 }
@@ -826,12 +826,14 @@ void WindowAdapter::SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty)
 	jpoint_t<int> 
     t = shape->GetSize();
 	uint32_t 
-    data[t.x*t.y];
+    *data = new uint32_t[t.x*t.y];
 
 	shape->GetGraphics()->GetRGBArray(data, {0, 0, t.x, t.y});
 
 	SDL_Surface 
     *surface = SDL_CreateRGBSurfaceFrom(data, t.x, t.y, 32, t.x*4, 0, 0, 0, 0);
+
+  delete [] data;
 
 	if (surface == nullptr) {
 		return;
@@ -847,7 +849,7 @@ void WindowAdapter::SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty)
 	SDL_FreeSurface(surface);
 }
 
-void WindowAdapter::SetRotation(jwindow_rotation_t t)
+void WindowAdapter::SetRotation(jwindow_rotation_t)
 {
 	// TODO::
 }

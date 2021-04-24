@@ -122,7 +122,7 @@ class Scene : public Object {
       return false;
     }
 
-    virtual void Update(EventManager &ev, std::chrono::duration<float> secs)
+    virtual void Update([[maybe_unused]] EventManager &ev, std::chrono::duration<float> secs)
     {
       mPos.y += 0.2f*secs.count();
 
@@ -131,15 +131,15 @@ class Scene : public Object {
       }
     }
     
-    virtual void Render(Graphics *g, std::chrono::duration<float> secs)
+    virtual void Render(Graphics *g, [[maybe_unused]] std::chrono::duration<float> secs)
     {
-      jpoint_t<int> isize = mImage->GetSize();
+      // jpoint_t<int> isize = mImage->GetSize();
 
       g->DrawImage(mImage, {(mPos - jpoint_t<float>{0.0f, 1.0f})*mScreenSize, mScreenSize});
       g->DrawImage(mImage, {mPos*mScreenSize, mScreenSize});
     }
 
-    virtual bool HasCollide(Object *param)
+    virtual bool HasCollide(Object *)
     {
       return false;
     }
@@ -173,13 +173,13 @@ class Fire : public Object {
       return false;
     }
 
-    virtual void Update(EventManager &ev, std::chrono::duration<float> secs)
+    virtual void Update([[maybe_unused]] EventManager &ev, std::chrono::duration<float> secs)
     {
       mPos.x += mVel.x*secs.count();
       mPos.y += mVel.y*secs.count();
     }
     
-    virtual void Render(Graphics *g, std::chrono::duration<float> secs)
+    virtual void Render(Graphics *g, [[maybe_unused]] std::chrono::duration<float> secs)
     {
       jpoint_t<int> isize = mImage->GetSize();
 
@@ -189,7 +189,7 @@ class Fire : public Object {
       g->DrawImage(mImage, {pos, size});
     }
 
-    virtual bool HasCollide(Object *param)
+    virtual bool HasCollide(Object *)
     {
       return false;
     }
@@ -206,7 +206,7 @@ class Fire : public Object {
 class EnemyFire : public Object {
 
   public:
-    EnemyFire(std::shared_ptr<Image> image, jpoint_t<float> pos, jpoint_t<float> vel = jpoint_t<float>{0.0f, 1.0f})
+    EnemyFire(std::shared_ptr<Image> image, jpoint_t<float> pos, [[maybe_unused]] jpoint_t<float> vel = jpoint_t<float>{0.0f, 1.0f})
     {
       mImage = image;
       mPos = pos;
@@ -226,13 +226,13 @@ class EnemyFire : public Object {
       return true;
     }
 
-    virtual void Update(EventManager &ev, std::chrono::duration<float> secs)
+    virtual void Update([[maybe_unused]] EventManager &ev, std::chrono::duration<float> secs)
     {
       mPos.x += mVel.x*secs.count();
       mPos.y += mVel.y*secs.count();
     }
     
-    virtual void Render(Graphics *g, std::chrono::duration<float> secs)
+    virtual void Render(Graphics *g, [[maybe_unused]] std::chrono::duration<float> secs)
     {
       jpoint_t<int> isize = mImage->GetSize();
 
@@ -242,7 +242,7 @@ class EnemyFire : public Object {
       g->DrawImage(mImage, {pos, size});
     }
 
-    virtual bool HasCollide(Object *param)
+    virtual bool HasCollide(Object *)
     {
       return false;
     }
@@ -276,7 +276,7 @@ class Explosion : public Object {
       return false;
     }
 
-    virtual void Update(EventManager &ev, std::chrono::duration<float> secs)
+    virtual void Update([[maybe_unused]] EventManager &ev, std::chrono::duration<float> secs)
     {
       mPos.y += 0.2*secs.count(); // INFO:: same velocity of scene
 
@@ -288,7 +288,7 @@ class Explosion : public Object {
       }
     }
     
-    virtual void Render(Graphics *g, std::chrono::duration<float> secs)
+    virtual void Render(Graphics *g, [[maybe_unused]] std::chrono::duration<float> secs)
     {
       jpoint_t<int> isize = mImage->GetSize();
       jpoint_t<int> region {isize.x/mDimensions.x, isize.y/mDimensions.y};
@@ -298,7 +298,7 @@ class Explosion : public Object {
       g->DrawImage(mImage, {jpoint_t<int>{mIndex%mDimensions.x, mIndex/mDimensions.x}*region, region}, mPos*mCameraSize - isize/2);
     }
 
-    virtual bool HasCollide(Object *param)
+    virtual bool HasCollide(Object *)
     {
       return false;
     }
@@ -379,7 +379,7 @@ class Player : public Object {
       }
     }
     
-    virtual void Render(Graphics *g, std::chrono::duration<float> secs)
+    virtual void Render(Graphics *g, [[maybe_unused]] std::chrono::duration<float> secs)
     {
       jpoint_t<int> isize = mImage->GetSize();
 
@@ -393,7 +393,7 @@ class Player : public Object {
       g->DrawImage(mImage, {pos, size});
     }
 
-    virtual bool HasCollide(Object *param)
+    virtual bool HasCollide(Object *)
     {
       return false;
     }
@@ -453,7 +453,7 @@ class Enemy : public Object {
       return true;
     }
 
-    virtual void Update(EventManager &ev, std::chrono::duration<float> secs)
+    virtual void Update(EventManager &, std::chrono::duration<float> secs)
     {
       jpoint_t<float> dir {0.0f, 1.0f};
 
@@ -477,7 +477,7 @@ class Enemy : public Object {
       }
     }
     
-    virtual void Render(Graphics *g, std::chrono::duration<float> secs)
+    virtual void Render(Graphics *g, [[maybe_unused]] std::chrono::duration<float> secs)
     {
       jpoint_t<int> isize = mImage->GetSize();
 
@@ -487,7 +487,7 @@ class Enemy : public Object {
       g->DrawImage(mImage, {pos, size});
     }
 
-    virtual bool HasCollide(Object *param)
+    virtual bool HasCollide(Object *)
     {
       return false;
     }

@@ -68,7 +68,7 @@ jvertical_align_t MessageDialog::GetVerticalAlign()
   return _label.GetVerticalAlign();
 }
 
-void MessageDialog::ActionPerformed(ActionEvent *event)
+void MessageDialog::ActionPerformed(ActionEvent *)
 {
   Close();
 }

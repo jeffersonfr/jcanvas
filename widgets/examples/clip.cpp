@@ -60,8 +60,8 @@ class App : public Frame {
       Button button1 {"Testing Clipping"};
 
 	public:
-		App(std::string title, int w, int h):
-			Frame(/*title, */ {w, h})
+		App(int w, int h):
+			Frame({w, h})
 		{
     }
 
@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 {
 	Application::Init(argc, argv);
 
-	auto app = std::make_shared<App>("Clip", 720, 480);
+	auto app = std::make_shared<App>(720, 480);
 
   app->Init();
 	app->SetTitle("Clip");

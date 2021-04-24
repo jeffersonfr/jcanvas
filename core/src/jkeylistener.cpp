@@ -30,17 +30,17 @@ KeyListener::~KeyListener()
 {
 }
 
-bool KeyListener::KeyPressed(KeyEvent *event)
+bool KeyListener::KeyPressed(KeyEvent *)
 {
   return false;
 }
 
-bool KeyListener::KeyReleased(KeyEvent *event)
+bool KeyListener::KeyReleased(KeyEvent *)
 {
   return false;
 }
 
-bool KeyListener::KeyTyped(KeyEvent *event)
+bool KeyListener::KeyTyped(KeyEvent *)
 {
   return false;
 }

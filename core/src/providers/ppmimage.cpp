@@ -306,7 +306,7 @@ static const PFormatData p_dta[][2] = {
 
 static int p_getheader(PNMData *data, char *to, int size)
 {
-	int len;
+	[[maybe_unused]] int len;
 
 	while (size--) {
 		P_GET( to, 1 );
@@ -434,6 +434,8 @@ cairo_surface_t * create_ppm_surface_from_stream(std::istream &stream)
 	cairo_surface_t *surface = nullptr;
 	
 	PNMData pnm {
+    .format = PFMT_PBM,
+	  .type = PIMG_RAW,
     .width = -1,
     .height = -1,
     .colors = 0,
@@ -474,7 +476,7 @@ cairo_surface_t * create_ppm_surface_from_stream(std::istream &stream)
 		return nullptr;
 	}
 
-	uint8_t row[pnm.width*4];
+	uint8_t *row = new uint8_t[pnm.width*4];
 	uint8_t *ptr = data;
 
 	pnm.rowbuf = new uint8_t[pnm.width*12];
@@ -506,6 +508,8 @@ cairo_surface_t * create_ppm_surface_from_stream(std::istream &stream)
 		data[i*4+1] = ALPHA_PREMULTIPLY(data[i*4+1], alpha);
 		data[i*4+0] = ALPHA_PREMULTIPLY(data[i*4+0], alpha);
 	}
+
+  delete [] row;
 
 	cairo_surface_mark_dirty(surface);
 

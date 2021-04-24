@@ -90,11 +90,13 @@ std::shared_ptr<IndexedImage> IndexedImage::Pack(std::shared_ptr<Image> image)
       jpoint_t<int> 
         size = image->GetSize();
       uint32_t 
-        rgb[size.x*size.y];
+        *rgb = new uint32_t[size.x*size.y];
 
       image->GetRGBArray(rgb, {0, 0, size.x, size.y});
 
       packed = Pack(rgb, size);
+
+      delete [] rgb;
     }
   }
 
@@ -291,7 +293,7 @@ std::shared_ptr<Image> IndexedImage::Crop(jrect_t<int> rect)
   return image;
 }
 
-std::shared_ptr<Image> IndexedImage::Blend(float alpha)
+std::shared_ptr<Image> IndexedImage::Blend(float)
 {
   return nullptr;
 }
@@ -301,7 +303,7 @@ std::shared_ptr<Image> IndexedImage::Colorize(jcolor_t<float> color)
   jpoint_t<int> 
     size = GetSize();
   uint32_t 
-    palette[_palette_size];
+    *palette = new uint32_t[_palette_size];
   jvector_t<3, float>
     hsb = color.ToHSB();
 
@@ -321,7 +323,12 @@ std::shared_ptr<Image> IndexedImage::Colorize(jcolor_t<float> color)
     palette[i] = (0xff << 24) | (r << 16) | (g << 8) | (b << 0);
   }
 
-  return std::shared_ptr<IndexedImage>(new IndexedImage(palette, _palette_size, _data, size));
+  std::shared_ptr<IndexedImage>
+    image = std::make_shared<IndexedImage>(palette, _palette_size, _data, size);
+
+  delete [] palette;
+
+  return image;
 }
 
 uint8_t * IndexedImage::LockData()

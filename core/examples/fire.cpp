@@ -52,16 +52,12 @@ class Fire : public Window {
 
       // generate the palette
       for (int x=0; x<256; x++) {
-        jcolor_t<float>
-          color;
         float
           h = (x/8.0f)/255.0f,
           s = 255.0f/255.0f,
           l = std::min(255.0f, (x * 2)/255.0f);
 
-        color.FromHSB({h, s, l});
-
-        palette[x] = uint32_t(color);
+        palette[x] = uint32_t(jcolor_t<float>::FromHSB({h, s, l}));
       }
     }
 

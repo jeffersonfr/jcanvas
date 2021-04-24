@@ -488,14 +488,14 @@ class App : public Frame, public ActionListener, public SelectListener {
     }
     */
 
-    virtual void ItemChanged(SelectEvent *event)
+    virtual void ItemChanged(SelectEvent *)
     {
       _marquee->SetBounceEnabled(_spin->GetCurrentIndex());
     }
 
     virtual void ActionPerformed(ActionEvent *event)
     {
-      Button *button = reinterpret_cast<Button *>(event->GetSource());
+      // Button *button = reinterpret_cast<Button *>(event->GetSource());
 
       _mutex.lock();
 

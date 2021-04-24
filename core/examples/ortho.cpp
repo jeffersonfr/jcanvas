@@ -166,7 +166,7 @@ class Grid : public Window, public KeyListener, public MouseListener {
       return true;
     }
 
-		bool MouseReleased(MouseEvent *event)
+		bool MouseReleased(MouseEvent *)
 		{
       _drag = false;
 

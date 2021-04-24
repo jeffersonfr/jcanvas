@@ -39,7 +39,7 @@ class PCXImageLoader {
     short int iWidth,iHeight,iBPP,iPlanes,iBPL;
     long lImageSize;
     char bEnc;
-    unsigned char *pImage, *pPalette, *pData;
+    uint8_t *pImage, *pPalette, *pData;
  
   private:
    int ReadHeader()
@@ -87,8 +87,8 @@ class PCXImageLoader {
 	 {
 		 int iLineCount,iBufferLineLen,iImageLineLen;
 		 long lLinePos=0;
-		 unsigned char bRunLen;
-		 unsigned char *pCur,*pInterLine;
+		 uint8_t bRunLen;
+		 uint8_t *pCur,*pInterLine;
 
 		 // Set our pointer to the beginning of the image data
 		 pCur=&pData[128];
@@ -97,26 +97,32 @@ class PCXImageLoader {
 		 iBufferLineLen=iBPL*iPlanes;
 		 iImageLineLen =iWidth*iPlanes;
 
-		 unsigned char pLine[iBufferLineLen];
-
 		 // Allocate space for the image data
-		 if(pImage!=nullptr)
+		 if(pImage != nullptr) {
 			 delete [] pImage;
+     }
 
-		 pImage=new unsigned char[(iImageLineLen * iHeight)+1];
+		 pImage = new uint8_t[(iImageLineLen * iHeight)+1];
 
-		 if(pImage==nullptr)
+		 if (pImage == nullptr) {
 			 return PCX_IMG_ERR_MEM_FAIL;
+     }
+
+		 uint8_t *pLine = new uint8_t[iBufferLineLen];
 
 		 // Decode each scanline
-		 for(iLineCount=0;iLineCount<iHeight;++iLineCount) {
+		 for (iLineCount=0;iLineCount<iHeight;++iLineCount) {
 			 lLinePos=0;
-			 while(lLinePos<iBufferLineLen) {
-				 if(*pCur > 0xC0) { // First 2 bits indicate run of next byte value
-					 bRunLen=*pCur & 0x3F; // Remaining 6 bits indicate run length
-					 ++pCur;  // Repeated value 
-					 for( ;bRunLen!=0;bRunLen--,lLinePos++)
+			 
+       while (lLinePos<iBufferLineLen) {
+				 if (*pCur > 0xC0) { // First 2 bits indicate run of next byte value
+					 bRunLen = *pCur & 0x3F; // Remaining 6 bits indicate run length
+					 
+           ++pCur;  // Repeated value 
+					 
+           for( ;bRunLen!=0;bRunLen--,lLinePos++) {
 						 pLine[lLinePos]=*pCur;
+           }
 
 					 ++pCur; 
 				 } else {
@@ -129,18 +135,20 @@ class PCXImageLoader {
 			 // Once we've decoded a line, copy it to the image.
 			 // This disregards any end-of-line padding inserted during the compression
 
-			 if(iPlanes==1) { // 8 bit images, straight copy
+			 if (iPlanes == 1) { // 8 bit images, straight copy
 				 memcpy(&pImage[iLineCount*iImageLineLen],pLine,iImageLineLen);
-			 } else if(iPlanes==3) { // for 24 bit, We have to interleave the RGB values
+			 } else if (iPlanes == 3) { // for 24 bit, We have to interleave the RGB values
 				 pInterLine=&pImage[iLineCount*iImageLineLen];
-				 for(lLinePos=0;lLinePos!=iWidth;++lLinePos,pInterLine+=3) { 
-					 pInterLine[0]=pLine[lLinePos];
-					 pInterLine[1]=pLine[lLinePos+iWidth];
-					 pInterLine[2]=pLine[lLinePos+(iWidth*2)];
+				 
+         for (lLinePos=0; lLinePos!=iWidth; ++lLinePos,pInterLine+=3) { 
+					 pInterLine[0] = pLine[lLinePos];
+					 pInterLine[1] = pLine[lLinePos+iWidth];
+					 pInterLine[2] = pLine[lLinePos+(iWidth*2)];
 				 }
 			 }
-
 		 } 
+
+     delete [] pLine;
 
 		 return PCX_IMG_OK;
 	 }
@@ -158,7 +166,7 @@ class PCXImageLoader {
 		 }
 
 		 // Create space for palette
-		 pPalette=new unsigned char[768];
+		 pPalette=new uint8_t[768];
 
 		 if(pPalette==nullptr) {
 			 return PCX_IMG_ERR_MEM_FAIL;
@@ -228,7 +236,7 @@ class PCXImageLoader {
 			 delete [] pData; 
 		 }
 
-		 pData=new unsigned char[ulSize];
+		 pData=new uint8_t[ulSize];
 
 		 if(pData==nullptr) {
 			 return PCX_IMG_ERR_MEM_FAIL;
@@ -291,12 +299,12 @@ class PCXImageLoader {
 		 return iHeight;
 	 }
 
-	 unsigned char * GetImage()
+	 uint8_t * GetImage()
 	 {
 		 return pImage;
 	 }
 
-	 unsigned char * GetPalette()
+	 uint8_t * GetPalette()
 	 {
 		 return pPalette;
 	 }

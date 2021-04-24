@@ -344,9 +344,9 @@ void CalendarDialog::BuildCalendar()
   Repaint();
 }
 
-void CalendarDialog::ActionPerformed(ActionEvent *event)
+void CalendarDialog::ActionPerformed(ActionEvent *)
 {
-  Button *button = reinterpret_cast<Button *>(event->GetSource());
+  // Button *button = reinterpret_cast<Button *>(event->GetSource());
 
   // TODO:: send a generic action event com a data atual selectionada
   // TODO:: deixar o button como checked (toggle)

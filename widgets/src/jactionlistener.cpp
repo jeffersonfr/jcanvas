@@ -30,7 +30,7 @@ ActionListener::~ActionListener()
 {
 }
 
-void ActionListener::ActionPerformed(ActionEvent *event)
+void ActionListener::ActionPerformed(ActionEvent *)
 {
 }
 

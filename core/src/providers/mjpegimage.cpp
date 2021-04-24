@@ -251,12 +251,12 @@ typedef void (*ftopict)(int *out, uint8_t *pic, int width);
 static uint8_t *datap;
 
 static int *LutYr = nullptr;
-static int *LutYg = nullptr;;
-static int *LutYb = nullptr;;
-static int *LutVr = nullptr;;
-static int *LutVrY = nullptr;;
-static int *LutUb = nullptr;;
-static int *LutUbY = nullptr;;
+static int *LutYg = nullptr;
+static int *LutYb = nullptr;
+static int *LutVr = nullptr;
+static int *LutVrY = nullptr;
+static int *LutUb = nullptr;
+static int *LutUbY = nullptr;
 static int *LutRv = nullptr;
 static int *LutGu = nullptr;
 static int *LutGv = nullptr;
@@ -896,7 +896,7 @@ static int dec_rec2(struct in *in, struct dec_hufftbl *hu, int *runp, int c, int
   c = GETBITS(in, i);
   
   if (c < (1 << (i - 1))) {
-    c += (-1 << i) + 1;
+    c += ((unsigned int)(-1) << i) + 1;
   }
 
   LEBI_PUT(in);
@@ -1437,7 +1437,7 @@ int get_picture(uint8_t *buf,int size)
   return 0;		
 }
 
-cairo_surface_t * create_mjpeg_surface_from_data(uint8_t *data, int size) 
+cairo_surface_t * create_mjpeg_surface_from_data(uint8_t *data, [[maybe_unused]] int size) 
 {
   uint8_t *pic = nullptr;
   int sw = 0, sh = 0;

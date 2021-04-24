@@ -41,7 +41,7 @@ static cairo_status_t cairocks_read_png(void *closure, uint8_t *data, uint32_t l
 	return CAIRO_STATUS_SUCCESS;
 }
 
-cairo_surface_t * create_png_surface_from_data(uint8_t *data, int size) 
+cairo_surface_t * create_png_surface_from_data(uint8_t *data, int) 
 {
 	cairocks_read_png_closure_t closure;
 

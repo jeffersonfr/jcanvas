@@ -159,7 +159,7 @@ class branch {
       leavesc3 = getRand(50, 255);
     }
 
-    branch(Vector2 start, Vector2 end, int length, float angle, int generation, int brac1, int brac2, int brac3, int leavesc1, int leavesc2, int leavesc3, int generations)
+    branch(Vector2 start, Vector2 end, int length, float angle, int generation, [[maybe_unused]] int brac1, [[maybe_unused]] int brac2, [[maybe_unused]] int brac3, int leavesc1, int leavesc2, int leavesc3, int generations)
     {
       NUMBER_OF_BRANCHES++;
 
@@ -278,7 +278,7 @@ class Tree : public Window, public KeyListener {
       }
     }
 		
-    virtual bool KeyPressed(KeyEvent *event) 
+    virtual bool KeyPressed(KeyEvent *) 
 		{
       Repaint();
 

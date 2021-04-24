@@ -99,7 +99,7 @@ jpoint_t<int> BorderLayout::GetMinimumLayoutSize(Container *parent)
   return t;
 }
 
-jpoint_t<int> BorderLayout::GetMaximumLayoutSize(Container *parent)
+jpoint_t<int> BorderLayout::GetMaximumLayoutSize(Container *)
 {
   jpoint_t<int> t = {INT_MAX, INT_MAX};
 

@@ -60,6 +60,20 @@ static void release_jasper()
     jas_cleanup();
 }     
 
+static int get_sample(jas_image_t *image, int *cmptlut, int n, int x, int y)
+{
+  int _s = jas_image_readcmptsample(image, cmptlut[n], x, y);
+
+  _s >>= jas_image_cmptprec(image, cmptlut[n]) - 8;
+
+  if (_s > 255)
+    _s = 255;
+  else if (_s < 0)
+    _s = 0;
+
+  return _s;
+}
+
 cairo_surface_t * create_jp2000_surface_from_data(uint8_t *data, int size) 
 {
   jas_stream_t
@@ -136,17 +150,6 @@ cairo_surface_t * create_jp2000_surface_from_data(uint8_t *data, int size)
   hs = jas_image_cmpthstep(image, 0);
   vs = jas_image_cmptvstep(image, 0);
 
-#define GET_SAMPLE( n, x, y ) ({ \
-    int _s; \
-    _s = jas_image_readcmptsample(image, cmptlut[n], x, y); \
-    _s >>= jas_image_cmptprec(image, cmptlut[n]) - 8; \
-    if (_s > 255) \
-    _s = 255; \
-    else if (_s < 0) \
-    _s = 0; \
-    _s; \
-    })
-
   cairo_surface_t 
     *surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, sw, sh);
 
@@ -185,19 +188,19 @@ cairo_surface_t * create_jp2000_surface_from_data(uint8_t *data, int size)
         x = (j - tlx) / hs;
 
         if (x >= 0 && x < sw) {
-          uint32_t r, g, b;
+          int r, g, b;
 
           if (mono) {
-            r = g = b = GET_SAMPLE(0, x, y);
+            r = g = b = get_sample(image, cmptlut, 0, x, y);
           } else {
             if (cm == JAS_CLRSPC_SYCBCR) {
-              r = GET_SAMPLE(0, x, y);
-              g = GET_SAMPLE(1, x/2, y/2);
-              b = GET_SAMPLE(2, x/2, y/2);
+              r = get_sample(image, cmptlut, 0, x, y);
+              g = get_sample(image, cmptlut, 1, x/2, y/2);
+              b = get_sample(image, cmptlut, 2, x/2, y/2);
             } else {
-              r = GET_SAMPLE(0, x, y);
-              g = GET_SAMPLE(1, x, y);
-              b = GET_SAMPLE(2, x, y);
+              r = get_sample(image, cmptlut, 0, x, y);
+              g = get_sample(image, cmptlut, 1, x, y);
+              b = get_sample(image, cmptlut, 2, x, y);
             }
           }
 

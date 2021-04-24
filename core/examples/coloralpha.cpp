@@ -128,7 +128,7 @@ class ColorAlphaTeste : public Window, public MouseListener {
 			jpoint_t 
         isize = _fg->GetSize();
 			uint32_t 
-        buffer[isize.x*isize.y];
+        *buffer = new uint32_t[isize.x*isize.y];
 
 			_fg->GetRGBArray(buffer, {0, 0, isize.x, isize.y});
 
@@ -159,6 +159,8 @@ class ColorAlphaTeste : public Window, public MouseListener {
       image->GetGraphics()->SetRGBArray(buffer, {0, 0, size.x, size.y});
 
 			g->DrawImage(image, {left, top, size.x-left-right, size.y-top-bottom});
+
+      delete [] buffer;
 		}
 
 };

@@ -147,39 +147,39 @@ class UserEventListener {
 		{
 		}
 
-		virtual void OnKeyDown(UserEvent *event)
+		virtual void OnKeyDown(UserEvent *)
 		{
 		}
 
-		virtual void OnKeyPress(UserEvent *event)
+		virtual void OnKeyPress(UserEvent *)
 		{
 		}
 
-		virtual void OnKeyUp(UserEvent *event)
+		virtual void OnKeyUp(UserEvent *)
 		{
 		}
 
-		virtual void OnKeyLongPress(UserEvent *event)
+		virtual void OnKeyLongPress(UserEvent *)
 		{
 		}
 
-		virtual void OnMousePress(UserEvent *event)
+		virtual void OnMousePress(UserEvent *)
 		{
 		}
 
-		virtual void OnMouseRelease(UserEvent *event)
+		virtual void OnMouseRelease(UserEvent *)
 		{
 		}
 
-		virtual void OnMouseClick(UserEvent *event)
+		virtual void OnMouseClick(UserEvent *)
 		{
 		}
 
-		virtual void OnMouseMove(UserEvent *event)
+		virtual void OnMouseMove(UserEvent *)
 		{
 		}
 
-		virtual void OnMouseWheel(UserEvent *event)
+		virtual void OnMouseWheel(UserEvent *)
 		{
 		}
 
@@ -433,7 +433,7 @@ class Test : public UserWindow, public UserEventListener {
 			}
 		}
 
-		virtual void OnKeyLongPress(UserEvent *event)
+		virtual void OnKeyLongPress(UserEvent *)
 		{
 			std::cout << "OnKeyLongPress" << std::endl;
 		}
@@ -467,14 +467,14 @@ class Test : public UserWindow, public UserEventListener {
 			}
 		}
 
-		virtual void OnMouseRelease(UserEvent *event)
+		virtual void OnMouseRelease(UserEvent *)
 		{
 			// TODO:: std::cout << "OnMouseRelease" << ", Button: " << event->GetButton() << std::endl;
 
 			_pressed = false;
 		}
 
-		virtual void OnMouseClick(UserEvent *event)
+		virtual void OnMouseClick(UserEvent *)
 		{
 			// TODO:: std::cout << "OnMouseClick" << ", Button: " << event->GetButton() << std::endl;
 		}
@@ -513,7 +513,7 @@ class Test : public UserWindow, public UserEventListener {
 			}
 		}
 
-		virtual void OnMouseWheel(UserEvent *event)
+		virtual void OnMouseWheel(UserEvent *)
 		{
 			// TODO:: std::cout << "OnMouseWheel: " << event->GetClicks() << std::endl;
 		}

@@ -82,7 +82,7 @@ jvertical_align_t InputDialog::GetVerticalAlign()
   return _label.GetVerticalAlign();
 }
 
-void InputDialog::ActionPerformed(ActionEvent *event)
+void InputDialog::ActionPerformed(ActionEvent *)
 {
   Close();
 }

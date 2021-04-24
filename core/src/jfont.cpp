@@ -390,7 +390,7 @@ std::string Font::TruncateString(std::string text, std::string extension, int wi
   return text;
 }
 
-bool Font::CanDisplay(int ch)
+bool Font::CanDisplay(int)
 {
   return true;
 }

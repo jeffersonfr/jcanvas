@@ -61,14 +61,14 @@ jcrossaxis_align_t ColumnLayout::GetCrossAxisAlign()
   return _cross_align;
 }
 
-jpoint_t<int> ColumnLayout::GetMinimumLayoutSize(Container *parent)
+jpoint_t<int> ColumnLayout::GetMinimumLayoutSize(Container *)
 {
   jpoint_t<int> t = {0, 0};
 
   return t;
 }
 
-jpoint_t<int> ColumnLayout::GetMaximumLayoutSize(Container *parent)
+jpoint_t<int> ColumnLayout::GetMaximumLayoutSize(Container *)
 {
   jpoint_t<int> t = {INT_MAX, INT_MAX};
 

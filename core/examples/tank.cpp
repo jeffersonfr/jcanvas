@@ -44,7 +44,7 @@ class Main : public Window, public KeyListener {
 		bool _running;
 
 	public:
-		Main(int n, int p):
+		Main():
 			Window(jpoint_t<int>{720, 480})
 		{
       SetFramesPerSecond(30);
@@ -191,7 +191,7 @@ int main(int argc, char **argv)
 {
 	Application::Init(argc, argv);
 
-	Main app(50, 100);
+	Main app;
 
 	app.SetTitle("Tank");
 	app.Exec();

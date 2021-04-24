@@ -363,7 +363,7 @@ jpoint_t<int> TextLayout::GetMinimumLayoutSize(Container *target)
   return t;
 }
 
-jpoint_t<int> TextLayout::GetMaximumLayoutSize(Container *target)
+jpoint_t<int> TextLayout::GetMaximumLayoutSize(Container *)
 {
   jpoint_t<int> t = {INT_MAX, INT_MAX};
 
@@ -689,7 +689,7 @@ Component * Paragraph::GetCharByIndex(std::size_t index)
     }
 
     if (word != nullptr) {
-      if (index >= word->GetComponentCount()) {
+      if (index >= (std::size_t)word->GetComponentCount()) {
         index = index - word->GetComponentCount();
       } else {
         return word->GetComponents()[index];
@@ -910,7 +910,7 @@ void Text::SetCaretPosition(std::size_t pos)
     std::size_t start = mCaretPosition;
     std::size_t end = start + mSelectionLength;
 
-    for (int i=start; i<end; i++) {
+    for (std::size_t i=start; i<end; i++) {
       dynamic_cast<GenericChar *>(GetCharByIndex(i))->SetSelect(false);
     }
   }
@@ -976,7 +976,7 @@ void Text::Select(std::size_t start, std::size_t end)
 
   mSelectionLength = end - start;
 
-  for (int i=start; i<end; i++) {
+  for (std::size_t i=start; i<end; i++) {
     dynamic_cast<GenericChar *>(GetCharByIndex(i))->SetSelect(true);
   }
 }

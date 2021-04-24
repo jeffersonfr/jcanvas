@@ -299,7 +299,7 @@ static void BicubicScale(uint32_t *src, uint32_t *dst, int w, int h, int sw, int
   }
 }
 
-static void NearesNeighborRotate(uint32_t *src, int w, int h, uint32_t *dst, int dw, int dh, float radians, bool resize)
+static void NearesNeighborRotate(uint32_t *src, int w, int h, uint32_t *dst, int dw, int dh, float radians, [[maybe_unused]] bool resize)
 {
   float angle = fmod(radians, 2*M_PI);
   int precision = 1024;

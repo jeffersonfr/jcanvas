@@ -231,7 +231,7 @@ jpoint_t<int> CardLayout::GetMinimumLayoutSize(Container *parent)
   return t;
 }
 
-jpoint_t<int> CardLayout::GetMaximumLayoutSize(Container *parent)
+jpoint_t<int> CardLayout::GetMaximumLayoutSize(Container *)
 {
   jpoint_t<int> t = {INT_MAX, INT_MAX};
 

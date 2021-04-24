@@ -144,11 +144,6 @@ class FrameTest : public Window, public MouseListener {
 		FrameTest():
 			Window({360, 360})
 		{
-			jpoint_t
-				size = GetSize();
-			int 
-				m = std::min(size.x, size.y);
-
 			_color_chooser = new ColorChooser();
 		}
 

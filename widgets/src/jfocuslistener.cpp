@@ -30,11 +30,11 @@ FocusListener::~FocusListener()
 {
 }
 
-void FocusListener::FocusGained(FocusEvent *event)
+void FocusListener::FocusGained(FocusEvent *)
 {
 }
 
-void FocusListener::FocusLost(FocusEvent *event)
+void FocusListener::FocusLost(FocusEvent *)
 {
 }
 

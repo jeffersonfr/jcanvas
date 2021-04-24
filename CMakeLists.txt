@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.13)
+cmake_minimum_required (VERSION 3.10)
 
 include (${CMAKE_SOURCE_DIR}/Defines.cmake)
 
@@ -12,9 +12,12 @@ option(COVERAGE "Enable coverage" OFF)
 option(PROFILE "Enable profile" OFF)
 option(DEBUG "Enable debug" OFF)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
+
+add_compile_options(-Wall -Wextra -pedantic -Werror)
 
 set(GRAPHIC_BIND "sdl2" CACHE STRING "Default graphic bind")
+
 set_property(CACHE GRAPHIC_BIND PROPERTY STRINGS 
   dummy allegro5 caca directfb drm efl egl fb flaschen gl gtk3 nanax qt5 sdl2 sfml2 vdpau vnc wayland xcb xlib jx dispmanx-pi egl-pi openvg-pi)
 

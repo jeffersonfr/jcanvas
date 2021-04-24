@@ -157,9 +157,6 @@ class Surface : public Window, public MouseListener {
 
 		void Paint(Graphics *g) 
 		{
-      jpoint_t
-        size = GetSize();
-
       g->Clear();
 
       Update();

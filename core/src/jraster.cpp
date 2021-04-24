@@ -646,7 +646,7 @@ void FillPolygon0(Raster *raster, std::vector<jpoint_t<int>> points, jpoint_t<in
 	}
 }
 
-void Raster::FillPolygon(const jpoint_t<int> &v1, const std::vector<jpoint_t<int>> &points, bool holed)
+void Raster::FillPolygon(const jpoint_t<int> &v1, const std::vector<jpoint_t<int>> &points, [[maybe_unused]] bool holed)
 {
 	if (points.size() == 0) {
 		return;
@@ -696,7 +696,7 @@ void Raster::DrawImage(std::shared_ptr<Image> image, const jpoint_t<int> &v1)
   jpoint_t<int>
     size = image->GetSize();
   uint32_t
-    data[size.x*size.y];
+    *data = new uint32_t[size.x*size.y];
 
   image->GetRGBArray(data, {0, 0, size});
 
@@ -739,6 +739,8 @@ void Raster::DrawImage(std::shared_ptr<Image> image, const jpoint_t<int> &v1)
       }
     }
   }
+
+  delete [] data;
 }
 
 void Raster::SetBlendEnabled(bool param)

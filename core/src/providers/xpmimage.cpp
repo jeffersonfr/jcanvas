@@ -182,7 +182,7 @@ static bool xpm_load(std::istream &stream, uint8_t **image, int *width, int *hei
 
 					colors = colors + 1;
 				} else if (rows < rows_tot) { // load image data
-					char code[chars_per_pixel+1];
+					char *code = new char[chars_per_pixel + 1];
 
 					for (int i=0; i<(int)columns_tot; i++) {
 						strncpy(code, buffer + i*chars_per_pixel, chars_per_pixel);
@@ -190,6 +190,8 @@ static bool xpm_load(std::istream &stream, uint8_t **image, int *width, int *hei
 						code[chars_per_pixel] = '\0';
 						data[rows*columns_tot + i] = palette[code];
 					}
+
+          delete [] code;
 
 					rows = rows + 1;
 				}

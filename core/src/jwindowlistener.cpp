@@ -30,35 +30,35 @@ WindowListener::~WindowListener()
 {
 }
 
-void WindowListener::WindowOpened(WindowEvent *event)
+void WindowListener::WindowOpened(WindowEvent *)
 {
 }
 
-void WindowListener::WindowClosing(WindowEvent *event)
+void WindowListener::WindowClosing(WindowEvent *)
 {
 }
 
-void WindowListener::WindowClosed(WindowEvent *event)
+void WindowListener::WindowClosed(WindowEvent *)
 {
 }
 
-void WindowListener::WindowResized(WindowEvent *event)
+void WindowListener::WindowResized(WindowEvent *)
 {
 }
 
-void WindowListener::WindowMoved(WindowEvent *event)
+void WindowListener::WindowMoved(WindowEvent *)
 {
 }
 
-void WindowListener::WindowPainted(WindowEvent *event)
+void WindowListener::WindowPainted(WindowEvent *)
 {
 }
 
-void WindowListener::WindowEntered(WindowEvent *event)
+void WindowListener::WindowEntered(WindowEvent *)
 {
 }
 
-void WindowListener::WindowLeaved(WindowEvent *event)
+void WindowListener::WindowLeaved(WindowEvent *)
 {
 }
 

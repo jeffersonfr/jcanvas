@@ -30,11 +30,11 @@ ContainerListener::~ContainerListener()
 {
 }
 
-void ContainerListener::ComponentAdded(ContainerEvent *event)
+void ContainerListener::ComponentAdded(ContainerEvent *)
 {
 }
 
-void ContainerListener::ComponentRemoved(ContainerEvent *event)
+void ContainerListener::ComponentRemoved(ContainerEvent *)
 {
 }
 

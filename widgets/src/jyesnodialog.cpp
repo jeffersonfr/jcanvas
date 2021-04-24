@@ -83,7 +83,7 @@ std::string YesNoDialog::GetResponse()
   return response;
 }
 
-void YesNoDialog::ActionPerformed(ActionEvent *event)
+void YesNoDialog::ActionPerformed(ActionEvent *)
 {
   Close();
 }

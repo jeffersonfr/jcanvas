@@ -30,31 +30,31 @@ ComponentListener::~ComponentListener()
 {
 }
 
-void ComponentListener::OnHide(ComponentEvent *event)
+void ComponentListener::OnHide(ComponentEvent *)
 {
 }
 
-void ComponentListener::OnShow(ComponentEvent *event)
+void ComponentListener::OnShow(ComponentEvent *)
 {
 }
 
-void ComponentListener::OnMove(ComponentEvent *event)
+void ComponentListener::OnMove(ComponentEvent *)
 {
 }
 
-void ComponentListener::OnSize(ComponentEvent *event)
+void ComponentListener::OnSize(ComponentEvent *)
 {
 }
 
-void ComponentListener::OnPaint(ComponentEvent *event)
+void ComponentListener::OnPaint(ComponentEvent *)
 {
 }
 
-void ComponentListener::OnEnter(ComponentEvent *event)
+void ComponentListener::OnEnter(ComponentEvent *)
 {
 }
 
-void ComponentListener::OnLeave(ComponentEvent *event)
+void ComponentListener::OnLeave(ComponentEvent *)
 {
 }
 

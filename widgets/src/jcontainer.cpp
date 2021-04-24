@@ -390,7 +390,7 @@ void Container::SetInsets(jinsets_t<int> insets)
   _insets = insets;
 }
 
-void Container::PaintGlassPane(Graphics *g)
+void Container::PaintGlassPane(Graphics *)
 {
 }
 

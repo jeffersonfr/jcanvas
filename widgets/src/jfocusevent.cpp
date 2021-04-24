@@ -21,7 +21,7 @@
 
 namespace jcanvas {
 
-FocusEvent::FocusEvent(void *source, jfocusevent_type_t type):
+FocusEvent::FocusEvent(void *source, jfocusevent_type_t):
   EventObject(source)
 {
 }

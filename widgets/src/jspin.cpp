@@ -131,7 +131,7 @@ void Spin::Next()
   int index = _current_index + 1;
 
   if (_is_range == false) {
-    if (index > (_items.size() - 1)) {
+    if (index > (int)(_items.size() - 1)) {
       index = _items.size() - 1;
 
       if (_is_loop_enabled == true) {
@@ -139,7 +139,7 @@ void Spin::Next()
       }
     }
   } else {
-    if (index > (_high_range - 1)) {
+    if (index > (int)(_high_range - 1)) {
       index = _high_range - 1;
 
       if (_is_loop_enabled == true) {
