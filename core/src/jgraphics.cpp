@@ -1476,6 +1476,40 @@ void Graphics::SetRGBArray(const uint32_t *rgb, jrect_t<int> rect)
       int si = 0;
       int di = 0;
 
+      // INFO:: premultiplied version
+      if (_composite == jcomposite_flags_t::SrcOver) {
+        for (int i=0; i<rect.size.x; i++) {
+          int a = *(src + si + 3);
+          int r = *(src + si + 2);
+          int g = *(src + si + 1);
+          int b = *(src + si + 0);
+
+          r = ALPHA_PREMULTIPLY(r, a);
+          g = ALPHA_PREMULTIPLY(g, a);
+          b = ALPHA_PREMULTIPLY(b, a);
+
+          int pa = *(dst + di + 3);
+          int pr = *(dst + di + 2);
+          int pg = *(dst + di + 1);
+          int pb = *(dst + di + 0);
+
+          pr = (int)((r + pr*(255.0 - a)/255.0));
+          pg = (int)((g + pg*(255.0 - a)/255.0));
+          pb = (int)((b + pb*(255.0 - a)/255.0));
+          pa = (int)((a + pa*(255.0 - a)/255.0));
+
+          *(dst + di + 3) = pa;
+          *(dst + di + 2) = pr;
+          *(dst + di + 1) = pg;
+          *(dst + di + 0) = pb;
+
+          si = si + 4;
+          di = di + 4;
+        }
+
+        continue;
+      }
+
       for (int i=0; i<rect.size.x; i++) {
         int a = *(src + si + 3);
         int r = *(src + si + 2);
