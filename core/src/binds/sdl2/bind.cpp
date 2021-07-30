@@ -585,9 +585,6 @@ jpoint_t<int> Application::GetScreenSize()
 void Application::Quit()
 {
   sg_quitting = true;
-  
-  sg_loop_mutex.lock();
-  sg_loop_mutex.unlock();
 }
 
 void Application::SetVerticalSyncEnabled(bool)
@@ -640,6 +637,9 @@ WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 
 WindowAdapter::~WindowAdapter()
 {
+  sg_loop_mutex.lock();
+  sg_loop_mutex.unlock();
+
   SDL_DestroyRenderer(sg_renderer);
   SDL_DestroyWindow(sg_window);
 	SDL_Quit();

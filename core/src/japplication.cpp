@@ -29,12 +29,14 @@ bool Application::FrameRate(size_t fps)
   static auto
     start_time = std::chrono::steady_clock::now();
   static int
-    current_frame_number = 0;
+    current_frame_number = 1;
 
   auto
     current_time = std::chrono::steady_clock::now();
   auto
-    frame_time = start_time + ++current_frame_number*std::chrono::microseconds{1000000/fps};
+    frame_time = start_time + current_frame_number*std::chrono::microseconds{1000000/fps};
+
+  current_frame_number = current_frame_number + 1;
 
   if (current_time > frame_time) {
     if ((current_time - frame_time) > std::chrono::seconds(1)) {

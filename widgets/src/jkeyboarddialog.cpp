@@ -691,7 +691,6 @@ void KeyboardDialog::BuildQWERTYKeyboard()
   lines[2]->Add(new KeyButton("j", "J", this, KEY_SIZE_1, KEY_SIZE_1));
   lines[2]->Add(new KeyButton("k", "K", this, KEY_SIZE_1, KEY_SIZE_1));
   lines[2]->Add(new KeyButton("l", "L", this, KEY_SIZE_1, KEY_SIZE_1));
-  // lines[2]->Add(new KeyButton("ç", "Ç", this, KEY_SIZE_1, KEY_SIZE_1));
   lines[2]->Add(new KeyButton("~", "^", this, KEY_SIZE_1, KEY_SIZE_1));
   lines[2]->Add(new KeyButton("]", "}", this, KEY_SIZE_1, KEY_SIZE_1));
 

@@ -48,7 +48,7 @@ using namespace jcanvas;
 
 #define ZOOM_FACTOR	4
 
-class Mandelbrot : public Window {
+class Mandelbrot : public Window, public MouseListener {
 
 	private:
     std::complex<double> center;
