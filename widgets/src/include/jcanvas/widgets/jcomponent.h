@@ -25,7 +25,6 @@
 #include "jcanvas/widgets/jborder.h"
 #include "jcanvas/widgets/jcomponentlistener.h"
 #include "jcanvas/widgets/jfocuslistener.h"
-#include "jcanvas/core/jkeymap.h"
 #include "jcanvas/core/jgraphics.h"
 #include "jcanvas/core/jkeylistener.h"
 #include "jcanvas/core/jmouselistener.h"
