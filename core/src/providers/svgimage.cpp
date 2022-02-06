@@ -46,24 +46,20 @@ cairo_surface_t * create_svg_surface_from_data(uint8_t *data, int size, int widt
 
   RsvgHandle 
     *svg = rsvg_handle_new_from_data(data, size, nullptr);
-    // *svg = svg_new_from_file (file, &err);
-  RsvgDimensionData 
-    dimensions;
+  gdouble
+    dsw,
+    dsh;
 
-  rsvg_handle_get_dimensions(svg, &dimensions);
+  rsvg_handle_get_intrinsic_size_in_pixels(svg, &dsw, &dsh);
 
-  int
-    sw = dimensions.width,
-    sh = dimensions.height;
-  float
-    scale = 72.0f; // pick_best_scape(sw, sh, dw, dh);
-
-  if (width > 0 && height > 0) {
-    scale = (float)width/(float)sw;
+  if (width > 0 and height > 0) {
+    dsw = width;
+    dsh = height;
   }
 
-  sw = ((float)sw * scale);
-  sh = ((float)sh * scale);
+  int
+    sw = static_cast<int>(dsw),
+    sh = static_cast<int>(dsh);
 
   cairo_surface_t 
     *surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, sw, sh);
@@ -74,8 +70,10 @@ cairo_surface_t * create_svg_surface_from_data(uint8_t *data, int size, int widt
 
   cairo_t *cr = cairo_create(surface);
 
-  cairo_scale(cr, scale, scale);
-  rsvg_handle_render_cairo(svg, cr);
+  RsvgRectangle 
+    rect {0, 0, dsw, dsh};
+
+  rsvg_handle_render_document(svg, cr, &rect, nullptr); 
 
   cairo_surface_mark_dirty(surface);
   cairo_destroy(cr);

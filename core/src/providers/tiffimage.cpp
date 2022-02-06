@@ -68,7 +68,7 @@ cairo_surface_t * create_tif_surface_from_data(uint8_t *data, int size)
 		return nullptr;
 	}
 
-  TIFFReadRGBAImageOriented(tif, sw, sh, (uint32 *)(dst), ORIENTATION_TOPLEFT, 0);
+  TIFFReadRGBAImageOriented(tif, sw, sh, (std::uint32_t *)(dst), ORIENTATION_TOPLEFT, 0);
 
 	for (int i=0; i<sw*sh; i++) {
     uint8_t p = dst[2];

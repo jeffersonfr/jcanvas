@@ -61,13 +61,13 @@ class BufferedImage : public virtual Image {
      * \brief
      *
      */
-    BufferedImage(std::string file);
+    BufferedImage(std::string file, jpoint_t<int> size_hint = {-1, -1});
 
     /**
      * \brief
      *
      */
-    BufferedImage(std::istream &stream);
+    BufferedImage(std::istream &stream, jpoint_t<int> size_hint = {-1, -1});
 
     /**
      * \brief

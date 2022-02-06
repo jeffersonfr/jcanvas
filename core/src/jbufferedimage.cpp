@@ -393,8 +393,8 @@ BufferedImage::BufferedImage(cairo_surface_t *surface):
   _graphics = new Graphics(_cairo_surface);
 }
 
-BufferedImage::BufferedImage(std::string file):
-  Image(jpixelformat_t::Unknown, {-1, -1})
+BufferedImage::BufferedImage(std::string file, jpoint_t<int> size):
+  Image(jpixelformat_t::Unknown, size)
 {
   std::ifstream f;
 
@@ -407,8 +407,8 @@ BufferedImage::BufferedImage(std::string file):
   ConstructFromStream(f);
 }
 
-BufferedImage::BufferedImage(std::istream &stream):
-  Image(jpixelformat_t::Unknown, {-1, -1})
+BufferedImage::BufferedImage(std::istream &stream, jpoint_t<int> size):
+  Image(jpixelformat_t::Unknown, size)
 {
   ConstructFromStream(stream);
 }
@@ -420,118 +420,118 @@ void BufferedImage::ConstructFromStream(std::istream &stream)
   }
 
   stream.seekg (0, stream.end);
-  int size = stream.tellg();
+  int length = stream.tellg();
   stream.seekg (0, stream.beg);
 
-  uint8_t *buffer = new uint8_t[size];
+  uint8_t *buffer = new uint8_t[length];
 
-  stream.read((char *)buffer, size);
+  stream.read((char *)buffer, length);
 
   if (!stream) {
     throw std::invalid_argument("Unable to get all image content");
   }
   
-  cairo_surface_t *surface = create_png_surface_from_data(buffer, size);
+  cairo_surface_t *surface = create_png_surface_from_data(buffer, length);
 
   if (surface == nullptr) {
 #ifdef JPG_IMAGE
-    surface = create_jpg_surface_from_data(buffer, size);
+    surface = create_jpg_surface_from_data(buffer, length);
 #endif
   }
 
   if (surface == nullptr) {
 #ifdef BPG_IMAGE
-    surface = create_bpg_surface_from_data(buffer, size);
+    surface = create_bpg_surface_from_data(buffer, length);
 #endif
   }
 
   if (surface == nullptr) {
 #ifdef SVG_IMAGE
-    surface = create_svg_surface_from_data(buffer, size, -1, -1);
+    surface = create_svg_surface_from_data(buffer, length, _size.x, _size.y);
 #endif
   }
 
   if (surface == nullptr) {
 #ifdef TIFF_IMAGE
-    surface = create_tif_surface_from_data(buffer, size);
+    surface = create_tif_surface_from_data(buffer, length);
 #endif
   }
 
   if (surface == nullptr) {
 #ifdef JP2000_IMAGE
-    surface = create_jp2000_surface_from_data(buffer, size);
+    surface = create_jp2000_surface_from_data(buffer, length);
 #endif
   }
 
   if (surface == nullptr) {
 #ifdef BMP_IMAGE
-    surface = create_bmp_surface_from_data(buffer, size);
+    surface = create_bmp_surface_from_data(buffer, length);
 #endif
   }
 
   if (surface == nullptr) {
 #ifdef PPM_IMAGE
-    surface = create_ppm_surface_from_data(buffer, size);
+    surface = create_ppm_surface_from_data(buffer, length);
 #endif
   }
 
   if (surface == nullptr) {
 #ifdef HEIF_IMAGE
-    surface = create_heif_surface_from_data(buffer, size);
+    surface = create_heif_surface_from_data(buffer, length);
 #endif
   }
 
   if (surface == nullptr) {
 #ifdef FLIF_IMAGE
-    surface = create_flif_surface_from_data(buffer, size);
+    surface = create_flif_surface_from_data(buffer, length);
 #endif
   }
 
   if (surface == nullptr) {
 #ifdef WEBP_IMAGE
-    surface = create_webp_surface_from_data(buffer, size);
+    surface = create_webp_surface_from_data(buffer, length);
 #endif
   }
 
   if (surface == nullptr) {
 #ifdef GIF_IMAGE
-    surface = create_gif_surface_from_data(buffer, size);
+    surface = create_gif_surface_from_data(buffer, length);
 #endif
   }
 
   if (surface == nullptr) {
 #ifdef ICO_IMAGE
-    surface = create_ico_surface_from_data(buffer, size);
+    surface = create_ico_surface_from_data(buffer, length);
 #endif
   }
 
   if (surface == nullptr) {
 #ifdef PCX_IMAGE
-    surface = create_pcx_surface_from_data(buffer, size);
+    surface = create_pcx_surface_from_data(buffer, length);
 #endif
   }
 
   if (surface == nullptr) {
 #ifdef TGA_IMAGE
-    surface = create_tga_surface_from_data(buffer, size);
+    surface = create_tga_surface_from_data(buffer, length);
 #endif
   }
 
   if (surface == nullptr) {
 #ifdef XBM_IMAGE
-    surface = create_xbm_surface_from_data(buffer, size);
+    surface = create_xbm_surface_from_data(buffer, length);
 #endif
   }
 
   if (surface == nullptr) {
 #ifdef XPM_IMAGE
-    surface = create_xpm_surface_from_data(buffer, size);
+    surface = create_xpm_surface_from_data(buffer, length);
 #endif
   }
 
   if (surface == nullptr) {
 #ifdef MJPEG_IMAGE
-    surface = create_mjpeg_surface_from_data(buffer, size);
+    surface = create_mjpeg_surface_from_data(buffer, length);
 #endif
   }
 

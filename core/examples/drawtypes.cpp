@@ -34,7 +34,7 @@ class Main : public Window {
       try {
         std::string path = "images/image." + format;
 
-			  _types[format] = std::make_shared<BufferedImage>(path);
+			  _types[format] = std::make_shared<BufferedImage>(path, jcanvas::jpoint_t<int>{256, 256});
       } catch (...) {
 			  _types[format] = nullptr;
       }
