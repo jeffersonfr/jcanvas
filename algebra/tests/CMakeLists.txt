@@ -9,12 +9,9 @@ macro(module_test)
     COMMAND $<TARGET_FILE:${ARGV0}>
   )
 
-  include_directories(
-    "../algebra/src/include"
-  )
-
-  target_link_libraries(${ARGV0}_test PUBLIC
-    jcanvas-core
+  target_link_libraries(${ARGV0}_test
+    PRIVATE
+      jcanvas-core
   )
 endmacro()
 

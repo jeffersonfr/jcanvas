@@ -7,18 +7,16 @@ macro(module_test)
     ${ARGV0}.cpp
   )
 
-  include_directories(
-    "../core/src/include"
+  target_link_libraries(${ARGV0}_example
+    PRIVATE
+      jcanvas-core
   )
-
-  target_link_libraries(${ARGV0}_example PUBLIC
-    jcanvas-core
-  )
-
-  if (OPENMP_FOUND)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+  
+  if(OpenMP_CXX_FOUND)
+    target_link_libraries(${ARGV0}_example
+      PRIVATE
+        OpenMP::OpenMP_CXX
+    )
   endif()
 endmacro()
 

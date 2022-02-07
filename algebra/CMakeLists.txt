@@ -1,6 +1,6 @@
 project (jcanvas-algebra)
 
-include (${CMAKE_SOURCE_DIR}/Defines.cmake)
+include (${PROJECT_SOURCE_DIR}/../Defines.cmake)
 
 set(SRCS
   src/jcircle.cpp

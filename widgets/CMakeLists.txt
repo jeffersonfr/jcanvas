@@ -1,6 +1,6 @@
 project (jcanvas-widgets)
 
-include (${CMAKE_SOURCE_DIR}/Defines.cmake)
+include (${PROJECT_SOURCE_DIR}/../Defines.cmake)
 
 set(SRCS
   src/jactionevent.cpp
@@ -72,31 +72,30 @@ set(SRCS
 )
 
 # find libcairo
-pkg_check_modules(CAIRO REQUIRED cairo)
+pkg_check_modules(Cairo REQUIRED IMPORTED_TARGET cairo)
 
 # find jmixin
-pkg_check_modules(JMIXIN REQUIRED jmixin)
+pkg_check_modules(jMixin REQUIRED IMPORTED_TARGET jmixin)
+
+# find threads
+find_package(Threads REQUIRED)
 
 # widgets compilation
-add_library(${PROJECT_NAME} SHARED 
-  ${SRCS} 
+add_library(${PROJECT_NAME}
+  SHARED 
+    ${SRCS} 
 )
 
-include_directories(
-  "${CMAKE_SOURCE_DIR}/widgets/src/include"
-  "${CMAKE_SOURCE_DIR}/algebra/src/include"
-  "${CMAKE_SOURCE_DIR}/core/src/include"
+target_include_directories(${PROJECT_NAME}
+  PRIVATE
+    src/include
 )
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-  ${CAIRO_INCLUDE_DIRS}
-  ${JMIXIN_INCLUDE_DIRS}
-)
-
-target_link_libraries(${PROJECT_NAME} PUBLIC
-  ${CAIRO_LIBRARIES}
-  ${JMIXIN_LIBRARIES}
-  pthread
+target_link_libraries(${PROJECT_NAME}
+  PUBLIC
+    PkgConfig::Cairo
+    PkgConfig::jMixin
+    Threads::Threads
 )
 
 if (TESTS)

@@ -1,6 +1,6 @@
 project (jcanvas-core)
 
-include (${CMAKE_SOURCE_DIR}/Defines.cmake)
+include (${PROJECT_SOURCE_DIR}/../Defines.cmake)
 
 set(SRCS
   src/japplication.cpp
@@ -30,49 +30,48 @@ include (cmake/GraphicBinds.cmake)
 include (cmake/ImageProviders.cmake)
 
 # find libcairo
-pkg_check_modules(CAIRO REQUIRED cairo)
+pkg_check_modules(Cairo REQUIRED IMPORTED_TARGET cairo)
 
 # find freetype2
-pkg_check_modules(FREETYPE REQUIRED freetype2)
+pkg_check_modules(FreeType REQUIRED IMPORTED_TARGET freetype2)
 
 # find jmixin
-pkg_check_modules(JMIXIN REQUIRED jmixin)
+pkg_check_modules(jMixin REQUIRED IMPORTED_TARGET jmixin)
 
 # core compilation
-add_library(${PROJECT_NAME} SHARED 
-  ${SRCS} 
-  ${GRAPHIC_BINDS_SRCS} 
-  ${IMAGE_PROVIDERS_SRCS}
+add_library(${PROJECT_NAME}
+  SHARED 
+    ${SRCS} 
+    ${GRAPHIC_BINDS_SRCS} 
+    ${IMAGE_PROVIDERS_SRCS}
 )
 
-include_directories(
-  "${CMAKE_SOURCE_DIR}/core/src/include"
-  "${CMAKE_SOURCE_DIR}/algebra/src/include"
+target_compile_definitions(${PROJECT_NAME}
+  PUBLIC
+    ${GRAPHIC_BINDS_CFLAGS} 
 )
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC
-  ${GRAPHIC_BINDS_CFLAGS} 
+target_include_directories(${PROJECT_NAME}
+  PRIVATE
+    src/include
+    ${GRAPHIC_BINDS_INCLUDE_DIRS}
+    ${IMAGE_PROVIDERS_INCLUDE_DIRS}
 )
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-  ${CAIRO_INCLUDE_DIRS}
-  ${FREETYPE_INCLUDE_DIRS}
-  ${JMIXIN_INCLUDE_DIRS}
-  ${GRAPHIC_BINDS_INCLUDE_DIRS}
-  ${IMAGE_PROVIDERS_INCLUDE_DIRS}
+target_link_directories(${PROJECT_NAME}
+  PRIVATE
+    ${GRAPHIC_BINDS_LIBRARY_DIRS} 
 )
 
-target_link_directories(${PROJECT_NAME} PUBLIC
-  ${GRAPHIC_BINDS_LIBRARY_DIRS} 
-)
-
-target_link_libraries(${PROJECT_NAME} PUBLIC
-  ${CAIRO_LIBRARIES}
-  ${FREETYPE_LIBRARIES}
-  ${JMIXIN_LIBRARIES}
-  ${GRAPHIC_BINDS_LIBRARIES}
-  ${IMAGE_PROVIDERS_LIBRARIES}
-  jcanvas-algebra
+target_link_libraries(${PROJECT_NAME}
+  PRIVATE
+    ${GRAPHIC_BINDS_LIBRARIES}
+    ${IMAGE_PROVIDERS_LIBRARIES}
+  PUBLIC
+    PkgConfig::Cairo
+    PkgConfig::FreeType
+    PkgConfig::jMixin
+    jcanvas-algebra
 )
 
 if (TESTS)

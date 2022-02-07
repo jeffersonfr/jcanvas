@@ -1,5 +1,7 @@
 cmake_minimum_required (VERSION 3.0)
 
+find_package(OpenMP)
+
 macro(module_test)
   add_executable(${ARGV0}_test
     ${ARGV0}.cpp
@@ -9,13 +11,17 @@ macro(module_test)
     COMMAND $<TARGET_FILE:${ARGV0}>
   )
 
-  include_directories(
-    "../core/src/include"
+  target_link_libraries(${ARGV0}_test
+    PRIVATE
+      jcanvas-core
   )
-
-  target_link_libraries(${ARGV0}_test PUBLIC
-    jcanvas-core
-  )
+  
+  if(OpenMP_CXX_FOUND)
+    target_link_libraries(${ARGV0}_test
+      PRIVATE
+        OpenMP::OpenMP_CXX
+    )
+  endif()
 endmacro()
 
 module_test(jcolor_basics)
