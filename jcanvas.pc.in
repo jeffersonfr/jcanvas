@@ -7,8 +7,8 @@ Name: jCanvas
 Description: A library for abstract a host graphic engine
 URL: https://github.com/me/jeffersonfr/jcanvas
 Version: 0.0.1
-Requires: @PKGCONF_REQ_PUB@
-Requires.private: @PKGCONF_REQ_PRIV@
+Requires: cairo
+Requires.private: cairo
 Cflags: -I"${includedir}" @JCANVAS_INCLUDE_DIRS@
 Libs: -L"${libdir}" -ljcanvas-core -ljcanvas-algebra @JCANVAS_LIBRARIES@
 Libs.private: -L"${libdir}" -ljcanvas-core -ljcanvas-algebra @JCANVAS_LIBRARIES@
