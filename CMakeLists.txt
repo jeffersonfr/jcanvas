@@ -16,6 +16,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_compile_options(-Wall -Wextra -pedantic -Werror)
 
+add_definitions (-DJCANVAS_RESOURCES_DIR=\"${CMAKE_INSTALL_PREFIX}/share/jcanvas\")
+
 set(GRAPHIC_BIND "sdl2" CACHE STRING "Default graphic bind")
 
 set_property(CACHE GRAPHIC_BIND PROPERTY STRINGS 
@@ -24,31 +26,36 @@ set_property(CACHE GRAPHIC_BIND PROPERTY STRINGS
 find_package(PkgConfig REQUIRED)
 
 if (COVERAGE)
-  set(CMAKE_CXX_FLAGS 
-    "${CMAKE_CXX_FLAGS} --coverage -lgcov"
+  set(COVERAGE_FLAGS
+    "--coverage -lgcov"
   )
 endif()
 
 if (SANITIZE)
-  set(CMAKE_CXX_FLAGS 
-    "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize-address-use-after-scope"
+  set(SANITIZE_FLAGS
+    "-fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize-address-use-after-scope"
   )
 endif()
 
 if (PROFILE)
-  set(CMAKE_CXX_FLAGS 
-    "${CMAKE_CXX_FLAGS} -pg -fprofile-arcs -ftest-coverage -fprofile-generate -fno-inline -O0"
-  )
-  set(CMAKE_EXE_LINKER_FLAGS 
-    "${CMAKE_EXE_LINKER_FLAGS} -pg"
+  set(PROFILE_FLAGS
+    "-pg -fprofile-arcs -ftest-coverage -fprofile-generate -fno-inline -O0"
   )
 endif()
 
 if (DEBUG)
-  set(CMAKE_CXX_FLAGS "-g -ggdb")
+  set(DEBUG_FLAGS
+    "-g -ggdb"
+  )
 endif()
 
-add_definitions (-DJCANVAS_RESOURCES_DIR=\"${CMAKE_INSTALL_PREFIX}/share/jcanvas\")
+set(CMAKE_CXX_FLAGS 
+  "${CMAKE_CXX_FLAGS} ${COVERAGE_FLAGS} ${SANITIZE_FLAGS} ${DEBUG_FLAGS}"
+)
+
+set(CMAKE_EXE_LINKER_FLAGS 
+  "${CMAKE_EXE_LINKER_FLAGS} ${COVERAGE_FLAGS} ${SANITIZE_FLAGS} ${DEBUG_FLAGS}"
+)
 
 enable_testing()
 
