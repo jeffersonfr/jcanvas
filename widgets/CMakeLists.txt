@@ -87,8 +87,8 @@ add_library(${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME}
-  PRIVATE
-    src/include
+  PUBLIC
+    "${PROJECT_SOURCE_DIR}/src/include"
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -96,6 +96,7 @@ target_link_libraries(${PROJECT_NAME}
     PkgConfig::Cairo
     PkgConfig::jMixin
     Threads::Threads
+    jcanvas-core
 )
 
 if (TESTS)

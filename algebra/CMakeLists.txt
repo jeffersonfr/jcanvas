@@ -16,11 +16,9 @@ add_library(${PROJECT_NAME} SHARED
   ${SRCS} 
 )
 
-include_directories(
-  "${CMAKE_SOURCE_DIR}/algebra/src/include"
-)
-
 target_include_directories(${PROJECT_NAME} PUBLIC
+  PUBLIC
+    "${PROJECT_SOURCE_DIR}/src/include"
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC

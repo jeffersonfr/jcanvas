@@ -53,9 +53,10 @@ target_compile_definitions(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME}
   PRIVATE
-    src/include
     ${GRAPHIC_BINDS_INCLUDE_DIRS}
     ${IMAGE_PROVIDERS_INCLUDE_DIRS}
+  PUBLIC
+    "${PROJECT_SOURCE_DIR}/src/include"
 )
 
 target_link_directories(${PROJECT_NAME}
