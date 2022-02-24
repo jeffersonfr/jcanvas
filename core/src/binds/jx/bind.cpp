@@ -26,7 +26,7 @@
 #include <atomic>
 #include <stdexcept>
 
-#include "jxclient.h"
+#include "jxclient/jxclient.h"
 
 namespace jcanvas {
 
@@ -344,7 +344,7 @@ class App : public jx::Client {
 
 };
 
-void Application::Init(int argc, char **argv)
+void Application::Init([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
 {
 	sg_screen.x = 1280;
 	sg_screen.y = 720;
@@ -380,9 +380,9 @@ void Application::Quit()
   sg_loop_mutex.unlock();
 }
 
-WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
+WindowAdapter::WindowAdapter(Window *parent, [[maybe_unused]] jrect_t<int> bounds)
 {
-	if (sg_window > 0) {
+	if (sg_window != nullptr) {
 		throw std::runtime_error("Cannot create more than one window");
   }
 
@@ -429,7 +429,7 @@ std::string WindowAdapter::GetTitle()
   return sg_title;
 }
 
-void WindowAdapter::SetOpacity(float opacity)
+void WindowAdapter::SetOpacity([[maybe_unused]] float opacity)
 {
 }
 
@@ -438,7 +438,7 @@ float WindowAdapter::GetOpacity()
 	return 1.0f;
 }
 
-void WindowAdapter::SetUndecorated(bool undecorated)
+void WindowAdapter::SetUndecorated([[maybe_unused]] bool undecorated)
 {
 }
 
@@ -447,7 +447,7 @@ bool WindowAdapter::IsUndecorated()
   return true;
 }
 
-void WindowAdapter::SetBounds(jrect_t<int> bounds)
+void WindowAdapter::SetBounds([[maybe_unused]] jrect_t<int> bounds)
 {
 }
 
@@ -458,7 +458,7 @@ jrect_t<int> WindowAdapter::GetBounds()
   };
 }
 		
-void WindowAdapter::SetVisible(bool visible)
+void WindowAdapter::SetVisible([[maybe_unused]] bool visible)
 {
   sg_visible = true;
 }
@@ -468,7 +468,7 @@ bool WindowAdapter::IsVisible()
 	return sg_visible;
 }
 		
-void WindowAdapter::SetResizable(bool resizable)
+void WindowAdapter::SetResizable([[maybe_unused]] bool resizable)
 {
 }
 
@@ -477,7 +477,7 @@ bool WindowAdapter::IsResizable()
   return false;
 }
 
-void WindowAdapter::SetCursorLocation(int x, int y)
+void WindowAdapter::SetCursorLocation([[maybe_unused]] int x, [[maybe_unused]] int y)
 {
 }
 
@@ -532,7 +532,7 @@ jcursor_style_t WindowAdapter::GetCursor()
   return jcursor_style_t::Default;
 }
 
-void WindowAdapter::SetCursorEnabled(bool enabled)
+void WindowAdapter::SetCursorEnabled([[maybe_unused]] bool enabled)
 {
 }
 
@@ -582,7 +582,7 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
   sg_window->changeCursor(type);
 }
 
-void WindowAdapter::SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty)
+void WindowAdapter::SetCursor([[maybe_unused]] std::shared_ptr<Image> shape, [[maybe_unused]] int hotx, [[maybe_unused]] int hoty)
 {
   /*
 	if ((void *)shape == nullptr) {
@@ -632,7 +632,7 @@ void WindowAdapter::SetCursor(std::shared_ptr<Image> shape, int hotx, int hoty)
   */
 }
 
-void WindowAdapter::SetRotation(jwindow_rotation_t t)
+void WindowAdapter::SetRotation([[maybe_unused]] jwindow_rotation_t t)
 {
 }
 

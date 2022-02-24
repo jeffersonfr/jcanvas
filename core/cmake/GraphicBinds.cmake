@@ -517,12 +517,8 @@ if (GRAPHIC_BIND STREQUAL xlib)
 endif()
 
 if (GRAPHIC_BIND STREQUAL jx)
-  include (cmake/FindJx.cmake)
+  pkg_check_modules(JX REQUIRED jx)
 
-  if (NOT JX_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
-  endif()
-  
   set(GRAPHIC_BINDS_SRCS 
     src/binds/${GRAPHIC_BIND}/bind.cpp
   )
