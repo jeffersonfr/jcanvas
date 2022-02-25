@@ -32,6 +32,7 @@ class Raster {
 
 	private:
     std::shared_ptr<Font> _font;
+    cairo_surface_t *_surface;
     jrect_t<int> _clip;
     jpoint_t<int> _size;
     uint32_t *_buffer;

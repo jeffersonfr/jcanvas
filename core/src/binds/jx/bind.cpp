@@ -26,12 +26,13 @@
 #include <atomic>
 #include <stdexcept>
 
-#include "jxclient/jxclient.h"
+#include "jxwindow/jxlayer.h"
+#include "jxwindow/jxwindow.h"
 
 namespace jcanvas {
 
 /** \brief */
-static jx::Client *sg_window = nullptr;
+static jx::Window *sg_window = nullptr;
 /** \brief */
 static std::shared_ptr<Image> sg_back_buffer = nullptr;
 /** \brief */
@@ -55,28 +56,38 @@ static std::shared_ptr<Image> sg_jcanvas_icon = nullptr;
 /** \brief */
 static Window *sg_jcanvas_window = nullptr;
 
-class App : public jx::Client {
+class App : public jx::Window {
 
   public:
-    App():
-      jx::Client()
+    App(jrect_t<int> bounds):
+      jx::Window({1280, 720}, {bounds.point.x, bounds.point.y})
+      // jx::Window({bounds.size.x, bounds.size.y}, {bounds.point.x, bounds.point.y})
     {
+      // method 2
+      onPaint(
+          [this](cairo_t *cr) {
+            _onPaint(cr);
+          });
+
+      onKey(
+          [this](const jx::KeyEvent &event) {
+            _onKey(event);
+          });
+
+      onPointer(
+          [this](const jx::PointerEvent &event) {
+            _onPointer(event);
+          });
+
+      requestFocus();
+      show();
     }
 
     virtual ~App()
     {
     }
 
-    virtual void onConfig(jx::Vec2<int> size) override
-    {
-      sg_screen.x = size.x;
-      sg_screen.y = size.y;
-
-      requestFocus();
-      requestPaint();
-    }
-
-    virtual void onKey(const jx::KeyEvent &event) override
+    void _onKey(const jx::KeyEvent &event)
     {
       std::cout << "Client:input: '" << (int)event.id << "' was " << ((event.down == true)?"pressed":"released") << std::endl;
   
@@ -106,7 +117,7 @@ class App : public jx::Client {
     std::map<jmouseevent_button_t, bool> 
       sg_mouse_button_state;
 
-    virtual void onPointer(const jx::PointerEvent &event) override
+    void _onPointer(const jx::PointerEvent &event)
     {
       jmouseevent_button_t 
         button =  jmouseevent_button_t::None;
@@ -141,7 +152,7 @@ class App : public jx::Client {
       sg_jcanvas_window->GetEventManager().PostEvent(new MouseEvent(sg_jcanvas_window, type, button, jmouseevent_button_t::None, {sg_mouse_x, sg_mouse_y}, mouse_z));
     }
 
-    virtual void onPaint(cairo_t *cr) override
+    void _onPaint(cairo_t *cr)
     {
       if (sg_jcanvas_window == nullptr || sg_jcanvas_window->IsVisible() == false) {
         return;
@@ -160,7 +171,7 @@ class App : public jx::Client {
       }
 
       if (sg_back_buffer == nullptr) {
-        sg_back_buffer = std::make_shared<BufferedImage>(jpixelformat_t::RGB32, bounds.size);
+        sg_back_buffer = std::make_shared<BufferedImage>(jpixelformat_t::ARGB, bounds.size);
       }
 
       Graphics 
@@ -177,9 +188,12 @@ class App : public jx::Client {
         
       cairo_surface_t *cairo_surface = g->GetCairoSurface();
 
-      // cairo_surface_flush(cairo_surface);
-      cairo_set_source_surface(cr, cairo_surface, 0, 0);
       cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+
+      // cairo_set_source_rgba(cr, 0.0f, 0.0f, 0.0f, 0.0f);
+      // cairo_paint(cr);
+
+      cairo_set_source_surface(cr, cairo_surface, 0, 0);
       cairo_paint(cr);
 
       sg_jcanvas_window->DispatchWindowEvent(new WindowEvent(sg_jcanvas_window, jwindowevent_type_t::Painted));
@@ -360,7 +374,7 @@ void Application::Loop()
 
   std::lock_guard<std::mutex> lock(sg_loop_mutex);
 
-  sg_window->loop();
+  jx::Layer::instance()->loop();
 
   sg_jcanvas_window->SetVisible(false);
 }
@@ -393,13 +407,7 @@ WindowAdapter::WindowAdapter(Window *parent, [[maybe_unused]] jrect_t<int> bound
 	sg_mouse_y = 0;
   sg_jcanvas_window = parent;
 
-  sg_window = new App();
-
-  sg_window->connect();
-
-  if (sg_window == 0) {
-		throw std::runtime_error("Cannot create a window");
-  }
+  sg_window = new App(bounds);
 }
 
 WindowAdapter::~WindowAdapter()
@@ -412,7 +420,7 @@ WindowAdapter::~WindowAdapter()
 
 void WindowAdapter::Repaint()
 {
-  sg_window->requestPaint();
+  sg_window->repaint();
 }
 
 void WindowAdapter::ToggleFullScreen()
@@ -493,6 +501,7 @@ jpoint_t<int> WindowAdapter::GetCursorLocation()
 
 jcursor_style_t WindowAdapter::GetCursor()
 {
+  /* TODO::
   jx::Cursor id = sg_window->currentCursor();
 
   if (id == jx::Cursor::Default) {
@@ -528,6 +537,7 @@ jcursor_style_t WindowAdapter::GetCursor()
   } else if (id == jx::Cursor::Wait) {
     return jcursor_style_t::Wait;
   }
+  */
 
   return jcursor_style_t::Default;
 }
@@ -543,7 +553,7 @@ bool WindowAdapter::IsCursorEnabled()
 
 void WindowAdapter::SetCursor(jcursor_style_t style)
 {
-  jx::Cursor type = jx::Cursor::Default;
+  [[maybe_unused]] jx::Cursor type = jx::Cursor::Default;
 
   if (style == jcursor_style_t::Default) {
     type = jx::Cursor::Default;
@@ -579,7 +589,8 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
     type = jx::Cursor::Wait;
   }
 
-  sg_window->changeCursor(type);
+  // TODO::
+  // sg_window->changeCursor(type);
 }
 
 void WindowAdapter::SetCursor([[maybe_unused]] std::shared_ptr<Image> shape, [[maybe_unused]] int hotx, [[maybe_unused]] int hoty)

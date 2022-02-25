@@ -38,6 +38,7 @@ jrect_t<int> Raster::GetClip()
 Raster::Raster(cairo_surface_t *surface):
   Raster((uint32_t *)cairo_image_surface_get_data(surface), {cairo_image_surface_get_width(surface), cairo_image_surface_get_height(surface)})
 {
+  _surface = surface;
   _font = nullptr;
 }
 
@@ -47,6 +48,7 @@ Raster::Raster(uint32_t *data, jpoint_t<int> size)
     throw std::invalid_argument("Invalid data");
   }
   
+  _surface = nullptr;
   _buffer = data;
   _size = size;
   _color = 0xfff0f0f0;
@@ -62,6 +64,10 @@ Raster::Raster(uint32_t *data, jpoint_t<int> size)
 
 Raster::~Raster()
 {
+  if (_surface != nullptr) {
+    cairo_surface_mark_dirty(_surface);
+    cairo_surface_flush(_surface);
+  }
 }
 
 void Raster::SetClip(const jrect_t<int> &rect)
