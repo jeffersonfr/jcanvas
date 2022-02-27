@@ -1445,7 +1445,7 @@ void Graphics::SetRGBArray(const uint32_t *rgb, jrect_t<int> rect)
   int sh = cairo_image_surface_get_height(_cairo_surface);
   
   if ((x < 0 || (x + rect.size.x) > sw) || (y < 0 || (y + rect.size.y) > sh)) {
-    // throw std::range_error("Index out of bounds");
+    return;
   }
 
   uint8_t *data = cairo_image_surface_get_data(_cairo_surface);
