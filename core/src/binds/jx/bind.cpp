@@ -60,8 +60,7 @@ class App : public jx::Window {
 
   public:
     App(jrect_t<int> bounds):
-      jx::Window({1280, 720}, {bounds.point.x, bounds.point.y})
-      // jx::Window({bounds.size.x, bounds.size.y}, {bounds.point.x, bounds.point.y})
+      jx::Window({bounds.size.x, bounds.size.y}, {bounds.point.x, bounds.point.y})
     {
       // method 2
       onPaint(
@@ -349,6 +348,14 @@ class App : public jx::Window {
           return jkeyevent_symbol_t::CurlyBracketRight;
         case jx::EventKey::Tilde:
           return jkeyevent_symbol_t::Tilde;
+        case jx::EventKey::Left:
+          return jkeyevent_symbol_t::CursorLeft;
+        case jx::EventKey::Right:
+          return jkeyevent_symbol_t::CursorRight;
+        case jx::EventKey::Up:
+          return jkeyevent_symbol_t::CursorUp;
+        case jx::EventKey::Down:
+          return jkeyevent_symbol_t::CursorDown;
         default: 
           break;
       }
@@ -360,9 +367,6 @@ class App : public jx::Window {
 
 void Application::Init([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
 {
-	sg_screen.x = 1280;
-	sg_screen.y = 720;
-  
   sg_quitting = false;
 }
 
@@ -405,6 +409,7 @@ WindowAdapter::WindowAdapter(Window *parent, [[maybe_unused]] jrect_t<int> bound
   sg_window = 0;
 	sg_mouse_x = 0;
 	sg_mouse_y = 0;
+	sg_screen = bounds.size;
   sg_jcanvas_window = parent;
 
   sg_window = new App(bounds);
@@ -501,8 +506,7 @@ jpoint_t<int> WindowAdapter::GetCursorLocation()
 
 jcursor_style_t WindowAdapter::GetCursor()
 {
-  /* TODO::
-  jx::Cursor id = sg_window->currentCursor();
+  jx::Cursor id = sg_window->cursor();
 
   if (id == jx::Cursor::Default) {
     return jcursor_style_t::Default;
@@ -537,7 +541,6 @@ jcursor_style_t WindowAdapter::GetCursor()
   } else if (id == jx::Cursor::Wait) {
     return jcursor_style_t::Wait;
   }
-  */
 
   return jcursor_style_t::Default;
 }
@@ -548,7 +551,7 @@ void WindowAdapter::SetCursorEnabled([[maybe_unused]] bool enabled)
 
 bool WindowAdapter::IsCursorEnabled()
 {
-	return false; // glutGet(GLUT_WINDOW_CURSOR) != jx::Cursor::NONE;
+  return sg_window->cursor() != jx::Cursor::None;
 }
 
 void WindowAdapter::SetCursor(jcursor_style_t style)
@@ -589,8 +592,7 @@ void WindowAdapter::SetCursor(jcursor_style_t style)
     type = jx::Cursor::Wait;
   }
 
-  // TODO::
-  // sg_window->changeCursor(type);
+  sg_window->cursor(type);
 }
 
 void WindowAdapter::SetCursor([[maybe_unused]] std::shared_ptr<Image> shape, [[maybe_unused]] int hotx, [[maybe_unused]] int hoty)
