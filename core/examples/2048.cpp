@@ -129,6 +129,8 @@ class Game2048 : public Window, public KeyListener {
 				move(UP);
 			} else if (event->GetSymbol() == jkeyevent_symbol_t::CursorDown) {
 				move(DOWN);
+			} else {
+				return false;
 			}
 			
 			for (int y=0; y<4; y++) {
