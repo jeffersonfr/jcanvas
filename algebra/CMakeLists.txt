@@ -1,6 +1,4 @@
-project (jcanvas-algebra)
-
-include (${PROJECT_SOURCE_DIR}/../Defines.cmake)
+project (jcanvas-algebra LANGUAGES CXX VERSION 1.0.0)
 
 set(SRCS
   src/jcircle.cpp
@@ -16,12 +14,16 @@ add_library(${PROJECT_NAME} SHARED
   ${SRCS} 
 )
 
-target_include_directories(${PROJECT_NAME} PUBLIC
+set_target_properties(${PROJECT_NAME} PROPERTIES
+  VERSION ${PROJECT_VERSION}
+  SOVERSION ${PROJECT_VERSION_MAJOR}
+  )
+
+add_library(jCanvas::Algebra ALIAS ${PROJECT_NAME})
+
+target_include_directories(${PROJECT_NAME}
   PUBLIC
     "${PROJECT_SOURCE_DIR}/src/include"
-)
-
-target_link_libraries(${PROJECT_NAME} PUBLIC
 )
 
 if (TESTS)

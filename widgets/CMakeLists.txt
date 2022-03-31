@@ -1,6 +1,4 @@
-project (jcanvas-widgets)
-
-include (${PROJECT_SOURCE_DIR}/../Defines.cmake)
+project (jcanvas-widgets LANGUAGES CXX VERSION 1.0.0)
 
 set(SRCS
   src/jactionevent.cpp
@@ -86,6 +84,13 @@ add_library(${PROJECT_NAME}
     ${SRCS} 
 )
 
+set_target_properties(${PROJECT_NAME} PROPERTIES
+  VERSION ${PROJECT_VERSION}
+  SOVERSION ${PROJECT_VERSION_MAJOR}
+  )
+
+add_library(jCanvas::Widgets ALIAS ${PROJECT_NAME})
+
 target_include_directories(${PROJECT_NAME}
   PUBLIC
     "${PROJECT_SOURCE_DIR}/src/include"
@@ -96,7 +101,7 @@ target_link_libraries(${PROJECT_NAME}
     PkgConfig::Cairo
     PkgConfig::jMixin
     Threads::Threads
-    jcanvas-core
+    jCanvas::Core
 )
 
 if (TESTS)

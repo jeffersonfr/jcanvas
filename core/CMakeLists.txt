@@ -1,6 +1,4 @@
-project (jcanvas-core)
-
-include (${PROJECT_SOURCE_DIR}/../Defines.cmake)
+project (jcanvas-core LANGUAGES CXX VERSION 1.0.0)
 
 set(SRCS
   src/japplication.cpp
@@ -20,6 +18,7 @@ set(SRCS
   src/jmouseevent.cpp
   src/jmouselistener.cpp
   src/jraster.cpp
+  src/jresources.cpp
   src/jwindow.cpp
   src/jwindowadapter.cpp
   src/jwindowevent.cpp
@@ -46,7 +45,17 @@ add_library(${PROJECT_NAME}
     ${IMAGE_PROVIDERS_SRCS}
 )
 
+set_target_properties(${PROJECT_NAME}
+  PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR}
+  )
+
+add_library(jCanvas::Core ALIAS ${PROJECT_NAME})
+
 target_compile_definitions(${PROJECT_NAME}
+  PRIVATE
+    JCANVAS_RESOURCES_DIR=\"${CMAKE_INSTALL_PREFIX}/share/jcanvas\"
   PUBLIC
     ${GRAPHIC_BINDS_CFLAGS} 
 )
@@ -72,7 +81,7 @@ target_link_libraries(${PROJECT_NAME}
     PkgConfig::Cairo
     PkgConfig::FreeType
     PkgConfig::jMixin
-    jcanvas-algebra
+    jCanvas::Algebra
 )
 
 if (TESTS)

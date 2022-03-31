@@ -21,6 +21,7 @@
 #include "jcanvas/core/jwindowadapter.h"
 #include "jcanvas/core/japplication.h"
 #include "jcanvas/core/jenum.h"
+#include "jcanvas/core/jresources.h"
 
 namespace jcanvas {
   jkeyevent_modifiers_t jKeyEventModifiersNone = jkeyevent_modifiers_t::None;
@@ -604,7 +605,7 @@ void Application::Quit()
 
 WindowAdapter::WindowAdapter(Window *parent, jrect_t<int> bounds)
 {
-  // sg_jcanvas_icon = std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/small-gnu.png");
+  // sg_jcanvas_icon = std::make_shared<BufferedImage>(Resources::Path() + "/images/small-gnu.png");
 
 	sg_mouse_x = 0;
 	sg_mouse_y = 0;

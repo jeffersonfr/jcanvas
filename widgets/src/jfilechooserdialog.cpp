@@ -19,6 +19,7 @@
  ***************************************************************************/
 #include "jcanvas/widgets/jfilechooserdialog.h"
 #include "jcanvas/widgets/jbutton.h"
+#include "jcanvas/core/jresources.h"
 
 #include "jmixin/jstring.h"
 
@@ -37,8 +38,8 @@ FileChooserDialog::FileChooserDialog(Container *parent, std::string title, std::
   _filter = filter;
   _extension_ignorecase = true;
 
-  _image_file = std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/file.png");
-  _image_folder = std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/folder.png");
+  _image_file = std::make_shared<BufferedImage>(Resources::Path() + "/images/file.png");
+  _image_folder = std::make_shared<BufferedImage>(Resources::Path() + "/images/folder.png");
   
   if (_type == jfilechooser_type_t::SaveFile) {
     _list = new ListBox();

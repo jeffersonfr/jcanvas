@@ -21,6 +21,7 @@
 #include "jcanvas/widgets/jsolidbackground.h"
 #include "jcanvas/widgets/jrectangleborder.h"
 #include "jcanvas/core/jbufferedimage.h"
+#include "jcanvas/core/jresources.h"
 
 #include <stdexcept>
 
@@ -68,7 +69,7 @@ void Spin::Build(std::string value)
 {
   SetLayout<BorderLayout>();
 
-  _previous.SetImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/left-arrow.png"));
+  _previous.SetImage(std::make_shared<BufferedImage>(Resources::Path() + "/images/left-arrow.png"));
   // _previous.SetFocusable(false);
   _previous.SetPreferredSize(_previous.GetImageComponent()->GetPreferredSize());
   _previous.SetBorder(nullptr);
@@ -82,7 +83,7 @@ void Spin::Build(std::string value)
   _text.SetHorizontalAlign(jhorizontal_align_t::Center);
   _text.SetVerticalAlign(jvertical_align_t::Center);
 
-  _next.SetImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/right-arrow.png"));
+  _next.SetImage(std::make_shared<BufferedImage>(Resources::Path() + "/images/right-arrow.png"));
   // _next.SetFocusable(false);
   _next.SetPreferredSize(_next.GetImageComponent()->GetPreferredSize());
   _next.SetBorder(nullptr);

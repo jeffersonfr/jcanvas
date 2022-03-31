@@ -19,16 +19,17 @@
  ***************************************************************************/
 #include "jcanvas/widgets/jcheckbutton.h"
 #include "jcanvas/core/jbufferedimage.h"
+#include "jcanvas/core/jresources.h"
 
 #include <algorithm>
 
 namespace jcanvas {
 
 CheckButton::CheckButton(jcheckbutton_type_t type, std::string text):
-  Button(text, std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/check-image.png"))
+  Button(text, std::make_shared<BufferedImage>(Resources::Path() + "/images/check-image.png"))
 {
-  _check_image = std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/check-image.png")->Scale({64, 32});
-  _radio_image = std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/radio-image.png")->Scale({64, 32});
+  _check_image = std::make_shared<BufferedImage>(Resources::Path() + "/images/check-image.png")->Scale({64, 32});
+  _radio_image = std::make_shared<BufferedImage>(Resources::Path() + "/images/radio-image.png")->Scale({64, 32});
 
   SetPressed(false);
   SetType(type);

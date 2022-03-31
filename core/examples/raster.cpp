@@ -21,8 +21,6 @@
 #include "jcanvas/core/jwindow.h"
 #include "jcanvas/core/jraster.h"
 
-#define JCANVAS_RESOURCES_DIR "/usr/local/share/jcanvas"
-
 using namespace jcanvas;
 
 class RasterTest : public Window {

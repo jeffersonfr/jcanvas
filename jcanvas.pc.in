@@ -11,5 +11,5 @@ Requires: cairo freetype2 jmixin
 Requires.private: 
 Cflags: -I"${includedir}" @JCANVAS_INCLUDE_DIRS@
 Cflags.private:
-Libs: -L"${libdir}" -ljcanvas-core -ljcanvas-algebra @JCANVAS_LIBRARIES@
+Libs: -L"${libdir}" -l$<TARGET_FILE_BASE_NAME:jCanvas::Algebra> -l$<TARGET_FILE_BASE_NAME:jCanvas::Core> $<$<TARGET_EXISTS:jCanvas::Widgets>:-l$<TARGET_FILE_BASE_NAME:jCanvas::Widgets>>
 Libs.private: 

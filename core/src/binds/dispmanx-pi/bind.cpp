@@ -21,6 +21,7 @@
 #include "jcanvas/core/jwindowadapter.h"
 #include "jcanvas/core/japplication.h"
 #include "jcanvas/core/jenum.h"
+#include "jcanvas/core/jresources.h"
 
 #include <thread>
 #include <mutex>
@@ -423,7 +424,7 @@ void Application::Init(int argc, char **argv)
 	int w = 30,
 			h = 30;
 
-	std::shared_ptr<Image> cursors = std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/cursors.png");
+	std::shared_ptr<Image> cursors = std::make_shared<BufferedImage>(Resources::Path() + "/images/cursors.png");
 
 	CURSOR_INIT(jcursor_style_t::Default, 0, 0, 8, 8);
 	CURSOR_INIT(jcursor_style_t::Crosshair, 4, 3, 15, 15);

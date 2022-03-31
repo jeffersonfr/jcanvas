@@ -174,7 +174,7 @@ if (${WEBP_FOUND})
 endif()
 
 # svg
-pkg_check_modules(SVG librsvg-2.0)
+#pkg_check_modules(SVG librsvg-2.0)
 
 if (${SVG_FOUND})
   set(IMAGE_PROVIDERS_SRCS 

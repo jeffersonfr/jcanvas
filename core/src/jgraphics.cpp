@@ -1775,25 +1775,30 @@ void Graphics::SetRGBArray(const uint32_t *rgb, jrect_t<int> rect)
       }
     }
   } else if (_pixelformat == jpixelformat_t::RGB32) {
+    uint32_t *src = (uint32_t *)(rgb + 0 * rect.size.x);
+    uint32_t *dst = (uint32_t *)(data + (y + 0) * stride + x * step);
+
+    if (x < 0) {
+      rect.size.x = rect.size.x + x;
+    }
+
+    if (x + rect.size.x > sw) {
+      rect.size.x = rect.size.x - x;
+    }
+
+    if (rect.size.x <= 0) {
+      return;
+    }
+
     for (int j=0; j<rect.size.y; j++) {
       if ((y + j) < 0 or (y + j) >= sh) {
         continue;
       }
 
-			if (x < 0) {
-				rect.size.x = rect.size.x + x;
-			}
+      std::memcpy(dst, src, rect.size.x * 4);
 
-			if (x + rect.size.x > sw) {
-				rect.size.x = rect.size.x - x;
-			}
-
-			if (rect.size.x > 0) {
-      	uint32_t *src = (uint32_t *)(rgb + j * rect.size.x);
-      	uint32_t *dst = (uint32_t *)(data + (y + j) * stride + x * step);
-
-			  memcpy(dst, src, rect.size.x*4);
-			}
+      src = src + rect.size.x;
+      dst = dst + rect.size.x;
     }
   } else if (_pixelformat == jpixelformat_t::RGB16) {
     for (int j=0; j<rect.size.y; j++) {

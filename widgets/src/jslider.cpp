@@ -19,12 +19,13 @@
  ***************************************************************************/
 #include "jcanvas/widgets/jslider.h"
 #include "jcanvas/core/jbufferedimage.h"
+#include "jcanvas/core/jresources.h"
 
 namespace jcanvas {
 
 Slider::Slider()
 {
-  _stone_image = std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/marker.png");
+  _stone_image = std::make_shared<BufferedImage>(Resources::Path() + "/images/marker.png");
 
   _is_pressed = false;
 

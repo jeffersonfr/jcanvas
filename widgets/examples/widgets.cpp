@@ -33,6 +33,7 @@
 #include "jcanvas/widgets/jlistbox.h"
 #include "jcanvas/widgets/jflatimage.h"
 #include "jcanvas/widgets/jscrollbar.h"
+#include "jcanvas/core/jresources.h"
 
 #include <iostream>
 #include <mutex>
@@ -392,7 +393,7 @@ class App : public Frame, public ActionListener, public SelectListener {
         jrect_t
           region = _marquee->GetVisibleBounds();
 
-        _staticimage = new FlatImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/green_icon.png"));
+        _staticimage = new FlatImage(std::make_shared<BufferedImage>(Resources::Path() + "/images/green_icon.png"));
         
         _staticimage->SetBounds({region.point.x + region.size.x + 16, region.point.y, 196, 196});
       }

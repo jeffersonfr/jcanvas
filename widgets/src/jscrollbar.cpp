@@ -21,6 +21,7 @@
 #include "jcanvas/widgets/jsolidbackground.h"
 #include "jcanvas/widgets/jrectangleborder.h"
 #include "jcanvas/core/jbufferedimage.h"
+#include "jcanvas/core/jresources.h"
 
 namespace jcanvas {
 
@@ -80,16 +81,16 @@ void ScrollBar::SetVertical(bool vertical)
   _slider.SetVertical(vertical);
 
   if (vertical == false) {
-    _previous.SetImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/left-arrow.png"));
-    _next.SetImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/right-arrow.png"));
+    _previous.SetImage(std::make_shared<BufferedImage>(Resources::Path() + "/images/left-arrow.png"));
+    _next.SetImage(std::make_shared<BufferedImage>(Resources::Path() + "/images/right-arrow.png"));
 
     Add(&_previous, jborderlayout_align_t::West);
     Add(&_next, jborderlayout_align_t::East);
   } else {
-    _previous.SetImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/down-arrow.png"));
+    _previous.SetImage(std::make_shared<BufferedImage>(Resources::Path() + "/images/down-arrow.png"));
     _previous.SetPreferredSize(_previous.GetImageComponent()->GetPreferredSize());
 
-    _next.SetImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/up-arrow.png"));
+    _next.SetImage(std::make_shared<BufferedImage>(Resources::Path() + "/images/up-arrow.png"));
     _next.SetPreferredSize(_next.GetImageComponent()->GetPreferredSize());
 
     Add(&_previous, jborderlayout_align_t::South);
@@ -99,7 +100,7 @@ void ScrollBar::SetVertical(bool vertical)
   // _slider.SetBackground(nullptr);
   _slider.SetBorder(nullptr);
   _slider.SetMetricVisible(false);
-  _slider.SetStoneImage(std::make_shared<BufferedImage>(JCANVAS_RESOURCES_DIR "/images/stone.png"));
+  _slider.SetStoneImage(std::make_shared<BufferedImage>(Resources::Path() + "/images/stone.png"));
 
   _previous.SetBackground(nullptr);
   _previous.SetBorder(nullptr);
