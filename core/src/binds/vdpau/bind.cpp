@@ -852,6 +852,7 @@ WindowAdapter::~WindowAdapter()
   sg_window = 0;
   
   sg_back_buffer = nullptr;
+  sg_jcanvas_window = nullptr;
 }
 
 void WindowAdapter::Repaint()

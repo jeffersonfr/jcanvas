@@ -632,6 +632,7 @@ WindowAdapter::~WindowAdapter()
   // gtk_main_quit();
   
   sg_back_buffer = nullptr;
+  sg_jcanvas_window = nullptr;
 }
 
 void WindowAdapter::Repaint()

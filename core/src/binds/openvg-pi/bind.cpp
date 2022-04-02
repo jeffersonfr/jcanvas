@@ -696,10 +696,11 @@ WindowAdapter::~WindowAdapter()
   vc_dispmanx_element_remove(sg_dispman_update, sg_dispman_element);
   vc_dispmanx_update_submit_sync(sg_dispman_update);
   vc_dispmanx_display_close(sg_dispman_display);
-  
-  sg_back_buffer = nullptr;
 
   bcm_host_deinit();
+  
+  sg_back_buffer = nullptr;
+  sg_jcanvas_window = nullptr;
 }
 
 void WindowAdapter::Repaint()

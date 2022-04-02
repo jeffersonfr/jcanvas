@@ -685,6 +685,7 @@ WindowAdapter::~WindowAdapter()
   layer_release(&sg_layer);
   
   sg_back_buffer = nullptr;
+  sg_jcanvas_window = nullptr;
 }
 
 void WindowAdapter::Repaint()

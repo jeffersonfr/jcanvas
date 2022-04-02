@@ -601,6 +601,7 @@ WindowAdapter::~WindowAdapter()
   xcb_disconnect(sg_xcb_connection);
   
   sg_back_buffer = nullptr;
+  sg_jcanvas_window = nullptr;
 }
 
 void WindowAdapter::Repaint()

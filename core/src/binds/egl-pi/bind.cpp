@@ -727,6 +727,7 @@ WindowAdapter::~WindowAdapter()
   vc_dispmanx_display_close(sg_dispman_display);
 
   sg_back_buffer = nullptr;
+  sg_jcanvas_window = nullptr;
 }
 
 void WindowAdapter::Repaint()

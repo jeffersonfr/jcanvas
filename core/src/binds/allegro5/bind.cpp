@@ -595,6 +595,8 @@ WindowAdapter::~WindowAdapter()
 
 	al_destroy_display(sg_display);
   sg_display = nullptr;
+  
+  sg_jcanvas_window = nullptr;
 }
 
 void WindowAdapter::Repaint()

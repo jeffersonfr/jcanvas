@@ -417,10 +417,11 @@ WindowAdapter::WindowAdapter(Window *parent, [[maybe_unused]] jrect_t<int> bound
 
 WindowAdapter::~WindowAdapter()
 {
-  sg_back_buffer = nullptr;
-
   delete sg_window;
   sg_window = nullptr;
+  
+  sg_back_buffer = nullptr;
+  sg_jcanvas_window = nullptr;
 }
 
 void WindowAdapter::Repaint()

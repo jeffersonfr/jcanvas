@@ -609,6 +609,7 @@ WindowAdapter::~WindowAdapter()
   rfbShutdownServer(sg_server, true);
   
   sg_back_buffer = nullptr;
+  sg_jcanvas_window = nullptr;
 }
 
 void WindowAdapter::Repaint()

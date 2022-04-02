@@ -612,6 +612,7 @@ WindowAdapter::~WindowAdapter()
   QCoreApplication::quit();
   
   sg_back_buffer = nullptr;
+  sg_jcanvas_window = nullptr;
 }
 
 void WindowAdapter::Repaint()
