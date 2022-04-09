@@ -70,7 +70,7 @@
 #include "providers/include/webpimage.h"
 #endif
 
-#ifdef JP2000_IMAGE
+#ifdef JP2_IMAGE
 #include "providers/include/jp2000image.h"
 #endif
 
@@ -458,7 +458,7 @@ void BufferedImage::ConstructFromStream(std::istream &stream)
   }
 
   if (surface == nullptr) {
-#ifdef JP2000_IMAGE
+#ifdef JP2_IMAGE
     surface = create_jp2000_surface_from_data(buffer, length);
 #endif
   }

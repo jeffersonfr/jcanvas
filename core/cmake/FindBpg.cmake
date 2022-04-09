@@ -1,50 +1,56 @@
-# Find bpg project
-
 # This module defines
-#   BPG_INCLUDE_DIRS: jmixin headers
-#   BPG_LIBRARIES: jmixin libraries
-#   BPG_DEFINITIONS: some definitions
+#   BPG_DIR: library prefix
+
+#   BPG_INCLUDE_DIRS: headers directory
+#   BPG_LIBRARIES: libraries
 #
 #   BPG_FOUND, If false, do not try to use BPG.
 
-set (BPG_INCLUDE_DIRS 
-  /usr/include
-  /usr/local/include
-)
+function (add_imported_library name libraries headers)
+  add_library (${name} UNKNOWN IMPORTED)
 
-set (BPG_LIBRARY_DIRS 
-  /usr/lib 
-  /usr/local/lib 
-)
+  set_target_properties (${name} PROPERTIES
+    IMPORTED_LOCATION ${libraries}
+    INTERFACE_INCLUDE_DIRECTORIES ${headers})
 
-find_path (BPG_INCLUDE_DIR 
-  NAMES libbpg.h
-  PATHS ${BPG_INCLUDE_DIRS}
-)
+  set (${name}_FOUND 1 CACHE INTERNAL "${name} found" FORCE)
+  set (${name}_LIBRARIES ${libraries} CACHE STRING "path to ${name} library" FORCE)
+  set (${name}_INCLUDE_DIRS ${headers} CACHE STRING "path to ${name} headers" FORCE)
 
-find_library (BPG_LIBRARY
-  NAMES libbpg.a
-  PATHS ${BPG_LIBRARY_DIRS}
-)
+  mark_as_advanced(FORCE ${name}_LIBRARIES)
+  mark_as_advanced(FORCE ${name}_INCLUDE_DIRS)
+endfunction ()
 
-find_path (BPG_LIBRARY_DIR
-  NAMES libbpg.a
-  PATHS ${BPG_LIBRARY_DIRS}
-)
+if (BPG_LIBRARIES AND BPG_INCLUDE_DIRS)
+  add_imported_library (Bpg ${BPG_LIBRARIES} ${BPG_INCLUDE_DIRS})
 
-if (BPG_LIBRARY)
-  if (BPG_INCLUDE_DIR)
-    set (BGP_INCLUDE_DIRS ${BPG_INCLUDE_DIR})
-    set (BGP_LIBRARY_DIRS ${BPG_INCLUDE_DIR})
-
-    set (BPG_CFLAGS_OTHER)
-    set (BPG_CFLAGS) 
-
-    set (BPG_LDFLAGS_OTHER)
-    set (BPG_LDFLAGS)
-
-    set (BPG_LIBRARIES ${BPG_LIBRARY})
-
-    set (BPG_FOUND "YES")
-  endif ()
+  return ()
 endif ()
+
+file (TO_CMAKE_PATH "$ENV{BPG_DIR}" _BPG_DIR_)
+
+find_library (BPG_LIBRARY_PATH NAMES bpg
+  PATHS
+    ${_BPG_DIR_}/lib
+    ${_BPG_DIR_}/lib/${CMAKE_LIBRARY_ARCHITECTURE}
+    /usr/lib 
+    /usr/local/lib
+  NO_DEFAULT_PATH)
+
+find_path (BPG_HEADER_PATH NAMES libbpg.h
+  PATHS
+    ${_BPG_DIR_}/include
+    ${_BPG_DIR_}/local/include
+    /usr/include
+    /usr/local/include
+  NO_DEFAULT_PATH)
+
+include (FindPackageHandleStandardArgs)
+
+find_package_handle_standard_args (
+  BPG DEFAULT_MSG BPG_LIBRARY_PATH BPG_HEADER_PATH)
+
+if (BPG_FOUND)
+  add_imported_library (Bpg ${BPG_LIBRARY_PATH} ${BPG_HEADER_PATH})
+endif ()
+

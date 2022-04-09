@@ -1,28 +1,17 @@
-# Find egl project
-
 # This module defines
-#   EGL_INCLUDE_DIRS: jmixin headers
-#   EGL_LIBRARIES: jmixin libraries
-#   EGL_DEFINITIONS: some definitions
+#   EglPi_INCLUDE_DIRS: headers directory
+#   EglPi_LIBRARIES: libraries
 #
-#   EGL_FOUND, If false, do not try to use EGL.
+#   EglPi_FOUND, If false, do not try to use EglPi.
 
-set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:/opt/vc/lib/pkgconfig")
+set (ENV{PKG_CONFIG_LIBDIR} "$ENV{PKG_CONFIG_LIBDIR}:/opt/vc/lib/pkgconfig")
 
-pkg_check_modules(LIBEGL REQUIRED brcmglesv2)
-pkg_check_modules(LIBBCMHOST REQUIRED bcm_host)
+pkg_check_modules(LibBrcmGlesv2 REQUIRED IMPORTED_TARGET brcmglesv2)
+pkg_check_modules(LibBcmHost REQUIRED IMPORTED_TARGET bcm_host)
 
-if (${LIBEGL_FOUND} AND ${LIBBCMHOST_FOUND})
-  set (EGL_INCLUDE_DIRS ${LIBEGL_INCLUDE_DIR} ${LIBBCMHOST_INCLUDE_DIRS})
-  set (EGL_CFLAGS_OTHER ${LIBEGL_CFLAGS_OTHER} ${LIBBCMHOST_CFLAGS_OTHER})
-  set (EGL_CFLAGS ${LIBEGL_CFLAGS} ${LIBBCMHOST_CFLAGS})
+add_library (EglPi UNKNOWN IMPORTED)
 
-  set (EGL_LIBRARY_DIRS ${LIBEGL_LIBRARY_DIRS} ${LIBBCMHOST_LIBRARY_DIRS})
-  set (EGL_LDFLAGS_OTHER ${LIBEGL_LDFLAGS_OTHER} ${LIBBCMHOST_LDFLAGS_OTHER})
-  set (EGL_LDFLAGS ${LIBEGL_LDFLAGS} ${LIBBCMHOST_LDFLAGS})
-
-  set (EGL_LIBRARIES ${LIBEGL_LIBRARIES} ${LIBBCMHOST_LIBRARIES})
-
-  set (EGL_FOUND "YES")
-endif()
-
+target_link_libraries (EglPi
+  INTERFACE
+    PkgConfig::LibBrcmGlesv2
+    PkgConfig::LibBcmHost)
