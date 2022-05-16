@@ -48,9 +48,9 @@ find_path (TIFF_HEADER_PATH NAMES tiffio.h tiffio.hxx
 include (FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args (
-  TIFF DEFAULT_MSG TIFF_LIBRARY_PATH TIFF_HEADER_PATH)
+  Tiff DEFAULT_MSG TIFF_LIBRARY_PATH TIFF_HEADER_PATH)
 
-if (TIFF_FOUND)
+if (Tiff_FOUND)
   add_imported_library (Tiff ${TIFF_LIBRARY_PATH} ${TIFF_HEADER_PATH})
 endif ()
 

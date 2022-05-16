@@ -48,9 +48,9 @@ find_path (JASPER_HEADER_PATH NAMES jasper/jasper.h
 include (FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args (
-  JASPER DEFAULT_MSG JASPER_LIBRARY_PATH JASPER_HEADER_PATH)
+  Jasper DEFAULT_MSG JASPER_LIBRARY_PATH JASPER_HEADER_PATH)
 
-if (JASPER_FOUND)
+if (Jasper_FOUND)
   add_imported_library (Jasper ${JASPER_LIBRARY_PATH} ${JASPER_HEADER_PATH})
 endif ()
 

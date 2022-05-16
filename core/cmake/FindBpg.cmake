@@ -48,9 +48,9 @@ find_path (BPG_HEADER_PATH NAMES libbpg.h
 include (FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args (
-  BPG DEFAULT_MSG BPG_LIBRARY_PATH BPG_HEADER_PATH)
+  Bpg DEFAULT_MSG BPG_LIBRARY_PATH BPG_HEADER_PATH)
 
-if (BPG_FOUND)
+if (Bpg_FOUND)
   add_imported_library (Bpg ${BPG_LIBRARY_PATH} ${BPG_HEADER_PATH})
 endif ()
 

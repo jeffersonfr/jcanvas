@@ -49,9 +49,9 @@ find_path (FLIF_HEADER_PATH NAMES flif-enc.hpp flif-dec.hpp
 include (FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args (
-  FLIF DEFAULT_MSG FLIF_LIBRARY_PATH FLIF_HEADER_PATH)
+  Flif DEFAULT_MSG FLIF_LIBRARY_PATH FLIF_HEADER_PATH)
 
-if (FLIF_FOUND)
+if (Flif_FOUND)
   add_imported_library (Flif ${FLIF_LIBRARY_PATH} ${FLIF_HEADER_PATH})
 endif ()
 
