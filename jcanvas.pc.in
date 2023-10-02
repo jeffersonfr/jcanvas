@@ -3,13 +3,12 @@ exec_prefix="${prefix}"
 libdir="${prefix}/lib"
 includedir="${prefix}/include"
 
-Name: jCanvas
-Description: A library for abstract a host graphic engine
-URL: https://github.com/me/jeffersonfr/jcanvas
-Version: 0.0.1
-Requires: cairo freetype2 jmixin
-Requires.private: 
+Name: @PROJECT_NAME@
+Description: @CMAKE_PROJECT_DESCRIPTION@
+URL: @CMAKE_PROJECT_HOMEPAGE_URL@
+Version: @PROJECT_VERSION@
+Requires: @PC_REQ_PUB@
+Requires.private: @PC_REQ_PRIVATE@
 Cflags: -I"${includedir}" @JCANVAS_INCLUDE_DIRS@
-Cflags.private:
-Libs: -L"${libdir}" -l$<TARGET_FILE_BASE_NAME:jCanvas::Algebra> -l$<TARGET_FILE_BASE_NAME:jCanvas::Core> $<$<TARGET_EXISTS:jCanvas::Widgets>:-l$<TARGET_FILE_BASE_NAME:jCanvas::Widgets>>
-Libs.private: 
+Libs: -L"${libdir}" -ljcanvas-algebra -ljcanvas-core -llibjcanvas-widgets
+Libs.private: -L"${libdir}" @PC_LIBS_PRIVATE@

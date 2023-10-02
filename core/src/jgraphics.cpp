@@ -24,6 +24,8 @@
 
 #include "jmixin/jstring.h"
 
+#include <cstring>
+
 #define M_2PI  (2*M_PI)
   
 #define IMAGE_LIMIT 32768

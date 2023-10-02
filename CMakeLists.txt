@@ -4,7 +4,12 @@ if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "In-source build is not allowed")
 endif()
 
-project (jcanvas)
+project(jcanvas
+  LANGUAGES CXX
+  HOMEPAGE_URL https://github.com/jeffersonfr/jcanvas
+  DESCRIPTION "A library for abstract a host graphic engine"
+  VERSION 1.0.0
+)
 
 option(WIDGETS "Enable widgets module" ON)
 option(TESTS "Enable unit tests" OFF)
@@ -52,7 +57,7 @@ endif()
 
 install(DIRECTORY resources/jcanvas DESTINATION ${CMAKE_INSTALL_PREFIX}/share)
 
-# generate jcanvas.pc
-configure_file(${PROJECT_SOURCE_DIR}/jcanvas.pc.in ${PROJECT_BINARY_DIR}/jcanvas.pc.gen @ONLY)
-file(GENERATE OUTPUT ${CMAKE_BINARY_DIR}/jcanvas.pc INPUT "${CMAKE_BINARY_DIR}/jcanvas.pc.gen")
+# generate pc file
+configure_file(jcanvas.pc.in jcanvas.pc @ONLY)
+
 install(FILES ${CMAKE_BINARY_DIR}/jcanvas.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
