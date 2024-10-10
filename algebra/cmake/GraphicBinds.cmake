@@ -1,16 +1,16 @@
 set(GRAPHIC_BINDS_SRCS)
 
-if (GRAPHIC_BIND STREQUAL allegro5)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL allegro5)
   pkg_check_modules(ALLEGRO5 allegro-5)
   pkg_check_modules(ALLEGRO5VIDEO allegro_video-5)
   pkg_check_modules(ALLEGRO5MAIN allegro_main-5)
 
   if (NOT ALLEGRO5_FOUND OR NOT ALLEGRO5VIDEO_FOUND OR NOT ALLEGRO5MAIN_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
 
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -26,15 +26,15 @@ if (GRAPHIC_BIND STREQUAL allegro5)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL caca)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL caca)
   pkg_check_modules(CACA caca)
 
   if (NOT CACA_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
 
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -46,15 +46,15 @@ if (GRAPHIC_BIND STREQUAL caca)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL directfb)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL directfb)
   pkg_check_modules(DIRECTFB directfb)
 
   if (NOT DIRECTFB_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
 
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -66,15 +66,15 @@ if (GRAPHIC_BIND STREQUAL directfb)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL dispmanx)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL dispmanx)
   include (cmake/FindDispmanX.cmake)
 
   if (NOT DISPMANX_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
   
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -86,15 +86,15 @@ if (GRAPHIC_BIND STREQUAL dispmanx)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL drm)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL drm)
   pkg_check_modules(DRM libdrm)
 
   if (NOT DRM_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
 
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -106,15 +106,15 @@ if (GRAPHIC_BIND STREQUAL drm)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL efl)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL efl)
   pkg_check_modules(EFL elementary)
 
   if (NOT EFL_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
 
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -126,19 +126,19 @@ if (GRAPHIC_BIND STREQUAL efl)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL fb)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL fb)
   # all done :)
 endif()
 
-if (GRAPHIC_BIND STREQUAL flaschen)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL flaschen)
   include (cmake/FindFlaschen.cmake)
 
   if (NOT FLASCHEN_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
   
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -150,16 +150,16 @@ if (GRAPHIC_BIND STREQUAL flaschen)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL gl)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL gl)
   pkg_check_modules(GL gl)
   pkg_check_modules(GLU glu)
 
   if (NOT GL_FOUND OR NOT GLU_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
 
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -174,15 +174,15 @@ if (GRAPHIC_BIND STREQUAL gl)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL egl)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL egl)
   include (cmake/FindEgl.cmake)
 
   if (NOT EGL_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
   
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -194,15 +194,15 @@ if (GRAPHIC_BIND STREQUAL egl)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL gtk3)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL gtk3)
   pkg_check_modules(GTK3 gtk+-3.0)
 
   if (NOT GTK3_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
 
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -214,15 +214,15 @@ if (GRAPHIC_BIND STREQUAL gtk3)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL nanax)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL nanax)
   include (cmake/FindNanaX.cmake)
 
   if (NOT NANAX_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
   
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -234,15 +234,15 @@ if (GRAPHIC_BIND STREQUAL nanax)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL openvg)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL openvg)
   include (cmake/FindOpenVg.cmake)
 
   if (NOT OPENVG_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
   
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -254,11 +254,11 @@ if (GRAPHIC_BIND STREQUAL openvg)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL qt5)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL qt5)
   find_package(Qt5Widgets REQUIRED)
 
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -269,15 +269,15 @@ if (GRAPHIC_BIND STREQUAL qt5)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL sdl2)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL sdl2)
   pkg_check_modules(SDL2 sdl2)
 
   if (NOT SDL2_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
 
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -289,15 +289,15 @@ if (GRAPHIC_BIND STREQUAL sdl2)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL sfml2)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL sfml2)
   pkg_check_modules(SFML2 sfml-graphics)
 
   if (NOT SFML2_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
 
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -309,16 +309,16 @@ if (GRAPHIC_BIND STREQUAL sfml2)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL vdpau)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL vdpau)
   pkg_check_modules(X11 x11)
   pkg_check_modules(VDPAU vdpau)
 
   if (NOT X11_FOUND OR NOT VDPAU_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
 
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -332,15 +332,15 @@ if (GRAPHIC_BIND STREQUAL vdpau)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL vnc)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL vnc)
   pkg_check_modules(VNC libvncserver)
 
   if (NOT VNC_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
 
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -352,15 +352,15 @@ if (GRAPHIC_BIND STREQUAL vnc)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL wayland)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL wayland)
   pkg_check_modules(WAYLAND wayland-client)
 
   if (NOT WAYLAND_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
 
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -373,15 +373,15 @@ if (GRAPHIC_BIND STREQUAL wayland)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL xcb)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL xcb)
   pkg_check_modules(XCB xcb)
 
   if (NOT XCB_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
 
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -393,15 +393,15 @@ if (GRAPHIC_BIND STREQUAL xcb)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL xlib)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL xlib)
   pkg_check_modules(X11 x11)
 
   if (NOT X11_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
 
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 
@@ -413,15 +413,15 @@ if (GRAPHIC_BIND STREQUAL xlib)
   )
 endif()
 
-if (GRAPHIC_BIND STREQUAL jx)
+if (JCANVAS_GRAPHIC_ENGINE STREQUAL jx)
   include (cmake/FindJx.cmake)
 
   if (NOT JX_FOUND)
-    message (SEND_ERROR "unable to find graphic bind ${GRAPHIC_BIND}")
+    message (SEND_ERROR "unable to find graphic bind ${JCANVAS_GRAPHIC_ENGINE}")
   endif()
   
   set(GRAPHIC_BINDS_SRCS 
-    src/binds/${GRAPHIC_BIND}/bind.cpp
+    src/binds/${JCANVAS_GRAPHIC_ENGINE}/bind.cpp
   )
 
   set(GRAPHIC_BINDS_INCLUDE_DIRS 

@@ -26,12 +26,12 @@ target_include_directories(${PROJECT_NAME}
     "${PROJECT_SOURCE_DIR}/src/include"
 )
 
-if (TESTS)
+if (JCANVAS_TESTS)
   enable_testing()
   add_subdirectory(tests)
 endif()
 
-if (EXAMPLES)
+if (JCANVAS_EXAMPLES)
   add_subdirectory(examples)
 endif()
 

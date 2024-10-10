@@ -104,11 +104,11 @@ target_link_libraries(${PROJECT_NAME}
     jCanvas::Core
 )
 
-if (TESTS)
+if (JCANVAS_TESTS)
   add_subdirectory(tests)
 endif()
 
-if (EXAMPLES)
+if (JCANVAS_EXAMPLES)
   add_subdirectory(examples)
 endif()
 

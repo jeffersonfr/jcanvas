@@ -11,16 +11,16 @@ project(jcanvas
   VERSION 1.0.0
 )
 
-option(WIDGETS "Enable widgets module" ON)
-option(TESTS "Enable unit tests" OFF)
-option(EXAMPLES "Enable examples" OFF)
-option(SANITIZE "Enable sanitize" OFF)
-option(COVERAGE "Enable coverage" OFF)
-option(PROFILE "Enable profile" OFF)
+option(JCANVAS_WIDGETS "Enable widgets module" ON)
+option(JCANVAS_TESTS "Enable unit tests" OFF)
+option(JCANVAS_EXAMPLES "Enable examples" OFF)
+option(JCANVAS_SANITIZE "Enable sanitize" OFF)
+option(JCANVAS_COVERAGE "Enable coverage" OFF)
+option(JCANVAS_PROFILE "Enable profile" OFF)
 
-set(GRAPHIC_BIND "sdl2" CACHE STRING "Default graphic bind")
+set(JCANVAS_GRAPHIC_ENGINE "sdl2" CACHE STRING "Default graphic bind")
 
-set_property(CACHE GRAPHIC_BIND PROPERTY STRINGS 
+set_property(CACHE JCANVAS_GRAPHIC_ENGINE PROPERTY STRINGS 
   dummy allegro5 caca directfb drm efl egl fb flaschen gl gtk3 nanax qt5 sdl2 sfml2 vdpau vnc wayland xcb xlib jx dispmanx-pi egl-pi openvg-pi)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -28,19 +28,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_options(-Wall -Wextra -Wpedantic -pedantic -Werror)
 
-if (COVERAGE)
+if (JCANVAS_COVERAGE)
   add_compile_options(--coverage -fprofile-arcs -ftest-coverage)
   add_link_options(-fprofile-arcs -lgcov)
 endif()
 
-if (SANITIZE)
+if (JCANVAS_SANITIZE)
   set(SANITIZE_FLAGS -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize-address-use-after-scope -U_FORTIFY_SOURCE -fno-omit-frame-pointer -fno-common)
 
   add_compile_options(${SANITIZE_FLAGS})
   add_link_options(${SANITIZE_FLAGS} -lasan -lubsan)
 endif()
 
-if (PROFILE)
+if (JCANVAS_PROFILE)
   add_compile_options(-pg -fprofile-arcs -ftest-coverage -fprofile-generate -fno-inline -O0)
 endif()
 
@@ -51,7 +51,7 @@ enable_testing()
 add_subdirectory(algebra)
 add_subdirectory(core)
 
-if (WIDGETS)
+if (JCANVAS_WIDGETS)
   add_subdirectory(widgets)
 endif()
 
