@@ -7,7 +7,7 @@ Name: @PROJECT_NAME@
 Description: @CMAKE_PROJECT_DESCRIPTION@
 URL: @CMAKE_PROJECT_HOMEPAGE_URL@
 Version: @PROJECT_VERSION@
-Requires: @PC_REQ_PUB@
+Requires: @PC_REQ_PUB@ cairo
 Requires.private: @PC_REQ_PRIVATE@
 Cflags: -I"${includedir}" @JCANVAS_INCLUDE_DIRS@
 Libs: -L"${libdir}" -ljcanvas-algebra -ljcanvas-core -ljcanvas-widgets
