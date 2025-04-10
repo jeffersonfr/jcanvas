@@ -60,4 +60,4 @@ install(DIRECTORY resources/jcanvas DESTINATION ${CMAKE_INSTALL_PREFIX}/share)
 # generate pc file
 configure_file(jcanvas.pc.in jcanvas.pc @ONLY)
 
-install(FILES ${CMAKE_BINARY_DIR}/jcanvas.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/jcanvas.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
