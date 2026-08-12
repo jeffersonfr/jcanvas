@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #ifndef J_RAISEDBEVELEDRECTANGLEBORDER_H
-#define J_RAISEDBEBELEDRECTANGLEBORDER_H
+#define J_RAISEDBEVELEDRECTANGLEBORDER_H
 
 #include "jcanvas/widgets/jrectangleborder.h"
 

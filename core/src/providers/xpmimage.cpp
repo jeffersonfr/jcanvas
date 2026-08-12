@@ -117,7 +117,7 @@ static bool xpm_load(std::istream &stream, uint8_t **image, int *width, int *hei
 	std::map<std::string, uint32_t> palette;
 	std::string line_buffer;
 	char buffer[4096];
-	size_t linenum_tot = 0;
+	// size_t linenum_tot = 0;
 	size_t linenum_inf = 0;
 	size_t colors = 0;
 	size_t colors_tot = 0;
@@ -129,7 +129,7 @@ static bool xpm_load(std::istream &stream, uint8_t **image, int *width, int *hei
 	uint32_t *data = nullptr;
 
 	while (std::getline(stream, line_buffer)) {
-		linenum_tot++;
+		// linenum_tot++;
 
 		if (line_buffer[0] == '"' ) {
 			linenum_inf++;

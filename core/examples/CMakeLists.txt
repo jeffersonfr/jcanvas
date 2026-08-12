@@ -1,5 +1,3 @@
-cmake_minimum_required (VERSION 3.0)
-
 find_package(OpenMP)
 
 macro(module_test)
@@ -83,3 +81,5 @@ module_test(tv)
 module_test(watch)
 module_test(particles)
 module_test(fly)
+module_test(trex)
+module_test(natal)

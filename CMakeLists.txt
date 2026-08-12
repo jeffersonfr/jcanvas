@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.20)
 
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "In-source build is not allowed")
@@ -12,8 +12,8 @@ project(jcanvas
 )
 
 option(JCANVAS_WIDGETS "Enable widgets module" ON)
-option(JCANVAS_TESTS "Enable unit tests" OFF)
-option(JCANVAS_EXAMPLES "Enable examples" OFF)
+option(JCANVAS_TESTS "Enable unit tests" ON)
+option(JCANVAS_EXAMPLES "Enable examples" ON)
 option(JCANVAS_SANITIZE "Enable sanitize" OFF)
 option(JCANVAS_COVERAGE "Enable coverage" OFF)
 option(JCANVAS_PROFILE "Enable profile" OFF)

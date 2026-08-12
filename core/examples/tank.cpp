@@ -83,7 +83,7 @@ class Main : public Window, public KeyListener {
 		{
 			Window::Paint(g);
 
-			KeyPressed();
+			UpdateKeys();
 
       jpoint_t
         size = GetSize();
@@ -138,7 +138,7 @@ class Main : public Window, public KeyListener {
       Repaint();
 		}
 
-		virtual void KeyPressed()
+		void UpdateKeys()
 		{
 			EventManager &ev = GetEventManager();
 			double angle_step = 0.1;
