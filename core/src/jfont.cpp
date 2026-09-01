@@ -250,7 +250,7 @@ jfont_extends_t Font::GetStringExtends(std::string text)
   cairo_text_extents_t t;
 
   if (GetEncoding() == jfont_encoding_t::Latin1) {
-    utf8 = jmixin::latin1_to_utf8(text);
+    utf8 = jmixin::String::latin1_to_utf8(text);
   }
 
   cairo_scaled_font_text_extents(_scaled_font, utf8.c_str(), &t);

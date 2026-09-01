@@ -145,17 +145,21 @@ template<typename T, typename = typename std::enable_if<std::is_arithmetic<T>::v
         return *this;
       }
 
-    template<typename U> 
+    template<typename U>
+      jrect_t<typename std::common_type<T, U>::type> merge(const jrect_t<U> &param) const
+      {
+          int x0 = std::min(point.x, param.point.x);
+          int y0 = std::min(point.y, param.point.y);
+          int w0 = std::max(point.x + size.x, param.point.x + param.size.x);
+          int h0 = std::max(point.y + size.y, param.point.y + param.size.y);
+
+          return {{x0, y0}, {w0, h0}};
+      }
+
+    template<typename U>
       jrect_t<typename std::common_type<T, U>::type> operator+(const jrect_t<U> &param) const
       {
-        int
-          x0 = std::min(point.x, param.point.x),
-             y0 = std::min(point.y, param.point.y);
-        int
-          w0 = std::max(point.x + size.x, param.point.x + param.size.x),
-             h0 = std::max(point.y + size.y, param.point.y + param.size.y);
-
-        return {{x0, y0}, {w0, h0}};
+        return {point + param.point, size + param.size};
       }
 
     template<typename U> 

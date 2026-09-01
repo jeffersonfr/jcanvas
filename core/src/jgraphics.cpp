@@ -1119,7 +1119,7 @@ void Graphics::DrawString(std::string text, jpoint_t<int> point)
   cairo_status_t status;
 
   if (_font->GetEncoding() == jfont_encoding_t::Latin1) {
-    utf8 = jmixin::latin1_to_utf8(text);
+    utf8 = jmixin::String::latin1_to_utf8(text);
   }
 
   status = cairo_scaled_font_text_to_glyphs(
@@ -1226,7 +1226,7 @@ void Graphics::DrawString(std::string text, jrect_t<int> rect, jhorizontal_align
             .text = lines[i],
             .dx = 0,
             .dy = i*height,
-            .sx = (rect.size.x - _font->GetStringWidth(jmixin::join(tokens, "")))/(float)(tokens.size() - 1)
+            .sx = (rect.size.x - _font->GetStringWidth(jmixin::String::join(tokens, "")))/(float)(tokens.size() - 1)
         });
       }
     }
@@ -2127,7 +2127,7 @@ void Graphics::TextTo(std::string text, jpoint_t<int> point)
   cairo_status_t status;
 
   if (font->GetEncoding() == jfont_encoding_t::Latin1) {
-    utf8 = jmixin::latin1_to_utf8(text);
+    utf8 = jmixin::String::latin1_to_utf8(text);
   }
 
   status = cairo_scaled_font_text_to_glyphs(

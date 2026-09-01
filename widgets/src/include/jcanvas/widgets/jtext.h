@@ -25,7 +25,7 @@
 #include "jcanvas/widgets/jtextlistener.h"
 #include "jcanvas/widgets/jnulllayout.h"
 
-#include "/usr/local/include/jmixin/jstring.h"
+#include <functional>
 
 namespace jcanvas {
 
